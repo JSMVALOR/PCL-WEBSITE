@@ -263,7 +263,7 @@ export default function Navbar() {
                                     <p className="text-[var(--text-muted)] text-sm mb-6 leading-relaxed">
                                       Connect with our dedicated admissions office, ask questions, or schedule a personalized campus tour.
                                     </p>
-                                    <Link to="/contact" className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-[var(--bg-color)] bg-[var(--primary-color)] px-6 py-3 rounded-xl hover:scale-105 transition-transform shadow-lg shadow-[var(--primary-color)]/20">
+                                    <Link to="/contact" onClick={() => setActiveDropdown(null)} className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-[var(--bg-color)] bg-[var(--primary-color)] px-6 py-3 rounded-xl hover:scale-105 transition-transform shadow-lg shadow-[var(--primary-color)]/20">
                                       Contact Office <ArrowRight size={14} />
                                     </Link>
                                   </div>
@@ -277,6 +277,7 @@ export default function Navbar() {
                                         <Link
                                           key={sIdx}
                                           to={subItem.link}
+                                          onClick={() => setActiveDropdown(null)}
                                           className="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-color)] transition-all flex items-center gap-3 pl-3 border-l-2 border-transparent hover:border-[var(--accent)] group"
                                         >
                                           <span>{subItem.label}</span>
