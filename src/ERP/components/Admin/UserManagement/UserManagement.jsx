@@ -382,7 +382,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  {/* 1. MASTER HEADER */}
  {!isHubView && (
- <PageHeader icon="fa-solid fa-users-gear" title="User Access Management" subtitle="Provision accounts, manage roles, and enforce disciplinary actions." rightContent={
+ <PageHeader icon="fa-solid fa-users-gear" title="User Access Management" subtitle="Provision accounts, manage roles, and maintain the college directory." rightContent={
 <>
 <div className="flex gap-3 w-full lg:w-auto">
  <button
@@ -434,12 +434,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  >
  Faculty <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec">{usersData.faculty.length}</span>
  </button>
- <button
- onClick={() => setActiveTab('disciplinary')}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 ${activeTab === 'disciplinary' ? "bg-rose-500/10 text-rose-500 border-theme border-rose-500/20" : "text-themeTextSec opacity-70 hover:text-rose-400 hover:bg-rose-500/5 border border-transparent"}`}
- >
- Disciplinary <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec">{usersData.disciplinary.length}</span>
- </button>
+ 
  </div>
 
  <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
