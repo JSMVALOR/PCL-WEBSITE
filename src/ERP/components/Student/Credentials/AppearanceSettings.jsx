@@ -43,29 +43,45 @@ export default function AppearanceSettings() {
                     >
                         <div className={`absolute top-0 right-0 w-32 h-32 -mr-10 -mt-10 rounded-full opacity-20 transition-transform duration-700 group-hover:scale-150 ${t.gradient}`}></div>
                         
-                        <div className="relative z-10 flex items-center justify-between w-full mb-4">
-                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-white/10 ${t.gradient} shadow-lg`}>
-                                <i className={`fa-solid ${t.icon} text-white`}></i>
-                            </div>
-                            {activeTheme === t.id && (
-                                <div className="w-6 h-6 rounded-full bg-themeAccent/20 flex items-center justify-center border border-themeAccent/50 text-themeAccent">
-                                    <i className="fa-solid fa-check text-xs"></i>
+                        <div className="relative z-10 flex flex-col gap-4">
+                            <div className="flex items-center justify-between w-full">
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/10 ${t.gradient} shadow-lg`}>
+                                    <i className={`fa-solid ${t.icon} text-white`}></i>
                                 </div>
-                            )}
-                        </div>
-                        
-                        <div className="relative z-10">
-                            <h3 className={`font-black text-sm tracking-tight mb-1 ${activeTheme === t.id ? 'text-themeAccent' : 'text-themeText'}`}>
-                                {t.name}
-                            </h3>
-                            <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} leading-relaxed`}>{t.desc}</p>
+                                {activeTheme === t.id && (
+                                    <div className="w-6 h-6 rounded-full bg-themeAccent/20 flex items-center justify-center border border-themeAccent/50 text-themeAccent">
+                                        <i className="fa-solid fa-check text-xs"></i>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Mini UI Preview */}
+                            <div className="w-full h-16 rounded-lg overflow-hidden border border-white/5 flex shadow-inner" style={{ background: 'var(--bg-color)' }}>
+                                {/* Mini Sidebar */}
+                                <div className="w-1/4 h-full border-r border-white/5" style={{ background: 'var(--panel-bg)' }}>
+                                    <div className="w-full h-2 mt-2 bg-[var(--text-muted)] opacity-20 mx-auto w-3/4 rounded-full"></div>
+                                    <div className="w-full h-1 mt-2 bg-[var(--primary-color)] mx-auto w-1/2 rounded-full"></div>
+                                </div>
+                                {/* Mini Content */}
+                                <div className="w-3/4 h-full p-2 flex flex-col gap-1">
+                                    <div className="w-1/3 h-1.5 rounded-full bg-[var(--text-color)] opacity-50"></div>
+                                    <div className="w-full h-6 rounded-md border border-white/5 mt-1" style={{ background: 'var(--panel-bg)' }}></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 className={`font-black text-sm tracking-tight mb-1 ${activeTheme === t.id ? 'text-themeAccent' : 'text-themeText'}`}>
+                                    {t.name}
+                                </h3>
+                                <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} leading-relaxed`}>{t.desc}</p>
+                            </div>
                         </div>
                     </button>
                 ))}
             </div>
             
             {/* Navigation Layout & Density */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4 pt-8 border-t border-themeBorder">
+            <div className="grid grid-cols-1 gap-8 mt-4 pt-8 border-t border-themeBorder">
                 
                 {/* Desktop Navigation */}
                 <div className="flex flex-col gap-5">
@@ -101,41 +117,8 @@ export default function AppearanceSettings() {
                     </div>
                 </div>
 
-                {/* Sidebar Density */}
-                <div className="flex flex-col gap-5">
-                    <h3 className={`text-xs font-black text-themeText uppercase tracking-widest flex items-center gap-2 px-1`}>
-                        <i className="fa-solid fa-list-check text-themeAccent"></i> Sidebar Density
-                    </h3>
-                    <div className="flex flex-col gap-4">
-                        <button type="button" onClick={() => changeSidebarMode('hubs')}
-                            className={`group flex items-start gap-4 p-5 rounded-themePanel border transition-all duration-300 outline-none ${
-                            sidebarMode === 'hubs' ? `${theme.layout.panel} border-themeAccent ring-1 ring-themeAccent` : `${theme.layout.panel} border-themeBorder hover:border-themeAccent/50`}`}
-                        >
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${sidebarMode === 'hubs' ? 'bg-themeAccent/10 text-themeAccent border-themeAccent/20' : 'bg-themeElevated text-themeTextSec border-themeBorder'}`}>
-                                <i className="fa-solid fa-layer-group text-lg"></i>
-                            </div>
-                            <div className="flex-1 text-left">
-                                <h3 className={`font-black text-sm ${sidebarMode === 'hubs' ? 'text-themeAccent' : 'text-themeText'}`}>Hubs Mode</h3>
-                                <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} mt-1`}>Tools grouped into Central Hubs</p>
-                            </div>
-                        </button>
-
-                        <button type="button" onClick={() => changeSidebarMode('expanded')}
-                            className={`group flex items-start gap-4 p-5 rounded-themePanel border transition-all duration-300 outline-none ${
-                            sidebarMode === 'expanded' ? `${theme.layout.panel} border-themeAccent ring-1 ring-themeAccent` : `${theme.layout.panel} border-themeBorder hover:border-themeAccent/50`}`}
-                        >
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${sidebarMode === 'expanded' ? 'bg-themeAccent/10 text-themeAccent border-themeAccent/20' : 'bg-themeElevated text-themeTextSec border-themeBorder'}`}>
-                                <i className="fa-solid fa-list text-lg"></i>
-                            </div>
-                            <div className="flex-1 text-left">
-                                <h3 className={`font-black text-sm ${sidebarMode === 'expanded' ? 'text-themeAccent' : 'text-themeText'}`}>Expanded Mode</h3>
-                                <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} mt-1`}>All tools directly accessible</p>
-                            </div>
-                        </button>
-                    </div>
                 </div>
-
-            </div>
         </div>
+    </div>
     );
 }
