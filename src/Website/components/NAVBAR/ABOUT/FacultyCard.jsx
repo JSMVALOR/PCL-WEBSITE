@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React from 'react';
 import { motion } from 'framer-motion';
 

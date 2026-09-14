@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker as LeafletMarker, ZoomControl } from "react-leaflet";
 import L from "leaflet";

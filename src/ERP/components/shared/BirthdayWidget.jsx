@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
 import { useERP } from "../../context/ErpContext";
 import { motion, AnimatePresence } from 'framer-motion';

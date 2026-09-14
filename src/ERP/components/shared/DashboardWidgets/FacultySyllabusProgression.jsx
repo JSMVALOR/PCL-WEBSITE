@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';

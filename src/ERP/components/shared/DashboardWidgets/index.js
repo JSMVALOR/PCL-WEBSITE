@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. */
 export { default as StudentActivityRings } from './StudentActivityRings';
 export { default as StudentTrajectoryChart } from './StudentTrajectoryChart';
 export { default as FacultySyllabusProgression } from './FacultySyllabusProgression';

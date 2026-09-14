@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { useEffect, useRef, useState } from "react";
 import { sendSystemEmail } from '../../lib/EmailService';
 import campusImg from '../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
