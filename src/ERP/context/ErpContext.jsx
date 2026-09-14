@@ -642,19 +642,47 @@ export const ErpProvider = ({ children }) => {
             }
         },
         attendanceCache, updateAttendanceCache, clearAttendanceCache,
-        assignSlot: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
-        clearSlot: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
-        submitAttendance: async (records) => { 
-            window.erpDialog?.alert("Attendance submitted locally. Backend SQL required."); 
+        assignSlot: async (data) => {
+            const { error } = await supabase.from('faculty_timetable').insert([data]);
+            if (error) throw error;
+        },
+        clearSlot: async (id) => {
+            const { error } = await supabase.from('faculty_timetable').delete().eq('id', id);
+            if (error) throw error;
+        },
+        submitAttendance: async (records) => {
+            const { error } = await supabase.from('attendance').insert(records);
+            if (error) throw error;
             clearAttendanceCache();
         },
-        publishAssignment: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
-        submitGrade: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
-        submitMarksToCOE: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); },
-        processStudentRequest: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
-        processFacultyLeave: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); },
-        submitFacultyLeave: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
-        updateMeetingNotes: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }
+        publishAssignment: async (data) => {
+            const { error } = await supabase.from('assignments').insert([data]);
+            if (error) throw error;
+        },
+        submitGrade: async (data) => {
+            const { error } = await supabase.from('student_grades').upsert([data], { onConflict: 'student_id,assignment_id' });
+            if (error) throw error;
+        },
+        submitMarksToCOE: async (assignmentId) => {
+            const { error } = await supabase.from('student_grades').update({ is_submitted_to_coe: true }).eq('assignment_id', assignmentId);
+            if (error) throw error;
+        },
+        processStudentRequest: async (id, status, resolverId) => {
+            const { error } = await supabase.from('student_requests').update({ status, resolved_by: resolverId }).eq('id', id);
+            if (error) throw error;
+        },
+        processFacultyLeave: async (id, status, reviewerId) => {
+            const { error } = await supabase.from('faculty_leave_requests').update({ status, reviewed_by: reviewerId }).eq('id', id);
+            if (error) throw error;
+        },
+        submitFacultyLeave: async (data) => {
+            const { error } = await supabase.from('faculty_leave_requests').insert([data]);
+            if (error) throw error;
+        },
+        updateMeetingNotes: async (data) => {
+            const { error } = await supabase.from('mentorship_notes').insert([data]);
+            if (error) throw error;
+        }
         }}>
             {children}
 
