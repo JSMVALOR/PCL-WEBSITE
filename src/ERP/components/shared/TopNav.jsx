@@ -96,7 +96,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                             className="absolute top-[calc(100%-8px)] left-0 pt-2 z-50 origin-top-left"
                                         >
-                                            <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[260px] flex flex-col gap-1.5 relative overflow-hidden">
+                                            <div className="bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[260px] flex flex-col gap-1.5 relative overflow-hidden">
                                                 
                                                 {/* Top edge highlight */}
                                                 <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#007AFF]/30 to-transparent"></div>
@@ -200,7 +200,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                     className="absolute top-[calc(100%-8px)] right-0 pt-2 z-50 origin-top-right"
                                 >
-                                    <div className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
+                                    <div className="bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
                                         <div className="p-3 mb-2 border-b border-black/5 dark:border-white/5 flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-black/5 dark:bg-white/10 flex items-center justify-center font-black text-[#1C1C1E] dark:text-[#F2F2F7] shadow-inner overflow-hidden border border-black/5 dark:border-white/5">
                                                 {userSession?.profile_picture_url ? (
