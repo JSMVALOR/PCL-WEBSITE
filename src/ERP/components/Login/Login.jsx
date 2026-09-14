@@ -120,7 +120,7 @@ export default function Login() {
                 }
             }
         } catch (error) {
-            setErrorMsg('Unable to connect to the authentication server. Please try again later.');
+            setErrorMsg(`Auth Connection Error: ${error.message || 'Please try again later.'}`);
         } finally {
             setIsLoading(false);
         }

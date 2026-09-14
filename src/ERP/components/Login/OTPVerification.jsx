@@ -32,7 +32,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
           setTimeout(() => setShowSentToast(false), 3000);
       }).catch(err => {
           console.error("OTP send failed:", err);
-          setShowErrorToast('Failed to send OTP. Check backend server.');
+          setShowErrorToast(`Failed to send OTP: ${err.message || 'Check backend server.'}`);
           setTimeout(() => setShowErrorToast(''), 4000);
       });
     }
