@@ -176,7 +176,7 @@ export default function AdminExaminations({ isHubView = false, isEmbedded = fals
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 relative z-10 gap-1.5 w-full xl:w-auto overflow-x-auto no-scrollbar ${!isHubView ? '-mt-2 lg:-mt-4' : 'mb-6 lg:mb-8'}`}>
  {tabs.map((t) => (
- <button
+ <button type="button"
  key={t.id}
  onClick={() => setView(t.id)}
  className={`flex-1 xl:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
@@ -221,7 +221,7 @@ export default function AdminExaminations({ isHubView = false, isEmbedded = fals
  </div>
  <div>
  <label className={LABEL_CLS}>Date</label>
- <input type="date" required value={examDate} onChange={(e) => setExamDate(e.target.value)} className={`${INPUT_CLS} dark:[color-scheme:dark]`} />
+ <input min="2026-09-14" type="date" required value={examDate} onChange={(e) => setExamDate(e.target.value)} className={`${INPUT_CLS} dark:[color-scheme:dark]`} />
  </div>
  </div>
  <div className="grid grid-cols-2 gap-4">
@@ -271,7 +271,7 @@ export default function AdminExaminations({ isHubView = false, isEmbedded = fals
  <span><i className="fa-solid fa-location-dot mr-1"></i> {ex.exam_rooms?.room_name}</span>
  </div>
  </div>
- <button onClick={() => handleGenerateTickets(ex.id)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg text-[10px] font-black uppercase tracking-widest text-themeText transition-colors flex items-center gap-2">
+ <button type="button" onClick={() => handleGenerateTickets(ex.id)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg text-[10px] font-black uppercase tracking-widest text-themeText transition-colors flex items-center gap-2">
  <i className="fa-solid fa-ticket text-emerald-400"></i> Admit Cards
  </button>
  </div>
@@ -359,7 +359,7 @@ export default function AdminExaminations({ isHubView = false, isEmbedded = fals
  <p className="text-sm font-black text-themeText line-clamp-1">{asg.title}</p>
  <p className="text-[10px] text-themeTextSec mt-1"><i className="fa-solid fa-user-tie"></i> {asg.profiles?.full_name}</p>
  </div>
- <button 
+ <button type="button" 
  disabled={isLocking}
  onClick={() => toggleAssignmentLock(asg.id, asg.admin_locked)}
  className={`w-28 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex justify-center items-center gap-2 ${asg.admin_locked ? 'bg-rose-500/10 text-rose-500 border border-rose-500/30' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 hover:bg-emerald-500/20'}`}
@@ -392,7 +392,7 @@ export default function AdminExaminations({ isHubView = false, isEmbedded = fals
  </span>
  <p className="text-sm font-black text-themeText line-clamp-1">{m.subject_name}</p>
  </div>
- <button 
+ <button type="button" 
  disabled={isLocking}
  onClick={() => toggleManualExamLock(m.subject_name, m.exam_type, m.admin_locked)}
  className={`w-28 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex justify-center items-center gap-2 ${m.admin_locked ? 'bg-rose-500/10 text-rose-500 border border-rose-500/30' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 hover:bg-emerald-500/20'}`}

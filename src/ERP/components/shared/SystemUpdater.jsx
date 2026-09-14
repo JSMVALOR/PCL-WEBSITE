@@ -99,7 +99,7 @@ export default function SystemUpdater({ children }) {
                         </div>
                     </div>
 
-                    <button 
+                    <button type="button" 
                         onClick={handleDownloadUpdate}
                         className="w-full py-3.5 rounded-xl bg-[#007AFF] text-white font-bold text-[13px] uppercase tracking-widest flex justify-center items-center gap-3 shadow-sm hover:bg-[#006DEB] transition-colors"
                     >

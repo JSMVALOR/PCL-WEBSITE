@@ -111,7 +111,7 @@ Program: ${formData.program}
             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#000]/80 via-[#000]/20 to-transparent z-10" />
             
-            <img 
+            <img loading="lazy" 
               src={campusImg} 
               alt="Prudentia College of Law Campus" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

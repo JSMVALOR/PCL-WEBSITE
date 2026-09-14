@@ -223,13 +223,13 @@ export default function StudentApprovals({ isEmbedded = false }) {
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
  <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  <PageHeader icon="fa-solid fa-file-signature" title="Approvals & Grievances" subtitle="Track your formal requests and resolutions." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl w-fit relative z-10 overflow-x-auto no-scrollbar">
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('leaves')}
  className={`px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Leave Requests
  </button>
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('grievances')}
  className={`px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'grievances' ? 'bg-rose-500 text-white' : 'text-themeTextSec hover:text-themeText'}`}
  >

@@ -88,7 +88,7 @@ export default function LeaveRequests({ onReviewRequest }) {
 
  <div className="flex flex-wrap items-center bg-themeElevated/90 backdrop-blur-2xl p-1 rounded-lg border border-white/5Strong w-full lg:w-auto">
  {["Pending", "Approved", "Rejected", "All"].map(status => (
- <button
+ <button type="button"
  key={status}
  onClick={() => setStatusFilter(status)}
  className={`flex-1 lg:flex-none px-2 lg:px-4 py-2 lg:py-1.5 rounded-md text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition ${
@@ -157,7 +157,7 @@ export default function LeaveRequests({ onReviewRequest }) {
  </span>
  </td>
  <td className="p-3 lg:p-4 text-right">
- <button 
+ <button type="button" 
  onClick={() => onReviewRequest(req)}
  className="px-3 py-1.5 lg:px-4 lg:py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5Strong rounded-lg text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeText transition-colors whitespace-nowrap"
  >

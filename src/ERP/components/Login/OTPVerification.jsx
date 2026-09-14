@@ -271,7 +271,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                 </div>
                 
                 <div className="flex flex-col items-center w-full gap-4 border-t border-[var(--card-border)] pt-6 mt-4">
-                    <button 
+                    <button type="button" 
                         onClick={handleResend}
                         disabled={resendTimer > 0 || resendCount >= 1 || state === 'locked'}
                         className={`w-full justify-center !py-4 text-xs font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-2 rounded-md ${
@@ -289,7 +289,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                         )}
                     </button>
 
-                    <button 
+                    <button type="button" 
                         onClick={onLogout} 
                         className="text-[10px] uppercase tracking-widest font-black text-neutral-500 hover:text-rose-500 transition-colors mt-2"
                     >

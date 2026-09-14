@@ -164,7 +164,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  </div>
  </div>
  <div className="flex gap-2">
- <button 
+ <button type="button" 
  onClick={handleExport}
  disabled={isLoading || isExporting}
  className="bg-emerald-500 hover:bg-emerald-400 text-themeText px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2 disabled:opacity-50"
@@ -172,7 +172,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>} 
  Export PDF
  </button>
- <button onClick={onClose} className="w-10 h-10 rounded-lg border border-black/5 dark:border-white/10 flex justify-center items-center text-themeTextSec hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors">
+ <button type="button" onClick={onClose} className="w-10 h-10 rounded-lg border border-black/5 dark:border-white/10 flex justify-center items-center text-themeTextSec hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>

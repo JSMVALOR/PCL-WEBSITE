@@ -51,7 +51,7 @@ export default function OrganizationDirectory() {
             {/* Header & Controls */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl backdrop-blur-xl border border-black/5 dark:border-white/10 shrink-0">
-                    <button 
+                    <button type="button" 
                         onClick={() => setActiveTab('faculty')}
                         className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
                             activeTab === 'faculty' ? 'bg-white dark:bg-[#1C1C1E] text-[#007AFF] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -59,7 +59,7 @@ export default function OrganizationDirectory() {
                     >
                         Faculty ({members.faculty.length})
                     </button>
-                    <button 
+                    <button type="button" 
                         onClick={() => setActiveTab('student')}
                         className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
                             activeTab === 'student' ? 'bg-white dark:bg-[#1C1C1E] text-[#007AFF] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'

@@ -166,7 +166,7 @@ export default function Credentials() {
  {/* Top Action & Navigation Bar */}
  <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] px-6 py-4 rounded-[2rem] gap-4">
  <div className="flex bg-black/[0.03] dark:bg-white/[0.03] p-1.5 rounded-xl border border-black/[0.04] dark:border-white/[0.08] shadow-inner">
- <button
+ <button type="button"
  onClick={() => setActiveTab("profile")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
  activeTab === "profile" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -174,7 +174,7 @@ export default function Credentials() {
  >
  <i className="fa-regular fa-user mr-2"></i> HR & Profile
  </button>
- <button
+ <button type="button"
  onClick={() => setActiveTab("security")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
  activeTab === "security" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -182,7 +182,7 @@ export default function Credentials() {
  >
  <i className="fa-solid fa-shield-halved mr-2"></i> Security
  </button>
- <button
+ <button type="button"
  onClick={() => setActiveTab("appearance")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
  activeTab === "appearance" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -194,16 +194,16 @@ export default function Credentials() {
  
  {activeTab === "profile" && (
  <div className="flex gap-2">
- <button 
+ <button type="button" 
  onClick={() => setShowEditModal(true)}
  className="px-4 py-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-black/5 dark:border-white/10 flex items-center gap-2"
  >
  <i className="fa-solid fa-pen-to-square"></i> Edit
  </button>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="px-4 py-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-black/5 dark:border-white/10 flex items-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="px-4 py-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-black/5 dark:border-white/10 flex items-center gap-2">
  <i className="fa-solid fa-print"></i> Print
  </button>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="hidden sm:flex px-4 py-2 bg-themeAccent hover:opacity-90 text-themeApp text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-themeAccent flex items-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="hidden sm:flex px-4 py-2 bg-themeAccent hover:opacity-90 text-themeApp text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-themeAccent flex items-center gap-2">
  <i className="fa-solid fa-id-badge"></i> Download ID
  </button>
  </div>

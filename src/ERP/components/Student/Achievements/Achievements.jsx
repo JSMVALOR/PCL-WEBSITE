@@ -173,7 +173,7 @@ export default function Achievements({ isEmbedded = false }) {
  
  {/* Header */}
  <div className="flex justify-end w-full">
- <button 
+ <button type="button" 
  onClick={() => setShowAddWizard(true)}
  className="bg-themeAccent hover:brightness-110 text-white px-6 py-3 rounded-lg text-sm font-bold transition flex items-center gap-2 active:scale-95"
  >
@@ -243,7 +243,7 @@ export default function Achievements({ isEmbedded = false }) {
  {/* Category Chips */}
  <div className="flex-1 w-full overflow-x-auto no-scrollbar flex items-center gap-2 px-2">
  {["All", "Moot Courts", "Internships", "Publications", "Research", "Certificates", "Awards"].map(cat => (
- <button 
+ <button type="button" 
  key={cat}
  onClick={() => setActiveCategory(cat)}
  className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-colors border ${activeCategory === cat ? 'bg-themeText text-white border-themeText' : 'bg-themePanel border-theme border-themeBorderStrong text-themeTextSec opacity-80 border-black/5 dark:border-white/10 hover:border-gray-400'}`}
@@ -278,7 +278,7 @@ export default function Achievements({ isEmbedded = false }) {
  
  <div className="flex bg-themePanel border-theme border-themeBorderStrong rounded-lg p-1">
  {['Cards', 'Timeline', 'Table'].map(mode => (
- <button 
+ <button type="button" 
  key={mode} onClick={() => setViewMode(mode)}
  className={`px-3 py-1.5 rounded-md text-xs font-bold transition ${viewMode === mode ? 'bg-themePanel border-theme border-themeBorderStrong text-themeText' : 'text-themeTextSec hover:text-themeTextSec opacity-80'}`}
  title={mode}
@@ -340,8 +340,8 @@ export default function Achievements({ isEmbedded = false }) {
  {item.role || 'Participant'}
  </span>
  <div className="flex gap-2">
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-pen-to-square"></i></button>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-ellipsis"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-pen-to-square"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-ellipsis"></i></button>
  </div>
  </div>
  </div>
@@ -426,7 +426,7 @@ export default function Achievements({ isEmbedded = false }) {
  {/* Drawer Header */}
  <div className="px-6 py-5 border-b border-black/10 dark:border-white/20 flex justify-between items-center bg-themePanel border-theme border-themeBorderStrong">
  <h2 className="text-lg font-bold text-themeText">Achievement Record</h2>
- <button onClick={() => setSelectedAchievement(null)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition">
+ <button type="button" onClick={() => setSelectedAchievement(null)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -504,10 +504,10 @@ export default function Achievements({ isEmbedded = false }) {
  </label>
  </div>
 
- <button onClick={() => handlePrintCertificate(selectedAchievement)} className="w-full bg-themeText hover:bg-black text-white font-bold text-sm py-3.5 rounded-xl transition flex justify-center items-center gap-2">
+ <button type="button" onClick={() => handlePrintCertificate(selectedAchievement)} className="w-full bg-themeText hover:bg-black text-white font-bold text-sm py-3.5 rounded-xl transition flex justify-center items-center gap-2">
  <i className="fa-solid fa-print"></i> Print Certificate
  </button>
- <button onClick={() => { setSelectedQrAch(selectedAchievement); setShowQrModal(true); }} className="w-full bg-themePanel border-theme border-themeBorderStrong hover:bg-themePanel border-theme border-themeBorderStrong text-themeText border border-black/10 dark:border-white/20 font-bold text-sm py-3.5 rounded-xl transition flex justify-center items-center gap-2">
+ <button type="button" onClick={() => { setSelectedQrAch(selectedAchievement); setShowQrModal(true); }} className="w-full bg-themePanel border-theme border-themeBorderStrong hover:bg-themePanel border-theme border-themeBorderStrong text-themeText border border-black/10 dark:border-white/20 font-bold text-sm py-3.5 rounded-xl transition flex justify-center items-center gap-2">
  <i className="fa-solid fa-qrcode"></i> Generate Verification QR
  </button>
  </div>
@@ -521,7 +521,7 @@ export default function Achievements({ isEmbedded = false }) {
  <div className="bg-themePanel border-theme border-themeBorderStrong w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
  <div className="px-6 py-5 border-b border-black/10 dark:border-white/20 flex justify-between items-center bg-themePanel border-theme border-themeBorderStrong">
  <h2 className="text-xl font-bold text-themeText">Add Achievement</h2>
- <button onClick={() => setShowAddWizard(false)} className="text-themeTextSec hover:text-themeText transition-colors"><i className="fa-solid fa-xmark text-xl"></i></button>
+ <button type="button" onClick={() => setShowAddWizard(false)} className="text-themeTextSec hover:text-themeText transition-colors"><i className="fa-solid fa-xmark text-xl"></i></button>
  </div>
  
  <form onSubmit={handleAddSubmit} className="flex-1 overflow-y-auto p-6 lg:p-8 flex flex-col gap-6">
@@ -556,7 +556,7 @@ export default function Achievements({ isEmbedded = false }) {
  </div>
  <div>
  <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2">Date Achieved</label>
- <input 
+ <input min="2026-09-14" 
  required type="date"
  value={formData.date_achieved} onChange={e => setFormData({...formData, date_achieved: e.target.value})}
  className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-lg px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none"
@@ -594,8 +594,8 @@ export default function Achievements({ isEmbedded = false }) {
  </form>
 
  <div className="p-6 border-t border-black/10 dark:border-white/20 bg-themePanel border-theme border-themeBorderStrong flex justify-end gap-3">
- <button onClick={() => setShowAddWizard(false)} className="px-6 py-3 rounded-lg text-sm font-bold text-themeTextSec opacity-80 hover:bg-themeBorder transition-colors">Cancel</button>
- <button onClick={handleAddSubmit} disabled={isSubmitting} className="px-6 py-3 rounded-lg text-sm font-bold bg-themeAccent text-white hover:brightness-110 transition flex items-center gap-2">
+ <button type="button" onClick={() => setShowAddWizard(false)} className="px-6 py-3 rounded-lg text-sm font-bold text-themeTextSec opacity-80 hover:bg-themeBorder transition-colors">Cancel</button>
+ <button type="button" onClick={handleAddSubmit} disabled={isSubmitting} className="px-6 py-3 rounded-lg text-sm font-bold bg-themeAccent text-white hover:brightness-110 transition flex items-center gap-2">
  {isSubmitting ? <i className="fa-solid fa-spinner fa-spin"></i> : "Submit to Mentor"}
  </button>
  </div>
@@ -608,7 +608,7 @@ export default function Achievements({ isEmbedded = false }) {
  {showQrModal && selectedQrAch && (
  <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
  <div className="bg-themeBg border border-black/10 dark:border-white/20 rounded-3xl w-full max-w-sm p-8 relative flex flex-col items-center text-center">
- <button onClick={() => setShowQrModal(false)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-themePanel border-theme border-themeBorderStrong hover:bg-themeBorder text-themeTextSec hover:text-themeText transition-colors">
+ <button type="button" onClick={() => setShowQrModal(false)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-themePanel border-theme border-themeBorderStrong hover:bg-themeBorder text-themeTextSec hover:text-themeText transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  

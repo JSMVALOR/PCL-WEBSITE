@@ -107,7 +107,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
   
  { id: 'auto-gen', label: 'Auto Generator', icon: 'fa-wand-magic-sparkles' },
  ].map(tab => (
- <button 
+ <button type="button" 
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${

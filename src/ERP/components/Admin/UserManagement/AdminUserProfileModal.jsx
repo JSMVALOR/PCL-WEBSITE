@@ -124,7 +124,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  <div className={`p-6 lg:p-8 bg-gradient-to-r ${user.role === 'student' ? 'from-themeAccent to-themeAccent/80' : 'from-blue-600 to-blue-500'} relative overflow-hidden shrink-0`}>
  <div className="absolute top-0 right-0 w-full max-w-[300px] md:w-[300px] h-[300px] bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 mix-blend-overlay pointer-events-none"></div>
  
- <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors z-20">
+ <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors z-20">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
 

@@ -140,7 +140,7 @@ export default function Login() {
             {/* Back Button */}
             {!Capacitor.isNativePlatform() && (
                 <div className="absolute top-6 left-6 z-20">
-                    <button 
+                    <button type="button" 
                         onClick={() => navigate('/')}
                         className="tlh-btn !py-3 !px-5"
                     >

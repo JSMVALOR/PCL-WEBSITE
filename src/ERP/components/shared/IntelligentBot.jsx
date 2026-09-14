@@ -207,7 +207,7 @@ export default function IntelligentBot() {
     return (
         <div className="fixed bottom-[110px] lg:bottom-6 right-4 lg:right-6 z-[200] flex flex-col items-end">
             {!isOpen ? (
-                <button
+                <button type="button"
                     onClick={() => setIsOpen(true)}
                     className="w-14 h-14 rounded-full bg-themePanel/85 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/5 dark:border-white/10 flex items-center justify-center text-themeAccent hover:scale-110 hover:shadow-themeAccent/30 transition-all duration-300 cursor-pointer group relative"
                     aria-label="Open Assistant"
@@ -234,10 +234,10 @@ export default function IntelligentBot() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button onClick={() => setMessages([])} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-themeTextSec transition-colors" title="Clear Chat">
+                            <button type="button" onClick={() => setMessages([])} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-themeTextSec transition-colors" title="Clear Chat">
                                 <i className="fa-solid fa-trash-can text-xs"></i>
                             </button>
-                            <button onClick={() => setIsOpen(false)} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-themeText transition-colors">
+                            <button type="button" onClick={() => setIsOpen(false)} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-themeText transition-colors">
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -274,7 +274,7 @@ export default function IntelligentBot() {
                             ? ['Draft Notice', 'Suspend ID', 'Add Seats', 'Clear']
                             : ['📰 Notices', '📝 Assignments', '🚨 Help', 'Clear']
                         ).map((chip, idx) => (
-                            <button
+                            <button type="button"
                                 key={idx}
                                 onClick={() => handleChipClick(chip)}
                                 disabled={isTyping}

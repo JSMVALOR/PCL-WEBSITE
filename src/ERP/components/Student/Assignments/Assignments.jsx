@@ -161,7 +161,7 @@ export default function Assignments({ isEmbedded = false }) {
  isEmbedded={isEmbedded}
  rightContent={
  <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-[2rem] w-full lg:w-auto overflow-x-auto no-scrollbar">
- <button
+ <button type="button"
  onClick={() => setView("pending")}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "pending"
  ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent border border-black/5 dark:border-white/10"
@@ -171,7 +171,7 @@ export default function Assignments({ isEmbedded = false }) {
  <span className={`w-2 h-2 rounded-full ${view === "pending" && pendingAssignments.length > 0 ? 'bg-rose-500 animate-pulse' : 'bg-neutral-600'}`}></span>
  Pending ({pendingAssignments.length})
  </button>
- <button
+ <button type="button"
  onClick={() => setView("completed")}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "completed"
  ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent border border-black/5 dark:border-white/10"
@@ -232,7 +232,7 @@ export default function Assignments({ isEmbedded = false }) {
  </div>
 
  <div className="p-4 border-t-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
- <button
+ <button type="button"
  onClick={() => openModal(task)}
  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
  >
@@ -314,7 +314,7 @@ export default function Assignments({ isEmbedded = false }) {
  <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent uppercase tracking-widest mb-1 block">{selectedTask.subject_name}</span>
  <h3 className="text-xl font-black text-themeText tracking-tight">{selectedTask.title}</h3>
  </div>
- <button onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-white transition-colors shrink-0">
+ <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-white transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>

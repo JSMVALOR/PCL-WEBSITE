@@ -39,7 +39,7 @@ export default function LeaveAudit({ isEmbedded = false }) {
  <h2 className={`font-bold tracking-tight text-lg lg:text-xl text-themeText`}>Audit Logs</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec mt-1">Immutable record of all actions taken within the leave management module.</p>
  </div>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full sm:w-10 h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeTextSec hover:text-indigo-500 transition-colors shrink-0">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full sm:w-10 h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeTextSec hover:text-indigo-500 transition-colors shrink-0">
  <i className="fa-solid fa-download"></i> <span className="sm:hidden ml-2 text-xs font-black uppercase tracking-widest text-themeText">Download Logs</span>
  </button>
  </div>

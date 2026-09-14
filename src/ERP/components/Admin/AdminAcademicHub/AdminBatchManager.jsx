@@ -90,7 +90,7 @@ export default function AdminBatchManager({ isEmbedded = false }) {
  <h2 className="text-xl font-black text-themeText">Batch Manager</h2>
  <p className="text-xs font-bold text-themeTextSec mt-1">Manage academic cohorts and WhatsApp broadcast groups.</p>
  </div>
- <button onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
+ <button type="button" onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
  {isCreating ? <><i className="fa-solid fa-xmark mr-2"></i> Cancel</> : <><i className="fa-solid fa-plus mr-2"></i> Create Batch</>}
  </button>
  </div>
@@ -150,7 +150,7 @@ export default function AdminBatchManager({ isEmbedded = false }) {
  <h3 className="text-lg font-black text-themeText">{batch.name}</h3>
  <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">{batch.program}</p>
  </div>
- <button onClick={() => handleDelete(batch.id)} className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500 hover:text-white">
+ <button type="button" onClick={() => handleDelete(batch.id)} className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-500 hover:text-white">
  <i className="fa-solid fa-trash text-xs"></i>
  </button>
  </div>

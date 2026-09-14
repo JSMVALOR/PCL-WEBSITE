@@ -81,13 +81,13 @@ export default function FacultyDashboard({ setActiveTab }) {
                 subtitle="Overview of your academic responsibilities and daily itinerary."
                 rightContent={
                     <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-black/5 dark:border-white/10 shrink-0">
-                        <button 
+                        <button type="button" 
                             onClick={() => setViewMode('dashboard')}
                             className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 ${viewMode === 'dashboard' ? 'bg-white dark:bg-[#2C2C2E] text-themeAccent shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}
                         >
                             <i className="fa-solid fa-chart-pie mr-2"></i> Dashboard
                         </button>
-                        <button 
+                        <button type="button" 
                             onClick={() => setViewMode('organization')}
                             className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 ${viewMode === 'organization' ? 'bg-white dark:bg-[#2C2C2E] text-themeAccent shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}
                         >
@@ -142,7 +142,7 @@ export default function FacultyDashboard({ setActiveTab }) {
                             <div className="lg:col-span-3 flex flex-col gap-6">
                                 <div className="flex items-center justify-between px-2">
                                     <h2 className={`${theme.text.heading} text-xl text-themeText tracking-tight`}><i className="fa-regular fa-clock text-themeTextSec opacity-70 mr-2"></i> Today's Itinerary</h2>
-                                    <button onClick={() => setActiveTab('timetable')} className="text-[10px] font-black text-themeAccent hover:text-themeText uppercase tracking-widest transition-colors">
+                                    <button type="button" onClick={() => setActiveTab('timetable')} className="text-[10px] font-black text-themeAccent hover:text-themeText uppercase tracking-widest transition-colors">
                                         Full Timetable &rarr;
                                     </button>
                                 </div>
@@ -172,7 +172,7 @@ export default function FacultyDashboard({ setActiveTab }) {
                                                     <p className={`text-xs font-medium text-themeTextSec mb-3`}>{cls.batch}</p>
                                                     <div className="flex items-center gap-4">
                                                         <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest flex items-center gap-1.5"><i className="fa-solid fa-location-dot opacity-70"></i> {cls.room}</span>
-                                                        <button onClick={() => setActiveTab('attendance')} className="px-3 py-1.5 bg-black/5 dark:bg-white/10 hover:bg-themeAccent hover:text-white rounded text-[9px] font-black uppercase tracking-widest transition-colors flex items-center gap-1.5">
+                                                        <button type="button" onClick={() => setActiveTab('attendance')} className="px-3 py-1.5 bg-black/5 dark:bg-white/10 hover:bg-themeAccent hover:text-white rounded text-[9px] font-black uppercase tracking-widest transition-colors flex items-center gap-1.5">
                                                             <i className="fa-solid fa-user-check"></i> Take Attendance
                                                         </button>
                                                     </div>

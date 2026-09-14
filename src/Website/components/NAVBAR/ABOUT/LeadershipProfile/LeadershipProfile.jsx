@@ -132,7 +132,7 @@ export default function LeadershipProfile({ overrideId }) {
                 gap={10}
                 speed={16}
               >
-                <img
+                <img loading="lazy"
                   src={profile.image}
                   alt={profile.name}
                   className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"

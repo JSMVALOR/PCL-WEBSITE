@@ -127,7 +127,7 @@ export default function ElectiveBidding() {
  })}
 
  <div className="flex justify-end mt-4">
- <button 
+ <button type="button" 
  onClick={submitBids} 
  disabled={isSubmitting}
  className="btn-erp"

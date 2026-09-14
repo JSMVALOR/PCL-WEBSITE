@@ -84,7 +84,7 @@ export default function SemesterManager({ isEmbedded = false }) {
  <h2 className="text-xl font-black text-themeText">Semester Manager</h2>
  <p className="text-xs font-bold text-themeTextSec">The global switch controlling the entire ERP's current academic state.</p>
  </div>
- <button onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
+ <button type="button" onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
  {isCreating ? <><i className="fa-solid fa-xmark mr-2"></i> Cancel</> : <><i className="fa-solid fa-plus mr-2"></i> Create Semester</>}
  </button>
  </div>
@@ -99,11 +99,11 @@ export default function SemesterManager({ isEmbedded = false }) {
  </div>
  <div>
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Start Date</label>
- <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
+ <input min="2026-09-14" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  <div>
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">End Date</label>
- <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
+ <input min="2026-09-14" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  </div>
  <button type="submit" className="btn-erp">
@@ -134,7 +134,7 @@ export default function SemesterManager({ isEmbedded = false }) {
  {new Date(sem.start_date).toLocaleDateString()} - {new Date(sem.end_date).toLocaleDateString()}
  </td>
  <td className="p-4 text-center">
- <button 
+ <button type="button" 
  onClick={() => toggleActive(sem.id, sem.is_active_globally)}
  className={`inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border transition ${sem.is_active_globally ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10 hover:text-themeText hover:border-themeText'}`}
  >

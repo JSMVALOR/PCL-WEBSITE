@@ -149,7 +149,7 @@ export default function StudentDashboard({ setActiveTab }) {
  />
  <div className="w-full mb-6 mt-4">
                 <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl backdrop-blur-xl border border-black/5 dark:border-white/10 w-fit shadow-inner">
-                    <button 
+                    <button type="button" 
                         onClick={() => setViewMode('dashboard')}
                         className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
                             viewMode === 'dashboard' ? 'bg-white/90 dark:bg-[#1C1C1E]/90 text-[#007AFF] shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -157,7 +157,7 @@ export default function StudentDashboard({ setActiveTab }) {
                     >
                         Overview
                     </button>
-                    <button 
+                    <button type="button" 
                         onClick={() => setViewMode('organization')}
                         className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
                             viewMode === 'organization' ? 'bg-white/90 dark:bg-[#1C1C1E]/90 text-[#007AFF] shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'

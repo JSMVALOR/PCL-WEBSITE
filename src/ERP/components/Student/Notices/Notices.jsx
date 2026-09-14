@@ -336,13 +336,13 @@ export default function Notices({ setActiveTab }) {
                 rightContent={
                     <div className="flex flex-col md:flex-row gap-3 items-center w-full md:w-auto">
                         <div className="flex bg-black/5 dark:bg-white/10 p-1 rounded-xl border border-black/5 dark:border-white/5 w-full md:w-auto">
-                            <button 
+                            <button type="button" 
                                 onClick={() => {setActiveMainTab('broadcasts'); setSelectedNotice(null); setIsBroadcasting(false);}} 
                                 className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-[12px] font-bold tracking-tight transition ${activeMainTab === "broadcasts" ? 'bg-white dark:bg-[#2C2C2E] text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'}`}
                             >
                                 Notices
                             </button>
-                            <button 
+                            <button type="button" 
                                 onClick={() => {setActiveMainTab('events'); setSelectedNotice(null); setIsBroadcasting(false);}} 
                                 className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-[12px] font-bold tracking-tight transition ${activeMainTab === "events" ? 'bg-white dark:bg-[#2C2C2E] text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'}`}
                             >
@@ -364,7 +364,7 @@ export default function Notices({ setActiveTab }) {
                         )}
 
                         {(userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'events' && (
-                            <button 
+                            <button type="button" 
                                 onClick={() => setActiveTab && setActiveTab('events')} 
                                 className="px-5 py-2 bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
                             >
@@ -372,7 +372,7 @@ export default function Notices({ setActiveTab }) {
                             </button>
                         )}
                         {(userSession?.role === 'faculty' || userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'broadcasts' && (
-                            <button 
+                            <button type="button" 
                                 onClick={() => setIsBroadcasting(true)} 
                                 className="px-5 py-2 bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
                             >

@@ -97,7 +97,7 @@ export default function AdminCareers({ isHubView = false , isEmbedded = false}) 
  <div className={`w-full ${!isHubView ? 'max-w-5xl mx-auto p-6 lg:p-8' : ''} animate-fade-in`}>
  <div className="flex justify-between items-center mb-6">
  <h2 className="text-xl font-black text-themeText tracking-tight">{currentJob ? 'Edit Job Posting' : 'New Job Posting'}</h2>
- <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText text-xs font-black uppercase tracking-widest rounded-lg transition-colors border border-black/5 dark:border-white/10">
+ <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText text-xs font-black uppercase tracking-widest rounded-lg transition-colors border border-black/5 dark:border-white/10">
  <i className="fa-solid fa-arrow-left mr-2"></i> Back
  </button>
  </div>
@@ -181,7 +181,7 @@ export default function AdminCareers({ isHubView = false , isEmbedded = false}) 
  <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec"></i>
  <input type="text" placeholder="Search jobs..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
  </div>
- <button onClick={handleCreateNew} className="px-5 py-2.5 bg-themeAccent text-themeApp hover:opacity-90 text-xs font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2">
+ <button type="button" onClick={handleCreateNew} className="px-5 py-2.5 bg-themeAccent text-themeApp hover:opacity-90 text-xs font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> New Job
  </button>
  </div>
@@ -225,7 +225,7 @@ export default function AdminCareers({ isHubView = false , isEmbedded = false}) 
  )}
  </td>
  <td className="p-4 text-right">
- <button onClick={() => handleEdit(job)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => handleEdit(job)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors">
  <i className="fa-solid fa-pen"></i>
  </button>
  </td>

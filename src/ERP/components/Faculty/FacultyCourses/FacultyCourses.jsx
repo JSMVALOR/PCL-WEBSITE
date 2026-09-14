@@ -270,7 +270,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  </div>
  <h2 className="text-2xl lg:text-3xl font-black text-[#1C1C1E] dark:text-[#F2F2F7]">{selectedCourse.name}</h2>
  </div>
- <button onClick={() => setSelectedCourse(null)} className="w-10 h-10 rounded-full bg-themeApp border border-black/5 dark:border-white/5 text-[#8E8E93] hover:text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-rose-500/10 hover:border-rose-500/20 hover:text-rose-500 transition flex items-center justify-center">
+ <button type="button" onClick={() => setSelectedCourse(null)} className="w-10 h-10 rounded-full bg-themeApp border border-black/5 dark:border-white/5 text-[#8E8E93] hover:text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-rose-500/10 hover:border-rose-500/20 hover:text-rose-500 transition flex items-center justify-center">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -285,7 +285,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  { id: "roster", label: "Class Roster", icon: "fa-users-viewfinder" },
  { id: "resources", label: "Resources", icon: "fa-google-drive" }
  ].map(tab => (
- <button
+ <button type="button"
  key={tab.id}
  onClick={() => setActiveSidebarTab(tab.id)}
  className={`flex-1 min-w-[120px] px-4 py-3 rounded-lg text-[12px] font-bold tracking-tight transition flex items-center justify-center gap-2 ${
@@ -350,7 +350,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  <div className="flex flex-col gap-6 animate-fade-in">
  <div className="flex items-center justify-between">
  <h3 className="text-sm font-black text-[#1C1C1E] dark:text-[#F2F2F7]">Course Resources</h3>
- <button 
+ <button type="button" 
  onClick={() => setShowResourceForm(!showResourceForm)}
  className="px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-themeBorder border border-black/5 dark:border-white/5 text-[#1C1C1E] dark:text-[#F2F2F7] font-black text-[10px] uppercase tracking-widest transition"
  >
@@ -403,7 +403,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest">{res.type}</p>
  </div>
  </a>
- <button onClick={() => handleDeleteResource(res.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition flex items-center justify-center shrink-0">
+ <button type="button" onClick={() => handleDeleteResource(res.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition flex items-center justify-center shrink-0">
  <i className="fa-solid fa-trash text-xs"></i>
  </button>
  </div>

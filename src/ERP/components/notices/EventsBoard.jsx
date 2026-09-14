@@ -108,7 +108,7 @@ export default function EventsBoard() {
                         </div>
                     </div>
                     {canCreate && (
-                        <button
+                        <button type="button"
                             onClick={() => setIsCreateModalOpen(true)}
                             className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg"
                         >
@@ -205,7 +205,7 @@ export default function EventsBoard() {
                                     </span>
                                     <h3 className={`${theme.text.heading} text-2xl tracking-tight mb-1 text-white`}>{selectedEvent.title}</h3>
                                 </div>
-                                <button onClick={() => setSelectedEvent(null)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-black/20 hover:bg-black/40 transition-colors shrink-0 text-white">
+                                <button type="button" onClick={() => setSelectedEvent(null)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-black/20 hover:bg-black/40 transition-colors shrink-0 text-white">
                                     <i className="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
@@ -265,7 +265,7 @@ export default function EventsBoard() {
                                                 onChange={(e) => setGalleryInput(e.target.value)}
                                                 className={`flex-1 ${theme.layout.input} rounded-xl px-4 py-2 text-sm`}
                                             />
-                                            <button
+                                            <button type="button"
                                                 onClick={handleAddGalleryImage}
                                                 disabled={isGalleryUpdating || !galleryInput.trim()}
                                                 className="bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-50"
@@ -278,7 +278,7 @@ export default function EventsBoard() {
                             )}
 
                             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                                <button
+                                <button type="button"
                                     onClick={() => setSelectedEvent(null)}
                                     className={`flex-1 py-4 bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:opacity-80 text-themeText rounded-xl text-xs font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2 border border-black/5 dark:border-white/10`}
                                 >
@@ -286,7 +286,7 @@ export default function EventsBoard() {
                                 </button>
                                 
                                 {(role === 'admin' || userSession?.db_id === selectedEvent.author_id) && (
-                                    <button
+                                    <button type="button"
                                         onClick={() => handleDelete(selectedEvent.id)}
                                         className={`sm:w-auto px-6 py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border-theme border-rose-500/20 hover:border-rose-500`}
                                     >
@@ -309,7 +309,7 @@ export default function EventsBoard() {
                                 <h3 className={`${theme.text.heading} text-xl text-themeText`}>Add College Event</h3>
                                 <p className={`${theme.text.secondary} text-xs mt-1`}>Publish a new event to the dashboard.</p>
                             </div>
-                            <button onClick={() => setIsCreateModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-themePanel/85 backdrop-blur-2xl shadow-premium hover:bg-themeBorder text-themeText transition-colors shrink-0">
+                            <button type="button" onClick={() => setIsCreateModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-themePanel/85 backdrop-blur-2xl shadow-premium hover:bg-themeBorder text-themeText transition-colors shrink-0">
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>

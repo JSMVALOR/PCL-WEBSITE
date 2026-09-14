@@ -24,7 +24,7 @@ export default function AdminDashboard({ setActiveTab, isEmbedded = false }) {
  {/* Mobile Utility Toggle */}
  <div className="xl:hidden w-full flex justify-between items-center mb-4 bg-themePanel/85 backdrop-blur-2xl p-3 rounded-2xl border border-white/5 animate-fade-in">
  <span className="text-xs font-bold text-themeTextSec flex items-center gap-2"><i className="fa-solid fa-layer-group"></i> Utilities & Monitors</span>
- <button onClick={() => setIsSidebarOpen(true)} className="flex items-center gap-2 bg-themeElevated/90 backdrop-blur-2xl px-3 py-1.5 rounded-lg border border-white/5 text-themeText hover:border-themeAccent transition-colors">
+ <button type="button" onClick={() => setIsSidebarOpen(true)} className="flex items-center gap-2 bg-themeElevated/90 backdrop-blur-2xl px-3 py-1.5 rounded-lg border border-white/5 text-themeText hover:border-themeAccent transition-colors">
  <i className="fa-solid fa-bars"></i>
  <span className="text-[10px] font-black uppercase tracking-widest">Open Panel</span>
  </button>
@@ -39,7 +39,7 @@ export default function AdminDashboard({ setActiveTab, isEmbedded = false }) {
  {/* DASHBOARD / ORGANIZATION TOGGLE */}
  <div className="w-full flex justify-center sm:justify-start mb-6">
  <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl backdrop-blur-xl border border-black/5 dark:border-white/10 shrink-0 shadow-inner">
- <button 
+ <button type="button" 
  onClick={() => setViewMode('dashboard')}
  className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
  viewMode === 'dashboard' ? 'bg-white/90 dark:bg-[#1C1C1E]/90 text-[#007AFF] shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -47,7 +47,7 @@ export default function AdminDashboard({ setActiveTab, isEmbedded = false }) {
  >
  Overview
  </button>
- <button 
+ <button type="button" 
  onClick={() => setViewMode('organization')}
  className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
  viewMode === 'organization' ? 'bg-white/90 dark:bg-[#1C1C1E]/90 text-[#007AFF] shadow-[0_2px_10px_rgba(0,0,0,0.1)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
@@ -110,7 +110,7 @@ export default function AdminDashboard({ setActiveTab, isEmbedded = false }) {
  `}>
  <div className="xl:hidden flex justify-between items-center mb-6">
  <h2 className="text-sm font-black text-themeText tracking-tight flex items-center gap-2"><i className="fa-solid fa-layer-group text-themeTextSec"></i> Utilities</h2>
- <button onClick={() => setIsSidebarOpen(false)} className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center text-themeTextSec border border-white/5 hover:text-themeText transition-colors">
+ <button type="button" onClick={() => setIsSidebarOpen(false)} className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center text-themeTextSec border border-white/5 hover:text-themeText transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>

@@ -93,11 +93,11 @@ export default function LeaveCalendar({ isEmbedded = false }) {
  
  <div className="flex flex-col md:flex-row items-center justify-between bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-4 lg:p-5 gap-4">
  <div className="flex items-center gap-3 lg:gap-4 w-full md:w-auto justify-between md:justify-start">
- <button onClick={prevMonth} className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeText hover:text-indigo-500 transition-colors">
+ <button type="button" onClick={prevMonth} className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeText hover:text-indigo-500 transition-colors">
  <i className="fa-solid fa-chevron-left"></i>
  </button>
  <h2 className={`font-bold tracking-tight text-lg lg:text-xl text-themeText min-w-[140px] lg:w-48 text-center`}>{monthName} {year}</h2>
- <button onClick={nextMonth} className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeText hover:text-indigo-500 transition-colors">
+ <button type="button" onClick={nextMonth} className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeText hover:text-indigo-500 transition-colors">
  <i className="fa-solid fa-chevron-right"></i>
  </button>
  </div>

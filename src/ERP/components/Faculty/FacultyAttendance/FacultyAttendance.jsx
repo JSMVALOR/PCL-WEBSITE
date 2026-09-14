@@ -340,7 +340,7 @@ export default function FacultyAttendance({ subjectContext }) {
  { id: "window", label: "Active Window", icon: "fa-clipboard-check", disabled: !activeSession },
  { id: "analytics", label: "Risk Analytics", icon: "fa-chart-pie" }
  ].map((tab) => (
- <button
+ <button type="button"
  key={tab.id}
  disabled={tab.disabled}
  onClick={() => setActiveTab(tab.id)}
@@ -418,7 +418,7 @@ export default function FacultyAttendance({ subjectContext }) {
  Session Completed
  </button>
  ) : (
- <button 
+ <button type="button" 
  onClick={() => handleStartAttendance(cls)}
  className="w-full py-3 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98]"
  >
@@ -445,10 +445,10 @@ export default function FacultyAttendance({ subjectContext }) {
  </div>
  
  <div className="flex flex-col gap-3">
- <button onClick={() => handleBulkMark('present')} disabled={isSaving} className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98]">
+ <button type="button" onClick={() => handleBulkMark('present')} disabled={isSaving} className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98]">
  Mark All Present
  </button>
- <button onClick={() => handleBulkMark('absent')} disabled={isSaving} className="w-full py-3.5 rounded-xl bg-themeElevated hover:bg-rose-500/10 hover:text-rose-500 text-themeTextSec border border-themeBorder text-[10px] font-black uppercase tracking-widest transition">
+ <button type="button" onClick={() => handleBulkMark('absent')} disabled={isSaving} className="w-full py-3.5 rounded-xl bg-themeElevated hover:bg-rose-500/10 hover:text-rose-500 text-themeTextSec border border-themeBorder text-[10px] font-black uppercase tracking-widest transition">
  Mark All Absent
  </button>
  </div>
@@ -472,13 +472,13 @@ export default function FacultyAttendance({ subjectContext }) {
  <p className="text-[10px] font-black uppercase text-themeTextSec">Expires in {qrTimeLeft}s</p>
  </div>
  ) : (
- <button onClick={generateQR} className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98]">
+ <button type="button" onClick={generateQR} className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98]">
  Generate Secure QR
  </button>
  )}
  </div>
  
- <button onClick={handleCloseSession} className="w-full py-4 rounded-2xl bg-themeElevated border border-themeBorder hover:border-themeAccent text-themeText text-xs font-black uppercase tracking-widest transition mt-auto flex items-center justify-center gap-2">
+ <button type="button" onClick={handleCloseSession} className="w-full py-4 rounded-2xl bg-themeElevated border border-themeBorder hover:border-themeAccent text-themeText text-xs font-black uppercase tracking-widest transition mt-auto flex items-center justify-center gap-2">
  <i className="fa-solid fa-lock"></i> Finalize & Lock Session
  </button>
  </div>
@@ -496,7 +496,7 @@ export default function FacultyAttendance({ subjectContext }) {
  className="w-full bg-themeElevated border border-themeBorder rounded-xl pl-10 pr-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent"
  />
  </div>
- <button onClick={refreshLiveAttendance} className="px-4 bg-themeElevated border border-themeBorder rounded-xl hover:text-themeText text-themeTextSec transition-colors" title="Sync live QR entries">
+ <button type="button" onClick={refreshLiveAttendance} className="px-4 bg-themeElevated border border-themeBorder rounded-xl hover:text-themeText text-themeTextSec transition-colors" title="Sync live QR entries">
  <i className="fa-solid fa-rotate-right"></i>
  </button>
  </div>
@@ -517,7 +517,7 @@ export default function FacultyAttendance({ subjectContext }) {
  </div>
  
  <div className="flex bg-themeElevated p-1 rounded-xl border border-themeBorder shrink-0">
- <button 
+ <button type="button" 
  onClick={() => updateAttendance(student.id, 'present')}
  className={`px-3 lg:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
  record.status === 'present' 
@@ -527,7 +527,7 @@ export default function FacultyAttendance({ subjectContext }) {
  >
  P
  </button>
- <button 
+ <button type="button" 
  onClick={() => updateAttendance(student.id, 'absent')}
  className={`px-3 lg:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
  record.status === 'absent' 
@@ -537,7 +537,7 @@ export default function FacultyAttendance({ subjectContext }) {
  >
  A
  </button>
- <button 
+ <button type="button" 
  onClick={() => updateAttendance(student.id, 'medical')}
  className={`px-3 lg:px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
  record.status === 'medical' || record.status === 'approved_leave' 

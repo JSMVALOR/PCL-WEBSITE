@@ -107,7 +107,7 @@ export default function GlobalSearch() {
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
                     {quickLinks.map((link) => (
-                      <button
+                      <button type="button"
                         key={link.id}
                         onClick={() => handleSelect(link.path)}
                         className="flex items-center gap-3 w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition-colors group border border-transparent hover:border-white/5"
@@ -130,7 +130,7 @@ export default function GlobalSearch() {
                   </h3>
                   <div className="space-y-1">
                     {STATIC_MODULES.slice(0, 3).map((item) => (
-                      <button
+                      <button type="button"
                         key={`recent-${item.id}`}
                         onClick={() => handleSelect(item.path)}
                         className="flex items-center justify-between w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition-colors group"
@@ -155,7 +155,7 @@ export default function GlobalSearch() {
                 </h3>
                 <div className="space-y-1">
                   {filteredModules.map((module) => (
-                    <button
+                    <button type="button"
                       key={module.id}
                       onClick={() => handleSelect(module.path)}
                       className="flex items-center justify-between w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition group border border-transparent hover:border-white/5"

@@ -576,7 +576,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  {/* Dropdown */}
  <div className="absolute top-full left-0 mt-1 w-48 bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition z-50 overflow-hidden flex flex-col p-1">
  {item.children.map(child => (
- <button 
+ <button type="button" 
  key={child.path}
  onClick={() => { setSelectedPage(child.path); setSelectedSection(siteStructure[child.path].sections[0].id); }}
  className={`px-4 py-3 text-left text-xs font-bold rounded-lg transition-colors ${selectedPage === child.path ? 'bg-themeAccent text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
@@ -589,7 +589,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  );
  }
  return (
- <button 
+ <button type="button" 
  key={idx}
  onClick={() => { setSelectedPage(item.path); setSelectedSection(siteStructure[item.path].sections[0].id); }}
  className={`px-4 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-colors whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
@@ -636,7 +636,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 pl-1">Page Section</label>
  <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
  {siteStructure[selectedPage]?.sections.map(section => (
- <button
+ <button type="button"
  key={section.id}
  onClick={() => setSelectedSection(section.id)}
  className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors whitespace-nowrap border shrink-0 ${selectedSection === section.id 
@@ -699,7 +699,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  </div>
 
  <div className="mt-4 pt-4 border-t border-white/5">
- <button
+ <button type="button"
  onClick={handleSave}
  disabled={isSaving || fetchError}
  className="w-full bg-themeAccent hover:bg-themeAccent/90 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
@@ -722,7 +722,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
  <span className="text-[10px] font-mono text-white/50 ml-4 font-bold tracking-widest uppercase">Live Preview — {siteStructure[selectedPage]?.name}</span>
  </div>
- <button 
+ <button type="button" 
  onClick={() => setIsPreviewFullscreen(!isPreviewFullscreen)} 
  className="text-white/50 hover:text-white transition px-2 py-1 flex items-center gap-2 rounded bg-white/5 hover:bg-white/10"
  title={isPreviewFullscreen ? "Exit Fullscreen" : "Fullscreen Preview"}

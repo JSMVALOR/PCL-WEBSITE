@@ -113,7 +113,7 @@ export default function AdminPlacements({ isHubView = false, isEmbedded = false 
  {!isHubView && (
  <PageHeader icon="fa-solid fa-briefcase" title="Placements & Internships" subtitle="Manage firm recruitment, tracks, and student placements." rightContent={
 <>
-<button
+<button type="button"
  onClick={() => setShowCreateModal(true)}
  className="w-full lg:w-auto px-6 py-3 bg-themePanel/85 backdrop-blur-2xl hover:bg-white/90 text-themeAccent rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 border border-white/50"
  >
@@ -124,13 +124,13 @@ export default function AdminPlacements({ isHubView = false, isEmbedded = false 
  )}
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8' : 'mb-6 lg:mb-8'}`}>
- <button onClick={() => setActiveTab('drives')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'drives' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('drives')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'drives' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-building"></i> Placement Drives
  </button>
- <button onClick={() => setActiveTab('applications')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'applications' ? 'bg-indigo-500 text-white border border-indigo-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('applications')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'applications' ? 'bg-indigo-500 text-white border border-indigo-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-file-contract"></i> Applications
  </button>
- <button onClick={() => setActiveTab('inquiries')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'inquiries' ? 'bg-emerald-500 text-white border border-emerald-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('inquiries')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'inquiries' ? 'bg-emerald-500 text-white border border-emerald-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-handshake"></i> Company Inquiries
  {inquiries.filter(i => i.status === 'pending').length > 0 && (
  <span className="ml-1 w-2 h-2 rounded-full bg-red-500"></span>
@@ -163,7 +163,7 @@ export default function AdminPlacements({ isHubView = false, isEmbedded = false 
  <h3 className="text-xl font-black text-themeText mb-1">{drive.company_name}</h3>
  <p className="text-sm font-bold text-themeAccent">{drive.role_title}</p>
  </div>
- <button 
+ <button type="button" 
  onClick={async () => {
  const newStatus = drive.status === 'Open' ? 'Closed' : 'Open';
  const { error } = await supabase.from('placement_drives').update({ status: newStatus }).eq('id', drive.id);
@@ -309,7 +309,7 @@ export default function AdminPlacements({ isHubView = false, isEmbedded = false 
  <div className="bg-themeApp w-full max-w-lg rounded-themePanel overflow-hidden border border-white/5 flex flex-col max-h-[90vh]">
  <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-b-theme border-white/5 flex justify-between items-center">
  <h3 className="text-xl font-black text-themeText">Create Placement Drive</h3>
- <button onClick={() => setShowCreateModal(false)} className="w-8 h-8 rounded-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowCreateModal(false)} className="w-8 h-8 rounded-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  <form onSubmit={handleCreateDrive} className="p-6 flex flex-col gap-4 overflow-y-auto no-scrollbar">
  <div>
@@ -323,7 +323,7 @@ export default function AdminPlacements({ isHubView = false, isEmbedded = false 
  </div>
  <div>
  <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 ml-1">Drive Date</label>
- <input type="date" value={driveForm.drive_date} onChange={e => setDriveForm({...driveForm, drive_date: e.target.value})} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-xs font-bold text-themeText outline-none focus:border-themeAccent transition-colors" required />
+ <input min="2026-09-14" type="date" value={driveForm.drive_date} onChange={e => setDriveForm({...driveForm, drive_date: e.target.value})} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-xs font-bold text-themeText outline-none focus:border-themeAccent transition-colors" required />
  </div>
  </div>
  <div>

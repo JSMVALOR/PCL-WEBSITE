@@ -87,11 +87,11 @@ export default function LeaveBlackouts() {
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">Start Date</label>
-                            <input type="date" required value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText focus:border-rose-500 outline-none transition" />
+                            <input min="2026-09-14" type="date" required value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText focus:border-rose-500 outline-none transition" />
                         </div>
                         <div>
                             <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">End Date (Inclusive)</label>
-                            <input type="date" required value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText focus:border-rose-500 outline-none transition" />
+                            <input min="2026-09-14" type="date" required value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText focus:border-rose-500 outline-none transition" />
                         </div>
                         <button type="submit" disabled={isSubmitting} className="mt-2 w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition flex items-center justify-center gap-2 shadow-lg shadow-rose-500/20 hover:shadow-rose-500/40">
                             {isSubmitting ? <i className="fa-solid fa-spinner fa-spin"></i> : <><i className="fa-solid fa-shield-halved"></i> Lock Period</>}
@@ -121,7 +121,7 @@ export default function LeaveBlackouts() {
                                     {new Date(b.start_date).toLocaleDateString('en-GB')} to {new Date(b.end_date).toLocaleDateString('en-GB')}
                                 </p>
                             </div>
-                            <button onClick={() => handleDelete(b.id)} className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-rose-500/10 hover:text-rose-500 text-themeTextSec border border-black/[0.04] dark:border-white/[0.08] rounded-lg text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2">
+                            <button type="button" onClick={() => handleDelete(b.id)} className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-rose-500/10 hover:text-rose-500 text-themeTextSec border border-black/[0.04] dark:border-white/[0.08] rounded-lg text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2">
                                 <i className="fa-solid fa-unlock"></i> Unlock
                             </button>
                         </div>

@@ -172,7 +172,7 @@ export default function Mentorship() {
               <i className="fa-solid fa-calendar-plus"></i>
             </div>
           </div>
-          <button onClick={async () => {
+          <button type="button" onClick={async () => {
               if(!mentorData) return window.erpDialog.alert("No mentor assigned.");
               const topic = await window.erpDialog.prompt("What is the primary topic of discussion?", "Request Mentorship Session");
               if(!topic) return;
@@ -234,7 +234,7 @@ export default function Mentorship() {
  </div>
 
  {meeting.notes && (
- <button onClick={() => window.erpDialog.alert(meeting.notes, "Meeting Notes")} className="w-full sm:w-auto px-6 py-4 bg-black/30 backdrop-blur-md hover:bg-white/10 border border-black/5 dark:border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-themeText transition-colors shrink-0 active:scale-95 flex items-center justify-center">
+ <button type="button" onClick={() => window.erpDialog.alert(meeting.notes, "Meeting Notes")} className="w-full sm:w-auto px-6 py-4 bg-black/30 backdrop-blur-md hover:bg-white/10 border border-black/5 dark:border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-themeText transition-colors shrink-0 active:scale-95 flex items-center justify-center">
  <i className="fa-regular fa-file-lines mr-2 text-themeAccent"></i> Read Log
  </button>
  )}

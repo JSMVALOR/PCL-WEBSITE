@@ -90,7 +90,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <div className="flex flex-col gap-6 animate-fade-in max-w-4xl mx-auto">
  
  <div className="flex items-center gap-4">
- <button 
+ <button type="button" 
  onClick={onBack}
  className="w-10 h-10 rounded-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors"
  >
@@ -107,7 +107,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <i className="fa-solid fa-calendar-check text-4xl text-themeTextSec mb-4"></i>
  <h3 className="text-lg font-black text-themeText">No Classes Affected</h3>
  <p className="text-sm text-themeTextSec mt-2">This faculty member has no classes scheduled during the leave period. No replacement is necessary.</p>
- <button 
+ <button type="button" 
  onClick={() => handleAssign({ name: "System Auto-Approved" })}
  disabled={isProcessing}
  className="mt-6 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition"
@@ -165,7 +165,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  </div>
  </div>
 
- <button 
+ <button type="button" 
  onClick={() => handleAssign(sug)}
  disabled={isProcessing}
  className="mt-2 py-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-500 hover:text-white border-[length:var(--border-width)] border-indigo-500/20 rounded-lg text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-colors w-full relative z-10"
@@ -178,7 +178,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  )}
 
  <div className="mt-4 flex justify-center">
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5Strong rounded-lg text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec transition-colors">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5Strong rounded-lg text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec transition-colors">
  Manual Assignment <i className="fa-solid fa-chevron-right ml-1"></i>
  </button>
  </div>

@@ -302,13 +302,13 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
  <p className="text-[9px] lg:text-xs font-semibold text-themeTextSec opacity-70">Per Faculty Mentor</p>
  </div>
  <div className="flex items-center bg-themeElevated/90 backdrop-blur-2xl rounded-2xl border border-black/5 dark:border-white/10 overflow-hidden">
- <button disabled={isProcessing} onClick={() => setMaxCapacity(Math.max(1, maxCapacity - 1))} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-r border-black/5 dark:border-white/10 active:scale-95 disabled:opacity-50">
+ <button type="button" disabled={isProcessing} onClick={() => setMaxCapacity(Math.max(1, maxCapacity - 1))} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-r border-black/5 dark:border-white/10 active:scale-95 disabled:opacity-50">
  <i className="fa-solid fa-minus text-[10px] lg:text-xs"></i>
  </button>
  <div className="w-12 h-10 lg:w-16 lg:h-12 flex items-center justify-center font-black text-themeText text-base lg:text-lg">
  {maxCapacity}
  </div>
- <button disabled={isProcessing} onClick={() => setMaxCapacity(maxCapacity + 1)} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-l border-black/5 dark:border-white/10 active:scale-95 disabled:opacity-50">
+ <button type="button" disabled={isProcessing} onClick={() => setMaxCapacity(maxCapacity + 1)} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-l border-black/5 dark:border-white/10 active:scale-95 disabled:opacity-50">
  <i className="fa-solid fa-plus text-[10px] lg:text-xs"></i>
  </button>
  </div>
@@ -323,21 +323,21 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
  style={{ display: 'none' }} 
  onChange={handleFileUpload} 
  />
- <button
+ <button type="button"
  onClick={() => fileInputRef.current?.click()}
  disabled={isProcessing}
  className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-blue-500/10 text-themeTextSec hover:text-blue-500 border border-white/5 hover:border-blue-500/30 rounded-2xl text-[9px] lg:text-xs font-black uppercase tracking-widest transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
  >
  <i className="fa-solid fa-upload"></i> <span className="hidden sm:inline">Bulk </span>CSV
  </button>
- <button
+ <button type="button"
  onClick={handleClearAll}
  disabled={totalAllocated === 0 || isProcessing}
  className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec hover:text-rose-400 border border-white/5 hover:border-black/5 dark:border-white/10 rounded-2xl text-[9px] lg:text-xs font-black uppercase tracking-widest transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
  >
  <i className="fa-solid fa-trash-can"></i> Clear All
  </button>
- <button
+ <button type="button"
  onClick={handleAutoAllocate}
  disabled={filteredStudents.length === 0 || isProcessing}
  className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
@@ -523,7 +523,7 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
  </div>
  <div className="flex gap-2 shrink-0">
  <i className="fa-solid fa-grip-vertical text-themeTextSec opacity-30 group-hover:opacity-100 transition-opacity"></i>
- <button
+ <button type="button"
  onClick={() => handleRemoveStudent(fac.id, student.id)}
  disabled={isProcessing}
  className="w-6 h-6 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec opacity-70 hover:text-rose-500 hover:border-black/5 dark:border-white/10 hover:bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center transition-colors lg:opacity-0 lg:group-hover:opacity-100 shrink-0 disabled:opacity-50"

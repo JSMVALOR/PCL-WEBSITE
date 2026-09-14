@@ -200,7 +200,7 @@ export default function AdminNotices({ isHubView = false }) {
  }`}>{n.priority}</span>
  <span className="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border border-black/5 dark:border-white/10">{n.category}</span>
  </div>
- <button onClick={() => handleDeleteNotice(n.id)} className="text-themeTextSec hover:text-rose-500 transition-colors"><i className="fa-solid fa-trash-can"></i></button>
+ <button type="button" onClick={() => handleDeleteNotice(n.id)} className="text-themeTextSec hover:text-rose-500 transition-colors"><i className="fa-solid fa-trash-can"></i></button>
  </div>
  <h4 className="text-lg font-black text-themeText">{n.title}</h4>
  <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
@@ -230,11 +230,11 @@ export default function AdminNotices({ isHubView = false }) {
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Start Date</label>
- <input type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} required className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
+ <input min="2026-09-14" type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} required className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
  </div>
  <div>
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">End Date (Optional)</label>
- <input type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
+ <input min="2026-09-14" type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
  </div>
  </div>
  <div>
@@ -273,7 +273,7 @@ export default function AdminNotices({ isHubView = false }) {
  )}
  </div>
  </div>
- <button onClick={() => handleDeleteEvent(e.id)} className="text-themeTextSec hover:text-rose-500 transition-colors p-2"><i className="fa-solid fa-trash-can"></i></button>
+ <button type="button" onClick={() => handleDeleteEvent(e.id)} className="text-themeTextSec hover:text-rose-500 transition-colors p-2"><i className="fa-solid fa-trash-can"></i></button>
  </div>
  ))}
  </div>
@@ -290,10 +290,10 @@ export default function AdminNotices({ isHubView = false }) {
  )}
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8' : ''}`}>
- <button onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-satellite-dish"></i> Notices
  </button>
- <button onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-calendar-day"></i> Events
  </button>
  </div>

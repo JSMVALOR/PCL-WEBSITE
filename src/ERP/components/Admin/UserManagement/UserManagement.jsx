@@ -385,13 +385,13 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <PageHeader icon="fa-solid fa-users-gear" title="User Access Management" subtitle="Provision accounts, manage roles, and maintain the college directory." rightContent={
 <>
 <div className="flex gap-3 w-full lg:w-auto">
- <button
+ <button type="button"
  onClick={() => setShowPasswordResetsModal(true)}
  className="flex-1 lg:flex-none px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition flex items-center justify-center gap-2 border border-white/30 backdrop-blur-md"
  >
  <i className="fa-solid fa-unlock-keyhole text-base"></i> Password Resets
  </button>
- <button
+ <button type="button"
  onClick={() => setShowProvisionModal(true)}
  className="flex-1 lg:flex-none px-6 py-3 bg-themePanel/85 backdrop-blur-2xl hover:bg-white/90 text-themeAccent rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition flex items-center justify-center gap-2 border border-white/50"
  >
@@ -405,7 +405,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  {/* FAB FOR HUB VIEW */}
  {isHubView && (
  <div className="flex justify-end mb-4">
- <button
+ <button type="button"
  onClick={() => setShowProvisionModal(true)}
  className="bg-themeAccent hover:bg-themeAccentMuted text-white px-6 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition flex justify-center items-center gap-2 border border-themeAccent active:scale-[0.98]"
  >
@@ -422,13 +422,13 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  
  {/* Tabs */}
  <div className="flex p-1.5 bg-themeApp rounded-themePanel border border-white/5 w-full lg:w-auto shrink-0">
- <button
+ <button type="button"
  onClick={() => setActiveTab('students')}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 ${activeTab === 'students' ? "bg-themeElevated/90 backdrop-blur-2xl text-themeAccent border border-black/5 dark:border-white/10" : "text-themeTextSec opacity-70 hover:text-themeText hover:bg-themeElevated/50 border border-transparent"}`}
  >
  Students <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec">{usersData.students.length}</span>
  </button>
- <button
+ <button type="button"
  onClick={() => setActiveTab('faculty')}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 ${activeTab === 'faculty' ? "bg-themeElevated/90 backdrop-blur-2xl text-themeAccent border border-black/5 dark:border-white/10" : "text-themeTextSec opacity-70 hover:text-themeText hover:bg-themeElevated/50 border border-transparent"}`}
  >
@@ -514,18 +514,18 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </td>
  <td className="p-4 lg:p-5 pr-5 lg:pr-6">
  <div className="flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
- <button onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Master Details">
+ <button type="button" onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Master Details">
  <i className="fa-solid fa-pen text-[10px]"></i>
  </button>
  {user.role === 'faculty' && (
- <button onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
- <button onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-indigo-500 hover:text-themeAccent text-themeTextSec flex items-center justify-center transition-colors" title="Reset Password">
+ <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-indigo-500 hover:text-themeAccent text-themeTextSec flex items-center justify-center transition-colors" title="Reset Password">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
- <button onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg bg-themeApp border-theme flex items-center justify-center transition-colors ${user.status === 'Active' ? 'border-black/5 dark:border-white/10 hover:border-rose-500 hover:text-rose-500 text-themeTextSec' : 'border-rose-500/50 bg-rose-500/10 text-rose-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`} title={user.status === 'Active' ? 'Suspend Account' : 'Reactivate'}>
+ <button type="button" onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg bg-themeApp border-theme flex items-center justify-center transition-colors ${user.status === 'Active' ? 'border-black/5 dark:border-white/10 hover:border-rose-500 hover:text-rose-500 text-themeTextSec' : 'border-rose-500/50 bg-rose-500/10 text-rose-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`} title={user.status === 'Active' ? 'Suspend Account' : 'Reactivate'}>
  <i className={`fa-solid ${user.status === 'Active' ? 'fa-ban' : 'fa-rotate-left'} text-[10px]`}></i>
  </button>
  </div>
@@ -578,14 +578,14 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  <div className="flex gap-2">
  {user.role === 'faculty' && (
- <button onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
- <button onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec flex items-center justify-center">
+ <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec flex items-center justify-center">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
- <button onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg border-theme flex items-center justify-center ${user.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-rose-400' : 'bg-rose-500 border-rose-600 text-white'}`}>
+ <button type="button" onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg border-theme flex items-center justify-center ${user.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-rose-400' : 'bg-rose-500 border-rose-600 text-white'}`}>
  <i className={`fa-solid ${user.status === 'Active' ? 'fa-ban' : 'fa-rotate-left'} text-[10px]`}></i>
  </button>
  </div>
@@ -613,7 +613,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText">Provision New Account</h3>
  <p className={`text-[10px] lg:text-xs text-themeAccent font-medium`}>Generate credentials and assign records.</p>
  </div>
- <button onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-black/5 dark:border-white/10 text-themeText transition-colors shrink-0">
+ <button type="button" onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-black/5 dark:border-white/10 text-themeText transition-colors shrink-0">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
@@ -644,7 +644,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </div>
  </div>
 
- <button onClick={closeProvisionWizard} className="mt-6 lg:mt-8 text-[10px] lg:text-xs font-black uppercase tracking-widest text-themeTextSec opacity-70 hover:text-themeText transition-colors">
+ <button type="button" onClick={closeProvisionWizard} className="mt-6 lg:mt-8 text-[10px] lg:text-xs font-black uppercase tracking-widest text-themeTextSec opacity-70 hover:text-themeText transition-colors">
  Done & Close
  </button>
  </div>
@@ -729,7 +729,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  {!provisionSuccess && (
  <div className="p-4 lg:p-5 border-t-theme border-white/5 bg-themePanel/85 backdrop-blur-2xl shrink-0 flex flex-col sm:flex-row gap-3">
  <button type="button" onClick={closeProvisionWizard} className="w-full sm:w-auto px-6 py-3.5 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeTextSec hover:text-themeText rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition-colors border border-black/5 dark:border-white/10 active:scale-95">Cancel</button>
- <button onClick={handleProvisionSubmit} disabled={isProvisioning || !newUserName || !newUserEmail || !assignment} className="w-full sm:flex-1 bg-themeAccent hover:bg-themeAccentMuted text-white rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 group relative overflow-hidden active:scale-[0.98]">
+ <button type="button" onClick={handleProvisionSubmit} disabled={isProvisioning || !newUserName || !newUserEmail || !assignment} className="w-full sm:flex-1 bg-themeAccent hover:bg-themeAccentMuted text-white rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 group relative overflow-hidden active:scale-[0.98]">
  {!isProvisioning && newUserName && newUserEmail && assignment && (
  <div className="absolute inset-0 w-full h-full -translate-x-full group-hover:"></div>
  )}
@@ -750,7 +750,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <h3 className={`font-bold tracking-tight text-lg text-themeText`}>Edit Questionnaire Data</h3>
  <p className="text-xs text-themeTextSec font-medium mt-1">For: {selectedQuestionnaireUser.name} ({selectedQuestionnaireUser.id})</p>
  </div>
- <button onClick={() => setSelectedQuestionnaireUser(null)} className="w-8 h-8 rounded-full bg-themeApp text-themeTextSec hover:text-themeText flex items-center justify-center border border-black/5 dark:border-white/10 transition-colors">
+ <button type="button" onClick={() => setSelectedQuestionnaireUser(null)} className="w-8 h-8 rounded-full bg-themeApp text-themeTextSec hover:text-themeText flex items-center justify-center border border-black/5 dark:border-white/10 transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -804,8 +804,8 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </div>
  </div>
  <div className="p-5 border-t-theme border-white/5 bg-themePanel/85 backdrop-blur-2xl flex justify-end gap-3 shrink-0">
- <button onClick={() => setSelectedQuestionnaireUser(null)} className="px-6 py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeTextSec hover:text-themeText rounded-themePanel text-[10px] font-black uppercase tracking-widest transition-colors border border-black/5 dark:border-white/10">Cancel</button>
- <button onClick={handleSaveQuestionnaire} className="btn-erp">Save Override</button>
+ <button type="button" onClick={() => setSelectedQuestionnaireUser(null)} className="px-6 py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeTextSec hover:text-themeText rounded-themePanel text-[10px] font-black uppercase tracking-widest transition-colors border border-black/5 dark:border-white/10">Cancel</button>
+ <button type="button" onClick={handleSaveQuestionnaire} className="btn-erp">Save Override</button>
  </div>
  </div>
  </div>

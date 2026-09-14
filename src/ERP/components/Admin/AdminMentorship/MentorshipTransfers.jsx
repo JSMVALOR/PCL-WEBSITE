@@ -202,7 +202,7 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  {mentees.length > 0 ? (
  <div className="border border-black/5 dark:border-white/10 rounded-lg overflow-hidden flex flex-col mt-2">
  <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 flex justify-between items-center border-b-[length:var(--border-width)] border-black/5 dark:border-white/10">
- <button onClick={selectAll} className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">
+ <button type="button" onClick={selectAll} className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">
  {selectedMentees.size === mentees.length ? "Deselect All" : "Select All"}
  </button>
  <span className="text-[10px] font-bold text-themeTextSec">{selectedMentees.size} Selected</span>
@@ -256,7 +256,7 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  </div>
 
  <div className="mt-auto pt-6">
- <button
+ <button type="button"
  onClick={handleTransfer}
  disabled={!sourceMentorId || !targetMentorId || selectedMentees.size === 0 || isProcessing}
  className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"

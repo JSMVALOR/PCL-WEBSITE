@@ -50,7 +50,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  {activeTab !== "review" && (
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 relative z-10 gap-1.5 overflow-x-auto no-scrollbar ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8 w-fit max-w-full' : ''}`}>
  {tabs.map((tab) => (
- <button
+ <button type="button"
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
@@ -69,7 +69,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  {/* Review Back Button */}
  {activeTab === "review" && (
  <div className="flex items-center gap-2 relative z-10 pt-2">
- <button
+ <button type="button"
  onClick={handleCloseReview}
  className="px-5 py-3 bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/20 hover:bg-white/20 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest text-white transition-colors flex items-center gap-2"
  >

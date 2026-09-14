@@ -239,25 +239,25 @@ export default function AdminApprovals({ isEmbedded = false }) {
 <>
 {/* Tabs */}
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/20 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/20 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('profile_updates')}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'profile_updates' ? 'bg-amber-500 text-themeApp border border-amber-500 scale-100' : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'}`}
  >
  Profile & Mentors
  </button>
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('timetable_reschedules')}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'timetable_reschedules' ? 'bg-indigo-500 text-white border border-indigo-500 scale-100' : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'}`}
  >
  Timetable Reschedules
  </button>
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('escalated_grievances')}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'escalated_grievances' ? 'bg-rose-500 text-white border border-rose-500 scale-100' : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'}`}
  >
  Escalated Grievances
  </button>
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('document_verification')}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'document_verification' ? 'bg-blue-500 text-white border border-blue-500 scale-100' : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'}`}
  >
@@ -305,8 +305,8 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  {req.status === 'pending' ? (
  <div className="flex gap-2 mt-auto">
- <button onClick={() => handleLeaveAction(req.id, 'approved', 'Approved by Administration')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Approve</button>
- <button onClick={async () => { const reason = await window.erpDialog.prompt("Reason for rejection:", "Input Required");
+ <button type="button" onClick={() => handleLeaveAction(req.id, 'approved', 'Approved by Administration')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Approve</button>
+ <button type="button" onClick={async () => { const reason = await window.erpDialog.prompt("Reason for rejection:", "Input Required");
  if(reason) handleLeaveAction(req.id, 'rejected', reason);
  }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Reject</button>
  </div>
@@ -351,12 +351,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {g.status === 'pending' || g.status === 'investigating' ? (
  <div className="flex flex-wrap gap-2 mt-auto">
  {g.status === 'pending' && (
- <button onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Start Investigation</button>
  )}
- <button onClick={async () => { const notes = await window.erpDialog.prompt("Resolution details:", "Input Required");
+ <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Resolution details:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
  }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Resolve</button>
- <button onClick={async () => { const notes = await window.erpDialog.prompt("Reason for dismissal:", "Input Required");
+ <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Reason for dismissal:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
  }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Dismiss</button>
  </div>
@@ -396,7 +396,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
 
  <div className="flex flex-wrap gap-2 mt-auto pt-3 border-t-theme border-black/5 dark:border-white/10">
- <button 
+ <button type="button" 
  onClick={() => handleDocumentPreview(doc.file_path)} 
  disabled={isProcessing} 
  className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] hover:opacity-80 text-themeText py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors mb-2"
@@ -404,8 +404,8 @@ export default function AdminApprovals({ isEmbedded = false }) {
  Preview Document
  </button>
  <div className="flex w-full gap-2">
- <button onClick={() => handleDocumentAction(doc.id, 'verified')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Verify</button>
- <button onClick={() => handleDocumentAction(doc.id, 'rejected')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Reject</button>
+ <button type="button" onClick={() => handleDocumentAction(doc.id, 'verified')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Verify</button>
+ <button type="button" onClick={() => handleDocumentAction(doc.id, 'rejected')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Reject</button>
  </div>
  </div>
  </div>
@@ -446,8 +446,8 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
 
  <div className="flex gap-2 mt-auto">
- <button onClick={() => handleProfileUpdateAction(req, 'approved', 'Approved by Administration')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Approve</button>
- <button onClick={async () => { const remarks = await window.erpDialog.prompt("Reason for rejection:", "Input Required");
+ <button type="button" onClick={() => handleProfileUpdateAction(req, 'approved', 'Approved by Administration')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Approve</button>
+ <button type="button" onClick={async () => { const remarks = await window.erpDialog.prompt("Reason for rejection:", "Input Required");
  if(remarks) handleProfileUpdateAction(req, 'rejected', remarks);
  }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Reject</button>
  </div>

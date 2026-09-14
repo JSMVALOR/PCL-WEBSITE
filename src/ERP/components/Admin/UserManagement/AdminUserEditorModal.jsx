@@ -60,7 +60,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className={`${theme.layout.panel} rounded-2xl w-full max-w-lg p-6 lg:p-8 flex flex-col gap-6 shadow-2xl relative border border-white/10`}>
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-themeElevated/90 hover:bg-themeBorder text-themeTextSec flex items-center justify-center transition-colors">
+        <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-themeElevated/90 hover:bg-themeBorder text-themeTextSec flex items-center justify-center transition-colors">
           <i className="fa-solid fa-xmark"></i>
         </button>
 

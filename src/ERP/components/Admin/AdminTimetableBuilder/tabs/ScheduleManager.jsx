@@ -329,7 +329,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  </div>
  </div>
  
- <button 
+ <button type="button" 
  onClick={() => deleteClassroom(room.id)}
  className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shrink-0 opacity-0 group-hover:opacity-100"
  title="Delete Classroom"
@@ -343,7 +343,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  <div className={`w-2 h-2 rounded-full ${room.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
  <span className="text-[10px] font-black uppercase tracking-widest text-themeText">{room.status}</span>
  </div>
- <button 
+ <button type="button" 
  onClick={() => toggleClassroomStatus(room.id, room.status)}
  className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded transition-colors ${room.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl text-amber-500 hover:bg-amber-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:bg-emerald-500/20'}`}
  >

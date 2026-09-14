@@ -251,7 +251,7 @@ export default function AdminFees({ isEmbedded = false }) {
 {/* Tabs */}
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/20 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/20 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['overview', 'batch'].map(tab => (
- <button 
+ <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
@@ -318,7 +318,7 @@ export default function AdminFees({ isEmbedded = false }) {
 
  {selectedBatch && (
  <div className="flex gap-4">
- <button 
+ <button type="button" 
  onClick={handleBulkMarkPaid}
  disabled={selectedStudentIds.length === 0 || loading}
  className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500 hover:text-white px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
@@ -344,7 +344,7 @@ export default function AdminFees({ isEmbedded = false }) {
  <input type="number" value={assignAmount} onChange={e => setAssignAmount(e.target.value)} required placeholder="Amount (₹)" min="1" className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-mono outline-none focus:border-themeAccent text-themeText" />
  </div>
  <div>
- <input type="date" value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-themeAccent text-themeText" />
+ <input min="2026-09-14" type="date" value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-themeAccent text-themeText" />
  </div>
  <div>
  <select value={assignType} onChange={e => setAssignType(e.target.value)} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-themeAccent text-themeText appearance-none">
@@ -433,7 +433,7 @@ export default function AdminFees({ isEmbedded = false }) {
  {status.pendingInvoices && status.pendingInvoices.length > 0 ? (
  <div className="flex flex-col gap-2 items-end">
  {status.pendingInvoices.map(inv => (
- <button 
+ <button type="button" 
  key={inv.id}
  onClick={() => handleMarkPaid(student.id, inv)}
  className="text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:text-white border border-emerald-500/30 hover:bg-emerald-500 px-3 py-1.5 rounded transition flex items-center gap-2"

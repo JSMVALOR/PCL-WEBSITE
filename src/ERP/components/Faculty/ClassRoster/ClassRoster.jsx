@@ -330,7 +330,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-70 pointer-events-none"></i>
  </div>
 
- <button 
+ <button type="button" 
  onClick={generateQRCode}
  disabled={facultyClasses.length === 0 || rosterData.length === 0}
  className="w-full sm:w-auto px-6 py-3.5 bg-themeElevated hover:bg-themeAccent hover:text-white disabled:bg-themeApp disabled:text-themeTextSec opacity-70 disabled:border-themeBorderStrong text-themeText border-theme border-themeBorder rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-95 flex items-center justify-center gap-2 group shrink-0 no-print"
@@ -354,7 +354,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  {showQR && (
  <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050505]/95 backdrop-blur-md p-4 animate-fade-in no-print">
  <div className="bg-gradient-to-b from-[#1a1a1a] to-[#121212] border border-[#2a2a2a] p-10 rounded-2xl flex flex-col items-center max-w-lg w-full relative">
- <button onClick={() => setShowQR(false)} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-[#888888] hover:text-white bg-[#222222] rounded-full border border-themeBorderStrong transition-colors hover:scale-110">
+ <button type="button" onClick={() => setShowQR(false)} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-[#888888] hover:text-white bg-[#222222] rounded-full border border-themeBorderStrong transition-colors hover:scale-110">
  <i className="fa-solid fa-xmark text-lg"></i>
  </button>
  
@@ -461,7 +461,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  </td>
  <td className="p-4 lg:p-5 pr-6 lg:pr-8">
  <div className="flex justify-end gap-1.5 lg:gap-2">
- <button
+ <button type="button"
  onClick={() => handleMark(student.id, "present")}
  className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition border-theme ${attendanceState[student.id] === "present"
  ? "bg-emerald-500 text-themeApp border-emerald-400 scale-[1.02]"
@@ -471,7 +471,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <span className="hidden sm:inline">Present</span>
  <i className="fa-solid fa-check sm:hidden"></i>
  </button>
- <button
+ <button type="button"
  onClick={() => handleMark(student.id, "absent")}
  className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition border-theme ${attendanceState[student.id] === "absent"
  ? "bg-rose-500 text-themeText border-rose-400 scale-[1.02]"
@@ -481,7 +481,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <span className="hidden sm:inline">Absent</span>
  <i className="fa-solid fa-xmark sm:hidden"></i>
  </button>
- <button
+ <button type="button"
  onClick={() => handleMark(student.id, "excused")}
  className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition border-theme ${attendanceState[student.id] === "excused"
  ? "bg-amber-500 text-themeApp border-amber-400 scale-[1.02]"
@@ -510,7 +510,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <i className="fa-solid fa-check-double text-lg"></i> Official Sync Complete
  </div>
  ) : (
- <button
+ <button type="button"
  onClick={handleSaveAttendance}
  disabled={isSaving || !isComplete}
  title={!isComplete ? "Mark all students to submit" : ""}

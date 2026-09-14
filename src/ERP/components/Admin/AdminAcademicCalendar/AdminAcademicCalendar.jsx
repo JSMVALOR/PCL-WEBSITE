@@ -179,7 +179,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  
  <div>
  <label className="block text-xs font-bold text-themeText/70 uppercase tracking-wider mb-2">Date</label>
- <input 
+ <input min="2026-09-14" 
  type="date" 
  name="date"
  required
@@ -317,13 +317,13 @@ export default function AdminAcademicCalendar({ isHubView }) {
  </div>
  )}
  <div className="flex flex-col gap-2">
- <button 
+ <button type="button" 
  onClick={() => handleEdit(event)}
  className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-colors"
  >
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button 
+ <button type="button" 
  onClick={() => handleDelete(event.id)}
  className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
  >

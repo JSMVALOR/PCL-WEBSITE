@@ -91,7 +91,7 @@ export default function AppearanceSettings() {
  {themes.map(t => {
  const isActive = activeTheme === t.id;
  return (
- <button
+ <button type="button"
  key={t.id}
  onClick={() => changeTheme(t.id)}
  className={`group flex flex-col text-left rounded-2xl overflow-hidden border-theme transition duration-300 relative outline-none ${
@@ -162,7 +162,7 @@ export default function AppearanceSettings() {
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
  {/* Classic Sidebar */}
- <button
+ <button type="button"
  onClick={() => changeNavLayout('classic')}
  className={`group flex items-start gap-4 text-left p-5 lg:p-6 rounded-2xl border-theme transition duration-300 outline-none ${
  navLayout === 'classic'
@@ -183,7 +183,7 @@ export default function AppearanceSettings() {
  </button>
 
  {/* Top Navigation */}
- <button
+ <button type="button"
  onClick={() => changeNavLayout('topnav')}
  className={`group flex items-start gap-4 text-left p-5 lg:p-6 rounded-2xl border-theme transition duration-300 outline-none ${
  navLayout === 'topnav'
@@ -219,7 +219,7 @@ export default function AppearanceSettings() {
 
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
  {/* Hubs Mode */}
- <button
+ <button type="button"
  onClick={() => changeSidebarMode('hubs')}
  className={`group flex items-start gap-4 text-left p-5 lg:p-6 rounded-2xl border-theme transition duration-300 outline-none ${
  sidebarMode === 'hubs'
@@ -240,7 +240,7 @@ export default function AppearanceSettings() {
  </button>
 
  {/* Expanded Mode */}
- <button
+ <button type="button"
  onClick={() => changeSidebarMode('expanded')}
  className={`group flex items-start gap-4 text-left p-5 lg:p-6 rounded-2xl border-theme transition duration-300 outline-none ${
  sidebarMode === 'expanded'

@@ -193,19 +193,19 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  
  {/* Header */}
  <PageHeader icon="fa-solid fa-stamp" title="Approvals & Disciplinary" subtitle="Manage mentee leave requests and investigate grievances." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl border border-white/5 w-fit relative z-10 overflow-x-auto max-w-full">
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('mentee_leaves')}
  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'mentee_leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Mentee Leaves
  </button>
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('mentee_grievances')}
  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'mentee_grievances' ? 'bg-amber-500 text-neutral-900' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Mentee Grievances
  </button>
- <button 
+ <button type="button" 
  onClick={() => setActiveTab('report_grievance')}
  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'report_grievance' ? 'bg-rose-500 text-white' : 'text-themeTextSec hover:text-themeText'}`}
  >
@@ -248,8 +248,8 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  {req.status === 'pending' ? (
  <div className="flex gap-2 mt-auto">
- <button onClick={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Approve</button>
- <button onClick={() => {
+ <button type="button" onClick={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Approve</button>
+ <button type="button" onClick={() => {
  const reason = window.prompt("Reason for rejection:");
  if(reason) handleLeaveAction(req.id, 'rejected', reason);
  }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Reject</button>
@@ -295,13 +295,13 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {g.status === 'pending' || g.status === 'investigating' ? (
  <div className="flex flex-wrap gap-2 mt-auto">
  {g.status === 'pending' && (
- <button onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Start Investigation</button>
  )}
- <button onClick={() => {
+ <button type="button" onClick={() => {
  const notes = window.prompt("Resolution details:");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
  }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Resolve</button>
- <button onClick={() => {
+ <button type="button" onClick={() => {
  const notes = window.prompt("Reason for dismissal:");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
  }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-colors">Dismiss</button>

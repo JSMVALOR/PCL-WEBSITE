@@ -120,7 +120,7 @@ export default function SQLStudio({ isEmbedded = false }) {
  </div>
  <div className="flex items-center gap-3">
  <span className="text-[10px] font-mono text-neutral-500 hidden sm:block">Cmd + Enter to Run</span>
- <button 
+ <button type="button" 
  onClick={handleExecute} 
  disabled={isExecuting}
  className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-emerald-950 text-[10px] px-4 py-1.5 rounded-md font-black uppercase tracking-widest transition flex items-center gap-2 active:scale-95"
@@ -186,7 +186,7 @@ export default function SQLStudio({ isEmbedded = false }) {
  To enable SQL Studio, you must create a secure RPC function in your Supabase database. Copy the SQL script below and execute it in your Supabase SQL Editor:
  </p>
  <div className="bg-themePanel/85 backdrop-blur-2xl rounded-md border border-black/5 dark:border-white/10 p-4 relative group">
- <button 
+ <button type="button" 
  onClick={() => navigator.clipboard.writeText(`CREATE OR REPLACE FUNCTION admin_exec_sql(query_text text)
 RETURNS jsonb
 LANGUAGE plpgsql

@@ -198,7 +198,7 @@ export default function Attendance({ isEmbedded = false }) {
  subtitle="Official class participation synced seamlessly." 
  isEmbedded={isEmbedded}
  rightContent={
- <button onClick={() => setShowScanner(true)} className="btn-erp">
+ <button type="button" onClick={() => setShowScanner(true)} className="btn-erp">
  <i className="fa-solid fa-qrcode text-lg"></i> Scan QR
  </button>
  }
@@ -340,7 +340,7 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="w-full max-w-sm bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] rounded-2xl overflow-hidden flex flex-col relative">
  <div className="p-4 border-b border-black/10 dark:border-white/20 flex justify-between items-center bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
  <h3 className="text-sm font-black text-themeText uppercase tracking-widest">Live Attendance</h3>
- <button onClick={() => setShowScanner(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors">
+ <button type="button" onClick={() => setShowScanner(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -396,7 +396,7 @@ export default function Attendance({ isEmbedded = false }) {
  <h2 className="text-xl font-black text-themeText leading-tight">{activeSubject.course_name}</h2>
  <p className="text-xs font-bold text-themeTextSec mt-2"><i className="fa-solid fa-user-tie mr-1"></i> {activeSubject.faculty_name}</p>
  </div>
- <button onClick={() => setActiveSubject(null)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors shrink-0">
+ <button type="button" onClick={() => setActiveSubject(null)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors shrink-0">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>

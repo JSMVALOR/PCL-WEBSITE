@@ -86,7 +86,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
  <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0/20">
  <i className="fa-solid fa-user-graduate"></i>
  </div>
- <button onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('users'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
+ <button type="button" onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('users'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
  </div>
  <div className="mt-auto">
  <p className="text-2xl font-black text-themeText tracking-tight">{data.students.total}</p>
@@ -121,7 +121,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
  <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0/20">
  <i className="fa-solid fa-chalkboard-user"></i>
  </div>
- <button onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('faculty'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
+ <button type="button" onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('faculty'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
  </div>
  <div className="mt-auto">
  <p className="text-2xl font-black text-themeText tracking-tight">{data.faculty.total}</p>
@@ -194,7 +194,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
  <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0/20">
  <i className="fa-solid fa-stamp"></i>
  </div>
- <button onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('adminapprovals'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
+ <button type="button" onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('adminapprovals'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
  </div>
  <div className="mt-auto">
  <p className="text-2xl font-black text-themeText tracking-tight">{data.approvals.total}</p>
@@ -227,7 +227,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
  <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0/20">
  <i className="fa-solid fa-indian-rupee-sign"></i>
  </div>
- <button onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('finance'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
+ <button type="button" onClick={(e) => { e.stopPropagation(); setActiveTab && setActiveTab('finance'); }} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
  </div>
  <div className="mt-auto">
  <p className="text-2xl font-black text-themeText tracking-tight truncate">{formatCurrency(data.fees.collected)}</p>

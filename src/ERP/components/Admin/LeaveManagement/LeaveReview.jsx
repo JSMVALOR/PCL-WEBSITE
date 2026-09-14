@@ -172,21 +172,21 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  {/* Actions Box */}
  {request.status === 'Pending' && (
  <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 flex flex-col gap-3">
- <button 
+ <button type="button" 
  onClick={() => handleAction('ApproveAndReplace')}
  disabled={isProcessing}
  className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition flex items-center justify-center gap-2"
  >
  <i className="fa-solid fa-user-clock"></i> Approve & Assign Replacement
  </button>
- <button 
+ <button type="button" 
  onClick={() => handleAction('Approve')}
  disabled={isProcessing}
  className="w-full py-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border-[length:var(--border-width)] border-emerald-500/20 rounded-xl text-xs font-black uppercase tracking-widest transition"
  >
  Approve (No Replacement)
  </button>
- <button 
+ <button type="button" 
  onClick={() => handleAction('Reject')}
  disabled={isProcessing}
  className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-white text-rose-500 border border-white/5Strong rounded-xl text-xs font-black uppercase tracking-widest transition"

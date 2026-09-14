@@ -199,7 +199,7 @@ export default function SecuritySettings() {
                                 </div>
                             ))}
 
-                            <button
+                            <button type="button"
                                 onClick={handleGlobalLogout}
                                 disabled={isLoggingOut}
                                 className="bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] p-4 lg:p-5 w-full flex items-center justify-center gap-3 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-300 rounded-[2rem]"

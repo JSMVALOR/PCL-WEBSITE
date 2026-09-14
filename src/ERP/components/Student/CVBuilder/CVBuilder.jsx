@@ -652,7 +652,7 @@ export default function CVBuilder() {
  title="CV Builder" 
  subtitle="Auto-generate your professional legal resume." 
  rightContent={
- <button
+ <button type="button"
  onClick={handleExport}
  disabled={isExporting}
  className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-themePanel border-theme border-themeBorderStrong hover:bg-neutral-200 text-[#050505] rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 shrink-0"
@@ -673,7 +673,7 @@ export default function CVBuilder() {
  </h2>
  <div className="flex flex-col gap-3">
  {Object.entries(TEMPLATES).map(([key, tmpl]) => (
- <button
+ <button type="button"
  key={key}
  onClick={() => setCvConfig({ ...cvConfig, template: key })}
  className={`w-full text-left p-4 rounded-[2rem] border-theme transition duration-200 group ${

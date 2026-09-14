@@ -78,25 +78,25 @@ export default function MentorshipDashboard({ setActiveTab }) {
  
  {/* Quick Actions */}
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
- <button onClick={() => setActiveTab('allocations')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('allocations')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-white transition duration-300">
  <i className="fa-solid fa-users-rays text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeText text-center mt-1">Assign Mentors</span>
  </button>
- <button onClick={() => setActiveTab('transfers')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('transfers')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition duration-300">
  <i className="fa-solid fa-shuffle text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeText text-center mt-1">Reshuffle</span>
  </button>
- <button onClick={() => setActiveTab('transfers')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-emerald-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('transfers')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-emerald-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition duration-300">
  <i className="fa-solid fa-right-left text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeText text-center mt-1">Transfer Mentees</span>
  </button>
- <button onClick={() => setActiveTab('allocations')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('allocations')} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition duration-300">
  <i className="fa-solid fa-file-csv text-lg group-hover:scale-110 transition-transform"></i>
  </div>

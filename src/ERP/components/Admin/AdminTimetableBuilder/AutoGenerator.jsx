@@ -190,7 +190,7 @@ export default function AutoGenerator({ isEmbedded = false }) {
  Let the AI constraint solver build a 100% clash-free schedule. It dynamically checks all faculty assignments, avoids room double-booking, and adapts to your custom operating hours and off-days in real-time.
  </p>
  
- <button
+ <button type="button"
  onClick={generateTimetable}
  disabled={isGenerating}
  className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"

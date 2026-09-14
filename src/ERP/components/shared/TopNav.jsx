@@ -67,7 +67,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                             onMouseEnter={() => hasChildren && handleMouseEnter(navItem.id)}
                             onMouseLeave={handleMouseLeave}
                         >
-                            <button 
+                            <button type="button" 
                                 onClick={() => {
                                     if (!hasChildren) {
                                         setActiveTab(navItem.id);
@@ -105,7 +105,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                                     const isActive = activeTab === link.id;
                                                     const hasNotice = link.id === 'notices' && notices?.length > 0;
                                                     return (
-                                                        <button
+                                                        <button type="button"
                                                             key={link.id}
                                                             onClick={() => {
                                                                 setActiveTab(link.id);
@@ -154,7 +154,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                     
                     {/* Layout Switcher */}
 
-                    <button onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/5 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7] transition-all relative group outline-none shadow-sm">
+                    <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/5 flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7] transition-all relative group outline-none shadow-sm">
                         <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
                         {notices?.length > 0 && (
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-[#1C1C1E]"></span>
@@ -169,7 +169,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                         onMouseEnter={() => handleMouseEnter('profile')}
                         onMouseLeave={handleMouseLeave}
                     >
-                        <button 
+                        <button type="button" 
                             onClick={() => setActiveTab('credentials')}
                             className="flex items-center gap-3 hover:bg-black/5 dark:hover:bg-white/5 p-1 pr-1 xl:pr-3 rounded-xl transition duration-300 outline-none"
                         >
@@ -215,7 +215,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                             </div>
                                         </div>
                                         
-                                        <button 
+                                        <button type="button" 
                                             onClick={() => {
                                                 setActiveTab('credentials');
                                                 setActiveDropdown(null);
@@ -228,7 +228,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                             Manage Profile
                                         </button>
                                         
-                                        <button 
+                                        <button type="button" 
                                             onClick={async () => {
                                                 const confirmed = await window.erpDialog?.confirm("Are you sure you want to securely sign out?", "End Session");
                                                 if (confirmed) {
@@ -252,7 +252,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                     {userSession?.role === 'admin' && (
                         <>
                             <div className="w-px h-5 bg-black/10 dark:bg-white/10 mx-1 hidden sm:block"></div>
-                            <button 
+                            <button type="button" 
                                 onClick={() => {
                                     window.location.href = '/';
                                 }}

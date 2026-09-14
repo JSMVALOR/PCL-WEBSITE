@@ -208,7 +208,7 @@ export default function AdminFacultyDirectory({ isHubView = false, isEmbedded = 
  {!isHubView && (
  <PageHeader icon="fa-solid fa-address-book" title="Public Faculty Directory" subtitle="Manage faculty profiles & provision accounts for the public website." rightContent={
 <>
-<button
+<button type="button"
  onClick={() => {
  setFormData({
  name: '', email: '', department: '', designation: '', specialisation: '', degrees: '', office: '', phone: '', linkedin: '', scholar: '', image_url: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', is_public: true
@@ -227,7 +227,7 @@ export default function AdminFacultyDirectory({ isHubView = false, isEmbedded = 
  {/* FAB FOR HUB VIEW */}
  {isHubView && (
  <div className="flex justify-end mb-4 -mt-4 lg:-mt-6">
- <button
+ <button type="button"
  onClick={() => {
  setFormData({
  name: '', email: '', department: '', designation: '', specialisation: '', degrees: '', office: '', phone: '', linkedin: '', scholar: '', image_url: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', is_public: true
@@ -273,14 +273,14 @@ export default function AdminFacultyDirectory({ isHubView = false, isEmbedded = 
  </div>
  </div>
  <div className="flex items-center gap-2">
- <button 
+ <button type="button" 
  onClick={() => setEditFacultyId(fac.id)}
  className="w-8 h-8 rounded-full bg-themeAccent/10 hover:bg-themeAccent text-themeAccent hover:text-white flex items-center justify-center transition-colors"
  title="Edit Faculty Profile"
  >
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button 
+ <button type="button" 
  onClick={() => toggleVisibility(fac.id, fac.faculty_profiles?.is_public)}
  className={`w-10 h-6 rounded-full p-1 transition-colors flex items-center border border-white/5 ${fac.faculty_profiles?.is_public ? 'bg-emerald-500/20 border-emerald-500/30' : 'bg-neutral-600/30'}`}
  title={fac.faculty_profiles?.is_public ? 'Publicly Visible' : 'Hidden from Public'}
@@ -319,7 +319,7 @@ export default function AdminFacultyDirectory({ isHubView = false, isEmbedded = 
  <h3 className="text-xl font-black uppercase tracking-tight">Add New Faculty</h3>
  <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec">Provisions account & updates website.</p>
  </div>
- <button onClick={() => setShowModal(false)} className="w-10 h-10 bg-themeApp hover:bg-neutral-800 rounded-full border border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors">
+ <button type="button" onClick={() => setShowModal(false)} className="w-10 h-10 bg-themeApp hover:bg-neutral-800 rounded-full border border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors">
  <i className="fa-solid fa-xmark text-lg"></i>
  </button>
  </div>
@@ -335,7 +335,7 @@ export default function AdminFacultyDirectory({ isHubView = false, isEmbedded = 
  <div className="bg-themeApp text-emerald-400 p-5 rounded-xl text-left font-mono text-xs border border-white/5 max-h-48 overflow-y-auto mx-auto max-w-lg mb-8">
  {provisionLogs.map((log, i) => <div key={i} className="mb-1">&gt; {log}</div>)}
  </div>
- <button onClick={() => setShowModal(false)} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 hover:bg-themeElevated/90 backdrop-blur-2xl text-themeText px-8 py-3 rounded-xl font-black uppercase text-sm transition-colors">
+ <button type="button" onClick={() => setShowModal(false)} className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 hover:bg-themeElevated/90 backdrop-blur-2xl text-themeText px-8 py-3 rounded-xl font-black uppercase text-sm transition-colors">
  Close Window
  </button>
  </div>

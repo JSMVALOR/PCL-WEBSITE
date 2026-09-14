@@ -175,6 +175,7 @@ export const ErpProvider = ({ children }) => {
             const { data: profile, error } = await supabase
                 .from('profiles')
                 .select('*')
+                .limit(1000)
                 .eq('id', userId)
                 .single();
 
@@ -287,6 +288,7 @@ export const ErpProvider = ({ children }) => {
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
+                .limit(1000)
                 .eq('id', data.user.id)
                 .single();
 
@@ -354,14 +356,14 @@ export const ErpProvider = ({ children }) => {
             };
 
             // Initial fetch
-            supabase.from('notices').select('*').order('created_at', { ascending: false })
+            supabase.from('notices').select('*').limit(500).order('created_at', { ascending: false })
                 .then(({ data }) => { 
                     if (data) {
                         setNotices(data.filter(filterNotice));
                     }
                 });
 
-            supabase.from('admin_events').select('*').order('event_date', { ascending: true })
+            supabase.from('admin_events').select('*').limit(500).order('event_date', { ascending: true })
                 .then(({ data }) => {
                     if (data) setEvents(data);
                 });
@@ -511,7 +513,7 @@ export const ErpProvider = ({ children }) => {
         }, refreshNotices: async () => {
             if (!userSession) return;
             try {
-                const { data, error } = await supabase.from('notices').select('*').order('created_at', { ascending: false });
+                const { data, error } = await supabase.from('notices').select('*').limit(500).order('created_at', { ascending: false });
                 if (error) throw error;
                 setNotices(data);
                 return { success: true, data };
@@ -573,7 +575,7 @@ export const ErpProvider = ({ children }) => {
         }, refreshEvents: async () => {
             if (!userSession) return;
             try {
-                const { data, error } = await supabase.from('admin_events').select('*').order('event_date', { ascending: true });
+                const { data, error } = await supabase.from('admin_events').select('*').limit(500).order('event_date', { ascending: true });
                 if (error) throw error;
                 setEvents(data);
                 return { success: true, data };
@@ -589,7 +591,7 @@ export const ErpProvider = ({ children }) => {
         fetchAttendance: async (batchId) => {
             if (!userSession) return;
             try {
-                const { data, error } = await supabase.from('attendance').select('*').eq('batch_id', batchId);
+                const { data, error } = await supabase.from('attendance').select('*').limit(2000).eq('batch_id', batchId);
                 if (error) throw error;
                 const byDay = {};
                 data.forEach(rec => {
@@ -656,13 +658,13 @@ export const ErpProvider = ({ children }) => {
                             For your security, you will be logged out in <span className="text-rose-500 font-bold">{sessionCountdown} seconds</span> due to inactivity.
                         </p>
                         <div className="flex w-full gap-3">
-                            <button
+                            <button type="button"
                                 onClick={logout}
                                 className="flex-1 py-3 rounded-xl bg-themeElevated hover:bg-themeBorder text-themeTextSec hover:text-themeText text-xs font-black uppercase tracking-wider transition-colors border border-themeBorderStrong"
                             >
                                 Log Out
                             </button>
-                            <button
+                            <button type="button"
                                 onClick={continueSession}
                                 className="flex-1 py-3 rounded-xl bg-themeAccent hover:bg-themeAccentMuted text-white text-xs font-black uppercase tracking-wider transition shadow-lg active:scale-95 border border-themeAccent"
                             >

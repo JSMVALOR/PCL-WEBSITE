@@ -118,7 +118,7 @@ export default function CourseVault({ isEmbedded = false }) {
  materials.length > 0 && (
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] rounded-2xl border border-black/10 dark:border-white/20 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar relative z-10">
  {getTypesList().map((filter) => (
- <button
+ <button type="button"
  key={filter}
  onClick={() => setActiveFilter(filter)}
  className={`flex-1 lg:flex-none px-5 py-2.5 rounded-lg text-[13px] font-bold tracking-tight transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${

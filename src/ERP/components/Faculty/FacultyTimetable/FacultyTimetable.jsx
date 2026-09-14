@@ -215,7 +215,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
  </div>
  
- <button onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="bg-emerald-500 hover:opacity-90 text-themeApp px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-opacity">
+ <button type="button" onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="bg-emerald-500 hover:opacity-90 text-themeApp px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-opacity">
  Mark Attd
  </button>
  </div>
@@ -272,7 +272,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  ) : (
  <div>
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Requested Date</label>
- <input type="date" value={reqDate} onChange={e => setReqDate(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
+ <input min="2026-09-14" type="date" value={reqDate} onChange={e => setReqDate(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  )}
  <div>
@@ -330,7 +330,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div className={`absolute top-0 right-0 w-48 h-48 ${c.solid} opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
  <div className="flex justify-between items-start mb-6 relative z-10">
  <Badge variant="outline" className={`${c.text} ${c.border}`}>{selectedLecture.day}, {selectedLecture.time} - {selectedLecture.endTime}</Badge>
- <button onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-themeText flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-themeText flex items-center justify-center transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -341,7 +341,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8 custom-scrollbar">
- <button onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="w-full bg-emerald-500 hover:opacity-90 text-themeApp py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2">
+ <button type="button" onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="w-full bg-emerald-500 hover:opacity-90 text-themeApp py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2">
  <i className="fa-solid fa-clipboard-check text-lg"></i> Launch Attendance Interface
  </button>
  </div>
@@ -361,7 +361,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div className="relative z-10 w-full lg:w-auto shrink-0 mt-4 md:mt-0">
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] rounded-2xl border border-black/10 dark:border-white/20 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['Timeline', 'Week', 'Requests'].map(tab => (
- <button 
+ <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${

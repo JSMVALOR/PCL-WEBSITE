@@ -187,7 +187,7 @@ export default function Leave({ isEmbedded = false }) {
  title="Leave Applications"
  subtitle="Apply for academic leave. Approved leaves protect your attendance record."
  rightContent={
- <button
+ <button type="button"
  onClick={() => setShowRequestModal(true)}
  className="w-full lg:w-auto bg-amber-500 hover:bg-amber-400 text-[#050505] px-6 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition active:scale-95 flex justify-center items-center gap-2"
  >
@@ -255,7 +255,7 @@ export default function Leave({ isEmbedded = false }) {
  </p>
  </div>
  {leave.document_path && (
- <button onClick={() => downloadProof(leave.document_path)} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1.5 transition-colors bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-3 py-2 lg:py-1.5 rounded-lg border border-black/5 dark:border-white/10 w-full lg:w-auto">
+ <button type="button" onClick={() => downloadProof(leave.document_path)} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1.5 transition-colors bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-3 py-2 lg:py-1.5 rounded-lg border border-black/5 dark:border-white/10 w-full lg:w-auto">
  <i className="fa-solid fa-paperclip"></i> View Proof
  </button>
  )}
@@ -277,7 +277,7 @@ export default function Leave({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText">Apply for Leave</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary} font-medium`}>This request will be routed to your assigned mentor or HOD.</p>
  </div>
- <button onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeTextSec hover:text-themeText hover:bg-neutral-800 border border-black/5 dark:border-white/10 transition-colors shrink-0">
+ <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeTextSec hover:text-themeText hover:bg-neutral-800 border border-black/5 dark:border-white/10 transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -309,11 +309,11 @@ export default function Leave({ isEmbedded = false }) {
  <div className="grid grid-cols-2 gap-4 lg:gap-5">
  <div>
  <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>From Date</label>
- <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-3 lg:px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition [color-scheme:dark]" required />
+ <input min="2026-09-14" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-3 lg:px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition [color-scheme:dark]" required />
  </div>
  <div>
  <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>To Date</label>
- <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-3 lg:px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition [color-scheme:dark]" required />
+ <input min="2026-09-14" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-3 lg:px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition [color-scheme:dark]" required />
  </div>
  </div>
 

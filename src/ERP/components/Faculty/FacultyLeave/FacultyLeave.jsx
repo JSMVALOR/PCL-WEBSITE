@@ -161,7 +161,7 @@ export default function FacultyLeave({ isEmbedded = false }) {
  <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  {/* Header */}
  {!isEmbedded && (
- <PageHeader rightContent={<button onClick={() => setShowRequestModal(true)} className="px-4 py-2 bg-themeAccent text-white rounded-lg hover:bg-themeAccent/90 transition-colors">Apply for Leave</button>}  
+ <PageHeader rightContent={<button type="button" onClick={() => setShowRequestModal(true)} className="px-4 py-2 bg-themeAccent text-white rounded-lg hover:bg-themeAccent/90 transition-colors">Apply for Leave</button>}  
  icon="fa-solid fa-plane-departure"
  title="Time Off & Leaves"
  subtitle="Request and track your faculty leaves."
@@ -249,7 +249,7 @@ export default function FacultyLeave({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText truncate">Apply for Time Off</h3>
  <p className={`text-[10px] lg:text-xs text-themeTextSec font-medium truncate`}>All requests require master admin approval.</p>
  </div>
- <button onClick={() => setShowRequestModal(false)} className="relative z-10 w-8 h-8 rounded-full bg-themeElevated hover:bg-rose-500 hover:text-white text-themeTextSec transition-colors flex items-center justify-center shrink-0 border border-themeBorder">
+ <button type="button" onClick={() => setShowRequestModal(false)} className="relative z-10 w-8 h-8 rounded-full bg-themeElevated hover:bg-rose-500 hover:text-white text-themeTextSec transition-colors flex items-center justify-center shrink-0 border border-themeBorder">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
@@ -270,11 +270,11 @@ export default function FacultyLeave({ isEmbedded = false }) {
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 ml-1">From Date</label>
- <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors [color-scheme:dark]" required />
+ <input min="2026-09-14" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors [color-scheme:dark]" required />
  </div>
  <div>
  <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 ml-1">To Date</label>
- <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors [color-scheme:dark]" required />
+ <input min="2026-09-14" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors [color-scheme:dark]" required />
  </div>
  </div>
 

@@ -28,7 +28,7 @@ export default function FacultyClinicsHub({ isEmbedded = false }) {
  
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-md rounded-2xl border border-white/5 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {tabs.map((t) => (
- <button
+ <button type="button"
  key={t.id}
  onClick={() => setActiveTab(t.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${

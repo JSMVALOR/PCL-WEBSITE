@@ -163,7 +163,7 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  title="Assignment Engine"
  subtitle="Publish assignments, set deadlines, and manage submissions across batches."
  rightContent={
- <button 
+ <button type="button" 
  onClick={() => setShowForm(!showForm)}
  className={`px-6 py-3.5 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 ${
  showForm ? 'bg-neutral-600 hover:bg-neutral-700' : 'bg-themeAccent hover:bg-themeAccent/90'
@@ -177,7 +177,7 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  )}
  
  {subjectContext && (
- <button 
+ <button type="button" 
  onClick={() => setShowForm(!showForm)}
  className={`px-6 py-3 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 ${
  showForm ? 'bg-neutral-600' : 'bg-themeAccent'
@@ -330,7 +330,7 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  <p className="text-[11px] font-bold text-themeTextSec mt-1">{assign.subject?.code} - {assign.subject?.name}</p>
  </div>
  
- <button 
+ <button type="button" 
  onClick={() => handleDelete(assign.id)}
  className="w-8 h-8 rounded-full bg-themeElevated border border-themeBorder flex items-center justify-center text-themeTextSec hover:text-rose-500 hover:border-rose-500/50 transition opacity-0 group-hover:opacity-100"
  title="Delete Assignment"

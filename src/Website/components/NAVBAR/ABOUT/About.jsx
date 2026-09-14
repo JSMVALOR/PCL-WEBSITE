@@ -26,7 +26,7 @@ function LeadershipCard({ leader, index }) {
         aria-label={`View profile of ${leader.name}`}
         className="w-full h-full cursor-pointer relative group aspect-[3/4] rounded-[32px] overflow-hidden focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--primary-color)] border border-[var(--card-border)] hover:border-[var(--primary-color)]/50 hover:shadow-[0_0_40px_rgba(255,191,0,0.15)] transition-all duration-500"
       >
-        <img
+        <img loading="lazy"
           src={leader.image}
           alt={leader.name}
           className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)]"

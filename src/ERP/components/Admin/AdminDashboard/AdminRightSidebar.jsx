@@ -28,7 +28,7 @@ export default function AdminRightSidebar({ setActiveTab }) {
  </h2>
  <div className="grid grid-cols-2 gap-2">
  {quickActions.map((action, i) => (
- <button 
+ <button type="button" 
  key={i} 
  onClick={() => {
  if (setActiveTab && action.tab) {

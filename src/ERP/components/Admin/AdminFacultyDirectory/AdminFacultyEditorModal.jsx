@@ -225,7 +225,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-1">Manage public identity and details</p>
  </div>
  </div>
- <button onClick={onClose} className="w-10 h-10 bg-neutral-50 hover:bg-neutral-100 rounded-full border border-neutral-200 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
+ <button type="button" onClick={onClose} className="w-10 h-10 bg-neutral-50 hover:bg-neutral-100 rounded-full border border-neutral-200 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
  <i className="fa-solid fa-xmark text-base"></i>
  </button>
  </div>
@@ -246,7 +246,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <div className="flex gap-3 mb-6">
  <div className="relative overflow-hidden group">
  <input type="file" accept="image/*" onChange={onSelectFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} type="button" className="bg-themeAccent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition group-hover:bg-themeAccent/90 flex items-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} type="button" className="bg-themeAccent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition group-hover:bg-themeAccent/90 flex items-center gap-2">
  <i className="fa-solid fa-upload"></i> Upload New
  </button>
  </div>
@@ -353,7 +353,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  {/* FOOTER */}
  <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-neutral-100 flex justify-end shrink-0 gap-4 z-10">
- <button onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-white/10 hover:text-themeText transition">
+ <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-white/10 hover:text-themeText transition">
  Cancel
  </button>
  <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-white px-10 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">

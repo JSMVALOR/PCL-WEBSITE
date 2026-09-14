@@ -59,7 +59,7 @@ export default function StudentAcademicHub({ isEmbedded = false }) {
  <div className="flex flex-col gap-3 relative z-10">
  <div className="flex flex-wrap gap-2 w-fit">
  {categories.map((cat) => (
- <button
+ <button type="button"
  key={cat.id}
  onClick={() => handleCategoryChange(cat.id)}
  className={`px-4 py-2 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center gap-2 ${
@@ -75,7 +75,7 @@ export default function StudentAcademicHub({ isEmbedded = false }) {
 
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] rounded-2xl border border-black/10 dark:border-white/20 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {tabs[activeCategory].map((t) => (
- <button
+ <button type="button"
  key={t.id}
  onClick={() => setActiveTab(t.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${

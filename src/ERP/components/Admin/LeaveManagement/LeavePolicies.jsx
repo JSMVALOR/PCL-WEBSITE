@@ -32,7 +32,7 @@ export default function LeavePolicies({ isEmbedded = false }) {
  <h2 className={`font-bold tracking-tight text-lg lg:text-xl text-themeText`}>Leave Policies Configuration</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec mt-1">Manage annual limits and rules for different leave types.</p>
  </div>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full md:w-auto px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full md:w-auto px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition flex items-center justify-center gap-2">
  <i className="fa-solid fa-plus"></i> New Policy
  </button>
  </div>
@@ -59,7 +59,7 @@ export default function LeavePolicies({ isEmbedded = false }) {
  <p className={`text-[8px] lg:text-[9px] font-bold uppercase tracking-widest mt-0.5 ${policy.is_active ? 'text-emerald-500' : 'text-rose-500'}`}>{policy.is_active ? 'Active' : 'Inactive'}</p>
  </div>
  </div>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-indigo-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-indigo-500/10">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-indigo-500 transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-indigo-500/10">
  <i className="fa-solid fa-ellipsis-vertical"></i>
  </button>
  </div>

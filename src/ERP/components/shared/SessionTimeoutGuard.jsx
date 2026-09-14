@@ -111,13 +111,13 @@ export default function SessionTimeoutGuard({ children }) {
                                 </div>
 
                                 <div className="flex w-full gap-3 mt-4">
-                                    <button 
+                                    <button type="button" 
                                         onClick={executeLogout}
                                         className="flex-1 py-3 px-4 bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border border-black/5 dark:border-white/5 rounded-lg font-bold uppercase tracking-widest text-[11px] hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
                                     >
                                         Log Out Now
                                     </button>
-                                    <button 
+                                    <button type="button" 
                                         onClick={continueSession}
                                         className="flex-[2] py-3 px-4 bg-[#34C759] text-white rounded-lg font-bold uppercase tracking-widest text-[11px] hover:bg-[#32B353] transition-colors shadow-sm"
                                     >

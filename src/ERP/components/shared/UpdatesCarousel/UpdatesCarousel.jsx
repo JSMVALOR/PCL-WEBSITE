@@ -70,7 +70,7 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
             {slides.length > 1 && (
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/20 dark:bg-white/20 backdrop-blur-xl px-3 py-1.5 rounded-full">
                     {slides.map((_, idx) => (
-                        <button 
+                        <button type="button" 
                             key={idx}
                             onClick={() => setActiveIndex(idx)}
                             className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeIndex === idx ? 'bg-white scale-125' : 'bg-white/40'}`}

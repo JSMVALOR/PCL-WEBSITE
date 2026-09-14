@@ -39,7 +39,7 @@ export default function MentorshipLogs({ isEmbedded = false }) {
  <span>Audit Log</span>
  <i className="fa-solid fa-list-check text-themeTextSec"></i>
  </h3>
- <button 
+ <button type="button" 
  onClick={fetchLogs}
  className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-indigo-500 hover:border-indigo-500 transition-colors flex items-center justify-center"
  >

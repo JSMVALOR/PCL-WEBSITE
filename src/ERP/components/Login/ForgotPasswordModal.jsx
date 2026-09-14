@@ -73,7 +73,7 @@ export default function ForgotPasswordModal({ onClose }) {
                         <p className="text-xs font-bold text-themeTextSec mb-8">
                             Your request has been forwarded to the Administration. Please monitor your registered contact channels for updates.
                         </p>
-                        <button 
+                        <button type="button" 
                             onClick={onClose}
                             className="w-full py-4 rounded-lg bg-themeApp border border-white/5 hover:border-black/5 dark:border-white/10 text-sm font-black uppercase tracking-wider text-themeText transition"
                         >

@@ -524,7 +524,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  { id: 'history', label: 'Meeting Logs', icon: 'fa-folder-open' },
  { id: 'risk', label: 'Risk Insights', icon: 'fa-triangle-exclamation' }
  ].map((tab) => (
- <button
+ <button type="button"
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
  className={`flex-auto sm:flex-1 flex items-center justify-center gap-1.5 lg:gap-2 px-3 lg:px-6 py-3 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap ${activeTab === tab.id
@@ -583,10 +583,10 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  </p>
  {leave.status === 'pending' && (
  <div className="flex gap-2">
- <button onClick={() => handleLeaveAction(leave.id, 'rejected')} disabled={isSaving} className="w-10 h-10 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors flex items-center justify-center border border-rose-500/20 hover:border-rose-500" title="Reject Leave">
+ <button type="button" onClick={() => handleLeaveAction(leave.id, 'rejected')} disabled={isSaving} className="w-10 h-10 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors flex items-center justify-center border border-rose-500/20 hover:border-rose-500" title="Reject Leave">
  <i className="fa-solid fa-xmark"></i>
  </button>
- <button onClick={() => handleLeaveAction(leave.id, 'approved')} disabled={isSaving} className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors flex items-center justify-center border border-emerald-500/20 hover:border-emerald-500" title="Approve Leave">
+ <button type="button" onClick={() => handleLeaveAction(leave.id, 'approved')} disabled={isSaving} className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors flex items-center justify-center border border-emerald-500/20 hover:border-emerald-500" title="Approve Leave">
  <i className="fa-solid fa-check"></i>
  </button>
  </div>
@@ -638,7 +638,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <p className="text-[9px] lg:text-[10px] font-bold text-themeTextSec uppercase tracking-widest">{mentee.erp_id}</p>
  </div>
  </div>
- <button onClick={() => setSelectedMenteeProfile(mentee)}
+ <button type="button" onClick={() => setSelectedMenteeProfile(mentee)}
  className="w-8 h-8 rounded-full bg-themeElevated hover:bg-themeAccent hover:text-white flex items-center justify-center transition-colors text-themeTextSec"
  >
  <i className="fa-solid fa-chevron-right text-xs"></i>
@@ -660,7 +660,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  </div>
  <p className="text-[9px] font-bold text-themeTextSec"><i className="fa-regular fa-clock text-themeAccent/50 mr-1"></i> Last session: {lastDate}</p>
  </div>
- <button
+ <button type="button"
  onClick={() => { setScheduleMentee(mentee); setScheduleForm({ date: '', time: '', topic: '', is_urgent: false }); setShowScheduleModal(true); }}
  className="mt-5 w-full py-3 bg-themeElevated hover:bg-themeAccent text-themeText hover:text-themeApp rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-95 border border-themeBorderStrong hover:border-themeAccent flex justify-center items-center gap-2"
  >
@@ -713,19 +713,19 @@ export default function FacultyMentorship({ isEmbedded = false }) {
 
  {mtg.status === 'pending' ? (
  <div className="flex flex-col sm:flex-row gap-2.5 lg:gap-3 mt-auto">
- <button onClick={() => handleAcceptDecline(mtg.id, 'declined')} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-themeElevated hover:bg-rose-500/10 text-themeTextSec hover:text-rose-500 border border-themeBorder hover:border-rose-500/30 rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
+ <button type="button" onClick={() => handleAcceptDecline(mtg.id, 'declined')} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-themeElevated hover:bg-rose-500/10 text-themeTextSec hover:text-rose-500 border border-themeBorder hover:border-rose-500/30 rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
  <i className="fa-solid fa-xmark text-sm lg:text-base"></i> Decline
  </button>
- <button onClick={() => handleAcceptDecline(mtg.id, 'scheduled')} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex justify-center items-center gap-2 relative overflow-hidden group/btn border border-emerald-500">
+ <button type="button" onClick={() => handleAcceptDecline(mtg.id, 'scheduled')} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex justify-center items-center gap-2 relative overflow-hidden group/btn border border-emerald-500">
  <i className="fa-solid fa-check text-sm lg:text-base"></i> Accept Request
  </button>
  </div>
  ) : (
  <div className="flex flex-col sm:flex-row gap-2.5 lg:gap-3 mt-auto">
- <button onClick={() => handleAcceptDecline(mtg.id, 'cancelled')} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-themeElevated hover:bg-opacity-80 text-themeTextSec hover:text-rose-400 border border-themeBorder rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
+ <button type="button" onClick={() => handleAcceptDecline(mtg.id, 'cancelled')} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-themeElevated hover:bg-opacity-80 text-themeTextSec hover:text-rose-400 border border-themeBorder rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
  <i className="fa-solid fa-calendar-xmark text-sm lg:text-base"></i> Cancel
  </button>
- <button onClick={() => { setSelectedMeeting(mtg); setShowLogModal(true); }} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex justify-center items-center gap-2 relative overflow-hidden group/btn border border-blue-500">
+ <button type="button" onClick={() => { setSelectedMeeting(mtg); setShowLogModal(true); }} className="w-full sm:flex-1 py-3 lg:py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-themePanel text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex justify-center items-center gap-2 relative overflow-hidden group/btn border border-blue-500">
  <i className="fa-solid fa-pen text-sm lg:text-base"></i> Log Notes
  </button>
  </div>
@@ -749,10 +749,10 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <p className={`text-[10px] lg:text-xs font-semibold text-themeTextSec mt-1`}>Configure when students are allowed to book time with you.</p>
  </div>
  <div className="flex w-full sm:w-auto items-center gap-2 lg:gap-3 shrink-0 flex-wrap sm:flex-nowrap">
- <button disabled={isSyncing} onClick={handleAutoSyncTimetable} className={`flex-1 sm:flex-none px-4 py-3 sm:py-2.5 bg-themeElevated border border-themeBorder rounded-themePanel text-[10px] lg:text-xs font-black text-emerald-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 ${isSyncing ? 'opacity-70 cursor-not-allowed' : ''}`}>
+ <button type="button" disabled={isSyncing} onClick={handleAutoSyncTimetable} className={`flex-1 sm:flex-none px-4 py-3 sm:py-2.5 bg-themeElevated border border-themeBorder rounded-themePanel text-[10px] lg:text-xs font-black text-emerald-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 ${isSyncing ? 'opacity-70 cursor-not-allowed' : ''}`}>
  <i className={`fa-solid fa-arrows-rotate text-sm ${isSyncing ? 'animate-spin' : ''}`}></i> {isSyncing ? 'Syncing...' : 'Auto-Sync Timetable'}
  </button>
- <button onClick={() => setShowAddSlotModal(true)} className="flex-1 sm:flex-none px-4 py-3 sm:py-2.5 bg-themeElevated border border-themeBorder rounded-themePanel text-[10px] lg:text-xs font-black text-themeAccent hover:text-white hover:bg-blue-600 hover:border-blue-500 uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2">
+ <button type="button" onClick={() => setShowAddSlotModal(true)} className="flex-1 sm:flex-none px-4 py-3 sm:py-2.5 bg-themeElevated border border-themeBorder rounded-themePanel text-[10px] lg:text-xs font-black text-themeAccent hover:text-white hover:bg-blue-600 hover:border-blue-500 uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2">
  <i className="fa-solid fa-plus text-sm"></i> Add Slot
  </button>
  </div>
@@ -794,7 +794,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  {slot.is_active ? 'Active' : 'Paused'}
  </span>
  </label>
- <button onClick={() => handleDeleteSlot(slot.id)} className="text-themeTextSec opacity-70 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center bg-themeElevated hover:bg-opacity-80 rounded-lg border border-themeBorder">
+ <button type="button" onClick={() => handleDeleteSlot(slot.id)} className="text-themeTextSec opacity-70 hover:text-rose-500 transition-colors w-8 h-8 flex items-center justify-center bg-themeElevated hover:bg-opacity-80 rounded-lg border border-themeBorder">
  <i className="fa-solid fa-trash text-sm"></i>
  </button>
  </div>
@@ -874,7 +874,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <div className="p-3 bg-themePanel/85 backdrop-blur-2xl/50 rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] text-sm text-themeText italic">"{g.description}"</div>
  {g.status === 'pending' && (
  <div className="flex gap-2 pt-2">
- <button disabled={isSaving} onClick={() => {
+ <button type="button" disabled={isSaving} onClick={() => {
  const note = window.prompt("Resolution Notes:");
  if(note) handleGrievanceAction(g.id, 'resolved', note);
  }} className="flex-1 py-2 bg-themeAccent hover:bg-themeAccent/90 text-white rounded-lg text-xs font-black uppercase tracking-widest transition">Mark Resolved</button>
@@ -996,7 +996,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText truncate">Log Meeting Notes</h3>
  <p className={`text-[10px] lg:text-xs text-themeTextSec font-medium truncate`}>Session with <span className="text-themeAccent font-bold">{selectedMeeting.student?.full_name}</span></p>
  </div>
- <button onClick={() => setShowLogModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-themePanel border border-themeBorder text-themeTextSec hover:text-themeText transition-colors shrink-0">
+ <button type="button" onClick={() => setShowLogModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-themePanel border border-themeBorder text-themeTextSec hover:text-themeText transition-colors shrink-0">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
@@ -1050,7 +1050,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText">Add Availability Slot</h3>
  <p className={`text-[10px] lg:text-xs text-themeTextSec font-medium`}>Create a new recurring weekly slot.</p>
  </div>
- <button onClick={() => setShowAddSlotModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-themePanel border border-themeBorder text-themeTextSec hover:text-themeText transition-colors shrink-0">
+ <button type="button" onClick={() => setShowAddSlotModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-themePanel border border-themeBorder text-themeTextSec hover:text-themeText transition-colors shrink-0">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
@@ -1117,7 +1117,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText`}>Schedule Session</h2>
  <p className="text-xs text-themeTextSec mt-1">with <span className="font-bold text-themeAccent">{scheduleMentee?.full_name}</span></p>
  </div>
- <button onClick={() => setShowScheduleModal(false)} className="w-8 h-8 rounded-full bg-themeElevated hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-themeTextSec">
+ <button type="button" onClick={() => setShowScheduleModal(false)} className="w-8 h-8 rounded-full bg-themeElevated hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-themeTextSec">
  <i className="fa-solid fa-times"></i>
  </button>
  </div>
@@ -1125,7 +1125,7 @@ export default function FacultyMentorship({ isEmbedded = false }) {
  <div className="flex gap-4">
  <div className="flex-1 flex flex-col gap-1.5">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Date</label>
- <input required type="date" value={scheduleForm.date} onChange={e => setScheduleForm({ ...scheduleForm, date: e.target.value })} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-2.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent" />
+ <input min="2026-09-14" required type="date" value={scheduleForm.date} onChange={e => setScheduleForm({ ...scheduleForm, date: e.target.value })} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-2.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent" />
  </div>
  <div className="flex-1 flex flex-col gap-1.5">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Time</label>

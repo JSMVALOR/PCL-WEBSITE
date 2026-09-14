@@ -94,16 +94,16 @@ export default function AdminLegalAid({ isHubView = false , isEmbedded = false})
  <div className="flex flex-row md:flex-col gap-2 shrink-0">
  {d.status === 'pending' && (
  <>
- <button onClick={() => handleStatusUpdate(d.id, 'approved')} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded transition-colors flex-1 text-center">
+ <button type="button" onClick={() => handleStatusUpdate(d.id, 'approved')} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded transition-colors flex-1 text-center">
  <i className="fa-solid fa-check mr-1"></i> Approve
  </button>
- <button onClick={() => handleStatusUpdate(d.id, 'rejected')} className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded transition-colors flex-1 text-center">
+ <button type="button" onClick={() => handleStatusUpdate(d.id, 'rejected')} className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs rounded transition-colors flex-1 text-center">
  <i className="fa-solid fa-xmark mr-1"></i> Reject
  </button>
  </>
  )}
  {d.status !== 'pending' && (
- <button onClick={() => handleStatusUpdate(d.id, 'pending')} className="px-4 py-2 bg-themePanel/85 backdrop-blur-2xl border border-white/5 hover:bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec font-bold text-xs rounded transition-colors w-full text-center">
+ <button type="button" onClick={() => handleStatusUpdate(d.id, 'pending')} className="px-4 py-2 bg-themePanel/85 backdrop-blur-2xl border border-white/5 hover:bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec font-bold text-xs rounded transition-colors w-full text-center">
  Reset Status
  </button>
  )}

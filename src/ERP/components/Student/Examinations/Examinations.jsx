@@ -154,7 +154,7 @@ export default function Examinations({ isEmbedded = false }) {
  rightContent={
  <div className="flex p-1.5 bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] w-full md:w-auto overflow-x-auto no-scrollbar min-w-max">
  {TABS.map((tab) => (
- <button
+ <button type="button"
  key={tab.id}
  onClick={() => setView(tab.id)}
  className={`flex-1 md:flex-none px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 ${view === tab.id
@@ -189,10 +189,10 @@ export default function Examinations({ isEmbedded = false }) {
  </div>
 
  <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full md:w-auto">
- <button onClick={handleExportICS} disabled={upcomingExams.length === 0} className="flex-1 md:flex-none px-6 py-3.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeText border border-black/5 dark:border-white/10 rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
+ <button type="button" onClick={handleExportICS} disabled={upcomingExams.length === 0} className="flex-1 md:flex-none px-6 py-3.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeText border border-black/5 dark:border-white/10 rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
  <i className="fa-solid fa-calendar-plus text-blue-400"></i> Sync Calendar
  </button>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled={upcomingExams.length === 0} className="flex-1 md:flex-none px-6 py-3.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-neutral-200 disabled:bg-neutral-800 disabled:text-neutral-500 text-[#050505] rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled={upcomingExams.length === 0} className="flex-1 md:flex-none px-6 py-3.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-neutral-200 disabled:bg-neutral-800 disabled:text-neutral-500 text-[#050505] rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-40">
  <i className="fa-solid fa-download"></i> Admit Card
  </button>
  </div>

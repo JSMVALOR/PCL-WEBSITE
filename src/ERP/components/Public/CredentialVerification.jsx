@@ -156,7 +156,7 @@ export default function CredentialVerification() {
                                         </div>
                                     </div>
                                 </div>
-                                <button 
+                                <button type="button" 
                                     onClick={() => handlePreview(doc.file_path)}
                                     className="w-full sm:w-auto px-5 py-2.5 bg-[#1a1a1a] hover:bg-emerald-500 hover:text-themeApp text-neutral-300 rounded-lg text-xs font-bold uppercase tracking-widest transition border border-neutral-800 hover:border-emerald-500 shrink-0"
                                 >

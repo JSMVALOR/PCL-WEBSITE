@@ -105,7 +105,7 @@ export default function SubjectBuilder({ isEmbedded = false }) {
  <h2 className="text-xl font-black text-themeText">Subject Identity & Color Builder</h2>
  <p className="text-xs font-bold text-themeTextSec">Assign permanent identities to subjects for instant recognition across the ERP.</p>
  </div>
- <button onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
+ <button type="button" onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
  {isCreating ? <><i className="fa-solid fa-xmark mr-2"></i> Cancel</> : <><i className="fa-solid fa-plus mr-2"></i> Create Subject</>}
  </button>
  </div>

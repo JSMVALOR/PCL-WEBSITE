@@ -90,14 +90,14 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  <div className="absolute -right-10 -top-10 w-40 h-40 bg-themeAccent/10 rounded-full blur-3xl pointer-events-none"></div>
  
  <div className="flex justify-between items-start relative z-10">
- <button onClick={onClose} className="w-8 h-8 rounded-lg bg-themeElevated border border-themeBorder flex items-center justify-center text-themeTextSec hover:text-themeText hover:border-themeBorderStrong transition">
+ <button type="button" onClick={onClose} className="w-8 h-8 rounded-lg bg-themeElevated border border-themeBorder flex items-center justify-center text-themeTextSec hover:text-themeText hover:border-themeBorderStrong transition">
  <i className="fa-solid fa-xmark"></i>
  </button>
  <div className="flex gap-2">
  <button type="button" onClick={() => window.erpDialog.alert("Messages engine linking...")} className="px-4 py-2 rounded-lg bg-themeElevated border border-themeBorder text-[10px] font-black text-themeText uppercase tracking-widest hover:border-themeAccent transition-colors">
  <i className="fa-regular fa-envelope text-themeAccent mr-2"></i> Message
  </button>
- <button onClick={onSchedule} className="btn-erp">
+ <button type="button" onClick={onSchedule} className="btn-erp">
  <i className="fa-solid fa-calendar-plus mr-2"></i> Schedule
  </button>
  </div>
@@ -178,13 +178,13 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  
  {isPending && (
  <div className="flex gap-2 mt-2 pt-3 border-t border-themeBorder">
- <button onClick={() => openVerifyModal(a.id, 'verified')} className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+ <button type="button" onClick={() => openVerifyModal(a.id, 'verified')} className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
  <i className="fa-solid fa-check mr-1"></i> Verify
  </button>
- <button onClick={() => openVerifyModal(a.id, 'revision_requested')} className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+ <button type="button" onClick={() => openVerifyModal(a.id, 'revision_requested')} className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
  <i className="fa-solid fa-rotate-left mr-1"></i> Revise
  </button>
- <button onClick={() => openVerifyModal(a.id, 'rejected')} className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+ <button type="button" onClick={() => openVerifyModal(a.id, 'rejected')} className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
  <i className="fa-solid fa-xmark mr-1"></i> Reject
  </button>
  </div>
@@ -227,8 +227,8 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  ></textarea>
  </div>
  <div className="p-5 border-t border-themeBorder bg-themePanel/85 backdrop-blur-2xl flex justify-end gap-3">
- <button onClick={() => setShowVerifyModal(false)} className="px-4 py-2 rounded-lg text-xs font-bold text-themeTextSec hover:text-themeText">Cancel</button>
- <button onClick={handleVerifySubmit} className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-white ${actionType === 'verified' ? 'bg-emerald-500' : actionType === 'rejected' ? 'bg-rose-500' : 'bg-blue-500'}`}>
+ <button type="button" onClick={() => setShowVerifyModal(false)} className="px-4 py-2 rounded-lg text-xs font-bold text-themeTextSec hover:text-themeText">Cancel</button>
+ <button type="button" onClick={handleVerifySubmit} className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-white ${actionType === 'verified' ? 'bg-emerald-500' : actionType === 'rejected' ? 'bg-rose-500' : 'bg-blue-500'}`}>
  Confirm
  </button>
  </div>

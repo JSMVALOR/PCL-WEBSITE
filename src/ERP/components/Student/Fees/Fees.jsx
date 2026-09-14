@@ -229,7 +229,7 @@ export default function Fees({ isEmbedded = false }) {
  <span className="font-mono text-themeText">{new Date().toLocaleDateString('en-GB')}</span>
  </div>
  </div>
- <button 
+ <button type="button" 
  onClick={() => setSuccessModal(null)}
  className="w-full py-3 bg-white/10 backdrop-blur-[60px] border border-black/10 dark:border-white/20 hover:bg-neutral-800 text-themeText text-sm font-bold rounded-lg hover:border-themeAccent/50 transition duration-300"
  >
@@ -249,7 +249,7 @@ export default function Fees({ isEmbedded = false }) {
 
 
  <div className={`flex p-1.5 bg-themePanel border-theme border-themeBorderStrong rounded-themePanel lg:rounded-themePanel w-full lg:w-fit overflow-x-auto no-scrollbar`}>
- <button
+ <button type="button"
  onClick={() => setView("overview")}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg lg:rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap ${view === "overview"
  ? theme.action.rowActive + " justify-center"
@@ -258,7 +258,7 @@ export default function Fees({ isEmbedded = false }) {
  >
  Outstanding Dues
  </button>
- <button
+ <button type="button"
  onClick={() => setView("history")}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg lg:rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap ${view === "history"
  ? theme.action.rowActive + " justify-center"
@@ -348,7 +348,7 @@ export default function Fees({ isEmbedded = false }) {
  </p>
  </div>
 
- <button
+ <button type="button"
  onClick={handlePayment}
  disabled={currentTotal === 0 || isProcessing}
  className={`relative z-10 w-full mt-6 lg:mt-8 py-4 rounded-themePanel text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex justify-center items-center gap-2 overflow-hidden ${currentTotal > 0 && !isProcessing
@@ -473,7 +473,7 @@ export default function Fees({ isEmbedded = false }) {
  {txn.status}
  </span>
  {txn.status === 'successful' && (
- <button onClick={() => generatePDF(`Receipt_${txn.id}`)} className="text-themeTextSec opacity-70 hover:text-themeAccent transition duration-300 bg-transparent hover:bg-themePanel border-theme border-themeBorderStrong w-8 h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-themePanel flex items-center justify-center border border-black/5 dark:border-white/10 hover:border-themeAccent/50 no-print" title="Download Receipt">
+ <button type="button" onClick={() => generatePDF(`Receipt_${txn.id}`)} className="text-themeTextSec opacity-70 hover:text-themeAccent transition duration-300 bg-transparent hover:bg-themePanel border-theme border-themeBorderStrong w-8 h-8 lg:w-9 lg:h-9 rounded-lg lg:rounded-themePanel flex items-center justify-center border border-black/5 dark:border-white/10 hover:border-themeAccent/50 no-print" title="Download Receipt">
  <i className="fa-solid fa-download text-[10px] lg:text-xs"></i>
  </button>
  )}

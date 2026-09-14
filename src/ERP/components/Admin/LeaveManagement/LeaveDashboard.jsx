@@ -123,7 +123,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  <h2 className={`font-bold tracking-tight text-base lg:text-lg mb-3 lg:mb-4 text-themeText`}>Quick Actions</h2>
  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4">
  {quickActions.map((action, idx) => (
- <button
+ <button type="button"
  key={idx}
  onClick={() => setActiveTab(action.tab)}
  className={`bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-xl p-4 lg:p-5 flex flex-col items-center justify-center gap-2 lg:gap-3 hover:border-${action.color}-500/50 hover:bg-${action.color}-500/10 hover:-translate-y-1 transition duration-300 group`}

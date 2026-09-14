@@ -200,7 +200,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  {/* Premium Full-Screen Header */}
  <div className="sticky top-0 z-50 bg-transparent/80 backdrop-blur-xl border-b border-black/10 dark:border-white/20 px-6 lg:px-12 py-5 flex items-center justify-between">
  <div className="flex items-center gap-4">
- <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-sm text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors">
+ <button type="button" onClick={onClose} className="w-10 h-10 rounded-full bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-sm text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors">
  <i className="fa-solid fa-arrow-left"></i>
  </button>
  <div>
@@ -212,7 +212,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  </div>
  
  {!hasPendingRequest && !isCropping && (
- <button 
+ <button type="button" 
  onClick={handleSubmit} 
  disabled={isSubmitting || uploadingImage} 
  className="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest bg-themeAccent text-themeApp hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 hover:scale-105 active:scale-95"
@@ -292,7 +292,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Date of Birth</label>
- <input type="date" value={formData.dob} onChange={e => setFormData({...formData, dob: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" />
+ <input min="2026-09-14" type="date" value={formData.dob} onChange={e => setFormData({...formData, dob: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" />
  </div>
  <div className="flex flex-col gap-2 md:col-span-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Current Address</label>
@@ -345,13 +345,13 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  </div>
  
  <div className="flex gap-4 w-full justify-end">
- <button 
+ <button type="button" 
  onClick={() => { setIsCropping(false); setUpImg(null); if(fileInputRef.current) fileInputRef.current.value = ''; }} 
  className="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest text-themeTextSec hover:bg-themePanel border-theme border-themeBorderStrong transition-colors"
  >
  Cancel
  </button>
- <button 
+ <button type="button" 
  onClick={uploadCroppedImage}
  disabled={!completedCrop?.width || !completedCrop?.height}
  className="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest bg-themeAccent text-themeApp hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"

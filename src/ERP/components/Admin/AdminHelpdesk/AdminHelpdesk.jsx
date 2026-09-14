@@ -110,7 +110,7 @@ export default function AdminHelpdesk({ isHubView = false , isEmbedded = false})
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8' : 'mb-4'}`}>
  {['all', 'public_inquiry', 'IT Support', 'Finance', 'Academic', 'Administration'].map(tab => (
- <button
+ <button type="button"
  key={tab}
  onClick={() => setActiveTab(tab)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
@@ -178,14 +178,14 @@ export default function AdminHelpdesk({ isHubView = false , isEmbedded = false})
  className="flex-1 bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent resize-none min-h-[80px]"
  />
  <div className="flex lg:flex-col gap-2 shrink-0">
- <button 
+ <button type="button" 
  onClick={() => handleReply(ticket.id, false)}
  disabled={submittingReply === ticket.id}
  className="flex-1 lg:flex-none px-4 py-2 bg-themeAccent hover:bg-themeAccent/80 text-themeText font-black uppercase tracking-widest text-[10px] rounded-lg transition-colors border border-white/5"
  >
  Send Reply
  </button>
- <button 
+ <button type="button" 
  onClick={() => handleReply(ticket.id, true)}
  disabled={submittingReply === ticket.id}
  className="flex-1 lg:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-themeText font-black uppercase tracking-widest text-[10px] rounded-lg transition-colors border border-white/5"

@@ -257,7 +257,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
 
  {subjectContext && students.length > 0 && (
  <div className="flex justify-end">
- <button 
+ <button type="button" 
  onClick={handleSaveMarks}
  disabled={isSaving || gradedCount === 0}
  className="px-8 py-3.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"

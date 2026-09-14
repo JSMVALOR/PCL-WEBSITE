@@ -91,7 +91,7 @@ export default function CLETracker() {
  Weeks Logged: <span className="text-themeText">{weeksLogged}</span> / 20 Required
  </p>
  </div>
- <button onClick={() => setShowModal(true)} className="text-[10px] lg:text-xs font-black text-themeAccent uppercase tracking-widest flex items-center gap-1.5 bg-themePanel border-theme border-themeBorderStrong px-3 py-2 rounded-lg border border-black/5 dark:border-white/10 hover:bg-themePanel border-theme border-themeBorderStrong transition-colors shrink-0">
+ <button type="button" onClick={() => setShowModal(true)} className="text-[10px] lg:text-xs font-black text-themeAccent uppercase tracking-widest flex items-center gap-1.5 bg-themePanel border-theme border-themeBorderStrong px-3 py-2 rounded-lg border border-black/5 dark:border-white/10 hover:bg-themePanel border-theme border-themeBorderStrong transition-colors shrink-0">
  <i className="fa-solid fa-plus"></i> <span className="hidden sm:inline">Add Diary</span>
  </button>
  </div>
@@ -152,7 +152,7 @@ export default function CLETracker() {
  <h3 className="text-lg lg:text-xl font-black text-themeText tracking-tight mb-1">Log CLE Diary</h3>
  <p className={`text-[10px] lg:text-xs text-rose-400 font-bold uppercase tracking-widest`}><i className="fa-solid fa-book-medical mr-1"></i> Mandatory Clinical Journal</p>
  </div>
- <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">

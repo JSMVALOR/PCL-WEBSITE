@@ -25,7 +25,7 @@ export default function AdminWebsiteHub({ isEmbedded = false }) {
                     rightContent={
                         <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl backdrop-blur-3xl border border-black/5 dark:border-white/10 overflow-x-auto no-scrollbar">
                             {tabs.map(tab => (
-                                <button
+                                <button type="button"
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${

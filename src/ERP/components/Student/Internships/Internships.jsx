@@ -279,7 +279,7 @@ export default function Internships({ isEmbedded = false }) {
 
  <div className="flex p-1.5 bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] w-full lg:w-fit overflow-x-auto no-scrollbar min-w-max border border-black/10 dark:border-white/20">
  {TABS.map(tab => (
- <button
+ <button type="button"
  key={tab.id}
  onClick={() => setView(tab.id)}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 lg:py-3 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === tab.id
@@ -304,7 +304,7 @@ export default function Internships({ isEmbedded = false }) {
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText flex items-center gap-2`}><i className="fa-solid fa-building text-themeAccent"></i> Corporate & External Internships</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec font-medium mt-1">Verified experiences sync to your digital resume.</p>
  </div>
- <button onClick={() => setShowExpModal(true)} className="px-5 py-2.5 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center gap-2">
+ <button type="button" onClick={() => setShowExpModal(true)} className="px-5 py-2.5 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> Log Experience
  </button>
  </div>
@@ -374,7 +374,7 @@ export default function Internships({ isEmbedded = false }) {
  <div className="px-5 lg:px-6 pb-5">
  <div className="flex items-center justify-between mb-3">
  <p className={`text-[9px] font-black uppercase tracking-widest text-blue-400`}><i className="fa-solid fa-timeline mr-1"></i> Daily Logs ({dailyLogs.length})</p>
- <button onClick={(e) => { e.stopPropagation(); setDailyLogForm({ experience_id: log.id, date: '', entry: '' }); setShowDailyLogModal(true); }} className="text-[9px] font-black text-themeAccent uppercase tracking-widest flex items-center gap-1.5 bg-themePanel border-theme border-themeBorderStrong px-3 py-1.5 rounded-md border border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 hover:bg-themePanel border-theme border-themeBorderStrong transition">
+ <button type="button" onClick={(e) => { e.stopPropagation(); setDailyLogForm({ experience_id: log.id, date: '', entry: '' }); setShowDailyLogModal(true); }} className="text-[9px] font-black text-themeAccent uppercase tracking-widest flex items-center gap-1.5 bg-themePanel border-theme border-themeBorderStrong px-3 py-1.5 rounded-md border border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 hover:bg-themePanel border-theme border-themeBorderStrong transition">
  <i className="fa-solid fa-plus text-[8px]"></i> Add Entry
  </button>
  </div>
@@ -404,7 +404,7 @@ export default function Internships({ isEmbedded = false }) {
  </div>
 
  <div className="px-5 lg:px-6 pb-6 pt-4 border-t-theme border-black/10 dark:border-white/20 flex flex-col gap-3 bg-themePanel/30">
- <button onClick={(e) => shareToLinkedIn(e, log)} className="w-full py-3 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 group/btn">
+ <button type="button" onClick={(e) => shareToLinkedIn(e, log)} className="w-full py-3 bg-[#0a66c2] hover:bg-[#004182] text-white rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 group/btn">
  <i className="fa-brands fa-linkedin text-sm group-hover/btn:scale-110 transition-transform"></i> Share to LinkedIn
  </button>
  </div>
@@ -424,7 +424,7 @@ export default function Internships({ isEmbedded = false }) {
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText flex items-center gap-2`}><i className="fa-solid fa-scale-balanced text-themeAccent"></i> Practical & Clinical Training</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec font-medium mt-1">Mandatory clinical courses and court visits tracking.</p>
  </div>
- <button onClick={() => setShowPracModal(true)} className="px-5 py-2.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-theme border-emerald-500/20 rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center gap-2">
+ <button type="button" onClick={() => setShowPracModal(true)} className="px-5 py-2.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-theme border-emerald-500/20 rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> Add Practical Log
  </button>
  </div>
@@ -487,7 +487,7 @@ export default function Internships({ isEmbedded = false }) {
  <h2 className={`${theme.text.heading} text-xl lg:text-2xl text-themeText tracking-tight`}>Active NOC Requests</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec font-medium mt-1">Official permissions for internships.</p>
  </div>
- <button onClick={() => setShowNocModal(true)} className="text-[10px] lg:text-xs font-black text-themePanel bg-themeText uppercase tracking-widest flex items-center gap-2 px-5 py-2.5 rounded-[2rem] transition active:scale-[0.98] hover:bg-themeText/90">
+ <button type="button" onClick={() => setShowNocModal(true)} className="text-[10px] lg:text-xs font-black text-themePanel bg-themeText uppercase tracking-widest flex items-center gap-2 px-5 py-2.5 rounded-[2rem] transition active:scale-[0.98] hover:bg-themeText/90">
  <i className="fa-solid fa-paper-plane"></i> <span className="hidden sm:inline">New Request</span>
  </button>
  </div>
@@ -533,11 +533,11 @@ export default function Internships({ isEmbedded = false }) {
  {/* Download */}
  <div className="w-full lg:w-auto shrink-0 flex items-center justify-center">
  {req.status === 'approved' ? (
- <button onClick={() => handlePrintNoc(req)} className="w-full lg:w-auto bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-theme border-emerald-500/20 px-6 py-3.5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2">
+ <button type="button" onClick={() => handlePrintNoc(req)} className="w-full lg:w-auto bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-theme border-emerald-500/20 px-6 py-3.5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2">
  <i className="fa-solid fa-print text-lg"></i> Print NOC
  </button>
  ) : (
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled className="w-full lg:w-auto bg-themePanel border-theme border-themeBorderStrong text-themeTextSec opacity-50 border border-black/10 dark:border-white/20 px-6 py-3.5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled className="w-full lg:w-auto bg-themePanel border-theme border-themeBorderStrong text-themeTextSec opacity-50 border border-black/10 dark:border-white/20 px-6 py-3.5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
  <i className="fa-solid fa-lock"></i> Locked
  </button>
  )}
@@ -569,7 +569,7 @@ export default function Internships({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black text-themeText tracking-tight mb-1">Log Legal Experience</h3>
  <p className="text-[10px] lg:text-xs text-emerald-400 font-bold uppercase tracking-widest"><i className="fa-solid fa-link mr-1"></i> Will sync to CV Builder</p>
  </div>
- <button onClick={() => setShowExpModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowExpModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleExpSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -635,14 +635,14 @@ export default function Internships({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black text-themeText tracking-tight mb-1">Request NOC</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Will be routed directly to your assigned mentor.</p>
  </div>
- <button onClick={() => setShowNocModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowNocModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleNocSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
  <div><label className={LABEL_CLS}>Company / Firm Name</label><input type="text" value={nocForm.company_name} onChange={e => setNocForm({ ...nocForm, company_name: e.target.value })} className={INPUT_CLS} required /></div>
  <div className="grid grid-cols-2 gap-5">
- <div><label className={LABEL_CLS}>Start Date</label><input type="date" value={nocForm.start_date} onChange={e => setNocForm({ ...nocForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
- <div><label className={LABEL_CLS}>End Date</label><input type="date" value={nocForm.end_date} onChange={e => setNocForm({ ...nocForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>Start Date</label><input min="2026-09-14" type="date" value={nocForm.start_date} onChange={e => setNocForm({ ...nocForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>End Date</label><input min="2026-09-14" type="date" value={nocForm.end_date} onChange={e => setNocForm({ ...nocForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  </div>
  <div>
  <label className={LABEL_CLS}>Google Drive Link to Offer Letter (Required)</label>
@@ -682,7 +682,7 @@ export default function Internships({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black text-themeText tracking-tight mb-1">Add Practical Log</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Log hours for mandatory clinical courses.</p>
  </div>
- <button onClick={() => setShowPracModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowPracModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handlePracSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -699,7 +699,7 @@ export default function Internships({ isEmbedded = false }) {
  <div><label className={LABEL_CLS}>Hours</label><input type="number" min="1" max="24" value={pracForm.hours} onChange={e => setPracForm({ ...pracForm, hours: e.target.value })} className={INPUT_CLS} required /></div>
  </div>
  <div><label className={LABEL_CLS}>Location / Institution</label><input type="text" value={pracForm.title} onChange={e => setPracForm({ ...pracForm, title: e.target.value })} className={INPUT_CLS} placeholder="e.g. High Court of AP" required /></div>
- <div><label className={LABEL_CLS}>Date</label><input type="date" value={pracForm.date_logged} onChange={e => setPracForm({ ...pracForm, date_logged: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>Date</label><input min="2026-09-14" type="date" value={pracForm.date_logged} onChange={e => setPracForm({ ...pracForm, date_logged: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  <div><label className={LABEL_CLS}>Observations</label><textarea rows="3" value={pracForm.description} onChange={e => setPracForm({ ...pracForm, description: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="What did you observe or do?" required></textarea></div>
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-theme border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Practical Hours Logged</div>
@@ -722,11 +722,11 @@ export default function Internships({ isEmbedded = false }) {
  <h3 className="text-lg font-black text-themeText tracking-tight mb-1">Add Daily Log Entry</h3>
  <p className={`text-[10px] lg:text-xs text-blue-400 font-bold uppercase tracking-widest`}><i className="fa-solid fa-timeline mr-1"></i> Internship Journal</p>
  </div>
- <button onClick={() => setShowDailyLogModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowDailyLogModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleDailyLogSubmit} className="p-5 lg:p-6 flex flex-col gap-5">
- <div><label className={LABEL_CLS}>Date</label><input type="date" value={dailyLogForm.date} onChange={e => setDailyLogForm({ ...dailyLogForm, date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>Date</label><input min="2026-09-14" type="date" value={dailyLogForm.date} onChange={e => setDailyLogForm({ ...dailyLogForm, date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  <div><label className={LABEL_CLS}>What did you do today?</label><textarea rows="4" value={dailyLogForm.entry} onChange={e => setDailyLogForm({ ...dailyLogForm, entry: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="Describe the work, cases reviewed, tasks completed..." required></textarea></div>
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-theme border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Entry Added</div>

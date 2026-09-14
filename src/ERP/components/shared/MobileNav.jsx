@@ -132,7 +132,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                 {bottomNavLinks.map((link, idx) => {
                     const isActive = activeTab === link.id && !mobileMenuOpen;
                     return (
-                        <button 
+                        <button type="button" 
                             key={link.id}
                             onClick={() => handleTabSwitch(link.id)}
                             className={`nav-btn ${isActive ? 'active-nav-btn' : ''} flex flex-col items-center justify-center w-[56px] h-[56px] rounded-[18px] relative z-20 transition duration-[0.45s] ease-out border-none bg-transparent cursor-pointer ${isActive ? 'text-themeAccent -translate-y-2 scale-110' : 'text-themeTextSec'}`}
@@ -144,7 +144,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                 })}
                 
                 {/* Mobile Menu Toggle Button */}
-                <button 
+                <button type="button" 
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                     className={`nav-btn ${mobileMenuOpen ? 'active-nav-btn' : ''} flex flex-col items-center justify-center w-[56px] h-[56px] rounded-[18px] relative z-20 transition duration-[0.45s] ease-out border-none bg-transparent cursor-pointer ${mobileMenuOpen ? 'text-themeAccent -translate-y-2 scale-110' : 'text-themeTextSec'}`}
                 >
@@ -180,7 +180,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                                             const isActive = activeTab === link.id;
                                             const hasNotice = link.id === 'notices' && notices?.length > 0;
                                             return (
-                                                <button
+                                                <button type="button"
                                                     key={link.id}
                                                     onClick={() => handleTabSwitch(link.id)}
                                                     className={`relative flex flex-col items-start gap-3 p-4 rounded-themePanel border transition duration-300 ${isActive 
@@ -205,7 +205,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                         
                         {/* Profile/Settings Button in Drawer */}
                         <div className="mt-8 animate-slide-up" style={{ animationDelay: `${navGroups.length * 40}ms` }}>
-                            <button
+                            <button type="button"
                                 onClick={() => handleTabSwitch('credentials')}
                                 className="w-full flex items-center justify-center gap-3 text-[#1C1C1E] dark:text-[#F2F2F7] bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs uppercase tracking-widest font-black border border-black/10 dark:border-black/5 dark:border-white/10 hover:border-themeAccent active:bg-themeElevated transition shadow-premiumElevated mb-4"
                             >
@@ -215,7 +215,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
 
                         {/* Logout Button in Drawer */}
                         <div className="mt-8 mb-4 animate-slide-up" style={{ animationDelay: `${navGroups.length * 40}ms` }}>
-                            <button
+                            <button type="button"
                                 onClick={async () => {
                                     const confirmed = await window.erpDialog?.confirm("Are you sure you want to securely sign out?", "End Session");
                                     if (confirmed) {

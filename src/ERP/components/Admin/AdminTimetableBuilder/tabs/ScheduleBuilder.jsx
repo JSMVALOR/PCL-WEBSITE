@@ -265,7 +265,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  </select>
  </div>
  
- <button 
+ <button type="button" 
  onClick={() => setIsDrawMode(!isDrawMode)} 
  className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition whitespace-nowrap border ${isDrawMode ? 'bg-amber-500 text-white border-amber-500' : 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-themeText hover:border-themeAccent'}`}
  >
@@ -300,10 +300,10 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  </div>
  {pendingDraws.length > 0 && (
  <div className="flex items-center gap-2 ml-auto shrink-0 border-l border-amber-500/30 pl-4">
- <button onClick={() => setPendingDraws([])} className="px-3 py-2 rounded-lg text-[10px] font-black uppercase text-amber-500 hover:bg-amber-500/10 transition-colors">
+ <button type="button" onClick={() => setPendingDraws([])} className="px-3 py-2 rounded-lg text-[10px] font-black uppercase text-amber-500 hover:bg-amber-500/10 transition-colors">
  Clear
  </button>
- <button onClick={handleSaveDraws} className="px-4 py-2 rounded-lg text-xs font-black uppercase bg-amber-500 text-white hover:bg-amber-600 transition-colors">
+ <button type="button" onClick={handleSaveDraws} className="px-4 py-2 rounded-lg text-xs font-black uppercase bg-amber-500 text-white hover:bg-amber-600 transition-colors">
  Save {pendingDraws.length} {pendingDraws.length === 1 ? 'Class' : 'Classes'}
  </button>
  </div>
@@ -328,7 +328,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  <h3 className="text-lg font-black text-themeText">Schedule New Class</h3>
  <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-0.5">{selectedBatch}</p>
  </div>
- <button onClick={() => setIsCreating(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:bg-themeBorderStrong text-themeText transition-colors">
+ <button type="button" onClick={() => setIsCreating(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:bg-themeBorderStrong text-themeText transition-colors">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
@@ -396,7 +396,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  {selectedClass && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
  <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-sm rounded-themePanel overflow-hidden border border-white/5 flex flex-col relative">
- <button onClick={() => setSelectedClass(null)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText transition-colors z-10">
+ <button type="button" onClick={() => setSelectedClass(null)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText transition-colors z-10">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  
@@ -419,7 +419,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  </div>
  </div>
  
- <button onClick={handleDeleteClass} className="w-full bg-rose-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-rose-600 transition-colors mt-6">
+ <button type="button" onClick={handleDeleteClass} className="w-full bg-rose-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-rose-600 transition-colors mt-6">
  Delete Class
  </button>
  </div>

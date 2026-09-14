@@ -119,7 +119,7 @@ export default function SidebarFramework({
 
         return (
             <div key={link.id} className="relative group/item outline-none w-full">
-                <button
+                <button type="button"
                     onContextMenu={(e) => handleContextMenu(e, link)}
                     onClick={() => {
                         if (hasChildren && !isCompact) {
@@ -218,7 +218,7 @@ export default function SidebarFramework({
                 </div>
 
                 {/* Collapse Toggle Button (Absolute Positioned on Edge) */}
-                <button 
+                <button type="button" 
                     onClick={toggleSidebar} 
                     className="absolute -right-3 top-7 w-6 h-6 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/10 dark:border-black/5 dark:border-white/10 shadow-md flex items-center justify-center text-themeTextSec hover:text-themeText hover:scale-110 transition z-50"
                     title={isCompact ? "Expand Sidebar" : "Collapse Sidebar"}
@@ -243,7 +243,7 @@ export default function SidebarFramework({
                         return (
                             <div key={groupIndex} className="flex flex-col gap-1">
                                 {!isCompact ? (
-                                    <button 
+                                    <button type="button" 
                                         onClick={() => setExpandedGroups(p => ({ ...p, [groupIndex]: !p[groupIndex] }))}
                                         className="flex items-center justify-between w-full px-3 py-1 mb-1 group outline-none"
                                     >
@@ -300,14 +300,14 @@ export default function SidebarFramework({
                         <p className="text-xs font-black text-themeText truncate">{contextMenu.item.label}</p>
                         <p className="text-[9px] text-themeTextSec uppercase tracking-widest mt-0.5">Context Options</p>
                     </div>
-                    <button onClick={(e) => toggleFavorite(e, contextMenu.item.id)} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
+                    <button type="button" onClick={(e) => toggleFavorite(e, contextMenu.item.id)} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
                         <i className={`fa-solid fa-star ${favorites.includes(contextMenu.item.id) ? 'text-amber-500' : 'text-themeTextSec'}`}></i>
                         {favorites.includes(contextMenu.item.id) ? 'Remove Favorite' : 'Pin to Favorites'}
                     </button>
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
+                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
                         <i className="fa-solid fa-arrow-up-right-from-square text-themeTextSec"></i> Open in New Tab
                     </button>
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
+                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
                         <i className="fa-solid fa-link text-themeTextSec"></i> Copy Link
                     </button>
                 </div>

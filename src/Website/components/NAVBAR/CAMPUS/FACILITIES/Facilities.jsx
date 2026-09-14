@@ -25,7 +25,7 @@ function ModuleFigure({ iconName, tag, image }) {
   
   return (
     <div className="relative w-full h-56 md:h-64 overflow-hidden rounded-t-2xl group border-b border-[var(--card-border)] bg-[#111]">
-      <img 
+      <img loading="lazy" 
         src={image || 'https://via.placeholder.com/600x400'} 
         alt={tag}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"

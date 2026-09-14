@@ -173,14 +173,14 @@ export default function AdminPasswordResetsModal({ onClose }) {
  </p>
  </div>
  <div className="flex items-center gap-3 w-full md:w-auto">
- <button
+ <button type="button"
  onClick={() => handleReject(req.id)}
  disabled={processingId === req.id}
  className="flex-1 md:flex-none px-4 py-2 rounded-xl bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500/10 text-rose-500 text-xs font-bold transition-colors disabled:opacity-50"
  >
  Reject
  </button>
- <button
+ <button type="button"
  onClick={() => handleApprove(req)}
  disabled={processingId === req.id}
  className="flex-1 md:flex-none px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"

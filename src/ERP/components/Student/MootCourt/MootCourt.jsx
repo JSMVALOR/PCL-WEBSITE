@@ -202,7 +202,7 @@ export default function MootCourt({ isEmbedded = false }) {
  {/* ═══════════════ TABS ═══════════════ */}
  <div className="flex p-1.5 bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] w-full lg:w-fit border border-black/10 dark:border-white/20 overflow-x-auto no-scrollbar">
  {TABS.map((tab) => (
- <button
+ <button type="button"
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
@@ -397,7 +397,7 @@ export default function MootCourt({ isEmbedded = false }) {
  </p>
  </div>
  </div>
- <button onClick={() => setShowMemorialModal(true)} className="w-full md:w-auto px-6 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 shrink-0 border-theme border-purple-400/50">
+ <button type="button" onClick={() => setShowMemorialModal(true)} className="w-full md:w-auto px-6 py-3.5 bg-purple-600 hover:bg-purple-500 text-white rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 shrink-0 border-theme border-purple-400/50">
  <i className="fa-solid fa-cloud-arrow-up"></i> Deposit Memorial
  </button>
  </div>
@@ -445,7 +445,7 @@ export default function MootCourt({ isEmbedded = false }) {
  <i className="fa-solid fa-lock-open"></i> Access Document
  </a>
  ) : (
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled className="w-full py-2.5 bg-transparent border border-black/10 dark:border-white/20 rounded-lg text-[9px] lg:text-[10px] font-black text-themeTextSec opacity-50 uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled className="w-full py-2.5 bg-transparent border border-black/10 dark:border-white/20 rounded-lg text-[9px] lg:text-[10px] font-black text-themeTextSec opacity-50 uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
  <i className="fa-solid fa-lock"></i> No File Attached
  </button>
  )}
@@ -501,7 +501,7 @@ export default function MootCourt({ isEmbedded = false }) {
  </h3>
  <p className="text-[10px] lg:text-xs text-purple-300/80 font-bold uppercase tracking-widest"><i className="fa-solid fa-shield-halved mr-1"></i> Undergoes plagiarism & quality review</p>
  </div>
- <button onClick={() => setShowMemorialModal(false)} className="w-8 h-8 rounded-full bg-purple-500/10 border-theme border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-500/30 flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowMemorialModal(false)} className="w-8 h-8 rounded-full bg-purple-500/10 border-theme border-purple-500/30 text-purple-300 hover:text-white hover:bg-purple-500/30 flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleMemorialSubmit} className="p-6 flex flex-col gap-5 overflow-y-auto flex-1">

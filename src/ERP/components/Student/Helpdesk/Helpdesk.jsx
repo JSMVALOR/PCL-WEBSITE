@@ -172,7 +172,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  title="Helpdesk Support" 
  subtitle="Raise tickets for campus, academic, or IT issues." 
  rightContent={
- <button
+ <button type="button"
  onClick={() => setShowTicketModal(true)}
  className="px-6 py-3.5 bg-themeAccent hover:bg-themeAccentMuted text-themeApp rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 transition"
  >
@@ -236,7 +236,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText">Create Support Ticket</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.muted} font-medium`}>We usually respond within 24 hours.</p>
  </div>
- <button onClick={() => setShowTicketModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText hover:border-amber-500 transition-colors shrink-0">
+ <button type="button" onClick={() => setShowTicketModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText hover:border-amber-500 transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>

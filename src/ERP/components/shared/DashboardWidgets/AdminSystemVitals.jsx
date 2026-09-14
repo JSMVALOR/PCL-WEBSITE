@@ -64,7 +64,7 @@ export default function AdminSystemVitals() {
             </h3>
             <p className="text-[10px] text-themeTextSec uppercase tracking-widest mt-1">Real-time health & utilization</p>
           </div>
-          <button 
+          <button type="button" 
             onClick={() => window.location.href = '#sql'} 
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-widest transition"
           >

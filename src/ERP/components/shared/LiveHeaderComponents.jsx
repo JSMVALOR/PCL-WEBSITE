@@ -49,7 +49,7 @@ export function RoleActionButton({ role, setActiveTab }) {
     const action = config[role] || config.student;
 
     return (
-        <button 
+        <button type="button" 
             onClick={() => setActiveTab(action.tab)}
             className={`hidden xl:flex items-center px-5 py-2.5 rounded-full bg-themeAccent/10 hover:bg-themeAccent/20 text-themeAccent text-[10px] font-black uppercase tracking-[0.1em] border border-themeAccent/20 hover:border-themeAccent/50 transition duration-300 shadow-sm shrink-0`}
         >

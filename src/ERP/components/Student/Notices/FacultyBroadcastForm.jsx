@@ -59,7 +59,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  <h2 className="text-2xl font-black text-themeText tracking-tight">{userSession?.role === "admin" ? "Administrative Broadcast" : "Faculty Broadcast"}</h2>
  <p className="text-xs font-bold text-themeTextSec mt-1">Send official notices directly to your assigned batches or specific students.</p>
  </div>
- <button onClick={onCancel} className="w-10 h-10 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-rose-500 hover:border-rose-500/30 transition">
+ <button type="button" onClick={onCancel} className="w-10 h-10 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-rose-500 hover:border-rose-500/30 transition">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>

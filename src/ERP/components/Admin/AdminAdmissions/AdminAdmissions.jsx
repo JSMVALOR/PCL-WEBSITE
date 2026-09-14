@@ -236,7 +236,7 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
  <PageHeader icon="fa-solid fa-user-graduate" title="Admissions Command Center" subtitle="Review and process incoming website applications." rightContent={
 <>
 <div className="flex gap-3 w-full lg:w-auto">
- <button
+ <button type="button"
  onClick={handleToggleAdmissions}
  disabled={isTogglingStatus}
  className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition flex items-center justify-center gap-2 border border-black/10 dark:border-white/20 backdrop-blur-md ${isAdmissionsOpen ? 'bg-rose-500/20 hover:bg-rose-500 text-white' : 'bg-emerald-500/20 hover:bg-emerald-500 text-white'}`}
@@ -252,7 +252,7 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
  <div className={`flex items-center justify-between relative z-10 flex-wrap gap-4 ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8' : 'mb-2'}`}>
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['all', 'pending', 'approved', 'rejected'].map(f => (
- <button 
+ <button type="button" 
  key={f}
  onClick={() => setFilter(f)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap min-w-max ${
@@ -267,7 +267,7 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
  </div>
 
  {isHubView && (
- <button
+ <button type="button"
  onClick={handleToggleAdmissions}
  disabled={isTogglingStatus}
  className={`px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2 border ${isAdmissionsOpen ? 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border-rose-500/20' : 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border-emerald-500/20'}`}
@@ -333,10 +333,10 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
  <td className="p-4 text-right space-x-2">
  {app.status === 'pending' && (
  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <button onClick={() => handleApprovePipeline(app)} className="w-8 h-8 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg transition" title="Approve">
+ <button type="button" onClick={() => handleApprovePipeline(app)} className="w-8 h-8 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white rounded-lg transition" title="Approve">
  <i className="fa-solid fa-check"></i>
  </button>
- <button onClick={() => handleReject(app.id)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg transition" title="Reject">
+ <button type="button" onClick={() => handleReject(app.id)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white rounded-lg transition" title="Reject">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -361,7 +361,7 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
  <span className="font-mono text-sm font-black text-themeText tracking-widest uppercase">Pipeline Execution</span>
  </div>
  {provisionStatus !== "running" && (
- <button onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }} className="w-8 h-8 flex items-center justify-center bg-themeApp hover:bg-themeElevated/90 backdrop-blur-2xl rounded-full border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText transition">
+ <button type="button" onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }} className="w-8 h-8 flex items-center justify-center bg-themeApp hover:bg-themeElevated/90 backdrop-blur-2xl rounded-full border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText transition">
  <i className="fa-solid fa-xmark"></i>
  </button>
  )}
@@ -417,7 +417,7 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
  {provisionStatus === "running" ? (
  <div className="text-amber-400 font-mono text-sm font-black tracking-widest animate-pulse px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded">PIPELINE ACTIVE...</div>
  ) : (
- <button
+ <button type="button"
  onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }}
  className="bg-themeApp hover:bg-neutral-800 text-themeText border border-black/5 dark:border-white/10 px-6 py-2.5 font-black uppercase tracking-widest rounded-lg transition-colors"
  >

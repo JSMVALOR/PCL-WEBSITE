@@ -254,8 +254,8 @@ export default function Timetable({ isEmbedded = false }) {
  <p className="text-xs font-bold text-themeTextSec">Academic Calendar</p>
  </div>
  <div className="flex gap-2">
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-left text-xs"></i></button>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-right text-xs"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-left text-xs"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-right text-xs"></i></button>
  </div>
  </div>
 
@@ -287,7 +287,7 @@ export default function Timetable({ isEmbedded = false }) {
  <div className={`absolute top-0 right-0 w-48 h-48 ${c.solid} opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
  <div className="flex justify-between items-start mb-6 relative z-10">
  <span className={`px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-widest bg-transparent/80 backdrop-blur-md ${c.text} border ${c.border}`}>{selectedLecture.day}, {selectedLecture.time} - {selectedLecture.endTime}</span>
- <button onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-themeText flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-themeText flex items-center justify-center transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -300,10 +300,10 @@ export default function Timetable({ isEmbedded = false }) {
 
  <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8 custom-scrollbar">
  <div className="grid grid-cols-2 gap-3">
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeAccent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeAccent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
  <i className="fa-solid fa-book-open text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Syllabus
  </button>
- <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeAccent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeAccent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
  <i className="fa-solid fa-folder-open text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Material
  </button>
  </div>
@@ -344,7 +344,7 @@ export default function Timetable({ isEmbedded = false }) {
  rightContent={
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] rounded-2xl border border-black/10 dark:border-white/20 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['Today', 'Week', 'Calendar', 'Changes'].map(tab => (
- <button 
+ <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
@@ -418,7 +418,7 @@ export default function Timetable({ isEmbedded = false }) {
  <p className="text-xs font-bold text-themeTextSec mb-4 leading-relaxed">
  Sync official updates, extra classes, and holidays directly to your Apple or Google Calendar.
  </p>
- <button onClick={exportCalendar} className="w-full bg-white/10 backdrop-blur-[80px] border border-white/20 border border-black/5 dark:border-white/10 hover:border-themeAccent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
+ <button type="button" onClick={exportCalendar} className="w-full bg-white/10 backdrop-blur-[80px] border border-white/20 border border-black/5 dark:border-white/10 hover:border-themeAccent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
  <i className="fa-regular fa-calendar-plus text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Export as .ICS
  </button>
  </div>

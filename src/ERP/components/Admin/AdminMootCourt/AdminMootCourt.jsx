@@ -94,7 +94,7 @@ export default function AdminMootCourt({ isHubView = false , isEmbedded = false}
  {!isHubView && (
  <PageHeader icon="fa-solid fa-gavel" title="Moot Court Society Admin" subtitle="Create competitions and blindly evaluate research memos." rightContent={
 <>
-<button
+<button type="button"
  onClick={() => setShowCreateModal(true)}
  className="w-full lg:w-auto px-6 py-3 bg-themePanel/85 backdrop-blur-2xl hover:bg-white/90 text-themeAccent rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 border border-white/50"
  >
@@ -105,10 +105,10 @@ export default function AdminMootCourt({ isHubView = false , isEmbedded = false}
  )}
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8' : 'mb-6 lg:mb-8'}`}>
- <button onClick={() => setActiveTab('moots')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'moots' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('moots')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'moots' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-list"></i> Competitions
  </button>
- <button onClick={() => setActiveTab('bids')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'bids' ? 'bg-emerald-500 text-white border border-emerald-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('bids')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'bids' ? 'bg-emerald-500 text-white border border-emerald-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-user-ninja"></i> Blind Evaluation Bids
  </button>
  </div>
@@ -172,7 +172,7 @@ export default function AdminMootCourt({ isHubView = false , isEmbedded = false}
  <p className="text-sm text-themeText whitespace-pre-wrap">{bid.research_memo}</p>
  </div>
  {!isSelected && (
- <button onClick={() => handleSelectBid(bid.id)} className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-emerald-500/20 text-emerald-400 border border-black/5 dark:border-white/10 hover:border-emerald-500/50 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
+ <button type="button" onClick={() => handleSelectBid(bid.id)} className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-emerald-500/20 text-emerald-400 border border-black/5 dark:border-white/10 hover:border-emerald-500/50 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2">
  <i className="fa-solid fa-check"></i> Select for Team
  </button>
  )}
@@ -189,7 +189,7 @@ export default function AdminMootCourt({ isHubView = false , isEmbedded = false}
  <div className="bg-themeApp w-full max-w-lg rounded-themePanel overflow-hidden border border-white/5 flex flex-col max-h-[90vh]">
  <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-b-theme border-white/5 flex justify-between items-center">
  <h3 className="text-xl font-black text-themeText">Create Moot Competition</h3>
- <button onClick={() => setShowCreateModal(false)} className="w-8 h-8 rounded-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText flex items-center justify-center"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowCreateModal(false)} className="w-8 h-8 rounded-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText flex items-center justify-center"><i className="fa-solid fa-xmark"></i></button>
  </div>
  <form onSubmit={handleCreateMoot} className="p-6 flex flex-col gap-4 overflow-y-auto">
  <div>
@@ -207,7 +207,7 @@ export default function AdminMootCourt({ isHubView = false , isEmbedded = false}
  </div>
  <div>
  <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 ml-1">Event Date</label>
- <input type="date" value={mootForm.event_date} onChange={e => setMootForm({...mootForm, event_date: e.target.value})} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-xs font-bold text-themeText outline-none" required />
+ <input min="2026-09-14" type="date" value={mootForm.event_date} onChange={e => setMootForm({...mootForm, event_date: e.target.value})} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-xs font-bold text-themeText outline-none" required />
  </div>
  </div>
  <div>
