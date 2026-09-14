@@ -171,10 +171,11 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  if (profileError) throw profileError;
 
- // 3. Update faculty_profiles table
+ // 3. Upsert faculty_profiles table (creates if missing)
  const { error: fProfileError } = await supabase
  .from('faculty_profiles')
- .update({
+ .upsert({
+ id: facultyId,
  designation: formData.designation,
  specialisation: formData.specialisation,
  bio: formData.bio,
@@ -184,8 +185,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  linkedin_url: formData.linkedin_url,
  scholar_url: formData.scholar_url,
  image_url: finalImageUrl
- })
- .eq('id', facultyId);
+ });
 
  if (fProfileError) throw fProfileError;
 

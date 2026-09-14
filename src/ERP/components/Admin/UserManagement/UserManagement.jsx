@@ -517,24 +517,14 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <button onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Master Details">
  <i className="fa-solid fa-pen text-[10px]"></i>
  </button>
- {activeTab === 'students' && (
- <button onClick={() => setCvStudentId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="View Student CV">
- <i className="fa-solid fa-file-pdf text-[10px]"></i>
- </button>
- )}
  {user.role === 'faculty' && (
- <button onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-blue-500 hover:text-blue-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Website Profile">
- <i className="fa-solid fa-address-card text-[10px]"></i>
+ <button onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
  <button onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-indigo-500 hover:text-themeAccent text-themeTextSec flex items-center justify-center transition-colors" title="Reset Password">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
- {activeTab === 'students' && (
- <button onClick={() => { setSelectedQuestionnaireUser(user); setQFormData(user.questionnaire_data || { legalInterest: '', accommodation: '', emergencyContact: '', emergencyPhone: '' }); }} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-amber-500 hover:text-amber-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Questionnaire">
- <i className="fa-solid fa-clipboard-list text-[10px]"></i>
- </button>
- )}
  <button onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg bg-themeApp border-theme flex items-center justify-center transition-colors ${user.status === 'Active' ? 'border-black/5 dark:border-white/10 hover:border-rose-500 hover:text-rose-500 text-themeTextSec' : 'border-rose-500/50 bg-rose-500/10 text-rose-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-500'}`} title={user.status === 'Active' ? 'Suspend Account' : 'Reactivate'}>
  <i className={`fa-solid ${user.status === 'Active' ? 'fa-ban' : 'fa-rotate-left'} text-[10px]`}></i>
  </button>
@@ -588,18 +578,13 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  <div className="flex gap-2">
  {user.role === 'faculty' && (
- <button onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-blue-500 hover:text-blue-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Website Profile">
- <i className="fa-solid fa-address-card text-[10px]"></i>
+ <button onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
  <button onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec flex items-center justify-center">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
- {activeTab === 'students' && (
- <button onClick={() => { setSelectedQuestionnaireUser(user); setQFormData(user.questionnaire_data || { legalInterest: '', accommodation: '', emergencyContact: '', emergencyPhone: '' }); }} className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-amber-500 flex items-center justify-center">
- <i className="fa-solid fa-clipboard-list text-[10px]"></i>
- </button>
- )}
  <button onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg border-theme flex items-center justify-center ${user.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-rose-400' : 'bg-rose-500 border-rose-600 text-white'}`}>
  <i className={`fa-solid ${user.status === 'Active' ? 'fa-ban' : 'fa-rotate-left'} text-[10px]`}></i>
  </button>
