@@ -11,6 +11,7 @@ import { theme } from '../../../../Shared/theme';
 import { createClient } from '@supabase/supabase-js';
 import AdminFacultyEditorModal from "../AdminFacultyDirectory/AdminFacultyEditorModal";
 import AdminStudentCVModal from './AdminStudentCVModal';
+import AdminUserEditorModal from './AdminUserEditorModal';
 import AdminUserProfileModal from './AdminUserProfileModal';
 import AdminPasswordResetsModal from './AdminPasswordResetsModal';
 
@@ -32,6 +33,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  const [sortBy, setSortBy] = useState("name_asc"); // name_asc, name_desc, id_asc, id_desc, status
 
  const [selectedQuestionnaireUser, setSelectedQuestionnaireUser] = useState(null);
+    const [editBasicUserId, setEditBasicUserId] = useState(null);
   const [editFacultyId, setEditFacultyId] = useState(null);
  const [qFormData, setQFormData] = useState({});
 
@@ -517,6 +519,9 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </td>
  <td className="p-4 lg:p-5 pr-5 lg:pr-6">
  <div className="flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+ <button onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Master Details">
+ <i className="fa-solid fa-pen text-[10px]"></i>
+ </button>
  {activeTab === 'students' && (
  <button onClick={() => setCvStudentId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="View Student CV">
  <i className="fa-solid fa-file-pdf text-[10px]"></i>
@@ -832,7 +837,15 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  onClose={() => setIsProfileModalOpen(false)} 
  />
 
- {editFacultyId && (
+ 
+      <AdminUserEditorModal
+        user={editBasicUserId}
+        isOpen={!!editBasicUserId}
+        onClose={() => setEditBasicUserId(null)}
+        onUpdate={fetchDirectory}
+      />
+
+      {editFacultyId && (
         <AdminFacultyEditorModal 
           facultyId={editFacultyId} 
           onClose={() => { setEditFacultyId(null); fetchDirectory(); }} 
