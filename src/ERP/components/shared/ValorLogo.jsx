@@ -3,13 +3,13 @@ import React from 'react';
 
 export default function ValorLogo({ className = "" }) {
     return (
-        <div className={`flex items-center gap-2 select-none ${className}`}>
-            {/* Signature part */}
+        <div className={`flex items-center gap-1.5 select-none ${className}`}>
+            {/* JSM part */}
             <span 
-                className="text-red-500 transform -rotate-12 translate-y-1" 
-                style={{ fontFamily: "'Great Vibes', cursive", fontSize: "1.5em", lineHeight: 1 }}
+                className="text-black dark:text-white font-bold tracking-widest translate-y-[2px]" 
+                style={{ fontSize: "1.1em", lineHeight: 1 }}
             >
-                Jsm
+                JSM
             </span>
             
             {/* VALOR Text part */}
