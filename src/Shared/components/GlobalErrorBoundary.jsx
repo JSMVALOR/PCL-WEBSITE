@@ -26,7 +26,7 @@ class GlobalErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="w-screen h-screen flex flex-col items-center justify-center bg-[#f4f4f0] dark:bg-[#0a0a0a] text-black dark:text-white p-6 font-sans">
+        <div className="w-full h-screen flex flex-col items-center justify-center bg-[#f4f4f0] dark:bg-[#0a0a0a] text-black dark:text-white p-6 font-sans">
           <div className="max-w-xl w-full bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-2xl rounded-[2rem] p-8 lg:p-12 flex flex-col items-center text-center">
             
             <div className="w-20 h-20 bg-rose-500/10 text-rose-500 rounded-3xl flex items-center justify-center mb-6 shadow-inner border border-rose-500/20">

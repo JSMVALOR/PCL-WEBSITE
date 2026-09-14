@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../Shared/lib/supabase/supabaseClient';
 import CryptoJS from 'crypto-js';
 
@@ -459,7 +459,8 @@ export const ErpProvider = ({ children }) => {
     };
 
     return (
-        <ErpContext.Provider value={{
+        <ErpContext.Provider value={useMemo(() => ({
+        
             userSession,
             isAppLoading,
             toggleSidebar,
@@ -683,7 +684,8 @@ export const ErpProvider = ({ children }) => {
             const { error } = await supabase.from('mentorship_notes').insert([data]);
             if (error) throw error;
         }
-        }}>
+        
+    }), [userSession, isAppLoading, isSidebarCollapsed, activeTheme, layoutPreference, navLayout, sidebarMode, notices, events, attendanceCache, globalTimetable, facultyTimetable, showSessionModal, sessionCountdown])}>
             {children}
 
             {/* Session Timeout Modal */}

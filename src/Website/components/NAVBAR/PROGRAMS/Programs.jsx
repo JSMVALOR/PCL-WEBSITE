@@ -158,7 +158,7 @@ export default function Programs() {
 
                   <div className="grid md:grid-cols-3 gap-6 md:gap-8">
                     <Link to="/programs/ba-llb" className={styles.glassCard}>
-                      <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex items-center justify-between font-['Playfair_Display']">
+                      <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex flex-wrap items-center justify-between font-['Playfair_Display']">
                         <span>BA. LL.B <span className="block text-xs text-[var(--text-muted)] font-sans mt-1 tracking-widest uppercase">5 Years</span></span>
                         <span className="transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">➔</span>
                       </h3>
@@ -167,7 +167,7 @@ export default function Programs() {
                       </p>
                     </Link>
                     <Link to="/programs/bba-llb" className={styles.glassCard}>
-                      <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex items-center justify-between font-['Playfair_Display']">
+                      <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex flex-wrap items-center justify-between font-['Playfair_Display']">
                         <span>BBA. LL.B <span className="block text-xs text-[var(--text-muted)] font-sans mt-1 tracking-widest uppercase">5 Years</span></span>
                         <span className="transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">➔</span>
                       </h3>
@@ -176,7 +176,7 @@ export default function Programs() {
                       </p>
                     </Link>
                     <Link to="/programs/llb" className={styles.glassCard}>
-                      <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex items-center justify-between font-['Playfair_Display']">
+                      <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex flex-wrap items-center justify-between font-['Playfair_Display']">
                         <span>LL.B <span className="block text-xs text-[var(--text-muted)] font-sans mt-1 tracking-widest uppercase">3 Years</span></span>
                         <span className="transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">➔</span>
                       </h3>
