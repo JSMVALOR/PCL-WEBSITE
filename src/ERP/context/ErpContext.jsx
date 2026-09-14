@@ -141,7 +141,7 @@ export const ErpProvider = ({ children }) => {
         
         // Fix for Tailwind dark mode classes - seamlessly sync the 'dark' class 
         // with our semantic themes so all dark: and light modes work properly.
-        if (activeTheme.includes(\'light\') || [\'marble-executive\', \'structural-neo-brutalism\'].includes(activeTheme)) {
+        if (activeTheme.includes('light') || ['marble-executive', 'structural-neo-brutalism'].includes(activeTheme)) {
             document.documentElement.classList.remove('dark');
         } else {
             document.documentElement.classList.add('dark');
