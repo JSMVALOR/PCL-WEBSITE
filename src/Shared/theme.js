@@ -31,6 +31,10 @@ export const theme = {
         iconBtn: "w-9 h-9 rounded-themeBtn hover:bg-themePanel flex items-center justify-center text-themeTextSec hover:text-themeAccent transition duration-300 border-theme border-transparent hover:border-themeBorder active:scale-90",
     },
 
+    inputs: {
+        base: "w-full bg-themeElevated/90 border border-themeBorder text-themeText focus:border-themeAccent focus:outline-none transition-colors placeholder:text-themeTextSec/50",
+        elevated: "shadow-sm hover:shadow-md"
+    },
     ui: {
         avatar: "rounded-themeBtn bg-themePanel/80 backdrop-blur-md border-theme border-themeBorder flex items-center justify-center font-bold text-themeAccent font-serif shadow-sm",
         card: "bg-themePanel/85 backdrop-blur-2xl border-theme border-white/5 rounded-themePanel px-6 py-8 md:px-8 md:py-10 shadow-premium transition duration-500 hover:shadow-premiumElevated",
