@@ -7,8 +7,8 @@ import Navbar from '../NAVBAR/Navbar';
 
 const COMPANY_NAME = 'JSM VALOR';
 const PRODUCT_NAME = 'Prudentia College of Law Website & ERP';
-const SUPPORT_EMAIL = 'contact.jsminnovations@gmail.com';
-const PRIVACY_EMAIL = 'contact.jsminnovations@gmail.com';
+const SUPPORT_EMAIL = 'contact@jsmvalor.in';
+const PRIVACY_EMAIL = 'contact@jsmvalor.in';
 const COMPANY_ADDRESS = '3-23, Gurramguda, Opp Badangpet Municipal Office, Balapur Mandal, R.R. Dist, Hyderabad - Telangana 501510';
 const EFFECTIVE_DATE = '19 July 2026';
 const VERSION = 'v1.0';

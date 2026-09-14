@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 import RootApp from './RootApp.jsx'
+import GlobalErrorBoundary from './Shared/components/GlobalErrorBoundary'
 import { NotificationProvider } from './Shared/context/NotificationContext'
 
 import { HelmetProvider } from 'react-helmet-async'
@@ -25,9 +26,11 @@ Sentry.init({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>
-    <BrowserRouter>
+        <BrowserRouter>
       <NotificationProvider>
-        <RootApp />
+        <GlobalErrorBoundary>
+          <RootApp />
+        </GlobalErrorBoundary>
       </NotificationProvider>
     </BrowserRouter>
     </HelmetProvider>
