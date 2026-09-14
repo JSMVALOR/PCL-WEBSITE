@@ -104,6 +104,23 @@ import { RoleActionButton } from './components/shared/LiveHeaderComponents';
 import IntelligentBot from './components/shared/IntelligentBot';
 
 export default function App() {
+  useEffect(() => {
+    const handleFormSubmit = (e) => {
+      // Ignore the login form so users don't get prompted when logging in
+      if (e.target && e.target.id === 'login-form') return;
+      if (e.target && e.target.closest && e.target.closest('.no-confirm-form')) return;
+      
+      const confirmed = window.confirm("Are you sure you want to submit this?");
+      if (!confirmed) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    
+    // Add to window in capture phase to intercept before React
+    window.addEventListener("submit", handleFormSubmit, true);
+    return () => window.removeEventListener("submit", handleFormSubmit, true);
+  }, []);
   const { userSession, isAppLoading, logout, notices, layoutPreference, navLayout } = useERP();
   
   const [needsOtp, setNeedsOtp] = useState(() => {

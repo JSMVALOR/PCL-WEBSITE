@@ -159,7 +159,7 @@ export default function Login() {
                     <p className="text-[var(--primary-color)] text-[10px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-3 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <form id="login-form" className="flex flex-col gap-6 no-confirm-form" onSubmit={handleSubmit}>
                     <AnimatePresence>
                         {errorMsg && (
                             <div className="bg-rose-500/10 border border-rose-500/30 text-rose-500 p-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-start gap-3">
