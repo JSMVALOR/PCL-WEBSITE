@@ -15,7 +15,7 @@ import CourseBALLB from '../../../../Website/components/NAVBAR/PROGRAMS/CourseBA
 import CourseBBALLB from '../../../../Website/components/NAVBAR/PROGRAMS/CourseBBALLB';
 import CourseLLB from '../../../../Website/components/NAVBAR/PROGRAMS/CourseLLB';
 import Facilities from '../../../../Website/components/NAVBAR/CAMPUS/FACILITIES/Facilities';
-import Contact from '../../../../Website/components/NAVBAR/Contact/Contact';
+import Contact from '../../../../Website/components/NAVBAR/CONTACT/Contact';
 import LeadershipProfile from '../../../../Website/components/NAVBAR/ABOUT/LeadershipProfile/LeadershipProfile';
 
 // Robust helper to perfectly calculate the DOM height of a CSS-scaled component
