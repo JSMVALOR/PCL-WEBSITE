@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { motion } from 'framer-motion';
 import React, { useState } from "react";
 import { theme } from '../../../../Shared/theme';

@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';

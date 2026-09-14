@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import OTPVerification from './components/Login/OTPVerification';
@@ -382,7 +382,7 @@ export default function App() {
                   <a href="/terms" target="_blank" className="hover:text-themeText transition-colors">Terms of Service</a>
                 </div>
                 <div>
-                  &copy; {new Date().getFullYear()} JSM INNOVATIONS. Data Processor.
+                  &copy; {new Date().getFullYear()} JSM VALOR. Data Processor.
                 </div>
               </div>
             </div>

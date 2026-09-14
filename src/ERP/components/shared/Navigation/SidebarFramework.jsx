@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';

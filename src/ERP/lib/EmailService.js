@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { HTML_EMAIL_TEMPLATES } from './emailtemplate';
 
 export const EMAIL_TEMPLATES = {

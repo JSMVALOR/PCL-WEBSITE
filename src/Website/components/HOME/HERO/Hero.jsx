@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, GraduationCap, FileText, Landmark } from 'lucide-react';

@@ -1,11 +1,11 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '../NAVBAR/Navbar';
 // NOTE: adjust the Navbar import path to match your project structure, or remove it
 // if this page will render standalone.
 
 
-const COMPANY_NAME = 'JSM Innovations';
+const COMPANY_NAME = 'JSM VALOR';
 const PRODUCT_NAME = 'Prudentia College of Law Website & ERP';
 const SUPPORT_EMAIL = 'contact.jsminnovations@gmail.com';
 const LEGAL_EMAIL = 'contact.jsminnovations@gmail.com';
@@ -213,7 +213,7 @@ export default function TermsAndConditions() {
               id="service"
               index={2}
               title="The service"
-              summary="JSM INNOVATIONS ERP helps small businesses manage inventory, invoicing, accounting and HR in one place — provided as-is and improved over time."
+              summary="JSM VALOR ERP helps small businesses manage inventory, invoicing, accounting and HR in one place — provided as-is and improved over time."
             >
               <p>
                 {PRODUCT_NAME} is a cloud-based enterprise resource planning platform covering modules such as
@@ -287,7 +287,7 @@ export default function TermsAndConditions() {
               id="your-data"
               index={6}
               title="Your data"
-              summary="Whatever business data you put into JSM INNOVATIONS — invoices, inventory, employee records — stays yours. We're processing it on your behalf, not claiming ownership."
+              summary="Whatever business data you put into JSM VALOR — invoices, inventory, employee records — stays yours. We're processing it on your behalf, not claiming ownership."
             >
               <p>
                 As between you and us, you own all data, records, and content you upload to or generate within
@@ -306,7 +306,7 @@ export default function TermsAndConditions() {
               id="acceptable-use"
               index={7}
               title="Acceptable use"
-              summary="Use JSM INNOVATIONS for legitimate business purposes — no reverse engineering, reselling access, overloading the system, or illegal activity."
+              summary="Use JSM VALOR for legitimate business purposes — no reverse engineering, reselling access, overloading the system, or illegal activity."
             >
               <p>You agree not to:</p>
               <ul className="list-disc pl-6 space-y-2 text-brand-muted">
@@ -348,7 +348,7 @@ export default function TermsAndConditions() {
               id="integrations"
               index={9}
               title="Third-party integrations"
-              summary="You can connect JSM INNOVATIONS to other tools — we're not responsible for how those third-party services handle your data."
+              summary="You can connect JSM VALOR to other tools — we're not responsible for how those third-party services handle your data."
             >
               <p>
                 {PRODUCT_NAME} may allow you to connect third-party services, such as payment gateways, banks,

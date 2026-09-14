@@ -1,5 +1,5 @@
 import React from 'react';
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { Routes, Route, useLocation } from 'react-router-dom';
 import SEO from './Website/components/SEO/SEO';
 import Navbar from './Website/components/NAVBAR/Navbar';

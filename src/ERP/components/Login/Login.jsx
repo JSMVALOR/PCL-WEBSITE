@@ -279,7 +279,7 @@ export default function Login() {
             <div className="mt-8 flex flex-col items-center justify-center text-[9px] uppercase tracking-[0.25em] font-bold text-[var(--text-color)]/50 z-10 gap-2 pointer-events-none drop-shadow-md">
                 <span className="flex items-center gap-2 bg-[var(--card-bg)] px-4 py-1.5 rounded-md backdrop-blur-sm border border-[var(--text-color)]/10 shadow-sm">
                     <i className="fa-solid fa-code text-[var(--primary-color)]/90"></i>
-                    Powered by JSM Associates & Innovation
+                    Powered by JSM VALOR
                 </span>
                 <span className="text-[var(--text-color)]/40 tracking-[0.4em] scale-90">PCL ERP Framework v8.25</span>
             </div>

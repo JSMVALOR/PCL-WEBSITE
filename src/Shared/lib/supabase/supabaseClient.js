@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize the Supabase client with the same project config as the ERP

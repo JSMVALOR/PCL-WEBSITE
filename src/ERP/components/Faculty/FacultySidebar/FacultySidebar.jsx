@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React from "react";
 import SidebarFramework from "../../shared/Navigation/SidebarFramework";
 

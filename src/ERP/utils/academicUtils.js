@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 /**
  * Calculates the relative semester of a student based on their academic_batch.
  * Assuming academic_batch is formatted like "2024-2029" or contains the start year.

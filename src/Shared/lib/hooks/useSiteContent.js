@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { useState, useEffect, useContext } from 'react';
 import { supabase } from '../supabase/supabaseClient';
 import { PreviewContext } from '../../../Website/context/PreviewContext';

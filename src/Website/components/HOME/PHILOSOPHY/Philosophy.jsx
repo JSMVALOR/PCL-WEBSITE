@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { forwardRef } from 'react';
 import entranceImg from '../../../../Shared/Assets/CAMPUS/pcl_entrance.webp';
 import { motion } from 'framer-motion';

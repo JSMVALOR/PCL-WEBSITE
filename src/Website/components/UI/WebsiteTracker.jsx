@@ -1,4 +1,4 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient'; // Adjusted relative path assuming src/COMPONENTS/UI/WebsiteTracker.jsx

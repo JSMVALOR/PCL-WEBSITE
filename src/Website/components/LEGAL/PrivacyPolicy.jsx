@@ -1,11 +1,11 @@
-/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+/* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '../NAVBAR/Navbar';
 // NOTE: adjust the Navbar import path to match your project structure, or remove it
 // if this page will render standalone.
 
 
-const COMPANY_NAME = 'JSM Innovations';
+const COMPANY_NAME = 'JSM VALOR';
 const PRODUCT_NAME = 'Prudentia College of Law Website & ERP';
 const SUPPORT_EMAIL = 'contact.jsminnovations@gmail.com';
 const PRIVACY_EMAIL = 'contact.jsminnovations@gmail.com';
@@ -193,7 +193,7 @@ export default function PrivacyPolicy() {
               id="scope"
               index={1}
               title="Scope of this policy"
-              summary="This covers personal data we handle as a company — not the business records our customers store inside their own JSM INNOVATIONS account."
+              summary="This covers personal data we handle as a company — not the business records our customers store inside their own JSM VALOR account."
             >
               <p>
                 This policy describes how we handle personal data belonging to website visitors, prospects,
@@ -221,7 +221,7 @@ export default function PrivacyPolicy() {
                 </li>
                 <li>
                   <strong className="text-white">Customer Data</strong> — the business records a customer
-                  enters into their JSM INNOVATIONS account, such as invoices, inventory, or their own employees'
+                  enters into their JSM VALOR account, such as invoices, inventory, or their own employees'
                   HR and payroll details. For this data, our customer is the controller and we act only as a
                   data processor on their instructions, under a Data Processing Addendum. See Section 12.
                 </li>
@@ -379,7 +379,7 @@ export default function PrivacyPolicy() {
                 Subject to applicable law, you may have the right to access, correct, export, or request
                 deletion of your personal data, and to object to or restrict certain processing. To exercise
                 these rights, email {PRIVACY_EMAIL}. We'll respond within the time required by applicable law,
-                and in any case within 30 days. Where you're a user inside a customer's JSM INNOVATIONS account
+                and in any case within 30 days. Where you're a user inside a customer's JSM VALOR account
                 rather than our direct customer, we may need to direct your request to that organization, since
                 they control that data.
               </p>
@@ -389,7 +389,7 @@ export default function PrivacyPolicy() {
               id="children"
               index={11}
               title="Children's privacy"
-              summary="JSM INNOVATIONS is a business product, not directed at children, and we don't knowingly collect personal data from them."
+              summary="JSM VALOR is a business product, not directed at children, and we don't knowingly collect personal data from them."
             >
               <p>
                 {PRODUCT_NAME} is a business tool intended for use by adults acting on behalf of an
@@ -402,7 +402,7 @@ export default function PrivacyPolicy() {
               id="dpa"
               index={12}
               title="Customer data and data processing agreements"
-              summary="If your organization stores business or HR records in JSM INNOVATIONS, that data is covered by our Data Processing Addendum, not this policy — your organization controls it, we just process it on their instructions."
+              summary="If your organization stores business or HR records in JSM VALOR, that data is covered by our Data Processing Addendum, not this policy — your organization controls it, we just process it on their instructions."
             >
               <p>
                 Where a customer organization stores personal data inside {PRODUCT_NAME} — for example,
