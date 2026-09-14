@@ -141,8 +141,7 @@ export const ErpProvider = ({ children }) => {
         
         // Fix for Tailwind dark mode classes - seamlessly sync the 'dark' class 
         // with our semantic themes so all dark: and light modes work properly.
-        const lightThemes = ['marble-executive', 'structural-neo-brutalism'];
-        if (lightThemes.includes(activeTheme)) {
+        if (activeTheme.includes(\'light\') || [\'marble-executive\', \'structural-neo-brutalism\'].includes(activeTheme)) {
             document.documentElement.classList.remove('dark');
         } else {
             document.documentElement.classList.add('dark');
@@ -380,12 +379,16 @@ export const ErpProvider = ({ children }) => {
                     if (filterNotice(newNotice)) {
                         setNotices(prev => [newNotice, ...prev]);
                         
-                        // Trigger Native Push Notification
+                        // Trigger Native Push Notification with Throttling
                         if ("Notification" in window && Notification.permission === "granted") {
-                            new Notification(`New Notice: ${newNotice.title}`, {
-                                body: newNotice.content,
-                                icon: '/favicon.ico'
-                            });
+                            window._lastNotifTime = window._lastNotifTime || 0;
+                            if (Date.now() - window._lastNotifTime > 2000) {
+                                new Notification(`New Notice: ${newNotice.title}`, {
+                                    body: newNotice.content,
+                                    icon: '/favicon.ico'
+                                });
+                                window._lastNotifTime = Date.now();
+                            }
                         }
                     }
                 })
@@ -639,10 +642,19 @@ export const ErpProvider = ({ children }) => {
             }
         },
         attendanceCache, updateAttendanceCache, clearAttendanceCache,
-        assignSlot: async () => { }, clearSlot: async () => { }, submitAttendance: async () => { },
-        publishAssignment: async () => { }, submitGrade: async () => { }, submitMarksToCOE: async () => { },
-        processStudentRequest: async () => { }, processFacultyLeave: async () => { },
-        submitFacultyLeave: async () => { }, updateMeetingNotes: async () => { }
+        assignSlot: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
+        clearSlot: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
+        submitAttendance: async (records) => { 
+            window.erpDialog?.alert("Attendance submitted locally. Backend SQL required."); 
+            clearAttendanceCache();
+        },
+        publishAssignment: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
+        submitGrade: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
+        submitMarksToCOE: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); },
+        processStudentRequest: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
+        processFacultyLeave: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); },
+        submitFacultyLeave: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }, 
+        updateMeetingNotes: async () => { window.erpDialog?.alert("Feature under construction. Backend SQL required."); }
         }}>
             {children}
 
