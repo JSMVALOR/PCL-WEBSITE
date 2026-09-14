@@ -18,7 +18,7 @@ export const SiteProvider = ({ children }) => {
             document.documentElement.classList.remove('dark');
         }
         // Fetch initial
-        supabase.from('system_settings').select('value').eq('key', 'admissions_status').single()
+        supabase.from('system_settings').select('value').eq('key', 'admissions_status').maybeSingle()
             .then(({ data, error }) => {
                 if (data && !error && isMounted) {
                     setIsAdmissionsOpen(data.value.is_open !== false);
