@@ -1,10 +1,11 @@
-/* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState, useEffect } from "react";
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { theme } from '../../../../Shared/theme';
+import re
 
-export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }) {
-    const [formData, setFormData] = useState({
+filepath = 'src/ERP/components/Admin/UserManagement/AdminUserEditorModal.jsx'
+with open(filepath, 'r') as f:
+    text = f.read()
+
+# Add new states
+new_states = """  const [formData, setFormData] = useState({
     full_name: '',
     erp_id: '',
     academic_batch: '',
@@ -51,9 +52,16 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
       }
     };
     fetchExtraDetails();
-  }, [user, isOpen]);
+  }, [user, isOpen]);"""
 
-    const handleSubmit = async (e) => {
+text = re.sub(
+    r'const \[formData, setFormData\] = useState\(\{[\s\S]*?\}\);\s*const \[isSaving, setIsSaving\] = useState\(false\);\s*useEffect\(\(\) => \{[\s\S]*?\}, \[user, isOpen\]\);',
+    new_states,
+    text
+)
+
+# Update handleSubmit
+new_submit = """  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
     setIsSaving(true);
@@ -73,7 +81,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
       if (error) throw error;
 
       if (user.role === 'faculty') {
-        const researchArray = formData.research.split(',').map(s => s.trim()).filter(Boolean);
+        const researchArray = formData.research.split(',').map(s => s.strip()).filter(Boolean);
         const { error: facError } = await supabase
           .from('faculty_profiles')
           .upsert({
@@ -96,41 +104,19 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
     } finally {
       setIsSaving(false);
     }
-  };
+  };"""
 
-  if (!isOpen || !user) return null;
+# I need to be careful with s.strip(). In JS it is s.trim()
+new_submit = new_submit.replace('s.strip()', 's.trim()')
 
-  return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className={`${theme.layout.panel} rounded-2xl w-full max-w-lg p-6 lg:p-8 flex flex-col gap-6 shadow-2xl relative border border-white/10`}>
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-themeElevated/90 hover:bg-themeBorder text-themeTextSec flex items-center justify-center transition-colors">
-          <i className="fa-solid fa-xmark"></i>
-        </button>
+text = re.sub(
+    r'const handleSubmit = async \(e\) => \{[\s\S]*?finally \{\s*setIsSaving\(false\);\s*\}\s*\};',
+    new_submit,
+    text
+)
 
-        <div>
-          <h2 className="text-xl font-bold text-themeText mb-1">Edit {user.role === 'student' ? 'Student' : 'Staff'} Details</h2>
-          <p className="text-xs text-themeTextSec">Master override for user credentials and info.</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 overflow-y-auto max-h-[70vh] pr-2">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-themeTextSec">Full Name</label>
-            <input required type="text" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-themeTextSec">ERP ID</label>
-            <input required type="text" value={formData.erp_id} onChange={e => setFormData({...formData, erp_id: e.target.value})} className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
-          </div>
-
-          {user.role === 'student' && (
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-themeTextSec">Academic Batch</label>
-              <input type="text" value={formData.academic_batch} onChange={e => setFormData({...formData, academic_batch: e.target.value})} className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
-            </div>
-          )}
-
-                    {user.role === 'faculty' && (
+# Update form JSX
+new_jsx = """          {user.role === 'faculty' && (
             <>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-themeTextSec">Department</label>
@@ -157,26 +143,20 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
                 <input type="text" value={formData.research} onChange={e => setFormData({...formData, research: e.target.value})} placeholder="Corporate Law, Human Rights" className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
               </div>
             </>
-          )}} className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
-            </div>
-          )}
+          )}"""
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-themeTextSec">Phone Number</label>
-            <input type="text" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
-          </div>
+text = re.sub(
+    r'\{user\.role === \'faculty\' && \([\s\S]*?\}\)',
+    new_jsx,
+    text
+)
 
-          <div className="flex justify-end gap-3 mt-4">
-            <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl text-xs font-bold text-themeTextSec hover:bg-themeElevated/90 transition-colors border border-transparent hover:border-black/5 dark:hover:border-white/10">
-              Cancel
-            </button>
-            <button type="submit" disabled={isSaving} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-themeAccent text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2">
-              {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-check"></i>}
-              Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
+# Add scrolling to the modal so it doesn't overflow the screen
+text = text.replace(
+    'className="flex flex-col gap-4"',
+    'className="flex flex-col gap-4 overflow-y-auto max-h-[70vh] pr-2"'
+)
+
+with open(filepath, 'w') as f:
+    f.write(text)
+print("Admin Modal Patched")

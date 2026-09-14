@@ -144,10 +144,10 @@ export default function FacultyProfile() {
       <div className="relative z-20 pt-28 pb-32 px-6 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
         {/* LEFT COLUMN: Image & Details */}
-        <div className="w-full lg:w-5/12 shrink-0 flex flex-col lg:sticky lg:top-32">
+        <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32">
           <Link
             to="/about/faculty"
-            className="inline-flex items-center text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors mb-8 uppercase tracking-widest text-xs font-bold focus:outline-none w-max"
+            className="inline-flex items-center text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors mb-8 uppercase tracking-widest text-xs font-bold focus:outline-none w-max self-start"
           >
             <i className="fa-solid fa-arrow-left mr-3 text-sm"></i> Back to Directory
           </Link>
@@ -156,12 +156,12 @@ export default function FacultyProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full aspect-[4/5] relative rounded-sm overflow-hidden mb-8 bg-black/20"
+            className="w-4/5 md:w-3/4 lg:w-full max-w-[320px] aspect-[4/5] relative rounded-3xl overflow-hidden mb-8 bg-black/5 shadow-2xl border border-[var(--card-border)]"
           >
             <img decoding="async" loading="lazy" 
               src={faculty.image} 
               alt={faculty.name} 
-              className="absolute inset-0 w-full h-full object-cover grayscale opacity-90 transition-all duration-700 hover:grayscale-0 hover:scale-105" 
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
             />
           </motion.div>
 
@@ -169,7 +169,7 @@ export default function FacultyProfile() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-4 items-center lg:items-start w-full"
           >
             <h1 className="text-4xl md:text-5xl font-bold font-serif text-[var(--text-color)]">
               {faculty.name}
@@ -191,7 +191,7 @@ export default function FacultyProfile() {
               )}
             </div>
 
-            <div className="flex gap-4 mt-4">
+            <div className="flex justify-center lg:justify-start gap-4 mt-4">
               {faculty.linkedin_url && (
                 <a href={faculty.linkedin_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-[var(--text-muted)] flex items-center justify-center text-[var(--text-muted)] hover:text-black hover:bg-[var(--primary-color)] hover:border-[var(--primary-color)] transition-all">
                   <i className="fa-brands fa-linkedin-in"></i>
