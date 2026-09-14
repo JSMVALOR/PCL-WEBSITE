@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../../../../supabaseClient";
+import { supabase } from "../../../../Shared/lib/supabase/supabaseClient";
 import { theme } from '../../../../Shared/theme';
 import { useERP } from "../../../context/ErpContext";
 
