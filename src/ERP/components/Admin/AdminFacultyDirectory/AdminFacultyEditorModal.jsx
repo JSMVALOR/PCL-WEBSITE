@@ -246,7 +246,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <div className="flex gap-3 mb-6">
  <div className="relative overflow-hidden group">
  <input type="file" accept="image/*" onChange={onSelectFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} type="button" className="bg-themeAccent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition group-hover:bg-themeAccent/90 flex items-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} type="button" className="bg-themeAccent text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition group-hover:bg-themeAccent/90 flex items-center gap-2">
  <i className="fa-solid fa-upload"></i> Upload New
  </button>
  </div>

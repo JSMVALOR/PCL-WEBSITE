@@ -120,7 +120,7 @@ const Advantages = forwardRef(({ windowWidth, ...props }, ref) => {
       >
         <div className="p-5 md:p-6 h-full min-h-[220px] md:min-h-full flex flex-col bg-white/5 dark:bg-black/20 backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[18px]">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-11 h-11 shrink-0 rounded-xl bg-[var(--card-bg)] text-[var(--primary-color)] flex items-center justify-center border border-[var(--primary-color)]/30 group-hover:bg-[var(--primary-color)] group-hover:text-[#000] group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 shadow-[0_0_15px_var(--primary-glow)]">
+            <div className="w-11 h-11 shrink-0 rounded-xl bg-[var(--card-bg)] text-[var(--primary-color)] flex items-center justify-center border border-[var(--primary-color)]/30 group-hover:bg-[var(--primary-color)] group-hover:text-black dark:group-hover:text-white group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 shadow-[0_0_15px_var(--primary-glow)]">
               {item.icon}
             </div>
             <h4

@@ -178,7 +178,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  )}
 
  <div className="mt-4 flex justify-center">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5Strong rounded-lg text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec transition-colors">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5Strong rounded-lg text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec transition-colors">
  Manual Assignment <i className="fa-solid fa-chevron-right ml-1"></i>
  </button>
  </div>

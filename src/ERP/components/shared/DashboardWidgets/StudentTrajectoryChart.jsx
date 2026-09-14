@@ -85,8 +85,8 @@ export default function StudentTrajectoryChart() {
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dy={10} />
             <YAxis domain={[0, 4]} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dx={-10} />
             <Tooltip allowEscapeViewBox={{ x: true, y: true }} 
-                contentStyle={{ backgroundColor: 'rgba(28, 28, 30, 0.8)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
-                itemStyle={{ color: '#007AFF' }}
+                contentStyle={{ backgroundColor: 'var(--theme-panel)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: 'var(--theme-text)', fontSize: '12px', fontWeight: 'bold' }}
+                itemStyle={{ color: 'var(--theme-accent)' }}
             />
             <Area type="monotone" dataKey="gpa" stroke="#007AFF" strokeWidth={3} fillOpacity={1} fill="url(#colorGpa)" activeDot={{ r: 6, fill: '#007AFF', stroke: '#fff', strokeWidth: 2 }} />
           </AreaChart>

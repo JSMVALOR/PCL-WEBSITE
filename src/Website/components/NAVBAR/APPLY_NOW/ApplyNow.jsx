@@ -26,7 +26,6 @@ export default function ApplyNow() {
   const [generatedTicket, setGeneratedTicket] = useState('');
   const [isProgramDropdownOpen, setIsProgramDropdownOpen] = useState(false);
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));

@@ -340,8 +340,8 @@ export default function Achievements({ isEmbedded = false }) {
  {item.role || 'Participant'}
  </span>
  <div className="flex gap-2">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-pen-to-square"></i></button>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-ellipsis"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-pen-to-square"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="text-themeTextSec hover:text-themeAccent transition-colors"><i className="fa-solid fa-ellipsis"></i></button>
  </div>
  </div>
  </div>

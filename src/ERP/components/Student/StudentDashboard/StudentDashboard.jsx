@@ -204,7 +204,7 @@ export default function StudentDashboard({ setActiveTab }) {
  </div>
  <motion.button 
  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
- onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} 
+ onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} 
  className="bg-rose-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold"
  >
  View Exam Portal →

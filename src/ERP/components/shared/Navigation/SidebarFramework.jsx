@@ -304,10 +304,10 @@ export default function SidebarFramework({
                         <i className={`fa-solid fa-star ${favorites.includes(contextMenu.item.id) ? 'text-amber-500' : 'text-themeTextSec'}`}></i>
                         {favorites.includes(contextMenu.item.id) ? 'Remove Favorite' : 'Pin to Favorites'}
                     </button>
-                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
+                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
                         <i className="fa-solid fa-arrow-up-right-from-square text-themeTextSec"></i> Open in New Tab
                     </button>
-                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
+                    <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
                         <i className="fa-solid fa-link text-themeTextSec"></i> Copy Link
                     </button>
                 </div>

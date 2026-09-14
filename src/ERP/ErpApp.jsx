@@ -419,7 +419,6 @@ export default function App() {
   const handleQuestionnaireComplete = (data) => {
     // Update local session so it dismisses
     const updatedSession = { ...userSession, questionnaire_completed: true };
-    localStorage.setItem('jsmerp_master_session', JSON.stringify(updatedSession));
     // Force a reload to cleanly apply state
     window.location.reload();
   };

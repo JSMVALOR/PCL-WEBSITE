@@ -18,7 +18,7 @@ export default function AdminFAB({ isEmbedded = false }) {
  {/* Action Menu */}
  <div className={`flex flex-col gap-2 transition duration-300 origin-bottom right-0 ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4 pointer-events-none'}`}>
  {actions.map((action, i) => (
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} 
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} 
  key={i} 
  className="flex items-center gap-3 bg-themePanel/85 backdrop-blur-2xl border border-white/5 p-2 pr-4 rounded-lg hover:border-themeAccent hover:text-themeAccent transition group"
  style={{ transitionDelay: `${(actions.length - i) * 30}ms` }}

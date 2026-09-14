@@ -140,7 +140,7 @@ export default function LeaveAnalytics({ isEmbedded = false }) {
  
  <div className="flex justify-between items-center mb-4 lg:mb-6">
  <h3 className={`font-bold tracking-tight text-base lg:text-lg text-themeText`}>Peak Leave Periods</h3>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">Export Report</button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">Export Report</button>
  </div>
  
  <div className="flex items-end gap-1.5 lg:gap-2 h-32 lg:h-48 pt-4">

@@ -293,7 +293,7 @@ export default function Notices({ setActiveTab }) {
                                 <i className="fa-solid fa-link"></i> Go to Portal
                             </motion.button>
                         )}
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} className="bg-white/10 backdrop-blur-md shadow-inner border border-black/5 dark:border-white/10 hover:border-white/30 text-themeTextSec hover:text-themeText px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
+                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-md shadow-inner border border-black/5 dark:border-white/10 hover:border-white/30 text-themeTextSec hover:text-themeText px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2">
                             <i className="fa-solid fa-paperclip"></i> Download Attachments
                         </motion.button>
                     </div>

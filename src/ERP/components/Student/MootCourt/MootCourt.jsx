@@ -445,7 +445,7 @@ export default function MootCourt({ isEmbedded = false }) {
  <i className="fa-solid fa-lock-open"></i> Access Document
  </a>
  ) : (
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled className="w-full py-2.5 bg-transparent border border-black/10 dark:border-white/20 rounded-lg text-[9px] lg:text-[10px] font-black text-themeTextSec opacity-50 uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} disabled className="w-full py-2.5 bg-transparent border border-black/10 dark:border-white/20 rounded-lg text-[9px] lg:text-[10px] font-black text-themeTextSec opacity-50 uppercase tracking-widest flex items-center justify-center gap-2 cursor-not-allowed">
  <i className="fa-solid fa-lock"></i> No File Attached
  </button>
  )}

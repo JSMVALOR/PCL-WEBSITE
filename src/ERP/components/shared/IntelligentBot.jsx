@@ -216,7 +216,7 @@ export default function IntelligentBot() {
                     <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 border-2 border-themePanel rounded-full animate-pulse"></span>
                 </button>
             ) : (
-                <div className="w-[calc(100vw-2rem)] max-w-sm h-[550px] max-h-[80vh] bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-3xl flex flex-col overflow-hidden animate-[fadeIn_0.25s_cubic-bezier(0.16,1,0.3,1)] relative before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/40 before:to-transparent before:pointer-events-none dark:before:bg-none">
+                <div className="w-[calc(100vw-2rem)] max-w-sm h-[550px] max-h-[80vh] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-3xl flex flex-col overflow-hidden animate-[fadeIn_0.25s_cubic-bezier(0.16,1,0.3,1)] relative before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/40 before:to-transparent before:pointer-events-none dark:before:bg-none">
                     {/* Header */}
                     <div className="bg-black/[0.02] dark:bg-white/[0.02] border-b border-black/[0.04] dark:border-white/[0.08] p-4 flex justify-between items-center z-10 shrink-0">
                         <div className="flex items-center gap-3">
@@ -251,7 +251,7 @@ export default function IntelligentBot() {
                                 className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed flex flex-col shadow-sm ${
                                     msg.sender === 'user'
                                         ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-white shadow-md self-end rounded-2xl rounded-tr-sm'
-                                        : 'bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-[#1C1C1E] dark:text-[#F2F2F7] font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
+                                        : 'bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-themeText font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
                                 }`}
                             >
                                 <span className="whitespace-pre-line">{formatMessage(msg.text)}</span>
@@ -292,7 +292,7 @@ export default function IntelligentBot() {
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder="Message Assistant..."
-                            className="flex-1 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-[#1C1C1E] dark:text-[#F2F2F7] focus:outline-none focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-[#2C2C2E] transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-[#EBEBF5]/50 font-medium"
+                            className="flex-1 bg-themeElevated backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-themeText focus:outline-none focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-[#2C2C2E] transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-themeTextSec font-medium"
                         />
                         <button
                             type="submit"

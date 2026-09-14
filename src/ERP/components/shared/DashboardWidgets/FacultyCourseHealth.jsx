@@ -84,8 +84,8 @@ export default function FacultyCourseHealth() {
             <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dx={-10} />
             <Tooltip allowEscapeViewBox={{ x: true, y: true }} 
                 cursor={{ fill: 'rgba(150, 150, 150, 0.05)' }}
-                contentStyle={{ backgroundColor: 'rgba(28, 28, 30, 0.8)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
-                itemStyle={{ color: '#fff' }}
+                contentStyle={{ backgroundColor: 'var(--theme-panel)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: 'var(--theme-text)', fontSize: '12px', fontWeight: 'bold' }}
+                itemStyle={{ color: 'var(--theme-text)' }}
                 formatter={(value) => [`${value}%`, 'Attendance']}
             />
             <Bar dataKey="attendance" radius={[0, 10, 10, 0]} barSize={20} animationDuration={1500}>

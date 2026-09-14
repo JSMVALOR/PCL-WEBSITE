@@ -1,5 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -102,8 +102,8 @@ export default function AdminCampusPulse({ className = "" }) {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dx={-10} />
                 <Tooltip allowEscapeViewBox={{ x: true, y: true }} 
-                    contentStyle={{ backgroundColor: 'rgba(28, 28, 30, 0.8)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: '#fff', fontSize: '12px', fontWeight: 'bold' }}
-                    itemStyle={{ color: '#fff' }}
+                    contentStyle={{ backgroundColor: 'var(--theme-panel)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: 'var(--theme-text)', fontSize: '12px', fontWeight: 'bold' }}
+                    itemStyle={{ color: 'var(--theme-text)' }}
                 />
                 <Area type="monotone" dataKey="students" stroke="#007AFF" strokeWidth={3} fillOpacity={1} fill="url(#colorStudentsPulse)" activeDot={{ r: 6, fill: '#007AFF', stroke: '#fff', strokeWidth: 2 }} />
                 <Area type="monotone" dataKey="faculty" stroke="#34C759" strokeWidth={3} fillOpacity={1} fill="url(#colorFacultyPulse)" activeDot={{ r: 6, fill: '#34C759', stroke: '#fff', strokeWidth: 2 }} />

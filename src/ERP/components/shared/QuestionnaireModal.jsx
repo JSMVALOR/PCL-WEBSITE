@@ -103,10 +103,10 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
     return (
         <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className={`w-full max-w-3xl bg-black/5 dark:bg-white/10 backdrop-blur-[80px] backdrop-blur-2xl shadow-premium border border-black/10 dark:border-white/20 shadow-premiumElevated rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh]`}>
+            <div className={`w-full max-w-3xl bg-themeElevated backdrop-blur-[80px] backdrop-blur-2xl shadow-premium border border-black/10 dark:border-white/20 shadow-premiumElevated rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh]`}>
                 
                 <div className="p-6 md:p-8 border-b-theme border-black/10 dark:border-white/20 flex flex-col gap-2 shrink-0">
-                    <div className="w-12 h-12 bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner flex items-center justify-center text-[#007AFF] mb-4 shadow-premiumElevated">
+                    <div className="w-12 h-12 bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner flex items-center justify-center text-themeAccent mb-4 shadow-premiumElevated">
                         <i className="fa-solid fa-clipboard-list text-xl"></i>
                     </div>
                     <h2 className={`${theme.text.heading} text-2xl`}>Comprehensive Onboarding Details</h2>
@@ -120,7 +120,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                         
                         {/* Section 1: Academic & Professional Details */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-[#007AFF] border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Background</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Background</h3>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
@@ -160,7 +160,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                         {/* Section 2: Personal & Identity Details */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-[#007AFF] border-b-theme border-black/10 dark:border-white/20 pb-2">Personal & Identity Details</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Personal & Identity Details</h3>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
@@ -196,13 +196,13 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                                         Same as Present Address
                                     </label>
                                 </div>
-                                <textarea name="permanentAddress" required rows="2" placeholder="Full permanent address" value={formData.permanentAddress} onChange={handleChange} disabled={formData.sameAsPresentAddress} className={`w-full border border-black/10 dark:border-white/20 rounded-themeBtn px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none resize-none ${formData.sameAsPresentAddress ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] backdrop-blur-2xl shadow-premium opacity-70' : 'bg-themeApp'}`}></textarea>
+                                <textarea name="permanentAddress" required rows="2" placeholder="Full permanent address" value={formData.permanentAddress} onChange={handleChange} disabled={formData.sameAsPresentAddress} className={`w-full border border-black/10 dark:border-white/20 rounded-themeBtn px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none resize-none ${formData.sameAsPresentAddress ? 'bg-themeElevated backdrop-blur-[80px] backdrop-blur-2xl shadow-premium opacity-70' : 'bg-themeApp'}`}></textarea>
                             </div>
                         </div>
 
                         {/* Section 3: Family & Emergency */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-[#007AFF] border-b-theme border-black/10 dark:border-white/20 pb-2">Family & Emergency Contacts</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Family & Emergency Contacts</h3>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
@@ -229,7 +229,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                                 <div className="flex flex-col gap-2">
                                     <label className="text-sm font-semibold text-themeText">Emergency Contact Phone *</label>
                                     <div className="flex">
-                                        <span className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] backdrop-blur-2xl shadow-premium border border-black/10 dark:border-white/20 border-r-0 rounded-l-themeBtn px-4 py-3 text-themeTextSec flex items-center select-none font-mono">+91</span>
+                                        <span className="bg-themeElevated backdrop-blur-[80px] backdrop-blur-2xl shadow-premium border border-black/10 dark:border-white/20 border-r-0 rounded-l-themeBtn px-4 py-3 text-themeTextSec flex items-center select-none font-mono">+91</span>
                                         <input type="text" name="emergencyPhone" required maxLength="10" placeholder="9876543210" value={formData.emergencyPhone} onChange={handleChange} className="w-full bg-themeApp border border-black/10 dark:border-white/20 rounded-r-themeBtn px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none font-mono" />
                                     </div>
                                 </div>
@@ -241,7 +241,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                 <div className="p-6 md:p-8 border-t-theme border-black/10 dark:border-white/20 bg-themeApp shrink-0 flex items-center justify-between">
                     <p className="text-xs text-themeTextSec">
-                        <i className="fa-solid fa-lock mr-2 text-[#007AFF]"></i>
+                        <i className="fa-solid fa-lock mr-2 text-themeAccent"></i>
                         Record will be locked upon submission.
                     </p>
                     <div className="flex gap-4">

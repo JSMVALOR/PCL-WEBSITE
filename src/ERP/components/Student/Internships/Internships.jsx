@@ -537,7 +537,7 @@ export default function Internships({ isEmbedded = false }) {
  <i className="fa-solid fa-print text-lg"></i> Print NOC
  </button>
  ) : (
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Feature coming soon!"); }} disabled className="w-full lg:w-auto bg-themePanel border-theme border-themeBorderStrong text-themeTextSec opacity-50 border border-black/10 dark:border-white/20 px-6 py-3.5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} disabled className="w-full lg:w-auto bg-themePanel border-theme border-themeBorderStrong text-themeTextSec opacity-50 border border-black/10 dark:border-white/20 px-6 py-3.5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest cursor-not-allowed flex items-center justify-center gap-2">
  <i className="fa-solid fa-lock"></i> Locked
  </button>
  )}
