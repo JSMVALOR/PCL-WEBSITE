@@ -1,7 +1,7 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "../../lib/supabase/supabaseClient";
+import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 
 export default function CredentialVerification() {
     const { id } = useParams();
@@ -30,7 +30,7 @@ export default function CredentialVerification() {
                     .select('*')
                     .eq('student_id', id)
                     .eq('status', 'verified')
-                    .order('uploaded_at', { ascending: false });
+                    .order('created_at', { ascending: false });
 
                 if (docError) throw docError;
                 setDocuments(docs || []);
@@ -61,7 +61,7 @@ export default function CredentialVerification() {
 
     if (isLoading) {
         return (
-            <div className="w-full h-screen bg-[#0a0a0a] flex items-center justify-center">
+            <div className="w-full h-screen bg-themeApp flex items-center justify-center">
                 <div className="flex items-center gap-4 text-emerald-500 animate-pulse">
                     <i className="fa-solid fa-shield-halved text-4xl"></i>
                     <h2 className="text-xl font-bold tracking-widest uppercase">Verifying Cryptographic Ledger...</h2>
@@ -72,7 +72,7 @@ export default function CredentialVerification() {
 
     if (errorMsg) {
         return (
-            <div className="w-full h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+            <div className="w-full h-screen bg-themeApp flex items-center justify-center p-4">
                 <div className="max-w-md w-full bg-[#111] border border-rose-500/30 rounded-2xl p-8 text-center">
                     <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto mb-6">
                         <i className="fa-solid fa-triangle-exclamation text-rose-500 text-2xl"></i>
@@ -88,7 +88,7 @@ export default function CredentialVerification() {
     }
 
     return (
-        <div className="w-full min-h-screen bg-[#0a0a0a] text-neutral-200 selection:bg-emerald-500/30 flex flex-col items-center py-12 px-4 sm:px-8">
+        <div className="w-full min-h-screen bg-themeApp text-neutral-200 selection:bg-emerald-500/30 flex flex-col items-center py-12 px-4 sm:px-8">
             
             <div className="max-w-3xl w-full">
                 
@@ -158,7 +158,7 @@ export default function CredentialVerification() {
                                 </div>
                                 <button 
                                     onClick={() => handlePreview(doc.file_path)}
-                                    className="w-full sm:w-auto px-5 py-2.5 bg-[#1a1a1a] hover:bg-emerald-500 hover:text-[#0a0a0a] text-neutral-300 rounded-lg text-xs font-bold uppercase tracking-widest transition-all border border-neutral-800 hover:border-emerald-500 shrink-0"
+                                    className="w-full sm:w-auto px-5 py-2.5 bg-[#1a1a1a] hover:bg-emerald-500 hover:text-themeApp text-neutral-300 rounded-lg text-xs font-bold uppercase tracking-widest transition border border-neutral-800 hover:border-emerald-500 shrink-0"
                                 >
                                     Preview Authenticated File
                                 </button>

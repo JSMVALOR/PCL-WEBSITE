@@ -10,7 +10,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Prudentia College of Law</title>
     
     <!-- Basic SEO Meta Tags -->
@@ -31,18 +31,36 @@
     <meta name="twitter:description" content="Empowering the next generation of legal professionals. Explore our modern campus, exceptional faculty, and diverse legal programs." />
     <meta name="twitter:image" content="/ASSETS/LOGOS/pcl_campus_logo.webp" />
 
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Anti-FOUC Theme Script -->
+    <!-- Anti-FOUC Theme Script for ERP -->
     <script>
       (function() {
         try {
-          var savedTheme = localStorage.getItem('erp_theme');
-          if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-          } else {
-            document.documentElement.setAttribute('data-theme', 'dark'); // Default ERP theme
+          // Only apply forced theme loading for ERP paths
+          if (window.location.pathname.startsWith('/erp')) {
+            var savedTheme = localStorage.getItem('jsmerp_theme');
+            if (savedTheme === 'light') savedTheme = 'marble-executive';
+            if (savedTheme === 'dark') savedTheme = 'dark-luxury';
+            var isDarkOS = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            var themeToApply = savedTheme || (isDarkOS ? 'dark-luxury' : 'marble-executive');
+            
+            document.documentElement.setAttribute('data-theme', themeToApply);
+            
+            var lightThemes = ['marble-executive', 'structural-neo-brutalism'];
+            if (lightThemes.indexOf(themeToApply) !== -1) {
+              document.documentElement.classList.remove('dark');
+            } else {
+              document.documentElement.classList.add('dark');
+            }
           }
         } catch (e) {}
       })();

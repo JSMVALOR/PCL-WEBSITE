@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useERP } from '../../../context/ErpContext';
-import { theme } from '../../../theme';
+import { theme } from '../../../../Shared/theme';
 import { Dialog } from '../../../utils/DialogManager';
-import pclLogo from '../../../../ASSETS/LOGOS/pcl_logo.svg';
+import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
 
 // --- Constants & Config ---
 const SIDEBAR_MIN_WIDTH = 80; // Compact width
@@ -131,7 +131,7 @@ export default function SidebarFramework({
                     style={{ paddingLeft }}
                     className={`
                         relative w-full flex items-center justify-between py-2.5 my-0.5 rounded-xl
-                        text-xs font-bold tracking-wide transition-all duration-200 outline-none
+                        text-xs font-bold tracking-wide transition duration-200 outline-none
                         ${isActive 
                             ? "bg-black/5 dark:bg-white/10 backdrop-blur-[30px] border border-black/10 dark:border-white/10 text-themeText shadow-md" 
                             : "text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 border border-transparent hover:border-black/5 dark:hover:border-white/5 hover:text-themeText"
@@ -145,7 +145,7 @@ export default function SidebarFramework({
                         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/5 bg-themeAccent rounded-r-full shadow-[0_0_12px_var(--accent)] animate-fade-in"></div>
                     )}
 
-                    <div className={`flex items-center ${isCompact ? "justify-center w-full" : "gap-3"} overflow-hidden`}>
+                    <div className={`flex items-center ${isCompact ? "justify-center w-full" : "gap-3"} min-w-0`}>
                         {/* Icon Lift Animation */}
                         <div className={`w-6 flex justify-center shrink-0 transition-transform duration-200 ${isActive ? "scale-110" : "group-hover/item:scale-110 group-hover/item:-translate-y-0.5"}`}>
                             <i className={`${link.icon} text-lg ${isActive ? "text-black dark:text-white drop-shadow-sm" : "opacity-70 group-hover/item:opacity-100 group-hover/item:text-themeText"}`}></i>
@@ -220,7 +220,7 @@ export default function SidebarFramework({
                 {/* Collapse Toggle Button (Absolute Positioned on Edge) */}
                 <button 
                     onClick={toggleSidebar} 
-                    className="absolute -right-3 top-7 w-6 h-6 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/10 dark:border-black/5 dark:border-white/10 shadow-md flex items-center justify-center text-themeTextSec hover:text-themeText hover:scale-110 transition-all z-50"
+                    className="absolute -right-3 top-7 w-6 h-6 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/10 dark:border-black/5 dark:border-white/10 shadow-md flex items-center justify-center text-themeTextSec hover:text-themeText hover:scale-110 transition z-50"
                     title={isCompact ? "Expand Sidebar" : "Collapse Sidebar"}
                 >
                     <i className={`fa-solid ${isCompact ? 'fa-chevron-right' : 'fa-chevron-left'} text-[9px]`}></i>
@@ -247,7 +247,7 @@ export default function SidebarFramework({
                                         onClick={() => setExpandedGroups(p => ({ ...p, [groupIndex]: !p[groupIndex] }))}
                                         className="flex items-center justify-between w-full px-3 py-1 mb-1 group outline-none"
                                     >
-                                        <p className="text-[9px] font-black text-themeTextSec opacity-60 group-hover:text-themeText group-hover:opacity-100 uppercase tracking-widest transition-all">
+                                        <p className="text-[9px] font-black text-themeTextSec opacity-60 group-hover:text-themeText group-hover:opacity-100 uppercase tracking-widest transition">
                                             {group.category}
                                         </p>
                                         <i className={`fa-solid fa-chevron-down text-[8px] text-themeTextSec opacity-30 transition-transform duration-300 ${isExpanded ? 'rotate-180 opacity-60' : ''}`}></i>
@@ -266,17 +266,9 @@ export default function SidebarFramework({
 
                 {/* 4. UTILITY & USER CARD ZONE */}
                 <div className="p-3 shrink-0 border-t border-black/5 dark:border-white/5 flex flex-col gap-2">
-                    <button 
-                        onClick={handleLogout}
-                        className={`w-full flex items-center justify-center gap-3 p-2.5 rounded-xl text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 transition-all border border-rose-500/10 hover:border-rose-500/30 hover:shadow-[0_0_15px_rgba(244,63,94,0.15)] group relative overflow-hidden`}
-                        title="Sign Out"
-                    >
-                        <i className="fa-solid fa-power-off text-sm group-hover:scale-110 transition-transform"></i>
-                        {!isCompact && <span className="text-xs font-bold whitespace-nowrap">Sign Out</span>}
-                    </button>
                     
                     {!isCompact && (
-                        <div onClick={() => handleTabSwitch('credentials')} className="flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-black/5 dark:border-white/10 mt-1 cursor-pointer hover:bg-black/5 dark:bg-white/5 hover:border-black/20 dark:border-black/10 dark:border-white/20 transition-all shadow-inner group-hover:scale-[1.02]">
+                        <div onClick={() => handleTabSwitch('credentials')} className="flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-black/5 dark:border-white/10 mt-1 cursor-pointer hover:bg-black/5 dark:bg-white/5 hover:border-black/20 dark:border-black/10 dark:border-white/20 transition shadow-inner group-hover:scale-[1.02]">
                             <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/10 dark:border-black/5 dark:border-white/10 flex items-center justify-center font-black text-xs text-themeText relative shrink-0 overflow-hidden">
                                 {userSession?.profile_picture_url ? (
                                     <img src={userSession.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
@@ -330,7 +322,7 @@ export default function SidebarFramework({
                             whileTap={{ scale: 0.9 }}
                             key={link.id}
                             onClick={() => handleTabSwitch(link.id)}
-                            className={`flex flex-col items-center justify-center w-16 gap-1.5 transition-all duration-300 relative z-10 ${isActive ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-white'}`}
+                            className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${isActive ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-white'}`}
                         >
                             <div className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative overflow-hidden ${isActive ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border border-black/20 dark:border-black/10 dark:border-white/20' : 'bg-transparent'}`}>
                                 
@@ -344,7 +336,7 @@ export default function SidebarFramework({
                 <motion.button 
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className={`flex flex-col items-center justify-center w-16 gap-1.5 transition-all duration-300 relative z-10 ${mobileMenuOpen ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-white'}`}
+                    className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${mobileMenuOpen ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-white'}`}
                 >
                     <div className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative overflow-hidden ${mobileMenuOpen ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border border-black/20 dark:border-black/10 dark:border-white/20' : 'bg-transparent'}`}>
                         

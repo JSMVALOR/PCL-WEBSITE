@@ -1,7 +1,9 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
-@import './STYLES/theme.css';
+
 @import "tailwindcss";
+
+@custom-variant dark (&:is(.dark, .dark *));
 
 @theme {
   --font-sans: 'Plus Jakarta Sans', sans-serif;
@@ -49,13 +51,10 @@
 .slide {
   height: 100dvh;
   width: 100vw;
-  position: sticky;
-  top: 0;
+  position: relative;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  /* Shadow creates depth as one slide scrolls over another */
-  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.4);
-  background-color: var(--bg-color); /* Ensure opaque background to cover slides underneath */
+  background-color: var(--bg-color);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -94,11 +93,11 @@
   width: 32px;
   height: 32px;
   background-color: var(--primary-color);
-  -webkit-mask-image: url('./ASSETS/LOGOS/pcl_logo.svg');
+  -webkit-mask-image: url('./Shared/Assets/LOGOS/pcl_logo.svg');
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
-  mask-image: url('./ASSETS/LOGOS/pcl_logo.svg');
+  mask-image: url('./Shared/Assets/LOGOS/pcl_logo.svg');
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
@@ -502,7 +501,7 @@
   background: none;
   border: none;
   color: var(--text-muted);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
@@ -533,7 +532,7 @@
   position: relative;
 }
 .tab-text {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 18px;
   line-height: 1.7;
   color: var(--text-muted);
@@ -736,7 +735,7 @@
   letter-spacing: -1px;
 }
 .dramatic-title .text-muted {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 2.2rem;
   font-style: italic;
   font-weight: 300;
@@ -899,7 +898,7 @@
   text-align: center;
 }
 .metric-number {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 5.5rem;
   font-weight: 300;
   letter-spacing: -2px;
@@ -909,7 +908,7 @@
 }
 .metric-item p {
   color: var(--text-muted);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 3px;
@@ -937,7 +936,7 @@
   letter-spacing: -0.5px;
 }
 .admissions-body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.05rem;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.6;
@@ -953,7 +952,7 @@
   border-radius: 30px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -1036,7 +1035,7 @@
 }
 .contact-box a, .contact-box p {
   color: rgba(255, 255, 255, 0.6);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.95rem;
   line-height: 1.6;
   text-decoration: none;
@@ -1488,10 +1487,7 @@
   transition: outline-offset 0.1s ease;
 }
 
-/* First slide doesn't need a top shadow */
-.slide:first-child {
-  box-shadow: none;
-}
+
 
 /* TLH Button Animation */
 .tlh-btn {
@@ -1514,25 +1510,25 @@
   left: 0;
   top: 0;
   height: 100%;
-  background-color: var(--primary-color);
+  background-color: var(--accent);
   width: 3px;
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 0;
 }
-.tlh-btn:hover::before {
+.tlh-btn:not(:disabled):hover::before {
   width: 100%;
 }
 .tlh-btn > * {
   position: relative;
   z-index: 1;
 }
-.tlh-btn:hover {
+.tlh-btn:not(:disabled):hover {
   color: #111;
 }
 .tlh-btn svg {
   transition: transform 0.35s ease;
 }
-.tlh-btn:hover svg {
+.tlh-btn:not(:disabled):hover svg {
   transform: translateX(4px);
 }
 
@@ -1540,4 +1536,472 @@
 html.home-snap {
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur-2xl, .backdrop-blur-md, .backdrop-blur-xl, .backdrop-blur, .theme-panel-surface {
+    backdrop-filter: none !important;
+  }
+}
+
+/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+
+
+@layer base {
+
+  /* Chrome/Safari AutoFill Fix for Dark Mode */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #0a0a0a inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  /* Dropdown Select Fix for themes */
+  select {
+    @apply appearance-none outline-none border;
+    background-color: var(--bg-panel);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    color-scheme: dark light;
+  }
+  select:focus {
+    border-color: var(--accent);
+  }
+  select option {
+    background-color: var(--bg-panel);
+    color: var(--text-primary);
+  }
+
+  :root {
+    --bg-app: #080808;
+    --bg-panel: #121212;
+    --bg-elevated: #1C1C1C;
+    --text-primary: #F5F5F0;
+    --text-secondary: #A1A1AA;
+    --accent: #FFC107;
+    --accent-muted: #C5A880;
+    --border-color: rgba(255, 193, 7, 0.1);
+    --border-strong: rgba(255, 193, 7, 0.2);
+    --radius-panel: 0.75rem;
+    --radius-btn: 0.5rem;
+    --border-width: 1px;
+    --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --text-on-accent: #000000;
+    --panel-blur: 40px;
+    --panel-opacity: 0.85;
+  }
+
+    
+  /* WEBSITE SPECIFIC LIGHT THEME (Only applies when no data-theme is set) */
+  /* system-website-light identifier */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --bg-app: #f8f9fa;
+      --bg-panel: #ffffff;
+      --bg-elevated: #f1f5f9;
+      --text-primary: #111111;
+      --text-secondary: #555555;
+      /* Website strictly keeps the Amber Gold accent in both modes */
+      --accent: #FFC107;
+      --accent-muted: #FFB300;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.15);
+      --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+      --text-on-accent: #000000;
+      --panel-blur: 40px;
+      --panel-opacity: 0.90;
+    }
+  }
+
+  [data-theme="marble-executive"] {
+    --bg-app: #F5F7FA;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #F8FAFC;
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+    --accent: #2563EB;
+    --accent-muted: #60A5FA;
+    --border-color: rgba(15, 23, 42, 0.08);
+    --border-strong: rgba(15, 23, 42, 0.15);
+    --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    --text-on-accent: #FFFFFF;
+    --panel-blur: 40px;
+    --panel-opacity: 0.90;
+  }
+
+  [data-theme="midnight-justice"] {
+    --bg-app: #0B1120;
+    --bg-panel: #111827;
+    --bg-elevated: #1F2937;
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --accent: #E2E8F0;
+    --accent-muted: #94A3B8;
+    --border-color: rgba(226, 232, 240, 0.1);
+    --border-strong: rgba(226, 232, 240, 0.2);
+    --text-on-accent: #000000;
+    --panel-blur: 40px;
+    --panel-opacity: 0.85;
+  }
+
+  [data-theme="emerald-chancery"] {
+    --bg-app: #061410;
+    --bg-panel: #0B1E17;
+    --bg-elevated: #122E23;
+    --text-primary: #ECFDF5;
+    --text-secondary: #6EE7B7;
+    --accent: #CBA86B;
+    --accent-muted: #D1D5DB;
+    --border-color: rgba(203, 168, 107, 0.15);
+    --border-strong: rgba(203, 168, 107, 0.3);
+    --text-on-accent: #000000;
+    --panel-blur: 40px;
+    --panel-opacity: 0.85;
+  }
+
+  [data-theme="crimson-advocate"] {
+    --bg-app: #110707;
+    --bg-panel: #1A0B0B;
+    --bg-elevated: #261313;
+    --text-primary: #FEF2F2;
+    --text-secondary: #FECACA;
+    --accent: #FCA5A5;
+    --accent-muted: #EF4444;
+    --border-color: rgba(252, 165, 165, 0.15);
+    --border-strong: rgba(252, 165, 165, 0.3);
+    --text-on-accent: #000000;
+    --panel-blur: 40px;
+    --panel-opacity: 0.85;
+  }
+
+  [data-theme="imperial-crown"] {
+    --bg-app: #0B0710;
+    --bg-panel: #130D1A;
+    --bg-elevated: #1E1528;
+    --text-primary: #FAF5FF;
+    --text-secondary: #D8B4FE;
+    --accent: #FDE047;
+    --accent-muted: #E879F9;
+    --border-color: rgba(253, 224, 71, 0.15);
+    --border-strong: rgba(253, 224, 71, 0.3);
+    --text-on-accent: #000000;
+    --panel-blur: 40px;
+    --panel-opacity: 0.85;
+  }
+
+  [data-theme="structural-neo-brutalism"] {
+    --bg-app: #f4f4f0;
+    --bg-panel: #ffffff;
+    --bg-elevated: #ffffff;
+    --text-primary: #000000;
+    --text-secondary: #000000;
+    --accent: #FF3333;
+    --accent-muted: #E60000;
+    --border-color: #000000;
+    --border-strong: #000000;
+    --radius-panel: 0px;
+    --radius-btn: 0px;
+    --border-width: 4px;
+    --shadow-elevated: 6px 6px 0px #000000;
+    --text-on-accent: #FFFFFF;
+    --panel-blur: 0px;
+    --panel-opacity: 1;
+  }
+
+  body {
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    @apply antialiased font-sans transition-colors duration-500;
+    /* Custom Scrollbar for Webkit - Flat Minimalist */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-elevated);
+      border-radius: var(--radius-btn);
+      border: 1px solid var(--border-color);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+  }
+
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  /* Retained for backward compatibility during migration, but stripped of glass effects */
+  .glass {
+    @apply bg-[#0a0a0a] border border-[#222222];
+  }
+
+  .glass-card {
+    @apply bg-[#141414] border border-[#333333];
+  }
+}
+
+@layer components {
+  /* Minimal UI transitions */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out forwards;
+  }
+}
+@layer components {
+  /* ERP Universal Button Animation (Main Website Style) */
+  .btn-erp {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-panel);
+    color: var(--text-primary);
+    transition: color 0.35s ease, border-color 0.35s ease;
+    cursor: pointer;
+    border-radius: var(--radius-btn);
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .btn-erp::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background-color: var(--accent);
+    width: 3px;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 0;
+  }
+  
+  .btn-erp:hover::before {
+    width: 100%;
+  }
+  
+  .btn-erp > * {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .btn-erp:hover {
+    color: var(--text-on-accent) !important;
+    border-color: var(--accent);
+  }
+  
+  .btn-erp i, .btn-erp svg {
+    transition: transform 0.35s ease;
+  }
+  
+  .btn-erp:hover i, .btn-erp:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Solid Variant */
+  .btn-erp-solid {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: var(--text-on-accent);
+    cursor: pointer;
+    border-radius: var(--radius-btn);
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+  }
+  
+  .btn-erp-solid:hover {
+    transform: translateY(-2px);
+    
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur-2xl,
+  .backdrop-blur-md,
+  .backdrop-blur-xl,
+  .backdrop-blur {
+    backdrop-filter: none !important;
+    background-color: var(--bg-panel) !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --border-color: rgba(255, 255, 255, 0.4);
+    --border-strong: rgba(255, 255, 255, 0.8);
+    --text-secondary: #E2E8F0;
+  }
+  
+  /* WEBSITE SPECIFIC LIGHT THEME (Only applies when no data-theme is set) */
+  /* system-website-light identifier */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --bg-app: #f8f9fa;
+      --bg-panel: #ffffff;
+      --bg-elevated: #f1f5f9;
+      --text-primary: #111111;
+      --text-secondary: #555555;
+      /* Website strictly keeps the Amber Gold accent in both modes */
+      --accent: #FFC107;
+      --accent-muted: #FFB300;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.15);
+      --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+      --text-on-accent: #000000;
+      --panel-blur: 40px;
+      --panel-opacity: 0.90;
+    }
+  }
+
+  [data-theme="marble-executive"] {
+    --border-color: rgba(0, 0, 0, 0.4);
+    --border-strong: rgba(0, 0, 0, 0.8);
+    --text-secondary: #334155;
+  }
+}
+
+@layer utilities {
+  .theme-panel-surface {
+    background-color: color-mix(in srgb, var(--bg-panel) calc(var(--panel-opacity) * 100%), transparent);
+    backdrop-filter: blur(var(--panel-blur));
+    -webkit-backdrop-filter: blur(var(--panel-blur));
+  }
+}
+
+
+  /* Bridge Website Variables to ERP Theme System */
+  :root, [data-theme] {
+    --bg-color: var(--bg-app);
+    --text-color: var(--text-primary);
+    
+    --primary-color: var(--accent);
+    --primary-hover: var(--accent-muted);
+    --primary-glow: transparent;
+    --primary-light: var(--accent);
+    
+    --card-bg: color-mix(in srgb, var(--bg-panel) 85%, transparent);
+    --card-solid: var(--bg-panel);
+    --card-border: var(--border-color);
+    --nav-bg: color-mix(in srgb, var(--bg-app) 85%, transparent);
+    --text-muted: var(--text-secondary);
+    --glass-shadow: rgba(0, 0, 0, 0.5);
+    
+    /* Hero Variables mapping to ERP */
+    --hero-overlay-1: color-mix(in srgb, var(--bg-app) 50%, transparent);
+    --hero-overlay-2-start: color-mix(in srgb, var(--bg-app) 80%, transparent);
+    --hero-overlay-2-mid: color-mix(in srgb, var(--bg-app) 40%, transparent);
+    --hero-overlay-2-end: color-mix(in srgb, var(--bg-app) 90%, transparent);
+    --hero-overlay-3: color-mix(in srgb, var(--bg-app) 60%, transparent);
+    --hero-badge-bg: color-mix(in srgb, var(--bg-panel) 30%, transparent);
+    --hero-pill-bg: color-mix(in srgb, var(--bg-panel) 60%, transparent);
+    --hero-metrics-bg: color-mix(in srgb, var(--bg-panel) 80%, transparent);
+    --hero-border: var(--border-color);
+    --hero-metrics-border: var(--border-strong);
+  }
+
+  /* Frosted Glass Utilities from Website */
+  .glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px var(--border-width) var(--card-border);
+  }
+
+  .glass-nav {
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  .glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--border-width) solid var(--card-border);
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+    border-radius: var(--radius-panel);
+    padding: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 var(--glass-shadow);
+  }
+
+/* Theme Reactive Logo */
+.theme-logo {
+  filter: brightness(0) invert(1); /* Default dark mode logo */
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) .theme-logo {
+    filter: none !important; /* System light mode logo */
+  }
+}
+
+html[data-theme="marble-executive"] .theme-logo,
+html[data-theme="structural-neo-brutalism"] .theme-logo {
+  filter: none !important; /* ERP light themes */
 }

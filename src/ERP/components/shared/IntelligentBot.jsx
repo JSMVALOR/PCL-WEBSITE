@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ErpContext';
-import { supabase } from '../../lib/supabase/supabaseClient';
+import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 
 // Simple inline markdown parser for the bot
 const formatMessage = (text) => {
@@ -103,21 +103,54 @@ export default function IntelligentBot() {
         }
     };
 
-    const handleAdminCommands = (text) => {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes('suspend') || lowerText.includes('disciplinary')) {
-            setTimeout(() => { setIsOpen(false); navigate('/admin/users'); }, 1500);
-            return "Navigating to **Identity & Access Management** for disciplinary actions...";
+    const handleNavigationCommands = (text) => {
+        const lower = text.toLowerCase();
+        const role = userSession?.role || 'student';
+        const prefix = role === 'admin' ? '/admin' : role === 'faculty' ? '/faculty' : '/student';
+        
+        if (lower.includes('fees') || lower.includes('payment')) {
+            setTimeout(() => { setIsOpen(false); navigate(role === 'admin' ? '/admin/finance' : '/student/fees'); }, 1500);
+            return "Routing you to the **Financial Ledger**...";
         }
-        if (lowerText.includes('draft notice') || lowerText.includes('new notice')) {
-            setTimeout(() => { setIsOpen(false); navigate('/admin/notices'); }, 1500);
-            return "Opening the **Broadcast Center** to draft a new notice...";
+        if (lower.includes('timetable') || lower.includes('schedule')) {
+            setTimeout(() => { setIsOpen(false); navigate(role === 'admin' ? '/admin/timetablebuilder' : `${prefix}/timetable`); }, 1500);
+            return "Pulling up the **Master Schedule Engine**...";
         }
-        if (lowerText.includes('add seats') || lowerText.includes('increase capacity')) {
-            setTimeout(() => { setIsOpen(false); navigate('/admin/curriculum'); }, 1500);
-            return "Navigating to **Master Timetable Builder** to manage capacities.";
+        if (lower.includes('course') || lower.includes('material')) {
+            setTimeout(() => { setIsOpen(false); navigate(`${prefix}/materials`); }, 1500);
+            return "Navigating to your **Course Vault**...";
         }
-        return null; 
+        if (lower.includes('sql') || lower.includes('database')) {
+            if (role === 'admin') {
+                setTimeout(() => { setIsOpen(false); navigate('/admin/sql'); }, 1500);
+                return "Initializing **SQL Studio** direct interface...";
+            }
+        }
+        if (lower.includes('approve') || lower.includes('leave')) {
+             if (role === 'admin') {
+                setTimeout(() => { setIsOpen(false); navigate('/admin/adminapprovals'); }, 1500);
+                return "Taking you to **Central Approvals**...";
+             }
+        }
+        if (lower.includes('mentorship') || lower.includes('mentor')) {
+            setTimeout(() => { setIsOpen(false); navigate(`${prefix}/mentorship`); }, 1500);
+            return "Opening the **Mentorship Hub**...";
+        }
+        if (role === 'admin') {
+            if (lower.includes('suspend') || lower.includes('disciplinary')) {
+                setTimeout(() => { setIsOpen(false); navigate('/admin/users'); }, 1500);
+                return "Navigating to **User Management** for disciplinary protocol...";
+            }
+            if (lower.includes('draft notice') || lower.includes('new notice')) {
+                setTimeout(() => { setIsOpen(false); navigate('/admin/notices'); }, 1500);
+                return "Opening the **Broadcast Center** to draft a new notice...";
+            }
+            if (lower.includes('add seats') || lower.includes('capacity')) {
+                setTimeout(() => { setIsOpen(false); navigate('/admin/academic'); }, 1500);
+                return "Navigating to **Course Builder** to manage capacities.";
+            }
+        }
+        return null;
     };
 
     const processMessage = (textToShow, textToProcess = textToShow) => {
@@ -127,11 +160,7 @@ export default function IntelligentBot() {
         setIsTyping(true);
 
         setTimeout(async () => {
-            let botReply = null;
-
-            if (userSession?.role === 'admin') {
-                botReply = handleAdminCommands(textToProcess);
-            }
+            let botReply = handleNavigationCommands(textToProcess);
 
             if (!botReply) {
                 if (matchKeywords(textToProcess, urgentKeywords)) {
@@ -153,7 +182,7 @@ export default function IntelligentBot() {
                     if (userSession?.role === 'admin') {
                         botReply = "Command not recognized. Try **'draft notice'**, **'suspend [student]'**, or **'add seats'**.";
                     } else {
-                        botReply = "I couldn't perfectly match that. Try asking me about **notices**, **assignments**, or say **'help'** for emergencies.";
+                        botReply = "I couldn't process that command natively. However, you can ask me to **'open fees'**, **'show timetable'**, or say **'help'** for emergencies.";
                     }
                 }
             }
@@ -180,16 +209,16 @@ export default function IntelligentBot() {
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="w-14 h-14 rounded-full bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-black/5 dark:border-white/10 flex items-center justify-center text-themeAccent hover:scale-110 hover:shadow-themeAccent/20 transition-all cursor-pointer group"
+                    className="w-14 h-14 rounded-full bg-themePanel/85 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/5 dark:border-white/10 flex items-center justify-center text-themeAccent hover:scale-110 hover:shadow-themeAccent/30 transition-all duration-300 cursor-pointer group relative"
                     aria-label="Open Assistant"
                 >
                     <i className="fa-solid fa-robot text-2xl group-hover:rotate-12 transition-transform"></i>
                     <span className="absolute top-0 right-0 w-3 h-3 bg-green-500 border-2 border-themePanel rounded-full animate-pulse"></span>
                 </button>
             ) : (
-                <div className="w-[calc(100vw-2rem)] max-w-sm h-[550px] max-h-[80vh] bg-themePanel/95 backdrop-blur-3xl shadow-premium border border-black/5 dark:border-white/10 shadow-2xl rounded-2xl flex flex-col overflow-hidden animate-[fadeIn_0.25s_cubic-bezier(0.16,1,0.3,1)]">
+                <div className="w-[calc(100vw-2rem)] max-w-sm h-[550px] max-h-[80vh] bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-3xl flex flex-col overflow-hidden animate-[fadeIn_0.25s_cubic-bezier(0.16,1,0.3,1)] relative before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/40 before:to-transparent before:pointer-events-none dark:before:bg-none">
                     {/* Header */}
-                    <div className="bg-white/5 border-b border-white/5 p-4 flex justify-between items-center z-10 shrink-0">
+                    <div className="bg-black/[0.02] dark:bg-white/[0.02] border-b border-black/[0.04] dark:border-white/[0.08] p-4 flex justify-between items-center z-10 shrink-0">
                         <div className="flex items-center gap-3">
                             <div className="relative">
                                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-themeAccent to-indigo-500 flex items-center justify-center shadow-lg shadow-themeAccent/20">
@@ -215,14 +244,14 @@ export default function IntelligentBot() {
                     </div>
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-gradient-to-b from-transparent to-black/20 flex flex-col no-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-transparent flex flex-col no-scrollbar">
                         {messages.map((msg) => (
                             <div
                                 key={msg.id}
                                 className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed flex flex-col shadow-sm ${
                                     msg.sender === 'user'
-                                        ? 'bg-themeAccent text-white self-end rounded-2xl rounded-tr-sm'
-                                        : 'bg-[#111] border border-white/5 text-neutral-300 self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
+                                        ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-white shadow-md self-end rounded-2xl rounded-tr-sm'
+                                        : 'bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-[#1C1C1E] dark:text-[#F2F2F7] font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
                                 }`}
                             >
                                 <span className="whitespace-pre-line">{formatMessage(msg.text)}</span>
@@ -230,7 +259,7 @@ export default function IntelligentBot() {
                         ))}
                         
                         {isTyping && (
-                            <div className="bg-[#111] border border-white/5 self-start rounded-2xl rounded-tl-sm px-4 py-3.5 bot-msg-anim flex gap-1.5 items-center shadow-lg">
+                            <div className="bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] self-start rounded-2xl rounded-tl-sm px-4 py-3.5 bot-msg-anim flex gap-1.5 items-center shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)]">
                                 <div className="w-1.5 h-1.5 rounded-full bg-themeAccent/70 animate-bounce" style={{ animationDelay: '0ms' }}></div>
                                 <div className="w-1.5 h-1.5 rounded-full bg-themeAccent/70 animate-bounce" style={{ animationDelay: '150ms' }}></div>
                                 <div className="w-1.5 h-1.5 rounded-full bg-themeAccent/70 animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -240,7 +269,7 @@ export default function IntelligentBot() {
                     </div>
 
                     {/* Preset Chips */}
-                    <div className="px-3 py-3 flex gap-2 overflow-x-auto no-scrollbar shrink-0 bg-[#0a0a0a]/50 border-t border-white/5">
+                    <div className="px-3 py-3 flex gap-2 overflow-x-auto no-scrollbar shrink-0 bg-black/[0.02] dark:bg-white/[0.02] border-t border-black/[0.04] dark:border-white/[0.08]">
                         {(userSession?.role === 'admin' 
                             ? ['Draft Notice', 'Suspend ID', 'Add Seats', 'Clear']
                             : ['📰 Notices', '📝 Assignments', '🚨 Help', 'Clear']
@@ -249,7 +278,7 @@ export default function IntelligentBot() {
                                 key={idx}
                                 onClick={() => handleChipClick(chip)}
                                 disabled={isTyping}
-                                className="whitespace-nowrap px-4 py-1.5 rounded-full border border-black/5 dark:border-white/10 bg-white/5 hover:bg-themeAccent hover:border-themeAccent text-[11px] font-bold text-themeText transition-all flex-shrink-0 disabled:opacity-50 cursor-pointer shadow-sm active:scale-95"
+                                className="whitespace-nowrap px-4 py-1.5 rounded-full border border-black/5 dark:border-white/10 bg-white/5 hover:bg-themeAccent hover:border-themeAccent text-[11px] font-bold text-themeText transition flex-shrink-0 disabled:opacity-50 cursor-pointer shadow-sm active:scale-95"
                             >
                                 {chip}
                             </button>
@@ -257,18 +286,18 @@ export default function IntelligentBot() {
                     </div>
 
                     {/* Input Area */}
-                    <form onSubmit={handleSend} className="p-3 bg-[#0a0a0a] flex items-center gap-2 shrink-0">
+                    <form onSubmit={handleSend} className="p-3 bg-transparent flex items-center gap-2 shrink-0 border-t border-black/[0.04] dark:border-white/[0.08]">
                         <input
                             type="text"
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder="Message Assistant..."
-                            className="flex-1 bg-[#1a1a1a] border border-black/5 dark:border-white/10 rounded-full pl-5 pr-4 py-3 text-sm text-themeText focus:outline-none focus:border-themeAccent/50 focus:bg-[#222] transition-all placeholder:text-neutral-500 font-medium"
+                            className="flex-1 bg-black/5 dark:bg-white/10 backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-[#1C1C1E] dark:text-[#F2F2F7] focus:outline-none focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-[#2C2C2E] transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-[#EBEBF5]/50 font-medium"
                         />
                         <button
                             type="submit"
                             disabled={!inputText.trim() || isTyping}
-                            className="w-11 h-11 rounded-full bg-themeAccent flex items-center justify-center text-white cursor-pointer hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-themeAccent/20"
+                            className="w-11 h-11 rounded-full bg-themeAccent flex items-center justify-center text-white cursor-pointer hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-themeAccent/20"
                             aria-label="Send Message"
                         >
                             <i className="fa-solid fa-paper-plane text-sm translate-x-[-1px] translate-y-[1px]"></i>

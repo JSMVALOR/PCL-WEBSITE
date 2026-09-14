@@ -1,0 +1,111 @@
+/* © 2026 JSM Associates & Innovation. All Rights Reserved. */
+.preloader-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-app);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2147483647;
+  overflow: hidden;
+}
+
+.preloader-container {
+  position: relative;
+  width: 400px;
+  max-width: 80%;
+  will-change: mask-position, -webkit-mask-position;
+
+  /* The CSS mask that creates the soft left-to-right sweep */
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 55%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 55%);
+  -webkit-mask-size: 250% 100%;
+  mask-size: 250% 100%;
+
+  /* Starts positioned off-screen to the right (hidden) */
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+
+  /* A single reveal sweep with an "ease-out-expo"-style curve for a
+     smoother, more premium finish than the previous ease-out. */
+  animation: flow-reveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Sits behind the logo and drives the pulsing glow using only
+   opacity + transform, both of which the compositor can animate
+   without repainting the SVG itself. The previous version animated
+   the svg's `filter` directly every frame, which is far more
+   expensive on a mark with this many paths. The logo now carries a
+   single static drop-shadow instead. */
+.preloader-glow {
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  border-radius: 50%;
+  display: none !important;
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: glow-pulse 2.4s ease-in-out 1.1s infinite alternate;
+  pointer-events: none;
+}
+
+.preloader-svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: none !important;
+}
+
+/* Fills the entire logo with solid gold instantly */
+.preloader-svg path {
+  fill: var(--accent) !important;
+  stroke: none !important;
+}
+
+/* Animates the mask to reveal the logo from left to right */
+@keyframes flow-reveal {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+/* Breathing glow — opacity/transform only, GPU-composited */
+@keyframes glow-pulse {
+  from {
+    opacity: 0.35;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+@media (max-width: 768px) {
+  .preloader-container {
+    width: 200px;
+    max-width: 60%;
+  }
+}
+
+/* Respect users who've asked for reduced motion: keep the logo
+   visible and gently lit, but drop the sweep and the pulse loop. */
+@media (prefers-reduced-motion: reduce) {
+  .preloader-container {
+    animation: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .preloader-glow {
+    animation: none;
+    opacity: 0.5;
+  }
+}

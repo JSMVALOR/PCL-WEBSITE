@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block admin and erp routes from search engines
+Disallow: /admin/
+Disallow: /erp/
+Disallow: /student/
+Disallow: /faculty/
+Disallow: /login/
+Disallow: /verify/
+
+Sitemap: https://prudentiacollege.edu/sitemap.xml

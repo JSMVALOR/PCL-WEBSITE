@@ -33,6 +33,33 @@ export const Dialog = {
         });
     },
 
+    
+    prompt: (message, title = "Input Required", defaultValue = "") => {
+        return new Promise((resolve) => {
+            if (_setDialogState) {
+                _setDialogState({
+                    isOpen: true,
+                    type: 'prompt',
+                    title,
+                    message,
+                    inputValue: defaultValue,
+                    onConfirm: (val) => {
+                        _setDialogState(prev => ({ ...prev, isOpen: false }));
+                        resolve(val);
+                    },
+                    onCancel: () => {
+                        _setDialogState(prev => ({ ...prev, isOpen: false }));
+                        resolve(null);
+                    }
+                });
+            } else {
+                console.warn("DialogContainer not mounted. Falling back to native prompt.");
+                const res = window.prompt(message, defaultValue);
+                resolve(res);
+            }
+        });
+    },
+
     confirm: (message, title = "Confirmation Required") => {
         return new Promise((resolve) => {
             if (_setDialogState) {
@@ -58,3 +85,6 @@ export const Dialog = {
         });
     }
 };
+
+// Expose globally for imperative access
+window.erpDialog = Dialog;

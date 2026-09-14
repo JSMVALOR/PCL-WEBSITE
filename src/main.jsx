@@ -5,6 +5,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 import RootApp from './RootApp.jsx'
+import { NotificationProvider } from './Shared/context/NotificationContext'
+
 import { HelmetProvider } from 'react-helmet-async'
 import * as Sentry from "@sentry/react";
 
@@ -24,7 +26,9 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>
     <BrowserRouter>
-      <RootApp />
+      <NotificationProvider>
+        <RootApp />
+      </NotificationProvider>
     </BrowserRouter>
     </HelmetProvider>
     <Analytics />

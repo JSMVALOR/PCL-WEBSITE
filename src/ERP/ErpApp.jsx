@@ -3,10 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import OTPVerification from './components/Login/OTPVerification';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { theme } from './theme';
+import { theme } from '../Shared/theme';
 import { useERP } from './context/ErpContext';
-import './index.css';
-import pclLogo from '../ASSETS/LOGOS/pcl_logo.svg';
+import pclLogo from '../Shared/Assets/LOGOS/pcl_logo.svg';
 
 // ==========================================
 // 1. AUTH & LAYOUT IMPORTS
@@ -21,7 +20,6 @@ import AdminSidebar from './components/Admin/AdminSidebar/AdminSidebar';
 // ==========================================
 // 2. SHARED PORTAL MODULES
 // ==========================================
-import Profile from './components/Student/Profile/Profile';
 import Notices from './components/Student/Notices/Notices';
 import Helpdesk from './components/Student/Helpdesk/Helpdesk';
 import Credentials from './components/Student/Credentials/Credentials';
@@ -69,7 +67,6 @@ import FacultyAdminHub from './components/Faculty/FacultyAdminHub/FacultyAdminHu
 import ClassRoster from './components/Faculty/ClassRoster/ClassRoster';
 import FacultyTimetable from './components/Faculty/FacultyTimetable/FacultyTimetable';
 import FacultyCourses from './components/Faculty/FacultyCourses/FacultyCourses';
-import MarksEntry from './components/Faculty/MarksEntry/MarksEntry';
 import FacultyMentorship from './components/Faculty/FacultyMentorship/FacultyMentorship';
 import FacultyClinicsHub from './components/Faculty/FacultyClinicsHub/FacultyClinicsHub';
 import FacultyLeave from './components/Faculty/FacultyLeave/FacultyLeave';
@@ -80,7 +77,8 @@ import FacultyAttendance from './components/Faculty/FacultyAttendance/FacultyAtt
 // ==========================================
 import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
 import UserManagement from './components/Admin/UserManagement/UserManagement';
-import AdminTimetableBuilder from './components/Admin/AdminTimetableBuilder/AdminTimetableBuilder';
+import AdminCourseBuilder from './components/Admin/AdminTimetableBuilder/AdminCourseBuilder';
+import AdminTimetableHQ from './components/Admin/AdminTimetableBuilder/AdminTimetableHQ';
 import AdminMentorship from './components/Admin/AdminMentorship/AdminMentorship';
 import AdminApprovals from './components/Admin/AdminApprovals/AdminApprovals';
 import AdminLeaveManagement from './components/Admin/LeaveManagement/AdminLeaveManagement';
@@ -92,7 +90,6 @@ import AdminPlacements from './components/Admin/AdminPlacements/AdminPlacements'
 import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
 import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
 import SQLStudio from './components/Admin/AdminDashboard/SQLStudio';
-import AdminFacultyDirectory from './components/Admin/AdminFacultyDirectory/AdminFacultyDirectory';
 import AdminHelpdesk from './components/Admin/AdminHelpdesk/AdminHelpdesk';
 import AdminSiteEditor from './components/Admin/AdminSiteEditor/AdminSiteEditor';
 import EventsBoard from './components/notices/EventsBoard';
@@ -271,7 +268,6 @@ export default function App() {
         case 'cvbuilder': return <CVBuilder />;
         
         case 'credentials': return <Credentials />;
-        case 'profile': return <Profile />;
         default: return <ModuleUnderConstruction tabName={activeTab} role="Student" />;
       }
     }
@@ -304,7 +300,6 @@ export default function App() {
         
         case 'helpdesk': return <Helpdesk />;
         case 'credentials': return <Credentials />;
-        case 'profile': return <Profile />;
         default: return <ModuleUnderConstruction tabName={activeTab} role="Faculty" />;
       }
     }
@@ -317,9 +312,10 @@ export default function App() {
         case 'academic': return <AdminAcademicHub />;
         case 'clinics': return <AdminClinicsHub />;
         case 'website': return <AdminWebsiteHub />;
-        case 'notices': return <AdminNotices />;
+        case 'notices': return <Notices setActiveTab={setActiveTab} />;
         case 'users': return <UserManagement />;
-        case 'curriculum': return <AdminTimetableBuilder />;
+        case 'coursebuilder': return <AdminCourseBuilder />;
+        case 'timetablebuilder': return <AdminTimetableHQ />;
         case 'allocations': return <AdminMentorship />;
         case 'adminapprovals': return <AdminApprovals />;
         case 'leavemanagement': return <AdminLeaveManagement />;
@@ -330,12 +326,10 @@ export default function App() {
         case 'legalaid': return <AdminLegalAid />;
         case 'adminadmissions': return <AdminAdmissions />;
         case 'sql': return <SQLStudio />;
-        case 'faculty': return <AdminFacultyDirectory />;
         case 'helpdesk': return <AdminHelpdesk />;
         case 'siteeditor': return <AdminSiteEditor />;
         case 'events': return <EventsBoard />;
         case 'credentials': return <Credentials />;
-        case 'profile': return <Profile />;
         default: return <ModuleUnderConstruction tabName={activeTab} role="Admin" />;
       }
     }
@@ -357,25 +351,25 @@ export default function App() {
           
           {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
           {navLayout === 'classic' && (
-            <>
+            <div className="hidden lg:block h-full">
               {userSession.role === 'student' && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
               {userSession.role === 'faculty' && <FacultySidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
               {userSession.role === 'admin' && <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
-            </>
+            </div>
           )}
 
-          {/* TOP NAV RENDER (Universal Desktop Layout) */}
-          {navLayout === 'topnav' && (
+          {/* TOP NAV RENDER (Universal Desktop & Mobile Header) */}
+          <div className={navLayout === 'classic' ? "block lg:hidden" : "block"}>
             <TopNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />
-          )}
+          </div>
 
-          {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Always active on mobile */}
-          {navLayout === "topnav" && <MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
+          {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Active when using TopNav Layout */}
+          {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
 
             <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
               <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 scroll-smooth flex flex-col" id="jsm-main-scroll-container">
-                {/* Spacer for TopNav if present */}
-                {navLayout === 'topnav' && <div className="hidden lg:block h-[72px] lg:h-[84px] shrink-0 w-full pointer-events-none transition-all duration-500"></div>}
+                {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
+                <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
 
                 <div className="flex-1 p-4 pt-[calc(1rem+env(safe-area-inset-top))] lg:p-6 lg:pt-6 flex flex-col relative z-10">
                   {renderContent()}
@@ -431,7 +425,7 @@ function ModuleUnderConstruction({ tabName, role }) {
     <div className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
       <div className={`${theme.layout.panel} rounded-themePanel p-8`}>
       <div className="flex items-center gap-4 mb-6">
-        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-[#333333] bg-themePanel`}>
+        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorderStrong bg-themePanel`}>
           <i className="fa-solid fa-layer-group"></i>
         </div>
         <div>

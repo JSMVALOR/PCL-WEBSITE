@@ -1,6 +1,6 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase/supabaseClient';
+import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 
 export default function ForgotPasswordModal({ onClose }) {
     const [institutionalId, setInstitutionalId] = useState('');
@@ -42,20 +42,20 @@ export default function ForgotPasswordModal({ onClose }) {
             <button 
                 type="button"
                 onClick={onClose}
-                className="fixed top-6 right-6 lg:top-10 lg:right-10 w-12 h-12 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:bg-themeBorder border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec hover:text-themeText transition-all outline-none z-[250] shadow-2xl cursor-pointer hover:scale-110"
+                className="fixed top-6 right-6 lg:top-10 lg:right-10 w-12 h-12 rounded-md bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:bg-themeBorder border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec hover:text-themeText transition outline-none z-[250] shadow-2xl cursor-pointer hover:scale-110"
             >
                 <i className="fa-solid fa-times text-xl"></i>
             </button>
 
             {/* Subtle Background Effects */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-themeAccent opacity-[0.05] mix-blend-screen filter blur-[120px] animate-pulse-slow"></div>
+                <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-md bg-themeAccent opacity-[0.05] mix-blend-screen filter blur-[120px] animate-pulse-slow"></div>
             </div>
 
             <div className="w-full max-w-xl mx-auto p-6 lg:p-12 min-h-screen flex flex-col justify-center relative z-10">
 
                 <div className="mb-8 relative z-10">
-                    <div className="w-14 h-14 rounded-2xl bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/5 dark:border-white/10 flex items-center justify-center mb-6 shadow-inner">
+                    <div className="w-14 h-14 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/5 dark:border-white/10 flex items-center justify-center mb-6 shadow-inner">
                         <i className="fa-solid fa-unlock-keyhole text-2xl text-themeAccent"></i>
                     </div>
                     <h2 className="text-2xl font-black text-themeText tracking-tight mb-2">Account Recovery</h2>
@@ -66,7 +66,7 @@ export default function ForgotPasswordModal({ onClose }) {
 
                 {success ? (
                     <div className="flex flex-col items-center justify-center py-8 text-center animate-fade-in">
-                        <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20">
+                        <div className="w-16 h-16 rounded-md bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20">
                             <i className="fa-solid fa-check text-3xl text-emerald-500"></i>
                         </div>
                         <h3 className="text-lg font-black text-themeText mb-2">Request Submitted</h3>
@@ -75,7 +75,7 @@ export default function ForgotPasswordModal({ onClose }) {
                         </p>
                         <button 
                             onClick={onClose}
-                            className="w-full py-4 rounded-xl bg-themeApp border border-white/5 hover:border-black/5 dark:border-white/10 text-sm font-black uppercase tracking-wider text-themeText transition-all"
+                            className="w-full py-4 rounded-lg bg-themeApp border border-white/5 hover:border-black/5 dark:border-white/10 text-sm font-black uppercase tracking-wider text-themeText transition"
                         >
                             Return to Login
                         </button>
@@ -83,7 +83,7 @@ export default function ForgotPasswordModal({ onClose }) {
                 ) : (
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
                         {error && (
-                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-xl text-xs font-bold flex items-start gap-3">
+                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-lg text-xs font-bold flex items-start gap-3">
                                 <i className="fa-solid fa-circle-exclamation shrink-0 mt-0.5"></i> 
                                 <span className="leading-relaxed">{error}</span>
                             </div>
@@ -97,7 +97,7 @@ export default function ForgotPasswordModal({ onClose }) {
                                 type="text"
                                 value={institutionalId}
                                 onChange={(e) => setInstitutionalId(e.target.value)}
-                                className="w-full bg-themeApp border border-white/5 focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition-all placeholder:text-themeTextSec placeholder:font-normal placeholder:normal-case shadow-inner"
+                                className="w-full bg-themeApp border border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec placeholder:font-normal placeholder:normal-case shadow-inner"
                                 placeholder="e.g. PCL-STU-2026"
                                 required
                             />
@@ -111,7 +111,7 @@ export default function ForgotPasswordModal({ onClose }) {
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
                                 rows={3}
-                                className="w-full bg-themeApp border border-white/5 focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText outline-none transition-all placeholder:text-themeTextSec placeholder:font-normal resize-none shadow-inner"
+                                className="w-full bg-themeApp border border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec placeholder:font-normal resize-none shadow-inner"
                                 placeholder="Briefly explain why you need a reset (e.g. Forgot password, locked out)"
                                 required
                             ></textarea>
@@ -120,11 +120,7 @@ export default function ForgotPasswordModal({ onClose }) {
                         <button
                             type="submit"
                             disabled={isSubmitting || !institutionalId || !reason}
-                            className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-[0.15em] transition-all duration-300 flex justify-center items-center gap-3 mt-2 ${
-                                isSubmitting || !institutionalId || !reason
-                                ? 'bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-themeTextSec cursor-not-allowed border border-white/5'
-                                : 'bg-themeAccent text-white hover:opacity-90 hover:scale-[1.02] shadow-xl shadow-themeAccent/30 border border-transparent'
-                            }`}
+                            className="tlh-btn w-full justify-center !py-4 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? (
                                 <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Submitting...</>

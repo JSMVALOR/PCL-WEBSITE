@@ -4,8 +4,8 @@ import { useERP } from '../../context/ErpContext';
 import { Capacitor } from '@capacitor/core';
 import { AnimatePresence, motion } from "framer-motion";
 import ForgotPasswordModal from './ForgotPasswordModal';
-import campusImg from '../../../ASSETS/CAMPUS/PCL_CAMPUS.webp';
-import pclLogo from '../../../ASSETS/LOGOS/pcl_logo.svg';
+import campusImg from '../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
+import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo.svg';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -139,27 +139,27 @@ export default function Login() {
                 <div className="absolute top-6 left-6 z-20">
                     <button 
                         onClick={() => navigate('/')}
-                        className="group flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--card-border)] bg-[var(--card-bg)] backdrop-blur-md text-[var(--text-muted)] hover:text-[var(--text-color)] hover:border-[var(--primary-color)] transition-all shadow-sm"
+                        className="tlh-btn !py-3 !px-5"
                     >
-                        <i className="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform text-xs"></i>
+                        <i className="fa-solid fa-arrow-left text-xs"></i>
                         <span className="text-xs font-bold uppercase tracking-widest">Website</span>
                     </button>
                 </div>
             )}
 
             {/* Glass Container Form */}
-            <div className="glass-container relative z-10 w-full max-w-md mx-auto !mt-0 !p-8 md:!p-10">
+            <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-8 md:p-10 overflow-hidden">
                 <div className="text-center mb-8">
                     <img src={pclLogo} alt="PCL Logo" className="w-16 h-16 mx-auto mb-4 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
                     <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] uppercase tracking-widest">Prudentia</h2>
                     <h3 className="text-sm font-medium text-[var(--text-muted)] mb-3 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
-                    <p className="text-[var(--primary-color)] text-[10px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-full px-3 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
+                    <p className="text-[var(--primary-color)] text-[10px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-3 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                     <AnimatePresence>
                         {errorMsg && (
-                            <div className="bg-rose-500/10 border border-rose-500/30 text-rose-500 p-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-start gap-3">
+                            <div className="bg-rose-500/10 border border-rose-500/30 text-rose-500 p-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-start gap-3">
                                 <i className="fa-solid fa-circle-exclamation mt-0.5"></i>
                                 <span>{errorMsg}</span>
                             </div>
@@ -178,7 +178,7 @@ export default function Login() {
                                     type="text"
                                     value={credential}
                                     onChange={(e) => setCredential(e.target.value)}
-                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-xl py-3.5 pl-12 pr-5 text-sm font-bold text-[var(--text-color)] outline-none transition-all placeholder:text-[var(--text-muted)]/50 uppercase"
+                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-3.5 pl-12 pr-5 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50 uppercase"
                                     placeholder="e.g. 26BBL7020"
                                     required
                                     autoCapitalize="none"
@@ -208,7 +208,7 @@ export default function Login() {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-xl py-3.5 pl-12 pr-12 text-sm font-bold text-[var(--text-color)] outline-none transition-all placeholder:text-[var(--text-muted)]/50"
+                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-3.5 pl-12 pr-12 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50"
                                     placeholder="••••••••"
                                     required
                                     autoCapitalize="none"
@@ -219,7 +219,7 @@ export default function Login() {
                                     type="button"
                                     tabIndex="-1"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-color)] outline-none w-8 h-8 flex items-center justify-center rounded-full"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-color)] outline-none w-8 h-8 flex items-center justify-center rounded-md"
                                 >
                                     <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                 </button>
@@ -233,7 +233,7 @@ export default function Login() {
                                     Security Verification
                                 </label>
                                 <div className="flex items-center gap-4">
-                                    <div className="bg-[var(--bg-color)] border border-rose-500/30 rounded-xl px-4 py-3 flex items-center justify-center gap-3 w-1/2">
+                                    <div className="bg-[var(--bg-color)] border border-rose-500/30 rounded-lg px-4 py-3 flex items-center justify-center gap-3 w-1/2">
                                         <span className="text-lg font-black text-[var(--text-color)]">{captcha.num1}</span>
                                         <i className="fa-solid fa-plus text-[var(--text-muted)] text-xs"></i>
                                         <span className="text-lg font-black text-[var(--text-color)]">{captcha.num2}</span>
@@ -243,7 +243,7 @@ export default function Login() {
                                         pattern="\d*"
                                         value={captcha.answer}
                                         onChange={handleCaptchaChange}
-                                        className="w-1/2 bg-[var(--bg-color)] border border-rose-500/30 focus:border-rose-500 rounded-xl py-3 px-5 text-lg font-bold text-[var(--text-color)] outline-none transition-all text-center"
+                                        className="w-1/2 bg-[var(--bg-color)] border border-rose-500/30 focus:border-rose-500 rounded-lg py-3 px-5 text-lg font-bold text-[var(--text-color)] outline-none transition text-center"
                                         placeholder="="
                                         required
                                     />
@@ -277,7 +277,7 @@ export default function Login() {
 
             {/* Tribute Footer */}
             <div className="mt-8 flex flex-col items-center justify-center text-[9px] uppercase tracking-[0.25em] font-bold text-[var(--text-color)]/50 z-10 gap-2 pointer-events-none drop-shadow-md">
-                <span className="flex items-center gap-2 bg-[var(--card-bg)] px-4 py-1.5 rounded-full backdrop-blur-sm border border-[var(--text-color)]/10 shadow-sm">
+                <span className="flex items-center gap-2 bg-[var(--card-bg)] px-4 py-1.5 rounded-md backdrop-blur-sm border border-[var(--text-color)]/10 shadow-sm">
                     <i className="fa-solid fa-code text-[var(--primary-color)]/90"></i>
                     Powered by JSM Associates & Innovation
                 </span>

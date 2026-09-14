@@ -4,7 +4,7 @@
 
 import React, { useState } from "react";
 import { useERP } from "../../context/ErpContext";
-import { theme } from "../../theme";
+import { theme } from '../../../Shared/theme';
 
 export default function EventsBoard() {
     const { userSession, events, addEvent, deleteEvent, updateEventGallery } = useERP();
@@ -95,22 +95,22 @@ export default function EventsBoard() {
     return (
         <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-[fadeIn_0.4s_ease-out]">
             {/* 1. HEADER BANNER */}
-            <div className={`bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated rounded-themePanel p-8 relative overflow-hidden border border-black/5 dark:border-white/10 text-themeText flex flex-col md:flex-row justify-between items-center gap-6`}>
+            <div className={`bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-8 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6`}>
                 <div className={`absolute top-0 right-0 w-full max-w-[16rem] md:w-64 h-64 ${currentTheme.glow} rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50`}></div>
                 <div className="relative z-10 flex items-center justify-between w-full">
                     <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 bg-themePanel/85 backdrop-blur-2xl shadow-premium rounded-themePanel flex items-center justify-center border border-black/5 dark:border-white/10 ${currentTheme.iconBox} text-2xl shrink-0`}>
+                        <div className={`w-14 h-14 bg-themePanel/85 backdrop-blur-2xl shadow-premium rounded-xl flex items-center justify-center border border-black/5 dark:border-white/10 ${currentTheme.iconBox} text-2xl shrink-0`}>
                             <i className="fa-solid fa-calendar-star"></i>
                         </div>
                         <div>
-                            <h1 className={`${theme.text.heading} text-3xl text-themeText tracking-tight mb-1`}>College Events</h1>
+                            <h1 className={`${theme.text.display} text-3xl text-themeText tracking-tight mb-1`}>College Events</h1>
                             <p className={`${theme.text.secondary} text-sm font-medium`}>Upcoming extracurricular and academic events.</p>
                         </div>
                     </div>
                     {canCreate && (
                         <button
                             onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-purple-600 text-white px-6 py-3 rounded-themePanel font-bold text-sm tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg"
+                            className="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg"
                         >
                             <i className="fa-solid fa-calendar-plus"></i> Add Event
                         </button>
@@ -120,7 +120,7 @@ export default function EventsBoard() {
 
             {/* 1.5 ACTION REQUIRED BANNER */}
             {canCreate && events.some(e => new Date(e.event_date) < new Date() && (!e.image_urls || e.image_urls.length === 0)) && (
-                <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-themePanel flex flex-col md:flex-row md:items-center justify-between gap-4 animate-pulse">
+                <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 animate-pulse">
                     <div className="flex items-center gap-3">
                         <i className="fa-solid fa-triangle-exclamation text-rose-500 text-xl"></i>
                         <div>
@@ -133,7 +133,7 @@ export default function EventsBoard() {
 
             {/* 2. EVENTS GRID */}
             {(!events || events.length === 0) ? (
-                <div className="w-full py-20 border-2 border-dashed border-white/5 rounded-themePanel flex flex-col items-center justify-center bg-themePanel/50">
+                <div className="w-full py-20 border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center bg-themePanel/50">
                     <i className="fa-solid fa-calendar-xmark text-4xl text-themeTextSec opacity-50 mb-4"></i>
                     <h3 className={`${theme.text.heading} text-lg text-themeText`}>No upcoming events</h3>
                     <p className={`${theme.text.secondary} text-xs font-semibold mt-1`}>Check back later for exciting college events!</p>
@@ -147,7 +147,7 @@ export default function EventsBoard() {
                         <div
                             key={evt.id}
                             onClick={() => setSelectedEvent(evt)}
-                            className={`${theme.layout.panel} p-0 rounded-themePanel border-theme hover: cursor-pointer flex flex-col justify-between transition-all group border-white/5 ${currentTheme.hoverBorder} overflow-hidden ${isPast ? 'opacity-60' : ''}`}
+                            className={`bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl overflow-hidden cursor-pointer group transition-all hover:scale-[1.01]  overflow-hidden ${isPast ? 'opacity-60' : ''}`}
                         >
                             {evt.image_url ? (
                                 <div className="h-40 w-full overflow-hidden border-b-theme border-white/5">
@@ -195,7 +195,7 @@ export default function EventsBoard() {
             {/* 3. READING MODAL */}
             {selectedEvent && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-                    <div className="bg-themeApp w-full max-w-2xl rounded-themePanel overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+                    <div className="bg-themeApp w-full max-w-2xl rounded-xl overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
 
                         <div className={`p-6 text-white relative bg-purple-600`}>
                             <div className="flex justify-between items-start relative z-10">
@@ -205,7 +205,7 @@ export default function EventsBoard() {
                                     </span>
                                     <h3 className={`${theme.text.heading} text-2xl tracking-tight mb-1 text-white`}>{selectedEvent.title}</h3>
                                 </div>
-                                <button onClick={() => setSelectedEvent(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 transition-colors shrink-0 text-white">
+                                <button onClick={() => setSelectedEvent(null)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-black/20 hover:bg-black/40 transition-colors shrink-0 text-white">
                                     <i className="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
@@ -230,7 +230,7 @@ export default function EventsBoard() {
                             </div>
 
                             {selectedEvent.image_url && (
-                                <div className="mb-6 border border-white/5 rounded-themePanel overflow-hidden">
+                                <div className="mb-6 border border-white/5 rounded-xl overflow-hidden">
                                     <img src={selectedEvent.image_url} alt="Event" className="w-full h-auto object-cover max-h-96" />
                                 </div>
                             )}
@@ -247,7 +247,7 @@ export default function EventsBoard() {
                                     {selectedEvent.image_urls && selectedEvent.image_urls.length > 0 ? (
                                         <div className="grid grid-cols-3 gap-2 mb-4">
                                             {selectedEvent.image_urls.map((url, i) => (
-                                                <div key={i} className="aspect-square rounded-themePanel overflow-hidden border border-white/5">
+                                                <div key={i} className="aspect-square rounded-xl overflow-hidden border border-white/5">
                                                     <img src={url} alt="Gallery" className="w-full h-full object-cover" />
                                                 </div>
                                             ))}
@@ -263,12 +263,12 @@ export default function EventsBoard() {
                                                 placeholder="Paste image URL here..."
                                                 value={galleryInput}
                                                 onChange={(e) => setGalleryInput(e.target.value)}
-                                                className={`flex-1 ${theme.layout.input} rounded-themePanel px-4 py-2 text-sm`}
+                                                className={`flex-1 ${theme.layout.input} rounded-xl px-4 py-2 text-sm`}
                                             />
                                             <button
                                                 onClick={handleAddGalleryImage}
                                                 disabled={isGalleryUpdating || !galleryInput.trim()}
-                                                className="bg-purple-600 text-white px-4 py-2 rounded-themePanel text-sm font-bold disabled:opacity-50"
+                                                className="bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-50"
                                             >
                                                 {isGalleryUpdating ? 'Adding...' : 'Add Image'}
                                             </button>
@@ -280,7 +280,7 @@ export default function EventsBoard() {
                             <div className="flex flex-col sm:flex-row gap-4 mt-8">
                                 <button
                                     onClick={() => setSelectedEvent(null)}
-                                    className={`flex-1 py-4 bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:opacity-80 text-themeText rounded-themePanel text-xs font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2 border border-black/5 dark:border-white/10`}
+                                    className={`flex-1 py-4 bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:opacity-80 text-themeText rounded-xl text-xs font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2 border border-black/5 dark:border-white/10`}
                                 >
                                     <i className="fa-solid fa-check-double text-themeAccent"></i> Close Event
                                 </button>
@@ -288,7 +288,7 @@ export default function EventsBoard() {
                                 {(role === 'admin' || userSession?.db_id === selectedEvent.author_id) && (
                                     <button
                                         onClick={() => handleDelete(selectedEvent.id)}
-                                        className={`sm:w-auto px-6 py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-themePanel text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border-theme border-rose-500/20 hover:border-rose-500`}
+                                        className={`sm:w-auto px-6 py-4 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border-theme border-rose-500/20 hover:border-rose-500`}
                                     >
                                         <i className="fa-solid fa-trash-can"></i> Delete
                                     </button>
@@ -303,13 +303,13 @@ export default function EventsBoard() {
             {/* 4. CREATE EVENT MODAL */}
             {isCreateModalOpen && canCreate && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-                    <div className="bg-themeApp w-full max-w-lg rounded-themePanel overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+                    <div className="bg-themeApp w-full max-w-lg rounded-xl overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
                         <div className="p-6 border-b-theme border-white/5 flex justify-between items-center bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated">
                             <div>
                                 <h3 className={`${theme.text.heading} text-xl text-themeText`}>Add College Event</h3>
                                 <p className={`${theme.text.secondary} text-xs mt-1`}>Publish a new event to the dashboard.</p>
                             </div>
-                            <button onClick={() => setIsCreateModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-themePanel/85 backdrop-blur-2xl shadow-premium hover:bg-themeBorder text-themeText transition-colors shrink-0">
+                            <button onClick={() => setIsCreateModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-themePanel/85 backdrop-blur-2xl shadow-premium hover:bg-themeBorder text-themeText transition-colors shrink-0">
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
@@ -374,7 +374,7 @@ export default function EventsBoard() {
                             </div>
 
                             {canCreate && (
-                                <label className="flex items-center gap-3 cursor-pointer mt-2 p-4 border border-white/5 rounded-themePanel bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated">
+                                <label className="flex items-center gap-3 cursor-pointer mt-2 p-4 border border-white/5 rounded-xl bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated">
                                     <input 
                                         type="checkbox" 
                                         checked={isPublic} 
@@ -391,7 +391,7 @@ export default function EventsBoard() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full mt-4 bg-purple-600 hover:opacity-90 text-white rounded-themePanel py-4 text-xs font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
+                                className="w-full mt-4 bg-purple-600 hover:opacity-90 text-white rounded-xl py-4 text-xs font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
                             >
                                 {isSubmitting ? (
                                     <>

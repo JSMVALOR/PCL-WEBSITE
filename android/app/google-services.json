@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341823051924",
+    "project_id": "prudentia-erp",
+    "storage_bucket": "prudentia-erp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341823051924:android:bc3d94ba9c46268aa1bc81",
+        "android_client_info": {
+          "package_name": "com.jsm.erp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6iDJ9LJHMBNmjv31oemWC2ID2sVAP9xQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

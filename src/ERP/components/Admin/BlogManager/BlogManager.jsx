@@ -1,426 +1,428 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from "../../../theme";
-import { supabase } from "../../../lib/supabase/supabaseClient";
+import { theme } from '../../../../Shared/theme';
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-export default function BlogManager({ isHubView = false }) {
-    const [blogs, setBlogs] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    const [currentBlog, setCurrentBlog] = useState(null);
-    const [formData, setFormData] = useState({
-        title: "",
-        slug: "",
-        author_name: "",
-        author_erp_id: "",
-        image_url: "",
-        content: "",
-        is_public: false
-    });
-    const [authorContact, setAuthorContact] = useState(null);
-    const [verifiedProfile, setVerifiedProfile] = useState(null);
+export default function BlogManager({ isHubView = false , isEmbedded = false}) {
+ const [blogs, setBlogs] = useState([]);
+ const [isLoading, setIsLoading] = useState(true);
+ const [isEditing, setIsEditing] = useState(false);
+ const [currentBlog, setCurrentBlog] = useState(null);
+ const [formData, setFormData] = useState({
+ title: "",
+ slug: "",
+ author_name: "",
+ author_erp_id: "",
+ image_url: "",
+ content: "",
+ is_public: false
+ });
+ const [authorContact, setAuthorContact] = useState(null);
+ const [verifiedProfile, setVerifiedProfile] = useState(null);
 
-    useEffect(() => {
-        fetchBlogs();
-    }, []);
+ useEffect(() => {
+ fetchBlogs();
+ }, []);
 
-    const fetchBlogs = async () => {
-        setIsLoading(true);
-        try {
-            // Fetch from admin_notices with category 'Blog' and join profiles
-            const { data, error } = await supabase
-                .from('admin_notices')
-                .select('*')
-                .eq('category', 'Blog')
-                .order('created_at', { ascending: false });
+ const fetchBlogs = async () => {
+ setIsLoading(true);
+ try {
+ // Fetch from admin_notices with category 'Blog' and join profiles
+ const { data, error } = await supabase
+ .from('admin_notices')
+ .select('*')
+ .eq('category', 'Blog')
+ .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setBlogs(data || []);
-        } catch (error) {
-            console.error("Failed to fetch blogs:", error);
-            window.erpDialog?.alert("Failed to load blogs. Please check your connection.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+ if (error) throw error;
+ setBlogs(data || []);
+ } catch (error) {
+ console.error("Failed to fetch blogs:", error);
+ window.erpDialog?.alert("Failed to load blogs. Please check your connection.");
+ } finally {
+ setIsLoading(false);
+ }
+ };
 
-    const handleCreateNew = () => {
-        setCurrentBlog(null);
-        setAuthorContact(null);
-        setFormData({ title: "", slug: "", author_name: "", author_erp_id: "", image_url: "", content: "", is_public: false });
-        setIsEditing(true);
-    };
+ const handleCreateNew = () => {
+ setCurrentBlog(null);
+ setAuthorContact(null);
+ setFormData({ title: "", slug: "", author_name: "", author_erp_id: "", image_url: "", content: "", is_public: false });
+ setIsEditing(true);
+ };
 
-    const handleEdit = (blog) => {
-        setCurrentBlog(blog);
-        setAuthorContact({ email: blog.author_email, phone: blog.author_phone });
-        setFormData({
-            title: blog.title || "",
-            slug: blog.slug || "",
-            author_name: blog.author_name || "",
-            author_erp_id: blog.author_erp_id || "",
-            image_url: blog.image_url || "",
-            content: blog.content || "",
-            is_public: blog.is_public || false
-        });
-        setVerifiedProfile(null);
-        setIsEditing(true);
-    };
+ const handleEdit = (blog) => {
+ setCurrentBlog(blog);
+ setAuthorContact({ email: blog.author_email, phone: blog.author_phone });
+ setFormData({
+ title: blog.title || "",
+ slug: blog.slug || "",
+ author_name: blog.author_name || "",
+ author_erp_id: blog.author_erp_id || "",
+ image_url: blog.image_url || "",
+ content: blog.content || "",
+ is_public: blog.is_public || false
+ });
+ setVerifiedProfile(null);
+ setIsEditing(true);
+ };
 
-    const verifyErpId = async () => {
-        if (!formData.author_erp_id) {
-            setVerifiedProfile({ error: "Please enter an ERP ID first." });
-            return;
-        }
-        try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('full_name, role')
-                .eq('erp_id', formData.author_erp_id)
-                .single();
-            
-            if (error || !data) {
-                setVerifiedProfile({ error: "No user found with this ERP ID." });
-            } else {
-                setVerifiedProfile({ success: `${data.full_name} (${data.role})` });
-            }
-        } catch (err) {
-            setVerifiedProfile({ error: "Error verifying ID." });
-        }
-    };
+ const verifyErpId = async () => {
+ if (!formData.author_erp_id) {
+ setVerifiedProfile({ error: "Please enter an ERP ID first." });
+ return;
+ }
+ try {
+ const { data, error } = await supabase
+ .from('profiles')
+ .select('full_name, role')
+ .eq('erp_id', formData.author_erp_id)
+ .single();
+ 
+ if (error || !data) {
+ setVerifiedProfile({ error: "No user found with this ERP ID." });
+ } else {
+ setVerifiedProfile({ success: `${data.full_name} (${data.role})` });
+ }
+ } catch (err) {
+ setVerifiedProfile({ error: "Error verifying ID." });
+ }
+ };
 
-    const handleSave = async (e) => {
-        e.preventDefault();
-        try {
-            const savePayload = {
-                title: formData.title,
-                slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
-                author_name: formData.author_name,
-                author_erp_id: formData.author_erp_id || null,
-                image_url: formData.image_url,
-                content: formData.content,
-                is_public: formData.is_public,
-                category: 'Blog'
-            };
+ const handleSave = async (e) => {
+ e.preventDefault();
+ try {
+ const savePayload = {
+ title: formData.title,
+ slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+ author_name: formData.author_name,
+ author_erp_id: formData.author_erp_id || null,
+ image_url: formData.image_url,
+ content: formData.content,
+ is_public: formData.is_public,
+ category: 'Blog'
+ };
 
-            if (currentBlog?.id) {
-                // Update
-                const { error } = await supabase.from('admin_notices').update(savePayload).eq('id', currentBlog.id);
-                if (error) throw error;
-                window.erpDialog?.alert("Blog updated successfully!");
-            } else {
-                // Insert
-                const { error } = await supabase.from('admin_notices').insert([savePayload]);
-                if (error) throw error;
-                window.erpDialog?.alert("Blog created successfully!");
-            }
+ if (currentBlog?.id) {
+ // Update
+ const { error } = await supabase.from('admin_notices').update(savePayload).eq('id', currentBlog.id);
+ if (error) throw error;
+ window.erpDialog?.alert("Blog updated successfully!");
+ } else {
+ // Insert
+ const { error } = await supabase.from('admin_notices').insert([savePayload]);
+ if (error) throw error;
+ window.erpDialog?.alert("Blog created successfully!");
+ }
 
-            setIsEditing(false);
-            fetchBlogs();
-        } catch (error) {
-            console.error("Save failed:", error);
-            window.erpDialog?.alert("Could not save to database.");
-            setIsEditing(false);
-        }
-    };
+ setIsEditing(false);
+ fetchBlogs();
+ } catch (error) {
+ console.error("Save failed:", error);
+ window.erpDialog?.alert("Could not save to database.");
+ setIsEditing(false);
+ }
+ };
 
-    const handleReject = async () => {
-        const actionText = currentBlog?.is_public ? "delete" : "reject and permanently delete";
-        if (!window.confirm(`Are you sure you want to ${actionText} this blog post?`)) return;
+ const handleReject = async () => {
+ const actionText = currentBlog?.is_public ? "delete" : "reject and permanently delete";
+ if (!window.confirm(`Are you sure you want to ${actionText} this blog post?`)) return;
 
-        try {
-            if (currentBlog?.id) {
-                const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
-                if (error) throw error;
-                window.erpDialog?.alert(`Blog ${currentBlog?.is_public ? 'deleted' : 'rejected'} and removed from database.`);
-            }
-            setIsEditing(false);
-            fetchBlogs();
-        } catch (error) {
-            console.error("Reject failed.", error);
-            window.erpDialog?.alert(`Could not ${actionText} the post.`);
-            setIsEditing(false);
-        }
-    };
+ try {
+ if (currentBlog?.id) {
+ const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
+ if (error) throw error;
+ window.erpDialog?.alert(`Blog ${currentBlog?.is_public ? 'deleted' : 'rejected'} and removed from database.`);
+ }
+ setIsEditing(false);
+ fetchBlogs();
+ } catch (error) {
+ console.error("Reject failed.", error);
+ window.erpDialog?.alert(`Could not ${actionText} the post.`);
+ setIsEditing(false);
+ }
+ };
 
-    const handleApproveERP = async () => {
-        try {
-            if (!currentBlog?.id) return;
-            const { error } = await supabase.from('admin_notices').update({ is_public: true }).eq('id', currentBlog.id);
-            if (error) throw error;
+ const handleApproveERP = async () => {
+ try {
+ if (!currentBlog?.id) return;
+ const { error } = await supabase.from('admin_notices').update({ is_public: true }).eq('id', currentBlog.id);
+ if (error) throw error;
 
-            if (currentBlog.author_erp_id || formData.author_erp_id) {
-                const authorId = formData.author_erp_id || currentBlog.author_erp_id;
-                const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
-                await supabase.from('notices').insert([{
-                    notice_id: noticeId,
-                    title: 'Blog Published!',
-                    category: 'System Alert',
-                    target_audience: 'person',
-                    target_id: authorId,
-                    priority: 'high',
-                    content: `Congratulations! Your blog post titled "${formData.title}" has been approved and published on the Prudentia website.`,
-                    author_name: 'Admin',
-                    author_id: null
-                }]);
-            }
-            window.erpDialog?.alert("Blog approved and author notified via ERP.");
-            setIsEditing(false);
-            fetchBlogs();
-        } catch (error) {
-            console.error("Approve failed", error);
-            window.erpDialog?.alert("Failed to approve the blog.");
-        }
-    };
+ if (currentBlog.author_erp_id || formData.author_erp_id) {
+ const authorId = formData.author_erp_id || currentBlog.author_erp_id;
+ const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+ await supabase.from('notices').insert([{
+ notice_id: noticeId,
+ title: 'Blog Published!',
+ category: 'System Alert',
+ target_audience: 'person',
+ target_id: authorId,
+ priority: 'high',
+ content: `Congratulations! Your blog post titled "${formData.title}" has been approved and published on the Prudentia website.`,
+ author_name: 'Admin',
+ author_id: null
+ }]);
+ }
+ window.erpDialog?.alert("Blog approved and author notified via ERP.");
+ setIsEditing(false);
+ fetchBlogs();
+ } catch (error) {
+ console.error("Approve failed", error);
+ window.erpDialog?.alert("Failed to approve the blog.");
+ }
+ };
 
-    const handleRejectERP = async () => {
-        const actionVerb = currentBlog?.is_public ? "delete" : "reject";
-        if (!window.confirm(`Are you sure you want to ${actionVerb} this blog and notify the author via ERP?`)) return;
-        try {
-            if (!currentBlog?.id) return;
-            const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
-            if (error) throw error;
+ const handleRejectERP = async () => {
+ const actionVerb = currentBlog?.is_public ? "delete" : "reject";
+ if (!window.confirm(`Are you sure you want to ${actionVerb} this blog and notify the author via ERP?`)) return;
+ try {
+ if (!currentBlog?.id) return;
+ const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
+ if (error) throw error;
 
-            if (currentBlog.author_erp_id || formData.author_erp_id) {
-                const authorId = formData.author_erp_id || currentBlog.author_erp_id;
-                const content = currentBlog?.is_public
-                    ? `Your published blog post titled "${formData.title}" has been removed from the Prudentia website by an administrator.`
-                    : `Thank you for your submission titled "${formData.title}". Unfortunately, it was not accepted for publication at this time.`;
+ if (currentBlog.author_erp_id || formData.author_erp_id) {
+ const authorId = formData.author_erp_id || currentBlog.author_erp_id;
+ const content = currentBlog?.is_public
+ ? `Your published blog post titled "${formData.title}" has been removed from the Prudentia website by an administrator.`
+ : `Thank you for your submission titled "${formData.title}". Unfortunately, it was not accepted for publication at this time.`;
 
-                const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
-                await supabase.from('notices').insert([{
-                    notice_id: noticeId,
-                    title: currentBlog?.is_public ? 'Blog Removed' : 'Blog Submission Update',
-                    category: 'System Alert',
-                    target_audience: 'person',
-                    target_id: authorId,
-                    priority: 'normal',
-                    content: content,
-                    author_name: 'Admin',
-                    author_id: null
-                }]);
-            }
-            window.erpDialog?.alert(`Blog ${actionVerb}ed and author notified via ERP.`);
-            setIsEditing(false);
-            fetchBlogs();
-        } catch (error) {
-            console.error("Reject failed", error);
-            window.erpDialog?.alert(`Failed to ${actionVerb} the blog.`);
-        }
-    };
+ const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+ await supabase.from('notices').insert([{
+ notice_id: noticeId,
+ title: currentBlog?.is_public ? 'Blog Removed' : 'Blog Submission Update',
+ category: 'System Alert',
+ target_audience: 'person',
+ target_id: authorId,
+ priority: 'normal',
+ content: content,
+ author_name: 'Admin',
+ author_id: null
+ }]);
+ }
+ window.erpDialog?.alert(`Blog ${actionVerb}ed and author notified via ERP.`);
+ setIsEditing(false);
+ fetchBlogs();
+ } catch (error) {
+ console.error("Reject failed", error);
+ window.erpDialog?.alert(`Failed to ${actionVerb} the blog.`);
+ }
+ };
 
-    const generateWhatsAppLink = (type) => {
-        if (!authorContact?.phone) return "#";
-        const phone = authorContact.phone.replace(/[^0-9]/g, '');
-        const message = type === 'approve' 
-            ? `Hello ${formData.author_name}, great news! Your blog post "${formData.title}" has been approved and published on the Prudentia College of Law website. You can view it live now.`
-            : `Hello ${formData.author_name}, we appreciate your submission titled "${formData.title}". After review, our editorial team has decided not to move forward with publishing it at this time. We encourage you to submit future works!`;
-        return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-    };
+ const generateWhatsAppLink = (type) => {
+ if (!authorContact?.phone) return "#";
+ const phone = authorContact.phone.replace(/[^0-9]/g, '');
+ const message = type === 'approve' 
+ ? `Hello ${formData.author_name}, great news! Your blog post "${formData.title}" has been approved and published on the Prudentia College of Law website. You can view it live now.`
+ : `Hello ${formData.author_name}, we appreciate your submission titled "${formData.title}". After review, our editorial team has decided not to move forward with publishing it at this time. We encourage you to submit future works!`;
+ return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+ };
 
-    const generateEmailLink = (type) => {
-        if (!authorContact?.email) return "#";
-        const subject = type === 'approve' ? 'Your PCL Blog Post is Published!' : 'Update regarding your PCL Blog Post submission';
-        const body = type === 'approve'
-            ? `Hello ${formData.author_name},\n\nGreat news! Your blog post "${formData.title}" has been approved and published on the Prudentia College of Law website.\n\nThank you for contributing to the community.\n\nBest regards,\nPCL Editorial Team`
-            : `Hello ${formData.author_name},\n\nThank you for your submission titled "${formData.title}". After review, our editorial team has decided not to move forward with publishing it at this time.\n\nWe appreciate your effort and encourage you to submit future works.\n\nBest regards,\nPCL Editorial Team`;
-        return `mailto:${authorContact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    };
+ const generateEmailLink = (type) => {
+ if (!authorContact?.email) return "#";
+ const subject = type === 'approve' ? 'Your PCL Blog Post is Published!' : 'Update regarding your PCL Blog Post submission';
+ const body = type === 'approve'
+ ? `Hello ${formData.author_name},\n\nGreat news! Your blog post "${formData.title}" has been approved and published on the Prudentia College of Law website.\n\nThank you for contributing to the community.\n\nBest regards,\nPCL Editorial Team`
+ : `Hello ${formData.author_name},\n\nThank you for your submission titled "${formData.title}". After review, our editorial team has decided not to move forward with publishing it at this time.\n\nWe appreciate your effort and encourage you to submit future works.\n\nBest regards,\nPCL Editorial Team`;
+ return `mailto:${authorContact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+ };
 
-    if (isEditing) {
-        return (
-            <div className={`w-full ${!isHubView ? 'max-w-5xl mx-auto p-6 lg:p-8' : ''} animate-fade-in`}>
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-black text-themeText tracking-tight">{currentBlog ? 'Edit Blog Post' : 'New Blog Post'}</h2>
-                    <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:bg-themeBorder text-themeText text-xs font-black uppercase tracking-widest rounded-lg transition-colors border border-black/5 dark:border-white/10">
-                        <i className="fa-solid fa-arrow-left mr-2"></i> Back
-                    </button>
-                </div>
-                
-                <form onSubmit={handleSave} className="flex flex-col gap-6 bg-themePanel/85 backdrop-blur-2xl shadow-premium p-6 rounded-2xl border border-white/5 shadow-sm">
-                    {/* Intimation Banner */}
-                    {currentBlog && (authorContact || currentBlog.author_erp_id) && (
-                        <div className="bg-themeAccent/10 border border-themeAccent/20 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
-                            <div>
-                                <h4 className="text-themeAccent font-bold text-sm mb-1">Author Contact Found</h4>
-                                <p className="text-[10px] text-themeTextSec uppercase tracking-widest">You can send an acceptance or rejection intimation directly.</p>
-                            </div>
-                            <div className="flex gap-2 flex-wrap justify-end">
-                                {currentBlog.author_erp_id && (
-                                    <>
-                                        <button type="button" onClick={handleApproveERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
-                                            <i className="fa-solid fa-bell text-sm"></i> ERP Approve
-                                        </button>
-                                        <button type="button" onClick={handleRejectERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
-                                            <i className="fa-solid fa-bell text-sm"></i> {currentBlog?.is_public ? 'ERP Notify Delete' : 'ERP Reject'}
-                                        </button>
-                                        <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
-                                    </>
-                                )}
-                                
-                                <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
-                                    <i className="fa-brands fa-whatsapp text-sm"></i> Approve
-                                </a>
-                                <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
-                                    <i className="fa-brands fa-whatsapp text-sm"></i> Reject
-                                </a>
-                                <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
-                                <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
-                                    <i className="fa-solid fa-envelope text-sm"></i> Approve
-                                </a>
-                                <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
-                                    <i className="fa-solid fa-envelope text-sm"></i> Reject
-                                </a>
-                            </div>
-                        </div>
-                    )}
+ if (isEditing) {
+ return (
+ <div className={`w-full ${!isHubView ? 'max-w-5xl mx-auto p-6 lg:p-8' : ''} animate-fade-in`}>
+ <div className="flex justify-between items-center mb-6">
+ <h2 className="text-xl font-black text-themeText tracking-tight">{currentBlog ? 'Edit Blog Post' : 'New Blog Post'}</h2>
+ <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText text-xs font-black uppercase tracking-widest rounded-lg transition-colors border border-black/5 dark:border-white/10">
+ <i className="fa-solid fa-arrow-left mr-2"></i> Back
+ </button>
+ </div>
+ 
+ <form onSubmit={handleSave} className="flex flex-col gap-6 bg-themePanel/85 backdrop-blur-2xl p-6 rounded-2xl border border-white/5">
+ {/* Intimation Banner */}
+ {currentBlog && (authorContact || currentBlog.author_erp_id) && (
+ <div className="bg-themeAccent/10 border border-themeAccent/20 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
+ <div>
+ <h4 className="text-themeAccent font-bold text-sm mb-1">Author Contact Found</h4>
+ <p className="text-[10px] text-themeTextSec uppercase tracking-widest">You can send an acceptance or rejection intimation directly.</p>
+ </div>
+ <div className="flex gap-2 flex-wrap justify-end">
+ {currentBlog.author_erp_id && (
+ <>
+ <button type="button" onClick={handleApproveERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <i className="fa-solid fa-bell text-sm"></i> ERP Approve
+ </button>
+ <button type="button" onClick={handleRejectERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <i className="fa-solid fa-bell text-sm"></i> {currentBlog?.is_public ? 'ERP Notify Delete' : 'ERP Reject'}
+ </button>
+ <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
+ </>
+ )}
+ 
+ <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <i className="fa-brands fa-whatsapp text-sm"></i> Approve
+ </a>
+ <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <i className="fa-brands fa-whatsapp text-sm"></i> Reject
+ </a>
+ <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
+ <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <i className="fa-solid fa-envelope text-sm"></i> Approve
+ </a>
+ <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <i className="fa-solid fa-envelope text-sm"></i> Reject
+ </a>
+ </div>
+ </div>
+ )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</label>
-                            <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="e.g. The Future of AI in Law" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">URL Slug (Auto-generated if empty)</label>
-                            <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} placeholder="e.g. ai-in-law" />
-                        </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author Name</label>
-                            <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_name} onChange={e => setFormData({...formData, author_name: e.target.value})} placeholder="e.g. John Doe" />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author ERP ID</label>
-                            <div className="flex items-center gap-2">
-                                <input type="text" className="flex-1 bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_erp_id || ''} onChange={e => { setFormData({...formData, author_erp_id: e.target.value}); setVerifiedProfile(null); }} placeholder="e.g. 26BAL0001" />
-                                <button type="button" onClick={verifyErpId} className="px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:bg-themeBorder border border-white/5 rounded-lg text-themeText text-[10px] font-black uppercase tracking-widest transition-colors shrink-0">
-                                    Verify
-                                </button>
-                            </div>
-                            {verifiedProfile?.success && <span className="text-[10px] font-bold text-emerald-500"><i className="fa-solid fa-check-circle mr-1"></i> Verified: {verifiedProfile.success}</span>}
-                            {verifiedProfile?.error && <span className="text-[10px] font-bold text-rose-500"><i className="fa-solid fa-triangle-exclamation mr-1"></i> {verifiedProfile.error}</span>}
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Status</label>
-                            <select className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_public ? "published" : "pending"} onChange={e => setFormData({...formData, is_public: e.target.value === "published"})}>
-                                <option value="pending">Pending Review (Hidden)</option>
-                                <option value="published">Published (Public)</option>
-                            </select>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Cover Image URL</label>
-                            <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
-                        </div>
-                    </div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</label>
+ <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="e.g. The Future of AI in Law" />
+ </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">URL Slug (Auto-generated if empty)</label>
+ <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} placeholder="e.g. ai-in-law" />
+ </div>
+ </div>
+ 
+ <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author Name</label>
+ <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_name} onChange={e => setFormData({...formData, author_name: e.target.value})} placeholder="e.g. John Doe" />
+ </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author ERP ID</label>
+ <div className="flex items-center gap-2">
+ <input type="text" className="flex-1 bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_erp_id || ''} onChange={e => { setFormData({...formData, author_erp_id: e.target.value}); setVerifiedProfile(null); }} placeholder="e.g. 26BAL0001" />
+ <button type="button" onClick={verifyErpId} className="px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5 rounded-lg text-themeText text-[10px] font-black uppercase tracking-widest transition-colors shrink-0">
+ Verify
+ </button>
+ </div>
+ {verifiedProfile?.success && <span className="text-[10px] font-bold text-emerald-500"><i className="fa-solid fa-check-circle mr-1"></i> Verified: {verifiedProfile.success}</span>}
+ {verifiedProfile?.error && <span className="text-[10px] font-bold text-rose-500"><i className="fa-solid fa-triangle-exclamation mr-1"></i> {verifiedProfile.error}</span>}
+ </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Status</label>
+ <select className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_public ? "published" : "pending"} onChange={e => setFormData({...formData, is_public: e.target.value === "published"})}>
+ <option value="pending">Pending Review (Hidden)</option>
+ <option value="published">Published (Public)</option>
+ </select>
+ </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Cover Image URL</label>
+ <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
+ </div>
+ </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Content (Markdown/HTML)</label>
-                        <textarea required className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[400px] font-mono" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} placeholder="Write your blog post content here..."></textarea>
-                    </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Content (Markdown/HTML)</label>
+ <textarea required className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[400px] font-mono" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} placeholder="Write your blog post content here..."></textarea>
+ </div>
 
-                    <div className="flex justify-between mt-4">
-                        {currentBlog ? (
-                            <button type="button" onClick={handleReject} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 text-xs font-black uppercase tracking-widest rounded-lg transition-colors">
-                                {currentBlog?.is_public ? 'Delete Post' : 'Reject & Delete'}
-                            </button>
-                        ) : <div></div>}
-                        <button type="submit" className="px-6 py-3 bg-themeAccent text-[#0a0a0a] hover:opacity-90 text-xs font-black uppercase tracking-widest rounded-lg shadow-md transition-colors">
-                            {currentBlog ? 'Update Post' : 'Submit Post'}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        );
-    }
+ <div className="flex justify-between mt-4">
+ {currentBlog ? (
+ <button type="button" onClick={handleReject} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 text-xs font-black uppercase tracking-widest rounded-lg transition-colors">
+ {currentBlog?.is_public ? 'Delete Post' : 'Reject & Delete'}
+ </button>
+ ) : <div></div>}
+ <button type="submit" className="btn-erp">
+ {currentBlog ? 'Update Post' : 'Submit Post'}
+ </button>
+ </div>
+ </form>
+ </div>
+ );
+ }
 
-    return (
-        <div className={`w-full ${!isHubView ? 'max-w-7xl mx-auto p-6 lg:p-8' : ''} animate-fade-in`}>
-            {!isHubView && (
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="w-12 h-12 rounded-xl bg-themeAccent/20 flex items-center justify-center shrink-0">
-                        <i className="fa-solid fa-newspaper text-themeAccent text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-black text-themeText tracking-tight mb-1">Blog Manager</h1>
-                        <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest">Review submissions, publish, and notify authors.</p>
-                    </div>
-                </div>
-            )}
+ return (
+ <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
+ <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ {!isHubView && (
+ <div className="flex items-center gap-4 mb-8">
+ <div className="w-12 h-12 rounded-xl bg-themeAccent/20 flex items-center justify-center shrink-0">
+ <i className="fa-solid fa-newspaper text-themeAccent text-xl"></i>
+ </div>
+ <div>
+ <h1 className="text-2xl font-black text-themeText tracking-tight mb-1">Blog Manager</h1>
+ <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest">Review submissions, publish, and notify authors.</p>
+ </div>
+ </div>
+ )}
 
-            <div className="flex justify-between items-center mb-6">
-                <div className="relative w-full max-w-xs">
-                    <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec"></i>
-                    <input type="text" placeholder="Search posts..." className="w-full bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
-                </div>
-                <button onClick={handleCreateNew} className="px-5 py-2.5 bg-themeAccent text-[#0a0a0a] hover:opacity-90 text-xs font-black uppercase tracking-widest rounded-xl shadow-md transition-all flex items-center gap-2">
-                    <i className="fa-solid fa-plus"></i> New Post
-                </button>
-            </div>
+ <div className="flex justify-between items-center mb-6">
+ <div className="relative w-full max-w-xs">
+ <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec"></i>
+ <input type="text" placeholder="Search posts..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
+ </div>
+ <button onClick={handleCreateNew} className="px-5 py-2.5 bg-themeAccent text-themeApp hover:opacity-90 text-xs font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2">
+ <i className="fa-solid fa-plus"></i> New Post
+ </button>
+ </div>
 
-            <div className="bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 rounded-2xl overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border-b border-white/5">
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Date</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Status</th>
-                                <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {isLoading ? (
-                                <tr>
-                                    <td colSpan="5" className="p-8 text-center text-sm font-black text-themeTextSec uppercase tracking-widest">
-                                        <i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Loading Posts...
-                                    </td>
-                                </tr>
-                            ) : blogs.length === 0 ? (
-                                <tr>
-                                    <td colSpan="5" className="p-8 text-center text-sm font-black text-themeTextSec uppercase tracking-widest">
-                                        No blog posts found.
-                                    </td>
-                                </tr>
-                            ) : (
-                                blogs.map((blog) => (
-                                    <tr key={blog.id} className="border-b border-white/5 hover:bg-themeElevated/50 transition-colors">
-                                        <td className="p-4 max-w-xs">
-                                            <p className="text-sm font-bold text-themeText truncate">{blog.title}</p>
-                                            <p className="text-[10px] font-medium text-themeTextSec mt-0.5 truncate">/{blog.slug}</p>
-                                        </td>
-                                        <td className="p-4 text-xs font-bold text-themeText truncate max-w-[150px]">
-                                            {blog.author_name || "Unknown"}
-                                            {blog.author_email && (
-                                                <span className="block text-[9px] text-themeTextSec font-mono mt-1" title={blog.author_email}>
-                                                    <i className="fa-solid fa-envelope mr-1"></i>Contact Available
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 text-xs font-bold text-themeTextSec whitespace-nowrap">{new Date(blog.created_at).toLocaleDateString()}</td>
-                                        <td className="p-4">
-                                            {blog.is_public ? (
-                                                <span className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded whitespace-nowrap">Published</span>
-                                            ) : (
-                                                <span className="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[9px] font-black uppercase tracking-widest rounded whitespace-nowrap">Pending</span>
-                                            )}
-                                        </td>
-                                        <td className="p-4 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => handleEdit(blog)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors" title="Review & Edit">
-                                                    <i className="fa-solid fa-pen-to-square"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    );
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl overflow-hidden">
+ <div className="overflow-x-auto">
+ <table className="w-full text-left border-collapse">
+ <thead>
+ <tr className="bg-themeElevated/90 backdrop-blur-2xl border-b border-white/5">
+ <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</th>
+ <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author</th>
+ <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Date</th>
+ <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Status</th>
+ <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec text-right">Actions</th>
+ </tr>
+ </thead>
+ <tbody>
+ {isLoading ? (
+ <tr>
+ <td colSpan="5" className="p-8 text-center text-sm font-black text-themeTextSec uppercase tracking-widest">
+ <i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Loading Posts...
+ </td>
+ </tr>
+ ) : blogs.length === 0 ? (
+ <tr>
+ <td colSpan="5" className="p-8 text-center text-sm font-black text-themeTextSec uppercase tracking-widest">
+ No blog posts found.
+ </td>
+ </tr>
+ ) : (
+ blogs.map((blog) => (
+ <tr key={blog.id} className="border-b border-white/5 hover:bg-themeElevated/50 transition-colors">
+ <td className="p-4 max-w-xs">
+ <p className="text-sm font-bold text-themeText truncate">{blog.title}</p>
+ <p className="text-[10px] font-medium text-themeTextSec mt-0.5 truncate">/{blog.slug}</p>
+ </td>
+ <td className="p-4 text-xs font-bold text-themeText truncate max-w-[150px]">
+ {blog.author_name || "Unknown"}
+ {blog.author_email && (
+ <span className="block text-[9px] text-themeTextSec font-mono mt-1" title={blog.author_email}>
+ <i className="fa-solid fa-envelope mr-1"></i>Contact Available
+ </span>
+ )}
+ </td>
+ <td className="p-4 text-xs font-bold text-themeTextSec whitespace-nowrap">{new Date(blog.created_at).toLocaleDateString()}</td>
+ <td className="p-4">
+ {blog.is_public ? (
+ <span className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded whitespace-nowrap">Published</span>
+ ) : (
+ <span className="px-2 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[9px] font-black uppercase tracking-widest rounded whitespace-nowrap">Pending</span>
+ )}
+ </td>
+ <td className="p-4 text-right">
+ <div className="flex items-center justify-end gap-2">
+ <button onClick={() => handleEdit(blog)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors" title="Review & Edit">
+ <i className="fa-solid fa-pen-to-square"></i>
+ </button>
+ </div>
+ </td>
+ </tr>
+ ))
+ )}
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 }

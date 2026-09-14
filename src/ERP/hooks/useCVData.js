@@ -1,6 +1,6 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase/supabaseClient';
+import { supabase } from '../../Shared/lib/supabase/supabaseClient';
 
 export default function useCVData(studentId) {
     const [erpData, setErpData] = useState(null);

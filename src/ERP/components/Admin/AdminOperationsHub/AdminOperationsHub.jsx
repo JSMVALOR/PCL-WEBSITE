@@ -1,62 +1,39 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
-import React, { useState } from "react";
-import { theme } from "../../../theme";
-import UserManagement from "../UserManagement/UserManagement";
-import AdminLeaveManagement from "../LeaveManagement/AdminLeaveManagement";
-import AdminNotices from "../notices/AdminNotices";
-import AdminApprovals from "../AdminApprovals/AdminApprovals";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminOperationsHub() {
-    const [activeTab, setActiveTab] = useState("users");
+    const navigate = useNavigate();
 
-    const tabs = [
-        { id: "users", label: "User Accounts", icon: "fa-users-gear" },
-        { id: "leaves", label: "Leave Management", icon: "fa-calendar-day" },
-        { id: "approvals", label: "Approvals", icon: "fa-check-to-slot" }
-    ];
+    const cards = [{"id": "users", "title": "User Management", "icon": "fa-users-gear", "desc": "Manage student and faculty profiles."}, {"id": "finance", "title": "Finance & Ledger", "icon": "fa-indian-rupee-sign", "desc": "Track fee invoices and collections."}, {"id": "adminadmissions", "title": "Admissions", "icon": "fa-id-card-clip", "desc": "Manage incoming student applications."}, {"id": "adminapprovals", "title": "Approvals", "icon": "fa-check-to-slot", "desc": "Verify documents and grievances."}, {"id": "leavemanagement", "title": "Leave Management", "icon": "fa-mug-hot", "desc": "Approve or reject faculty leave requests."}];
 
     return (
-        <div className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated">
-            {/* ═══ MASTER HUB HEADER ═══ */}
-            <div className={`w-full relative overflow-hidden rounded-[2rem] shadow-2xl p-6 lg:p-8 flex flex-col gap-6 border border-white/5 bg-gradient-to-r from-themeAccent to-themeAccent/80`}>
-                {/* Background Decorations */}
-                <div className="absolute top-0 right-0 w-full max-w-[300px] md:w-[300px] h-[300px] bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 mix-blend-overlay pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-[200px] h-[200px] bg-black/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 mix-blend-overlay pointer-events-none"></div>
+        <div className="w-full animate-fade-in selection:bg-[#007AFF]/20 min-h-screen bg-transparent text-[#1C1C1E] dark:text-[#F2F2F7]">
+            <div className="max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12">
+                <PageHeader 
+                    icon="fa-solid fa-gears" 
+                    title="Operations HQ" 
+                    subtitle="Central command for users, finances, and administration." 
+                />
 
-                <div className="flex items-center gap-4 lg:gap-5 relative z-10">
-                    <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-[1rem] bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/20 flex items-center justify-center shrink-0 shadow-lg">
-                        <i className="fa-solid fa-gears text-white text-2xl lg:text-3xl drop-shadow-sm dark:drop-shadow-md"></i>
-                    </div>
-                    <div>
-                        <span className="px-2 lg:px-2.5 py-1 bg-white/20 text-white border border-white/30 rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest mb-1.5 lg:mb-2 inline-block shadow-sm">Campus Core</span>
-                        <h1 className={`${theme.text.heading} text-2xl lg:text-3xl tracking-tight text-white mb-1 drop-shadow-sm dark:drop-shadow-md`}>Operations HQ</h1>
-                        <p className="text-white/80 text-xs lg:text-sm font-medium tracking-wide">Manage users, leaves, and campus notices.</p>
-                    </div>
-                </div>
-
-                {/* Hub Navigation Tabs */}
-                <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/20 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/20 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
-                    {tabs.map((t) => (
-                        <button
-                            key={t.id}
-                            onClick={() => setActiveTab(t.id)}
-                            className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
-                                activeTab === t.id 
-                                ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-black dark:text-white shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border border-black/10 dark:border-white/40 scale-100' 
-                                : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
-                            }`}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    {cards.map(card => (
+                        <div 
+                            key={card.id}
+                            onClick={() => navigate(`/admin/${card.id}`)}
+                            className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-6 lg:p-8 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition duration-300 group flex flex-col gap-4 cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
                         >
-                            <i className={`fa-solid ${t.icon} ${activeTab === t.id ? 'animate-pulse' : ''}`}></i> {t.label}
-                        </button>
+                            <div className="w-12 h-12 rounded-[1rem] bg-[#007AFF]/10 flex items-center justify-center border border-[#007AFF]/20 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                <i className={`fa-solid ${card.icon} text-[#007AFF] text-xl`}></i>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7] mb-1">{card.title}</h3>
+                                <p className="text-xs font-medium text-[#8E8E93] leading-relaxed">{card.desc}</p>
+                            </div>
+                        </div>
                     ))}
                 </div>
-            </div>
-
-            {/* ═══ RENDER SUB-MODULE ═══ */}
-            <div className="animate-fade-in">
-                {activeTab === "users" && <UserManagement isHubView={true} />}
-                {activeTab === "leaves" && <AdminLeaveManagement isHubView={true} />}
-                {activeTab === "approvals" && <AdminApprovals isHubView={true} />}
             </div>
         </div>
     );

@@ -1,0 +1,23 @@
+{
+  "appId": "com.jsm.erp",
+  "appName": "PCL ERP",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffff",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": true,
+      "androidSpinnerStyle": "large",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#000000",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "CapacitorUpdater": {
+      "autoUpdate": false
+    }
+  }
+}

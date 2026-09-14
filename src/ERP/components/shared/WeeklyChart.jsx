@@ -129,7 +129,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                                                 <div 
                                                     key={cls.id}
                                                     onClick={() => !cls.isDraft && onLectureClick && onLectureClick(cls)}
-                                                    className={`absolute inset-x-[4px] p-2.5 rounded-xl border backdrop-blur-md transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:z-20 z-10 group/card overflow-hidden ${c.bg} ${cls.isDraft ? 'border-dashed border-2 opacity-80' : c.border} ${c.shadow} hover:shadow-lg`}
+                                                    className={`absolute inset-x-[4px] p-2.5 rounded-xl border backdrop-blur-md transition duration-300 cursor-pointer hover:-translate-y-1 hover:z-20 z-10 group/card overflow-hidden ${c.bg} ${cls.isDraft ? 'border-dashed border-2 opacity-80' : c.border} ${c.shadow} hover:shadow-lg`}
                                                     style={{
                                                         ...style,
                                                         ...(cls.isDraft ? {

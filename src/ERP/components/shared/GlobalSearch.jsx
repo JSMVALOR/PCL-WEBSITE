@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useERP } from '../../context/ErpContext';
-import { theme } from '../../theme';
+import { theme } from '../../../Shared/theme';
 
 // Pre-defined static modules for the search dictionary
 const STATIC_MODULES = [
@@ -86,7 +86,7 @@ export default function GlobalSearch() {
           }}
           onFocus={() => setIsOpen(true)}
           placeholder="Search modules, features, or quick links..."
-          className="w-full bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 text-themeText rounded-full py-3.5 pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-themeAccent/20 focus:border-themeAccent transition-all shadow-sm placeholder:text-themeTextSec text-sm"
+          className="w-full bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 text-themeText rounded-full py-3.5 pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-themeAccent/20 focus:border-themeAccent transition shadow-sm placeholder:text-themeTextSec text-sm"
         />
       </div>
 
@@ -94,7 +94,7 @@ export default function GlobalSearch() {
       {isOpen && (
         <div 
           ref={dropdownRef}
-          className="absolute top-[calc(100%+0.75rem)] left-0 right-0 bg-themePanel/90 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-themePanel shadow-2xl overflow-hidden transform transition-all duration-300 origin-top animate-fade-in"
+          className="absolute top-[calc(100%+0.75rem)] left-0 right-0 bg-themePanel/90 backdrop-blur-xl border border-black/5 dark:border-white/10 rounded-themePanel shadow-2xl overflow-hidden transform transition duration-300 origin-top animate-fade-in"
         >
           <div className="max-h-[420px] overflow-y-auto p-3 scrollbar-hide">
             
@@ -158,7 +158,7 @@ export default function GlobalSearch() {
                     <button
                       key={module.id}
                       onClick={() => handleSelect(module.path)}
-                      className="flex items-center justify-between w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition-all group border border-transparent hover:border-white/5"
+                      className="flex items-center justify-between w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition group border border-transparent hover:border-white/5"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 flex items-center justify-center rounded-md bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 text-themeTextSec group-hover:text-themeAccent group-hover:border-themeAccent/30 group-hover:bg-themeAccent/10 transition-colors">
@@ -173,7 +173,7 @@ export default function GlobalSearch() {
                           </p>
                         </div>
                       </div>
-                      <div className="opacity-0 group-hover:opacity-100 transition-all pr-2 translate-x-2 group-hover:translate-x-0 transform duration-300">
+                      <div className="opacity-0 group-hover:opacity-100 transition pr-2 translate-x-2 group-hover:translate-x-0 transform duration-300">
                         <i className="fa-solid fa-arrow-right text-themeAccent"></i>
                       </div>
                     </button>

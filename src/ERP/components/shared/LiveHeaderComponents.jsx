@@ -1,6 +1,6 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
-import { theme } from '../../theme';
+import { theme } from '../../../Shared/theme';
 
 export function LiveClock() {
     const [time, setTime] = useState(new Date());
@@ -24,7 +24,7 @@ export function LiveClock() {
 export function GlobalSearch() {
     return (
         <div className="hidden md:flex items-center w-full max-w-[200px] lg:max-w-[240px] xl:max-w-[320px] group mx-2 lg:mx-4">
-            <div className={`w-full flex items-center px-4 py-2.5 rounded-themeBtn bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 focus-within:border-themeAccent transition-all hover:border-black/5 dark:border-white/10 shadow-sm`}>
+            <div className={`w-full flex items-center px-4 py-2.5 rounded-themeBtn bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-white/5 focus-within:border-themeAccent transition hover:border-black/5 dark:border-white/10 shadow-sm`}>
                 <i className="fa-solid fa-magnifying-glass text-themeTextSec opacity-50 group-focus-within:text-themeAccent transition-colors"></i>
                 <input 
                     type="text" 
@@ -51,7 +51,7 @@ export function RoleActionButton({ role, setActiveTab }) {
     return (
         <button 
             onClick={() => setActiveTab(action.tab)}
-            className={`hidden xl:flex items-center px-5 py-2.5 rounded-full bg-themeAccent/10 hover:bg-themeAccent/20 text-themeAccent text-[10px] font-black uppercase tracking-[0.1em] border border-themeAccent/20 hover:border-themeAccent/50 transition-all duration-300 shadow-sm shrink-0`}
+            className={`hidden xl:flex items-center px-5 py-2.5 rounded-full bg-themeAccent/10 hover:bg-themeAccent/20 text-themeAccent text-[10px] font-black uppercase tracking-[0.1em] border border-themeAccent/20 hover:border-themeAccent/50 transition duration-300 shadow-sm shrink-0`}
         >
             <i className={`fa-solid ${action.icon} mr-2`}></i> {action.label}
         </button>

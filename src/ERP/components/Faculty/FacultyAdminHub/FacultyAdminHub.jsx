@@ -1,61 +1,40 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
-import React, { useState } from "react";
-import { theme } from "../../../theme";
-import FacultyLeave from "../FacultyLeave/FacultyLeave";
-import Approvals from "../Approvals/Approvals";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function FacultyAdminHub({ isEmbedded = false }) {
-    const [activeTab, setActiveTab] = useState("leave");
+export default function FacultyAdminHub() {
+    const navigate = useNavigate();
 
-    const tabs = [
-        { id: "leave", label: "My Leaves", icon: "fa-mug-hot" },
-        { id: "approvals", label: "Student Approvals", icon: "fa-check-to-slot" }
-    ];
-
-    const Wrapper = isEmbedded ? 'div' : 'div';
-    const wrapperClass = isEmbedded 
-        ? "flex flex-col gap-6" 
-        : "w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated";
+    const cards = [{"id": "facultyleave", "title": "Leave Management", "icon": "fa-plane-departure", "desc": "Apply and track leave requests."}, {"id": "approvals", "title": "Approvals", "icon": "fa-file-signature", "desc": "Respond to pending verifications."}];
 
     return (
-        <Wrapper className={wrapperClass}>
-            {!isEmbedded && (
-                <div className="w-full relative overflow-hidden rounded-[2.5rem] p-8 lg:p-10 xl:p-12 border border-white/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-15px_rgba(0,0,0,0.2)] bg-white/10 backdrop-blur-[80px] flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 xl:gap-10 shrink-0">
-                    <div className="relative z-10 flex-1">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 dark:bg-white/10 backdrop-blur-md border border-black/5 dark:border-white/10 text-themeTextSec text-[10px] font-black uppercase tracking-widest mb-4 xl:mb-6 shadow-inner">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] animate-pulse"></span> 
-                            Faculty Hub
+        <div className="w-full animate-fade-in selection:bg-[#007AFF]/20 min-h-screen bg-transparent text-[#1C1C1E] dark:text-[#F2F2F7]">
+            <div className="max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12">
+                <PageHeader 
+                    icon="fa-solid fa-briefcase" 
+                    title="Admin & HR Hub" 
+                    subtitle="Manage your profile, leaves, and administrative requests." 
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                    {cards.map(card => (
+                        <div 
+                            key={card.id}
+                            onClick={() => navigate(`/faculty/${card.id}`)}
+                            className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-6 lg:p-8 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition duration-300 group flex flex-col gap-4 cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
+                        >
+                            <div className="w-12 h-12 rounded-[1rem] bg-[#007AFF]/10 flex items-center justify-center border border-[#007AFF]/20 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                <i className={`fa-solid ${card.icon} text-[#007AFF] text-xl`}></i>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7] mb-1">{card.title}</h3>
+                                <p className="text-xs font-medium text-[#8E8E93] leading-relaxed">{card.desc}</p>
+                            </div>
                         </div>
-                        <h1 className={`${theme.text.heading} text-3xl sm:text-4xl lg:text-5xl xl:text-6xl tracking-tight mb-3 xl:mb-4 leading-none drop-shadow-sm dark:drop-shadow-md text-white`}>
-                            Administration
-                        </h1>
-                        <p className="text-white/80 text-xs lg:text-sm font-bold uppercase tracking-[0.2em] flex items-center gap-2">
-                            Manage your time off and review student requests.
-                        </p>
-                    </div>
+                    ))}
                 </div>
-            )}
-
-            <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] shadow-[0_10px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_20px_rgba(0,0,0,0.2)] rounded-2xl border border-black/10 dark:border-white/20 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
-                                activeTab === tab.id 
-                                ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-black dark:text-white shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border border-black/10 dark:border-white/40 scale-100' 
-                                : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
-                            }`}
-                    >
-                        <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'text-themeAccent' : 'opacity-70'}`}></i> {tab.label}
-                    </button>
-                ))}
             </div>
-
-            <div className="w-full flex-1 relative animate-fade-in">
-                {activeTab === "leave" && <FacultyLeave isEmbedded={true} />}
-                {activeTab === "approvals" && <Approvals isEmbedded={true} />}
-            </div>
-        </Wrapper>
+        </div>
     );
 }

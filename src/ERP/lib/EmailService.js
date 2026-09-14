@@ -6,7 +6,6 @@ export const EMAIL_TEMPLATES = {
         subject: `Your ERP Login Passcode`,
         message_body: HTML_EMAIL_TEMPLATES.ERP_LOGIN_OTP(params),
     }),
-    // Legacy wrappers for backward compatibility if needed, though we prefer HTML
     APPLICATION_RECEIVED: (params) => ({
         subject: `Application Received - Ticket #${params.ticket_id}`,
         message_body: HTML_EMAIL_TEMPLATES.APPLICATION_RECEIVED(params),
@@ -25,9 +24,6 @@ export const EMAIL_TEMPLATES = {
     }),
 };
 
-// ==========================================
-// DISPATCH ENGINE
-// ==========================================
 export const sendSystemEmail = async (templateKey, params) => {
     try {
         const templateBuilder = EMAIL_TEMPLATES[templateKey];
@@ -37,9 +33,8 @@ export const sendSystemEmail = async (templateKey, params) => {
 
         const { subject, message_body } = templateBuilder(params);
 
-        const emailEndpoint = (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') 
-            ? '/api/send-email' 
-            : (import.meta.env.VITE_EMAIL_SERVER_URL || 'http://localhost:3001/send-email');
+        // Vercel Serverless Function Endpoint
+        const emailEndpoint = 'https://pcl-website.vercel.app/api/send-email';
 
         const response = await fetch(emailEndpoint, {
             method: 'POST',
@@ -56,10 +51,9 @@ export const sendSystemEmail = async (templateKey, params) => {
         const result = await response.json();
         
         if (!response.ok) {
-            throw new Error(result.error || 'Failed to dispatch email via local engine.');
+            throw new Error(result.error || 'Failed to dispatch email via Vercel Serverless Engine.');
         }
 
-        console.log(`[Email Engine] Dispatched: ${subject} to ${params.to_email}`);
         return true;
     } catch (error) {
         console.error("Email Engine Error:", error);

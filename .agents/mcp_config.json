@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "qa-testing-tools": {
+      "command": "node",
+      "args": ["mcp-qa/index.js"]
+    }
+  }
+}

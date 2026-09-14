@@ -1,14 +1,14 @@
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 import SystemUpdater from './ERP/components/shared/SystemUpdater';
-import { setupPushNotifications } from './utils/PushEngine';
+import { setupPushNotifications } from './Shared/utils/PushEngine';
 import { Capacitor } from '@capacitor/core';
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import React, { Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
-import Preloader from './COMPONENTS/UI/Preloader/Preloader';
-import ScrollToTop from './COMPONENTS/UI/ScrollToTop';
+import Preloader from './Website/components/UI/Preloader/Preloader';
+import ScrollToTop from './Website/components/UI/ScrollToTop';
 import App from './App';
-import { SiteProvider } from './CONTEXT/SiteContext';
+import { SiteProvider } from './Website/context/SiteContext';
 import { ErpProvider } from './ERP/context/ErpContext';
 import ErpApp from './ERP/ErpApp';
 

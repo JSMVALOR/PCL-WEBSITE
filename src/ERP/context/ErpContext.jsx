@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase/supabaseClient';
+import { supabase } from '../../Shared/lib/supabase/supabaseClient';
 import CryptoJS from 'crypto-js';
 
 const SECRET_KEY = import.meta.env.VITE_ERP_ENCRYPTION_KEY || 'JSM_PCL_ENTERPRISE_AES_256_SECURE_KEY_v1';
@@ -110,7 +110,9 @@ export const ErpProvider = ({ children }) => {
     };
 
     const [activeTheme, setActiveTheme] = useState(() => {
-        const stored = localStorage.getItem('jsmerp_theme');
+        let stored = localStorage.getItem('jsmerp_theme');
+        if (stored === 'light') stored = 'marble-executive';
+        if (stored === 'dark') stored = 'dark-luxury';
         if (stored) return stored;
         
         // Auto-detect system preference
@@ -136,6 +138,15 @@ export const ErpProvider = ({ children }) => {
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', activeTheme);
         localStorage.setItem('jsmerp_theme', activeTheme);
+        
+        // Fix for Tailwind dark mode classes - seamlessly sync the 'dark' class 
+        // with our semantic themes so all dark: and light modes work properly.
+        const lightThemes = ['marble-executive', 'structural-neo-brutalism'];
+        if (lightThemes.includes(activeTheme)) {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
     }, [activeTheme]);
 
     // Navigation Layout State
@@ -316,12 +327,29 @@ export const ErpProvider = ({ children }) => {
             const role = userSession.role;
             const filterNotice = (n) => {
                 if (role === 'admin') return true;
-                if (n.author_id === userSession.db_id) return true;
-                if (n.target_audience === 'global') return true;
-                if (role === 'student' && n.target_audience === 'student') return true;
-                if (role === 'faculty' && n.target_audience === 'faculty') return true;
-                if (n.target_audience === 'class' && n.target_id === userSession.academic_batch) return true;
-                if (n.target_audience === 'person' && n.target_id === userSession.erp_id) return true;
+                if (n.author_id === (userSession.db_id || userSession.id)) return true;
+                
+                // If the backend sent JSON array
+                let targets = [];
+                try {
+                    if (Array.isArray(n.target_audience)) targets = n.target_audience;
+                    else if (typeof n.target_audience === 'string') {
+                        if (n.target_audience.startsWith('[')) targets = JSON.parse(n.target_audience);
+                        else targets = [n.target_audience];
+                    }
+                } catch (e) {
+                    targets = [n.target_audience];
+                }
+
+                if (!targets || targets.length === 0) return true; // Fallback show all if malformed
+
+                if (targets.includes('Global') || targets.includes('global')) return true;
+                if (role === 'student' && (targets.includes('Student') || targets.includes('student'))) return true;
+                if (role === 'faculty' && (targets.includes('Faculty') || targets.includes('faculty'))) return true;
+                
+                if (role === 'student' && userSession.academic_batch && targets.includes(userSession.academic_batch)) return true;
+                if (userSession.erp_id && targets.includes(userSession.erp_id)) return true;
+
                 return false;
             };
 
@@ -636,7 +664,7 @@ export const ErpProvider = ({ children }) => {
                             </button>
                             <button
                                 onClick={continueSession}
-                                className="flex-1 py-3 rounded-xl bg-themeAccent hover:bg-themeAccentMuted text-white text-xs font-black uppercase tracking-wider transition-all shadow-lg active:scale-95 border border-themeAccent"
+                                className="flex-1 py-3 rounded-xl bg-themeAccent hover:bg-themeAccentMuted text-white text-xs font-black uppercase tracking-wider transition shadow-lg active:scale-95 border border-themeAccent"
                             >
                                 Continue
                             </button>

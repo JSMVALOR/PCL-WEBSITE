@@ -1,316 +1,194 @@
 /* © 2026 JSM Associates & Innovation. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from "../../../theme";
+import UpdatesCarousel from "../../shared/UpdatesCarousel/UpdatesCarousel";
+import { theme } from '../../../../Shared/theme';
+import PageHeader from "../../shared/PageHeader/PageHeader";
+import { FacultySyllabusProgression, FacultyCourseHealth } from "../../shared/DashboardWidgets";
+import OrganizationDirectory from '../../shared/OrganizationDirectory/OrganizationDirectory';
 import { useERP } from "../../../context/ErpContext";
-import { supabase } from "../../../lib/supabase/supabaseClient";
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 export default function FacultyDashboard({ setActiveTab }) {
-    const { userSession } = useERP();
-    
-    // Zero-Lag Cache Init
-    const cacheKey = `faculty_dash_cache_${userSession?.db_id || 'guest'}`;
-    const [dashboardData, setDashboardData] = useState(() => {
-        const cached = sessionStorage.getItem(cacheKey);
-        if (cached) {
-            try { return JSON.parse(cached); } catch (e) { }
-        }
-        return {
-            stats: { classesToday: 0, ungradedSubmissions: 0, pendingApprovals: 0, activeMentees: 0 },
-            schedule: [],
-            actionItems: [],
-            noticesCount: 0
-        };
+    const [viewMode, setViewMode] = useState('dashboard');
+    const { userSession, notices } = useERP();
+
+    const [dashboardData, setDashboardData] = useState({
+        stats: { averageAttendance: '--%', courseHealth: 'Syncing...', classesToday: 0, syllabusCoverage: '0%' },
+        schedule: [],
+        loading: true
     });
 
-    const [currentTime, setCurrentTime] = useState(new Date());
-
     useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 60000); // Update every minute
-        return () => clearInterval(timer);
-    }, []);
-
-    useEffect(() => {
-        if (!userSession?.db_id) return;
-
-        const fetchDashboardTelemetry = async () => {
+        let isMounted = true;
+        const fetchDashboardData = async () => {
             try {
-                const todayDay = new Date().toLocaleDateString("en-US", { weekday: 'long' });
+                // 1. Fetch Schedule from Supabase
+                // Using RPC or direct query.
+                const { data: scheduleData } = await supabase
+                    .from('faculty_timetable')
+                    .select('*')
+                    .eq('faculty_id', userSession?.db_id || userSession?.id || 'default')
+                    .order('start_time', { ascending: true });
 
-                // PARALLEL FETCHING: All dashboard data streams fetched simultaneously
-                const [
-                    scheduleRes,
-                    leavesRes,
-                    noticesRes,
-                    ungradedRes,
-                    nocsRes,
-                    menteeRes
-                ] = await Promise.all([
-                    supabase.from('class_schedule').select('*, subjects(name, code)').eq('faculty_id', userSession.db_id).eq('day_of_week', todayDay).order('start_time', { ascending: true }),
-                    supabase.from('leave_requests').select('*, student:profiles!leave_requests_student_id_fkey(full_name)').eq('status', 'pending').eq('mentor_id', userSession.db_id),
-                    supabase.from('notices').select('*', { count: 'exact', head: true }).gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
-                    supabase.from('assignment_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-                    supabase.from('noc_requests').select('*, student:profiles!student_id(full_name)').eq('status', 'pending_mentor').eq('mentor_id', userSession.db_id),
-                    supabase.from('mentorship_meetings').select('*', { count: 'exact', head: true }).eq('faculty_id', userSession.db_id).eq('status', 'scheduled')
-                ]);
+                // 2. Fetch average stats from faculty_stats view or calculate locally
+                const { data: statsData } = await supabase
+                    .from('faculty_stats')
+                    .select('*')
+                    .eq('faculty_id', userSession?.db_id || userSession?.id || 'default')
+                    .single();
 
-                const scheduleData = scheduleRes.data || [];
-                const leaves = leavesRes.data || [];
-                const noticesCount = noticesRes.count || 0;
-                const ungradedCount = ungradedRes.count || 0;
-                const nocs = nocsRes.data || [];
-                const menteeCount = menteeRes.count || 0;
-
-                const totalApprovals = leaves.length + nocs.length;
-
-                const actions = [];
-
-                leaves.slice(0, 2).forEach(l => actions.push({ 
-                    title: "Review Leave Application", 
-                    subtitle: l.leave_type, 
-                    student: l.student?.full_name, 
-                    type: "Approval", 
-                    urgent: true, 
-                    tab: 'approvals' 
-                }));
-
-                nocs.slice(0, 2).forEach(n => actions.push({ 
-                    title: "Review Internship NOC", 
-                    subtitle: n.company_name, 
-                    student: n.student?.full_name, 
-                    type: "Approval", 
-                    urgent: true, 
-                    tab: 'approvals' 
-                }));
-
-                if (ungradedCount > 0) {
-                    actions.push({ 
-                        title: "Grade Pending Submissions", 
-                        subtitle: "Assignment Engine", 
-                        student: `${ungradedCount} Students`, 
-                        type: "Grading", 
-                        urgent: false, 
-                        tab: 'assignments' 
+                if (isMounted) {
+                    setDashboardData({
+                        stats: {
+                            averageAttendance: statsData?.average_attendance ? `${statsData.average_attendance}%` : '0%',
+                            courseHealth: statsData?.course_health || 'Optimal',
+                            classesToday: scheduleData?.length || 0,
+                            syllabusCoverage: statsData?.syllabus_coverage ? `${statsData.syllabus_coverage}%` : '0%'
+                        },
+                        schedule: scheduleData && scheduleData.length > 0 ? scheduleData : [],
+                        loading: false
                     });
                 }
-
-                const newData = {
-                    stats: {
-                        classesToday: scheduleData.length,
-                        ungradedSubmissions: ungradedCount,
-                        pendingApprovals: totalApprovals,
-                        activeMentees: menteeCount
-                    },
-                    schedule: scheduleData,
-                    actionItems: actions.slice(0, 4),
-                    noticesCount: noticesCount
-                };
-
-                setDashboardData(newData);
-                sessionStorage.setItem(cacheKey, JSON.stringify(newData));
-
-            } catch (error) {
-                console.error("Dashboard Aggregation Failed:", error);
+            } catch (err) {
+                console.warn(err);
+                if (isMounted) setDashboardData(prev => ({ ...prev, loading: false }));
             }
         };
+        fetchDashboardData();
+        return () => { isMounted = false; };
+    }, [userSession]);
 
-        fetchDashboardTelemetry();
-    }, [userSession, cacheKey]);
+    const getClassStatus = (start, end) => {
+        const now = new Date();
+        const currentMins = now.getHours() * 60 + now.getMinutes();
+        const [startH, startM] = start.split(':').map(Number);
+        const [endH, endM] = end.split(':').map(Number);
+        
+        const startMins = startH * 60 + startM;
+        const endMins = endH * 60 + endM;
 
-    // --- TIME PARSERS & LIVE STATUS ---
-    const formatTime = (timeString) => {
-        if (!timeString) return "";
-        const [hourStr, minuteStr] = timeString.split(':');
-        const hour = parseInt(hourStr, 10);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const formattedHour = hour % 12 || 12;
-        return `${formattedHour < 10 ? '0' : ''}${formattedHour}:${minuteStr} ${ampm}`;
-    };
-
-    const getClassStatus = (startTime, endTime) => {
-        const currentTotalMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-        const parseDbTime = (t) => {
-            const [h, m] = t.split(':');
-            return parseInt(h, 10) * 60 + parseInt(m, 10);
-        };
-
-        const startMins = parseDbTime(startTime);
-        const endMins = parseDbTime(endTime);
-
-        if (currentTotalMinutes > endMins) return 'completed';
-        if (currentTotalMinutes >= startMins && currentTotalMinutes <= endMins) return 'active';
+        if (currentMins >= startMins && currentMins <= endMins) return 'active';
+        if (currentMins > endMins) return 'completed';
         return 'upcoming';
     };
 
-    // --- UI CONFIG ---
-    const todayStr = new Date().toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' });
-    const quickStatsConfig = [
-        { label: "Classes Today", value: dashboardData.stats.classesToday, icon: "fa-solid fa-chalkboard-user", color: "text-themeAccent", bg: "bg-themePanel", border: "border-themeBorderStrong" },
-        { label: "Ungraded Subs", value: dashboardData.stats.ungradedSubmissions, icon: "fa-solid fa-file-signature", color: dashboardData.stats.ungradedSubmissions > 0 ? "text-themeAccent" : "text-themeTextSec opacity-70", bg: dashboardData.stats.ungradedSubmissions > 0 ? "bg-themePanel" : "bg-themePanel", border: dashboardData.stats.ungradedSubmissions > 0 ? "border-themeBorderStrong" : "border-themeBorder" },
-        { label: "Pending Approvals", value: dashboardData.stats.pendingApprovals, icon: "fa-solid fa-clipboard-question", color: dashboardData.stats.pendingApprovals > 0 ? "text-themeAccent" : "text-themeTextSec opacity-70", bg: dashboardData.stats.pendingApprovals > 0 ? "bg-themePanel" : "bg-themePanel", border: dashboardData.stats.pendingApprovals > 0 ? "border-themeBorderStrong" : "border-themeBorder" },
-        { label: "Upcoming Sessions", value: dashboardData.stats.activeMentees, icon: "fa-solid fa-people-arrows", color: "text-themeAccent", bg: "bg-themePanel", border: "border-themeBorderStrong" },
-    ];
-
     return (
-        <div className="w-full max-w-7xl mx-auto flex flex-col gap-8 pb-12 animate-fade-in selection:bg-themeElevated">
-
-            {/* 1. COMMAND CENTER BANNER (Liquid Glass) */}
-            <div 
-                className="w-full relative overflow-hidden rounded-[2.5rem] p-8 lg:p-10 xl:p-12 border border-black/10 dark:border-white/20 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-15px_rgba(0,0,0,0.2)] bg-black/5 dark:bg-white/10 backdrop-blur-[80px] flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 xl:gap-10 shrink-0 mb-2"
-            >
-                <div className="relative z-10 flex-1">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/20 dark:bg-white/10 backdrop-blur-md border border-black/5 dark:border-white/10 text-themeTextSec text-[10px] font-black uppercase tracking-widest mb-4 xl:mb-6 shadow-inner">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] animate-pulse"></span> 
-                        Faculty Command Center
-                    </div>
-                    <h2 className={`${theme.text.heading} text-3xl sm:text-4xl lg:text-5xl xl:text-6xl tracking-tight mb-3 xl:mb-4 leading-none drop-shadow-sm dark:drop-shadow-md text-white`}>
-                        Welcome back,<br className="hidden sm:block lg:hidden" /> <span className="text-themeAccent">{userSession?.name?.split(' ')[0] || "Professor"}</span>.
-                    </h2>
-                    <p className="text-white/80 text-xs lg:text-sm font-bold uppercase tracking-[0.2em] flex items-center gap-2 mb-3 xl:mb-4">
-                        <i className="fa-regular fa-calendar-days opacity-70"></i> {todayStr}
-                    </p>
-                    <p className={`text-white/80 text-sm font-medium`}>
-                        You have {dashboardData.stats.classesToday} classes today and {dashboardData.stats.pendingApprovals} pending student requests.
-                    </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 shrink-0 relative z-10">
-                    <button onClick={() => setActiveTab('notices')} className="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-[2rem] text-xs font-black uppercase tracking-widest transition-all shadow-sm flex items-center justify-center gap-2 group">
-                        <i className="fa-solid fa-satellite-dish group-hover:scale-110 transition-transform"></i> Announcements
-                    </button>
-                    <button onClick={() => setActiveTab('roster')} className="bg-white text-black px-8 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition-all duration-300 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] flex justify-center items-center gap-2 hover:opacity-95 group">
-                        <i className="fa-solid fa-clipboard-user group-hover:scale-110 transition-transform"></i> Mark Attendance
-                    </button>
-                </div>
-            </div>
-
-            {/* 2. QUICK STATS GRID */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {quickStatsConfig.map((stat, index) => (
-                    <div key={index} className={`bg-themeElevated shadow-2xl border-theme border-themeBorder p-6 rounded-themePanel flex flex-col gap-4 hover:border-themeBorderStrong hover:-translate-y-1 transition-all duration-300 group cursor-default`}>
-                        <div className={`w-12 h-12 rounded-themePanel flex items-center justify-center ${stat.bg} ${stat.color} border-theme ${stat.border} group-hover:scale-110 transition-transform shadow-sm`}>
-                            <i className={`${stat.icon} text-xl`}></i>
-                        </div>
-                        <div>
-                            <p className={`${theme.text.heading} text-3xl font-black tracking-tight leading-none mb-1 text-themeText`}>{stat.value}</p>
-                            <p className={`text-[10px] font-black uppercase tracking-widest ${theme.text.muted}`}>{stat.label}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* 3. MAIN DASHBOARD SPLIT */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                {/* Left Column: Today's Schedule */}
-                <div className="lg:col-span-2 flex flex-col gap-6">
-                    <div className="flex items-center justify-between px-2">
-                        <h2 className={`${theme.text.heading} text-xl text-themeText tracking-tight`}><i className="fa-regular fa-clock text-themeTextSec opacity-70 mr-2"></i> Today's Itinerary</h2>
-                        <button onClick={() => setActiveTab('timetable')} className="text-[10px] font-black text-themeAccent hover:text-themeText uppercase tracking-widest transition-colors">
-                            Full Timetable &rarr;
+        <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
+            
+            <PageHeader 
+                icon="fa-solid fa-chalkboard-user"
+                title={`Welcome back, ${userSession?.name || "Professor"}`}
+                subtitle="Overview of your academic responsibilities and daily itinerary."
+                rightContent={
+                    <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl border border-black/5 dark:border-white/10 shrink-0">
+                        <button 
+                            onClick={() => setViewMode('dashboard')}
+                            className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 ${viewMode === 'dashboard' ? 'bg-white dark:bg-[#2C2C2E] text-themeAccent shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}
+                        >
+                            <i className="fa-solid fa-chart-pie mr-2"></i> Dashboard
+                        </button>
+                        <button 
+                            onClick={() => setViewMode('organization')}
+                            className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 ${viewMode === 'organization' ? 'bg-white dark:bg-[#2C2C2E] text-themeAccent shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}
+                        >
+                            <i className="fa-solid fa-sitemap mr-2"></i> Organization
                         </button>
                     </div>
+                }
+            />
 
-                    <div className="bg-themePanel shadow-2xl border-theme border-themeBorder rounded-themePanel p-2 overflow-hidden">
-                        {dashboardData.schedule.length === 0 ? (
-                            <div className="w-full py-16 flex flex-col items-center justify-center text-center">
-                                <i className="fa-solid fa-mug-hot text-4xl text-themeTextSec opacity-50 mb-3"></i>
-                                <h3 className="text-sm font-black text-themeText">No Classes Today</h3>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec opacity-70 mt-1">You have a clear itinerary.</p>
+            <div className="flex-1 w-full max-w-[1400px] mx-auto p-4 sm:p-6 lg:p-8 xl:p-10 flex flex-col animate-fade-in custom-scrollbar overflow-y-auto">
+                {viewMode === 'organization' ? (
+                    <OrganizationDirectory />
+                ) : (
+                    <>
+                        {/* MAIN CONTENT WIDGETS */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full animate-fade-in-up mt-2 mb-6">
+                            <div className="col-span-1 lg:col-span-2 flex flex-col h-[360px]">
+                                <FacultyCourseHealth />
                             </div>
-                        ) : dashboardData.schedule.map((cls) => {
-                            const status = getClassStatus(cls.start_time, cls.end_time);
-                            return (
-                                <div key={cls.id} className={`flex gap-6 p-5 rounded-themePanel transition-all duration-300 ${status === 'active' ? 'bg-themeElevated border-theme border-themeBorderStrong shadow-lg' : `hover:bg-themeElevated border-theme border-transparent ${status === 'completed' ? 'opacity-50 grayscale' : ''}`}`}>
-                                    {/* Timeline Line */}
-                                    <div className="flex flex-col items-center justify-start gap-1 w-20 shrink-0 border-r-theme border-themeBorder pr-4">
-                                        <span className={`text-sm font-black tracking-tight ${status === 'completed' ? theme.text.muted : 'text-themeText'}`}>
-                                            {formatTime(cls.start_time).split(' ')[0]}
-                                        </span>
-                                        <span className={`text-[10px] font-black uppercase tracking-widest ${theme.text.muted}`}>
-                                            {formatTime(cls.start_time).split(' ')[1]}
-                                        </span>
-                                    </div>
+                            <div className="col-span-1 flex flex-col h-[360px]">
+                                <UpdatesCarousel userSession={userSession} notices={notices || []} onNoticesClick={() => setActiveTab('notices')} />
+                            </div>
+                        </div>
 
-                                    {/* Class Card */}
-                                    <div className="flex-1">
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                                            <div className="flex-1 min-w-0">
-                                                <h4 className={`font-bold ${status === 'completed' ? 'text-themeTextSec line-through' : 'text-themeText'} truncate`}>
-                                                    {cls.subjects?.name || cls.subject_id || "Course Name"}
-                                                </h4>
-                                                <div className="flex items-center gap-3 mt-1 text-xs text-themeTextSec">
-                                                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-users"></i> {cls.batch_id}</span>
-                                                    <span className="flex items-center gap-1.5"><i className="fa-solid fa-location-dot"></i> {cls.room_name || "TBA"}</span>
-                                                    <span className="flex items-center gap-1.5 text-themeAccent"><i className="fa-solid fa-hashtag"></i> {cls.subjects?.code || "CODE"}</span>
-                                                </div>
-                                            </div>
-                                            {status === 'active' && (
-                                                <span className="bg-themeAccent text-themePanel px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest flex items-center w-fit gap-1.5 shadow-sm">
-                                                    <span className="w-1.5 h-1.5 bg-themePanel rounded-full animate-pulse"></span> Ongoing
-                                                </span>
-                                            )}
+                        {/* QUICK STATS GRID */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 shrink-0">
+                            {[
+                                { label: 'Syllabus Coverage', value: dashboardData.stats.syllabusCoverage, icon: 'fa-book-open', color: 'text-blue-500' },
+                                { label: 'Overall Attendance', value: dashboardData.stats.averageAttendance, icon: 'fa-user-check', color: 'text-emerald-500' },
+                                { label: 'Classes Today', value: dashboardData.stats.classesToday || dashboardData.schedule.length, icon: 'fa-chalkboard-user', color: 'text-indigo-500' },
+                                { label: 'Course Health', value: dashboardData.stats.courseHealth, icon: 'fa-heart-pulse', color: 'text-rose-500' }
+                            ].map((stat, i) => (
+                                <div key={i} className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 relative group cursor-default">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="flex items-start justify-between mb-2">
+                                        <div className={`w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/10 flex items-center justify-center ${stat.color} mb-4 group-hover:scale-110 transition-transform`}>
+                                            <i className={`fa-solid ${stat.icon}`}></i>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Right Column: Action Items & Notices */}
-                <div className="flex flex-col gap-6">
-                    <h2 className={`${theme.text.heading} text-xl text-themeText tracking-tight px-2`}><i className="fa-solid fa-thumbtack text-themeTextSec opacity-70 mr-2"></i> Action Items</h2>
-
-                    <div className="flex flex-col gap-4">
-                        {dashboardData.actionItems.length === 0 ? (
-                            <div className="bg-themePanel shadow-2xl border-theme border-themeBorder p-6 rounded-themePanel text-center">
-                                <p className="text-xs font-bold text-themeTextSec opacity-70 uppercase tracking-widest">Inbox Zero. No pending tasks.</p>
-                            </div>
-                        ) : dashboardData.actionItems.map((task, index) => (
-                            <div key={index} onClick={() => setActiveTab(task.tab)} className={`bg-themePanel shadow-2xl border-theme border-themeBorder p-5 rounded-themePanel hover:bg-themeElevated hover:border-themeBorderStrong transition-all duration-300 hover:-translate-y-1 group cursor-pointer relative overflow-hidden`}>
-                                {task.urgent && <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-themeAccent"></div>}
-
-                                <div className="flex justify-between items-start mb-2 pl-2">
-                                    <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border-theme ${task.type === 'Approval' ? 'bg-themeElevated text-themeAccent border-themeBorderStrong' : 'bg-themeElevated text-themeTextSec border-themeBorder'}`}>
-                                        {task.type}
-                                    </span>
-                                </div>
-
-                                <h3 className="text-sm font-black text-themeText mb-1 group-hover:text-themeAccent transition-colors pl-2 leading-tight">{task.title}</h3>
-                                <p className={`text-[10px] font-bold ${theme.text.muted} uppercase tracking-widest mb-4 pl-2`}>{task.subtitle}</p>
-
-                                <div className="flex items-center justify-between pt-3 border-t-theme border-themeBorder pl-2">
-                                    <span className={`text-[10px] font-semibold ${theme.text.secondary} flex items-center gap-1.5`}>
-                                        <div className="w-5 h-5 rounded-md bg-themeElevated border-theme border-themeBorderStrong flex items-center justify-center"><i className="fa-solid fa-user text-[9px] text-themeTextSec"></i></div>
-                                        {task.student}
-                                    </span>
-                                    <div className="w-7 h-7 rounded-themePanel bg-themeElevated border-theme border-themeBorderStrong flex items-center justify-center text-themeTextSec opacity-70 group-hover:bg-themeAccent group-hover:text-themePanel group-hover:border-themeAccent transition-all shadow-sm">
-                                        <i className="fa-solid fa-arrow-right -rotate-45 text-[10px]"></i>
+                                    <div>
+                                        <p className="text-3xl font-black tracking-tight leading-none mb-1 text-themeText">{stat.value}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">{stat.label}</p>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-
-                        {/* Quick Action Card (Announcements) */}
-                        <div onClick={() => setActiveTab('notices')} className="mt-2 bg-themeElevated shadow-2xl p-6 rounded-themePanel border-theme border-themeBorderStrong text-themeText relative overflow-hidden group cursor-pointer hover:border-themeAccent transition-all hover:-translate-y-1 duration-300">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel rounded-full blur-2xl -translate-y-1/2 translate-x-1/4 opacity-50"></div>
-                            <div className="w-10 h-10 rounded-themePanel bg-themePanel border-theme border-themeBorderStrong flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm">
-                                <i className="fa-solid fa-bullhorn text-themeAccent text-lg"></i>
-                            </div>
-                            <h3 className="text-sm font-black mb-1 text-themeText">Campus Announcements</h3>
-                            <p className={`text-xs ${theme.text.secondary} font-medium mb-4 relative z-10`}>
-                                {dashboardData.noticesCount > 0
-                                    ? `${dashboardData.noticesCount} new notices broadcasted recently.`
-                                    : "No new announcements this week."}
-                            </p>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-themeAccent flex items-center gap-2 relative z-10">
-                                View Broadcaster <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                            </span>
+                            ))}
                         </div>
-                    </div>
-                </div>
-            </div>
 
+                        {/* MAIN DASHBOARD SPLIT */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            
+                            {/* Left Column: Today's Schedule */}
+                            <div className="lg:col-span-3 flex flex-col gap-6">
+                                <div className="flex items-center justify-between px-2">
+                                    <h2 className={`${theme.text.heading} text-xl text-themeText tracking-tight`}><i className="fa-regular fa-clock text-themeTextSec opacity-70 mr-2"></i> Today's Itinerary</h2>
+                                    <button onClick={() => setActiveTab('timetable')} className="text-[10px] font-black text-themeAccent hover:text-themeText uppercase tracking-widest transition-colors">
+                                        Full Timetable &rarr;
+                                    </button>
+                                </div>
+
+                                <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-2">
+                                    {dashboardData.schedule.length === 0 ? (
+                                        <div className="w-full py-16 flex flex-col items-center justify-center text-center">
+                                            <i className="fa-solid fa-mug-hot text-4xl text-themeTextSec opacity-50 mb-3"></i>
+                                            <h3 className="text-sm font-black text-themeText">No Classes Today</h3>
+                                            <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec opacity-70 mt-1">You have a clear itinerary.</p>
+                                        </div>
+                                    ) : dashboardData.schedule.map((cls) => {
+                                        const status = getClassStatus(cls.start_time, cls.end_time);
+                                        return (
+                                            <div key={cls.id} className={`flex gap-6 p-5 rounded-xl transition duration-300 ${status === 'active' ? 'bg-themeAccent/5 border border-themeAccent/20' : `hover:bg-black/5 dark:hover:bg-white/5 border border-transparent ${status === 'completed' ? 'opacity-50 grayscale' : ''}`}`}>
+                                                <div className="w-24 shrink-0 flex flex-col items-end pt-1">
+                                                    <span className="text-xs font-black text-themeText">{cls.time}</span>
+                                                    <span className={`text-[9px] font-bold uppercase tracking-widest mt-1 ${status === 'active' ? 'text-themeAccent' : 'text-themeTextSec'}`}>
+                                                        {status === 'active' ? '● Live Now' : status}
+                                                    </span>
+                                                </div>
+                                                <div className="w-px bg-black/10 dark:bg-white/10 relative">
+                                                    <div className={`absolute top-2 -left-1 w-2.5 h-2.5 rounded-full border-[2px] border-themeApp ${status === 'active' ? 'bg-themeAccent shadow-[0_0_10px_rgba(var(--color-accent),0.5)]' : status === 'completed' ? 'bg-themeTextSec' : 'bg-themeBorderStrong'}`}></div>
+                                                </div>
+                                                <div className="flex-1 pb-4">
+                                                    <h3 className="text-sm font-black text-themeText mb-1">{cls.subject}</h3>
+                                                    <p className={`text-xs font-medium text-themeTextSec mb-3`}>{cls.batch}</p>
+                                                    <div className="flex items-center gap-4">
+                                                        <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest flex items-center gap-1.5"><i className="fa-solid fa-location-dot opacity-70"></i> {cls.room}</span>
+                                                        <button onClick={() => setActiveTab('attendance')} className="px-3 py-1.5 bg-black/5 dark:bg-white/10 hover:bg-themeAccent hover:text-white rounded text-[9px] font-black uppercase tracking-widest transition-colors flex items-center gap-1.5">
+                                                            <i className="fa-solid fa-user-check"></i> Take Attendance
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            
+
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
