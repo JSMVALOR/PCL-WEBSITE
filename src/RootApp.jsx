@@ -6,6 +6,8 @@ import { Capacitor } from '@capacitor/core';
 import React, { Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 import Preloader from './Website/components/UI/Preloader/Preloader';
+import RouteSkeleton from './Website/components/UI/RouteSkeleton';
+import ErpSkeleton from './ERP/components/shared/ErpSkeleton';
 import ScrollToTop from './Website/components/UI/ScrollToTop';
 import App from './App';
 import { SiteProvider } from './Website/context/SiteContext';
@@ -14,7 +16,7 @@ import ErpApp from './ERP/ErpApp';
 
 const ErpWrapper = () => {
   return (
-    <Suspense fallback={<Preloader />}>
+    <Suspense fallback={<ErpSkeleton />}>
       <ErpProvider>
         <ErpApp />
       </ErpProvider>
@@ -43,7 +45,7 @@ const RootApp = () => {
       <ScrollToTop />
       {isErpRoute ? <ErpWrapper /> : (
         <SiteProvider>
-          <Suspense fallback={<Preloader />}>
+          <Suspense fallback={<RouteSkeleton />}>
             <App />
           </Suspense>
         </SiteProvider>
