@@ -1,5 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
+import ValorLogo from '../shared/ValorLogo';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useERP } from '../../context/ErpContext';
 import { Capacitor } from '@capacitor/core';
