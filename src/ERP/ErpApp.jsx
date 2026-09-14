@@ -1,6 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
+import ValorLogo from './components/shared/ValorLogo';
+
 import OTPVerification from './components/Login/OTPVerification';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { theme } from '../Shared/theme';
@@ -382,7 +384,11 @@ export default function App() {
                   <a href="/terms" target="_blank" className="hover:text-themeText transition-colors">Terms of Service</a>
                 </div>
                 <div>
-                  &copy; {new Date().getFullYear()} JSM VALOR. Data Processor.
+                  <div className="flex items-center gap-2">
+                    <span className="opacity-50">&copy; {new Date().getFullYear()}</span>
+                    <ValorLogo className="scale-[0.5] origin-left -ml-1 -mr-6" />
+                    <span className="opacity-50">Data Processor.</span>
+                  </div>
                 </div>
               </div>
             </div>
