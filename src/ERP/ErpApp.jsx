@@ -162,7 +162,8 @@ export default function App() {
   useEffect(() => {
     const container = document.getElementById('jsm-main-scroll-container');
     if (container) {
-      container.scrollTo(0, 0);
+      container.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [location.pathname]);
 
@@ -386,7 +387,7 @@ export default function App() {
           {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
 
             <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
-              <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 scroll-smooth flex flex-col" id="jsm-main-scroll-container">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
                 {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
                 <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
 
