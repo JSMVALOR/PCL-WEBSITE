@@ -18,8 +18,6 @@ export default function ValorLogo({ className = "" }) {
                     <span className="text-black dark:text-white tracking-tight" style={{ fontSize: "1.4em" }}>VALOR</span>
                     <span className="text-red-500" style={{ fontSize: "1.4em" }}>.</span>
                 </div>
-                {/* Blue underline */}
-                <div className="h-1 bg-blue-600 w-full mt-0.5"></div>
             </div>
         </div>
     );
