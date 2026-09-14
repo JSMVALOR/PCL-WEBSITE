@@ -3,6 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUp, Activity } from 'lucide-react';
 import styles from './PremiumFooter.module.css';
+import ValorLogo from '../../../../ERP/components/shared/ValorLogo';
+
 
 export default function BottomStrip() {
   const handleScrollTop = () => {
@@ -31,7 +33,10 @@ export default function BottomStrip() {
         <div className="text-sm text-[var(--text-secondary)] order-3 md:order-2 text-center md:text-left">
           &copy; {new Date().getFullYear()} Prudentia College of Law. 
           <span className="hidden md:inline mx-2 text-black/20 dark:text-white/20">|</span> 
-          <span className="text-[var(--accent)] font-medium block md:inline mt-1 md:mt-0">Powered by JSM Innovation</span>
+          <span className="inline-flex items-center gap-2 mt-1 md:mt-0 align-middle">
+          <span className="text-[var(--text-secondary)]">Powered by</span>
+          <ValorLogo className="scale-[0.5] origin-left -ml-1 -my-4" />
+          </span>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-xs uppercase tracking-widest text-[var(--text-secondary)] font-bold order-1 md:order-3">

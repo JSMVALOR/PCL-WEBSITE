@@ -15,7 +15,7 @@ export default function ValorLogo({ className = "" }) {
             {/* VALOR Text part */}
             <div className="relative flex flex-col justify-end">
                 <div className="flex items-baseline leading-none" style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900 }}>
-                    <span className="text-white tracking-tight" style={{ fontSize: "1.4em" }}>VALOR</span>
+                    <span className="text-black dark:text-white tracking-tight" style={{ fontSize: "1.4em" }}>VALOR</span>
                     <span className="text-red-500" style={{ fontSize: "1.4em" }}>.</span>
                 </div>
                 {/* Blue underline */}
