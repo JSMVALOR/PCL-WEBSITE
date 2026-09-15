@@ -264,7 +264,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  Document Verification
  </button>
  </div>
-} />
+
 
  {isLoading ? (
  <div className="flex flex-col items-center justify-center py-20 opacity-50">
