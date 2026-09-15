@@ -15,6 +15,50 @@ export default function LeaveAnalytics({ isEmbedded = false }) {
  fetchAnalytics();
  }, []);
 
+ const handleExportReport = () => {
+    try {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "DEPARTMENT LEAVE STATS (Current Year)
+";
+        csvContent += "Department,Total Leave Days
+";
+        departmentStats.forEach(d => { csvContent += `"${d.name}",${d.count}
+`; });
+        csvContent += "
+";
+        
+        csvContent += "LEAVE REASON BREAKDOWN
+";
+        csvContent += "Reason,Request Count
+";
+        typeStats.forEach(t => { csvContent += `"${t.name}",${t.count}
+`; });
+        csvContent += "
+";
+        
+        csvContent += "MONTHLY LEAVE TRENDS
+";
+        csvContent += "Month,Request Count,Is Peak Period
+";
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        monthlyStats.forEach((m, idx) => { csvContent += `"${months[idx]}",${m.count},${m.isPeak ? "YES" : "NO"}
+`; });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `leave_analytics_report_${new Date().getFullYear()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        window.erpToast?.show("Leave Analytics Report exported successfully.", "success");
+    } catch (error) {
+        console.error("Export error:", error);
+        window.erpDialog?.alert("Failed to export leave analytics report.");
+    }
+ };
+
  const fetchAnalytics = async () => {
  setIsLoading(true);
  try {
@@ -140,7 +184,7 @@ export default function LeaveAnalytics({ isEmbedded = false }) {
  
  <div className="flex justify-between items-center mb-4 lg:mb-6">
  <h3 className={`font-bold tracking-tight text-base lg:text-lg text-themeText`}>Peak Leave Periods</h3>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">Export Report</button>
+ <button type="button" onClick={handleExportReport} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">Export Report</button>
  </div>
  
  <div className="flex items-end gap-1.5 lg:gap-2 h-32 lg:h-48 pt-4">
