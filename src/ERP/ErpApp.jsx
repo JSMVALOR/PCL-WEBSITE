@@ -98,7 +98,7 @@ import EventsBoard from './components/notices/EventsBoard';
 import AdminOperationsHub from './components/Admin/AdminOperationsHub/AdminOperationsHub';
 import AdminAcademicHub from './components/Admin/AdminAcademicHub/AdminAcademicHub';
 import AdminClinicsHub from './components/Admin/AdminClinicsHub/AdminClinicsHub';
-import AdminWebsiteHub from './components/Admin/AdminWebsiteHub/AdminWebsiteHub';
+import BlogManager from './components/Admin/BlogManager/BlogManager';
 import SessionTimeoutGuard from './components/shared/SessionTimeoutGuard';
 import { RoleActionButton } from './components/shared/LiveHeaderComponents';
 import IntelligentBot from './components/shared/IntelligentBot';
