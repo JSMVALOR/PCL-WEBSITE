@@ -47,7 +47,7 @@ export default function DialogContainer() {
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.95, opacity: 0, y: 10 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        className={`relative w-full max-w-sm backdrop-blur-[80px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border border-black/5 dark:border-white/10 rounded-[2rem] overflow-hidden ${isAlert ? (isError ? "bg-rose-600 dark:bg-rose-600/90" : "bg-emerald-600 dark:bg-emerald-600/90") : "bg-black/5 dark:bg-white/10"}`}
+                        className={`relative w-full max-w-sm backdrop-blur-[60px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border rounded-[2rem] overflow-hidden ${isAlert ? (isError ? "bg-rose-500/90 border-rose-400/50 shadow-rose-500/20" : "bg-emerald-500/90 border-emerald-400/50 shadow-emerald-500/20") : "bg-white/10 dark:bg-black/40 border-white/20"} `}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Edge Specular */}
@@ -57,7 +57,7 @@ export default function DialogContainer() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", delay: 0.1, stiffness: 400, damping: 25 }}
-                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-400" : (isAlert ? "bg-white/20 border-white/30 text-white" : "bg-emerald-500/20 border-emerald-500/30 text-emerald-400")}`}
+                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-500" : "bg-white/20 border-white/30 text-white"}`}
                             >
                                 <i className={`fa-solid text-xl ${(isConfirm || isPrompt) ? "fa-circle-question" : (isError ? "fa-xmark" : "fa-check")}`}></i>
                             </motion.div>
@@ -68,7 +68,7 @@ export default function DialogContainer() {
 
                         {/* Body */}
                         <div className="px-8 pb-8 text-center relative z-10">
-                            <p className={`text-sm font-medium leading-relaxed whitespace-pre-wrap ${isAlert ? "text-white/90" : "text-white/70"}`}>
+                            <p className={`text-sm font-medium leading-relaxed whitespace-pre-wrap ${isAlert ? "text-white/90" : "text-white/90"}`}>
                                 {dialogState.message}
                             </p>
                         </div>
@@ -92,13 +92,13 @@ export default function DialogContainer() {
                         )}
 
                         {/* Footer Controls */}
-                        <div className="p-4 bg-black/20 border-t border-black/5 dark:border-white/10 flex flex-col sm:flex-row gap-3 relative z-10">
+                        <div className="p-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 relative z-10">
                             {(isConfirm || isPrompt) && (
                                 <motion.button 
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={dialogState.onCancel}
-                                    className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white/80 border border-black/5 dark:border-white/10 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-colors"
+                                    className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/10 hover:border-white/30 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all"
                                 >
                                     Cancel
                                 </motion.button>
