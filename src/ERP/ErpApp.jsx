@@ -27,6 +27,8 @@ import Helpdesk from './components/Student/Helpdesk/Helpdesk';
 import Credentials from './components/Student/Credentials/Credentials';
 import QuestionnaireModal from './components/shared/QuestionnaireModal';
 import DialogContainer from './components/shared/DialogContainer';
+import ToastContainer from './components/shared/ToastContainer';
+import './utils/ToastManager';
 import CredentialVerification from './components/Public/CredentialVerification';
 import GlobalSearch from './components/shared/GlobalSearch';
 
@@ -367,6 +369,7 @@ export default function App() {
     return (
       <SessionTimeoutGuard>
         <DialogContainer />
+        <ToastContainer />
         <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-themeApp text-themeText premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
           
           {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}

@@ -137,47 +137,71 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
  }
 
  if (newAllocations.length > 0) {
- try {
- const { error } = await supabase.from('mentorship').insert(newAllocations);
- if (error) throw error;
- 
- await logAction(`Auto-allocated ${newAllocations.length} students`);
- 
- setFaculty(newFacultyState);
- setUnallocatedStudents(pool);
- } catch (error) {
- console.error("Error saving allocations:", error);
- window.erpDialog?.alert("Failed to save allocations.");
- fetchMentorshipData();
- }
+    if (!(await window.erpDialog?.confirm(`Auto-allocate ${newAllocations.length} students across all available faculty?`, "Auto Allocate Engine"))) return;
+
+    const backupFaculty = [...currentFacultyState];
+    const backupUnallocated = [...studentsToDistribute];
+
+    setFaculty(newFacultyState);
+    setUnallocatedStudents(pool);
+
+    window.erpToast?.undoable(
+        `Auto-allocated ${newAllocations.length} students`,
+        async () => {
+            try {
+                const { error } = await supabase.from('mentorship').insert(newAllocations);
+                if (error) throw error;
+                await logAction(`Auto-allocated ${newAllocations.length} students`);
+            } catch (error) {
+                console.error("Error saving allocations:", error);
+                window.erpDialog?.alert("Failed to save auto-allocations.");
+                fetchMentorshipData();
+            }
+        },
+        () => {
+            setFaculty(backupFaculty);
+            setUnallocatedStudents(backupUnallocated);
+            window.erpToast?.show("Auto-allocation reverted.", "success");
+        },
+        10000
+    );
  }
  };
 
- const handleAutoAllocate = () => {
- triggerProcessing("Auto-Allocating...", async () => {
+ const handleAutoAllocate = async () => {
  await executeDistribution(unallocatedStudents, faculty);
- });
  };
 
- const handleClearAll = () => {
- triggerProcessing("Clearing allocations...", async () => {
- const { error: deleteError } = await supabase.from('mentorship').delete().neq('id', '00000000-0000-0000-0000-000000000000');
- if (deleteError) {
- console.error("Error clearing allocations:", deleteError);
- return;
- }
+ const handleClearAll = async () => {
+    if (!(await window.erpDialog?.confirm("Are you absolutely sure you want to completely wipe all mentorship allocations? This action will affect all students.", "Nuclear Wipe"))) return;
 
- await logAction(`Cleared all mentorship allocations`);
+    const backupFaculty = [...faculty];
+    const backupUnallocated = [...unallocatedStudents];
 
- let allStudents = [...unallocatedStudents];
- faculty.forEach(f => {
- allStudents = [...allStudents, ...f.mentees];
- });
- const newFacultyState = faculty.map(f => ({ ...f, mentees: [] }));
- 
- setFaculty(newFacultyState);
- setUnallocatedStudents(allStudents);
- });
+    let allStudents = [...unallocatedStudents];
+    faculty.forEach(f => {
+        allStudents = [...allStudents, ...f.mentees];
+    });
+    const newFacultyState = faculty.map(f => ({ ...f, mentees: [] }));
+    
+    setFaculty(newFacultyState);
+    setUnallocatedStudents(allStudents);
+
+    window.erpToast?.undoable(
+        "All Mentorship Allocations Wiped",
+        async () => {
+            const { error: deleteError } = await supabase.from('mentorship').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            if (!deleteError) {
+                await logAction(`Cleared all mentorship allocations`);
+            }
+        },
+        () => {
+            setFaculty(backupFaculty);
+            setUnallocatedStudents(backupUnallocated);
+            window.erpToast?.show("Wipe reverted successfully.", "success");
+        },
+        10000
+    );
  };
 
  const handleRemoveStudent = async (facultyId, studentId) => {
