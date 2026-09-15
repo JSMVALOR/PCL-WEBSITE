@@ -133,7 +133,7 @@ export default function SecuritySettings() {
                         <button
                             type="submit"
                             disabled={isUpdating || !passwords.new}
-                            className={`${theme.buttons.primary} w-full py-3.5 mt-2 rounded-[2rem] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
+                            className={`${theme.action.btnPrimary} w-full py-3.5 mt-2 rounded-[2rem] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
                         >
                             {isUpdating ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Propagating...</> : "Update Identity Key"}
                         </button>
