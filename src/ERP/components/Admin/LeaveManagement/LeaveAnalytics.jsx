@@ -18,31 +18,20 @@ export default function LeaveAnalytics({ isEmbedded = false }) {
  const handleExportReport = () => {
     try {
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "DEPARTMENT LEAVE STATS (Current Year)
-";
-        csvContent += "Department,Total Leave Days
-";
-        departmentStats.forEach(d => { csvContent += `"${d.name}",${d.count}
-`; });
-        csvContent += "
-";
-        
-        csvContent += "LEAVE REASON BREAKDOWN
-";
-        csvContent += "Reason,Request Count
-";
-        typeStats.forEach(t => { csvContent += `"${t.name}",${t.count}
-`; });
-        csvContent += "
-";
-        
-        csvContent += "MONTHLY LEAVE TRENDS
-";
-        csvContent += "Month,Request Count,Is Peak Period
-";
+        csvContent += "DEPARTMENT LEAVE STATS (Current Year)\n";
+        csvContent += "Department,Total Leave Days\n";
+        departmentStats.forEach(d => { csvContent += `"${d.name}",${d.count}\n`; });
+        csvContent += "\n";
+
+        csvContent += "LEAVE REASON BREAKDOWN\n";
+        csvContent += "Reason,Request Count\n";
+        typeStats.forEach(t => { csvContent += `"${t.name}",${t.count}\n`; });
+        csvContent += "\n";
+
+        csvContent += "MONTHLY LEAVE TRENDS\n";
+        csvContent += "Month,Request Count,Is Peak Period\n";
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        monthlyStats.forEach((m, idx) => { csvContent += `"${months[idx]}",${m.count},${m.isPeak ? "YES" : "NO"}
-`; });
+        monthlyStats.forEach((m, idx) => { csvContent += `"${months[idx]}",${m.count},${m.isPeak ? "YES" : "NO"}\n`; });
 
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
@@ -58,7 +47,6 @@ export default function LeaveAnalytics({ isEmbedded = false }) {
         window.erpDialog?.alert("Failed to export leave analytics report.");
     }
  };
-
  const fetchAnalytics = async () => {
  setIsLoading(true);
  try {
