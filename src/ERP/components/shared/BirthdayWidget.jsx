@@ -16,7 +16,7 @@ export default function BirthdayWidget() {
         const fetchBirthdays = async () => {
             try {
                 // Fetch profiles where birthday is today (MM-DD matches today)
-                // Since date_of_birth might be stored as YYYY-MM-DD
+                // Since dob might be stored as YYYY-MM-DD
                 const today = new Date();
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
@@ -27,13 +27,13 @@ export default function BirthdayWidget() {
                 // but for scale RPC is better. For this demo, let's just use an RPC if it existed, or filter in memory.
                 const { data, error } = await supabase
                     .from('profiles')
-                    .select('id, full_name, role, avatar_url, date_of_birth')
-                    .not('date_of_birth', 'is', null);
+                    .select('id, full_name, role, profile_picture_url, dob')
+                    .not('dob', 'is', null);
 
                 if (!error && data) {
                     const todays = data.filter(p => {
-                        if (!p.date_of_birth) return false;
-                        const dob = new Date(p.date_of_birth);
+                        if (!p.dob) return false;
+                        const dob = new Date(p.dob);
                         return dob.getMonth() === today.getMonth() && dob.getDate() === today.getDate();
                     });
                     if (isMounted) setBirthdays(todays);
@@ -116,8 +116,8 @@ export default function BirthdayWidget() {
                     {birthdays.map((person, idx) => (
                         <div key={idx} className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-3 py-2.5 rounded-xl border border-black/5 dark:border-white/10 group hover:bg-black/5 dark:hover:bg-white/15 transition-colors">
                             <div className="w-8 h-8 rounded-lg bg-white dark:bg-[#2C2C2E] border border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                                {person.avatar_url ? (
-                                    <img src={person.avatar_url} alt={person.full_name} className="w-full h-full object-cover" />
+                                {person.profile_picture_url ? (
+                                    <img src={person.profile_picture_url} alt={person.full_name} className="w-full h-full object-cover" />
                                 ) : (
                                     <i className="fa-solid fa-user text-[10px] text-[#8E8E93]"></i>
                                 )}
