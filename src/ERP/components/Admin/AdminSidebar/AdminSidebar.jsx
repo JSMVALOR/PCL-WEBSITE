@@ -53,7 +53,7 @@ export const ADMIN_NAV_GROUPS = [
       {
         id: "it_web_group", label: "Website & IT", icon: "fa-solid fa-globe",
         children: [
-          { id: "website", label: "Website Hub", icon: "fa-solid fa-sitemap" },
+          { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
           { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
         ]
@@ -65,7 +65,7 @@ export const ADMIN_NAV_GROUPS = [
 const BOTTOM_NAV_LINKS = [
   { id: "dashboard", label: "Home", icon: "fa-solid fa-server" },
   { id: "sql", label: "Database", icon: "fa-solid fa-database" },
-  { id: "website", label: "Website", icon: "fa-solid fa-globe" },
+  { id: "siteeditor", label: "CMS", icon: "fa-solid fa-pen-nib" },
   { id: "academic", label: "Academic", icon: "fa-solid fa-graduation-cap" }
 ];
 

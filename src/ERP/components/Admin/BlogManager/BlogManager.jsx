@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { theme } from '../../../../Shared/theme';
+import PageHeader from '../../shared/PageHeader/PageHeader';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 export default function BlogManager({ isHubView = false , isEmbedded = false}) {
@@ -338,17 +339,7 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
  <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
- {!isHubView && (
- <div className="flex items-center gap-4 mb-8">
- <div className="w-12 h-12 rounded-xl bg-themeAccent/20 flex items-center justify-center shrink-0">
- <i className="fa-solid fa-newspaper text-themeAccent text-xl"></i>
- </div>
- <div>
- <h1 className="text-2xl font-black text-themeText tracking-tight mb-1">Blog Manager</h1>
- <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest">Review submissions, publish, and notify authors.</p>
- </div>
- </div>
- )}
+ <PageHeader icon="fa-solid fa-newspaper" title="Blog Manager" subtitle="Review submissions, publish, and notify authors." />
 
  <div className="flex justify-between items-center mb-6">
  <div className="relative w-full max-w-xs">
