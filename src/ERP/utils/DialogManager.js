@@ -14,7 +14,7 @@ export const registerDialogContainer = (setter) => {
 export const Dialog = {
     alert: (message, title = "Notification", isError = null) => {
         if (isError === null) {
-            isError = message.toLowerCase().includes("error") || message.toLowerCase().includes("fail");
+            isError = String(message).toLowerCase().includes("error") || String(message).toLowerCase().includes("fail");
         }
         return new Promise((resolve) => {
             if (_setDialogState) {

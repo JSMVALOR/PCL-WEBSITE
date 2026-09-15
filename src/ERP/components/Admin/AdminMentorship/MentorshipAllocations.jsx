@@ -247,7 +247,7 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
  });
 
  if (error) {
- window.erpDialog?.alert("Database Error: Could not assign mentor.");
+ window.erpDialog?.alert("Database Error: SQL table is missing or disconnected.\nPlease contact JSM VALOR Support.", "Mentorship Error", true);
  console.error(error);
  fetchMentorshipData();
  return;
