@@ -56,16 +56,16 @@ export default function AppearanceSettings() {
                             </div>
 
                             {/* Mini UI Preview */}
-                            <div className="w-full h-16 rounded-lg overflow-hidden border border-white/5 flex shadow-inner" style={{ background: 'var(--bg-color)' }}>
+                            <div className={`w-full h-16 rounded-lg overflow-hidden border border-black/10 dark:border-white/10 flex shadow-inner ${t.gradient}`}>
                                 {/* Mini Sidebar */}
-                                <div className="w-1/4 h-full border-r border-white/5" style={{ background: 'var(--panel-bg)' }}>
-                                    <div className="w-full h-2 mt-2 bg-[var(--text-muted)] opacity-20 mx-auto w-3/4 rounded-full"></div>
-                                    <div className="w-full h-1 mt-2 bg-[var(--primary-color)] mx-auto w-1/2 rounded-full"></div>
+                                <div className={`w-1/4 h-full border-r border-black/5 dark:border-white/10 ${t.id === 'marble-executive' ? 'bg-white/60' : 'bg-black/40'}`}>
+                                    <div className={`w-full h-2 mt-2 ${t.id === 'marble-executive' ? 'bg-black/20' : 'bg-white/20'} mx-auto w-3/4 rounded-full`}></div>
+                                    <div className={`w-full h-1 mt-2 ${t.accent} mx-auto w-1/2 rounded-full`}></div>
                                 </div>
                                 {/* Mini Content */}
                                 <div className="w-3/4 h-full p-2 flex flex-col gap-1">
-                                    <div className="w-1/3 h-1.5 rounded-full bg-[var(--text-color)] opacity-50"></div>
-                                    <div className="w-full h-6 rounded-md border border-white/5 mt-1" style={{ background: 'var(--panel-bg)' }}></div>
+                                    <div className={`w-1/3 h-1.5 rounded-full ${t.id === 'marble-executive' ? 'bg-black/40' : 'bg-white/40'}`}></div>
+                                    <div className={`w-full h-6 rounded-md border border-black/5 dark:border-white/5 mt-1 ${t.id === 'marble-executive' ? 'bg-white/60' : 'bg-black/40'}`}></div>
                                 </div>
                             </div>
                             
