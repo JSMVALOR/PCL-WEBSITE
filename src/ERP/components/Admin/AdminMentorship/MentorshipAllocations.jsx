@@ -81,6 +81,10 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
  setUnallocatedStudents(unallocated);
  setFaculty(facultyState);
 
+ const totalStudents = students ? students.length : 0;
+ const totalFac = facultyData ? facultyData.length : 1;
+ setMaxCapacity(Math.ceil(totalStudents / Math.max(1, totalFac)));
+
  } catch (error) {
  console.error("Error fetching mentorship data:", error);
  } finally {
