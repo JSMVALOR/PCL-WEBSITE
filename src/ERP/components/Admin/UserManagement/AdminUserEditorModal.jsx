@@ -157,8 +157,6 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
                 <input type="text" value={formData.research} onChange={e => setFormData({...formData, research: e.target.value})} placeholder="Corporate Law, Human Rights" className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
               </div>
             </>
-          )}} className="w-full bg-themeElevated/90 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent focus:outline-none transition-colors" />
-            </div>
           )}
 
           <div className="flex flex-col gap-1.5">
