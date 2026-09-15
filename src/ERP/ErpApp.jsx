@@ -331,7 +331,7 @@ export default function App() {
         case 'operations': return <AdminOperationsHub />;
         case 'academic': return <AdminAcademicHub />;
         case 'clinics': return <AdminClinicsHub />;
-        case \'blogs\': return <BlogManager />;
+        case 'blogs': return <BlogManager />;
         case 'notices': return <Notices setActiveTab={setActiveTab} />;
         case 'users': return <UserManagement />;
         case 'coursebuilder': return <AdminCourseBuilder />;
