@@ -1,15 +1,13 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from "react";
 import PageHeader from "../../shared/PageHeader/PageHeader";
-import AdminSiteEditor from "../AdminSiteEditor/AdminSiteEditor";
 import BlogManager from "../BlogManager/BlogManager";
 import AdminPlacements from "../AdminPlacements/AdminPlacements";
 
 export default function AdminWebsiteHub({ isEmbedded = false }) {
-    const [activeTab, setActiveTab] = useState("editor");
+    const [activeTab, setActiveTab] = useState("blogs");
 
     const tabs = [
-        { id: "editor", label: "CMS Editor", icon: "fa-pen-nib" },
         { id: "blogs", label: "Blog Engine", icon: "fa-blog" },
         { id: "careers", label: "Careers & Drives", icon: "fa-briefcase" }
     ];
@@ -42,7 +40,6 @@ export default function AdminWebsiteHub({ isEmbedded = false }) {
                 />
 
                 <div className="flex-1 min-h-0 bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] overflow-hidden flex flex-col relative z-10">
-                    {activeTab === "editor" && <div className="h-full w-full overflow-y-auto"><AdminSiteEditor isEmbedded={true} /></div>}
                     {activeTab === "blogs" && <div className="h-full w-full overflow-y-auto"><BlogManager isEmbedded={true} /></div>}
                     {activeTab === "careers" && <div className="h-full w-full overflow-y-auto"><AdminPlacements isEmbedded={true} /></div>}
                 </div>

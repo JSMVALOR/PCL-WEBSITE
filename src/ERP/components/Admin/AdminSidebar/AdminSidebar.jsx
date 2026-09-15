@@ -42,12 +42,17 @@ export const ADMIN_NAV_GROUPS = [
         ]
       },
       {
-        id: "clinics_it_group", label: "Clinics & Web", icon: "fa-solid fa-globe",
+        id: "clinics_group", label: "Clinical Programs", icon: "fa-solid fa-scale-balanced",
         children: [
-          { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-scale-balanced" },
+          { id: "clinics", label: "Overview Hub", icon: "fa-solid fa-chart-pie" },
           { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
-          { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" },
           { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" },
+          { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" }
+        ]
+      },
+      {
+        id: "it_web_group", label: "Website & IT", icon: "fa-solid fa-globe",
+        children: [
           { id: "website", label: "Website Hub", icon: "fa-solid fa-sitemap" },
           { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
