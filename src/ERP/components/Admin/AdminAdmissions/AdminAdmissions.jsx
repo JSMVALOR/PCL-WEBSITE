@@ -249,7 +249,7 @@ export default function AdminAdmissions({ isHubView = false , isEmbedded = false
 } />
  )}
 
- <div className={`flex items-center justify-between relative z-10 flex-wrap gap-4 ${!isHubView ? '-mt-10 lg:-mt-12 ml-6 lg:ml-8' : 'mb-2'}`}>
+ <div className={`flex items-center justify-between relative z-10 flex-wrap gap-4`}>
  <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated/90 backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['all', 'pending', 'approved', 'rejected'].map(f => (
  <button type="button" 
