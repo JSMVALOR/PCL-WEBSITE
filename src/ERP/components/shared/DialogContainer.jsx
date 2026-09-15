@@ -20,6 +20,8 @@ export default function DialogContainer() {
 
     const isConfirm = dialogState.type === 'confirm';
     const isPrompt = dialogState.type === 'prompt';
+    const isError = dialogState.isError;
+    const isAlert = dialogState.type === 'alert';
 
     return (
         <AnimatePresence>
@@ -45,7 +47,7 @@ export default function DialogContainer() {
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.95, opacity: 0, y: 10 }}
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                        className="relative w-full max-w-sm bg-black/5 dark:bg-white/10 backdrop-blur-[80px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border border-black/5 dark:border-white/10 rounded-[2rem] overflow-hidden"
+                        className={`relative w-full max-w-sm backdrop-blur-[80px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] border border-black/5 dark:border-white/10 rounded-[2rem] overflow-hidden ${isAlert ? (isError ? "bg-rose-600 dark:bg-rose-600/90" : "bg-emerald-600 dark:bg-emerald-600/90") : "bg-black/5 dark:bg-white/10"}`}
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Edge Specular */}
@@ -55,9 +57,9 @@ export default function DialogContainer() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", delay: 0.1, stiffness: 400, damping: 25 }}
-                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'}`}
+                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-400" : (isAlert ? "bg-white/20 border-white/30 text-white" : "bg-emerald-500/20 border-emerald-500/30 text-emerald-400")}`}
                             >
-                                <i className={`fa-solid text-xl ${(isConfirm || isPrompt) ? 'fa-circle-question' : 'fa-check'}`}></i>
+                                <i className={`fa-solid text-xl ${(isConfirm || isPrompt) ? "fa-circle-question" : (isError ? "fa-xmark" : "fa-check")}`}></i>
                             </motion.div>
                             <h3 className="font-black tracking-widest uppercase text-white text-lg drop-shadow-sm dark:drop-shadow-md">
                                 {dialogState.title}
@@ -66,7 +68,7 @@ export default function DialogContainer() {
 
                         {/* Body */}
                         <div className="px-8 pb-8 text-center relative z-10">
-                            <p className="text-white/70 text-sm font-medium leading-relaxed whitespace-pre-wrap">
+                            <p className={`text-sm font-medium leading-relaxed whitespace-pre-wrap ${isAlert ? "text-white/90" : "text-white/70"}`}>
                                 {dialogState.message}
                             </p>
                         </div>
@@ -105,7 +107,7 @@ export default function DialogContainer() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => isPrompt ? dialogState.onConfirm(dialogState.inputValue) : dialogState.onConfirm()}
-                                className={`flex-1 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-colors shadow-lg ${(isConfirm || isPrompt) ? 'bg-rose-500 hover:bg-rose-400 text-white shadow-rose-500/30' : 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/30'}`}
+                                className={`flex-1 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-colors shadow-lg ${(isConfirm || isPrompt) ? "bg-rose-500 hover:bg-rose-400 text-white shadow-rose-500/30" : "bg-white/20 hover:bg-white/30 text-white shadow-none"}`}
                             >
                                 {isPrompt ? 'Submit' : (isConfirm ? ((dialogState.title?.toLowerCase() || "").includes("sign out") || (dialogState.title?.toLowerCase() || "").includes("session") ? "Sign Out" : "Confirm") : "Understood")}
                             </motion.button>
