@@ -239,12 +239,22 @@ export default function MentorshipAllocations({ isEmbedded = false }) {
 
  newFaculty[facIndex].mentees.splice(destination.index, 0, draggedStudent);
  
- await supabase.from('mentorship').upsert({
+ // Fix: Delete any existing allocation first, then insert new one
+ await supabase.from('mentorship').delete().eq('student_id', draggedStudent.id);
+ const { error } = await supabase.from('mentorship').insert({
  student_id: draggedStudent.id,
  faculty_id: destination.droppableId
- }, { onConflict: 'student_id' });
+ });
+
+ if (error) {
+ window.erpDialog?.alert("Database Error: Could not assign mentor.");
+ console.error(error);
+ fetchMentorshipData();
+ return;
+ }
 
  await logAction(`Assigned student ${draggedStudent.name} to mentor ${newFaculty[facIndex].name}`);
+ window.erpDialog?.alert(`Success! ${draggedStudent.name} has been assigned to ${newFaculty[facIndex].name}.`);
  }
 
  setUnallocatedStudents(newUnallocated);
