@@ -517,8 +517,8 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <button type="button" onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/5 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec flex items-center justify-center transition-colors" title="Edit Master Details">
  <i className="fa-solid fa-pen text-[10px]"></i>
  </button>
- {user.role === 'faculty' && (
- <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ {(user.role === 'faculty' || user.role === 'admin') && (
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeAccent/10 border border-themeAccent/30 hover:bg-themeAccent/20 text-themeAccent flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
@@ -577,8 +577,8 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <Badge variant="secondary">{user.batch || user.department || "Unassigned"}</Badge>
 
  <div className="flex gap-2">
- {user.role === 'faculty' && (
- <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 text-blue-400 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ {(user.role === 'faculty' || user.role === 'admin') && (
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeAccent/10 border border-themeAccent/30 hover:bg-themeAccent/20 text-themeAccent flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}

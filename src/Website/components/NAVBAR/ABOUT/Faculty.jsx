@@ -29,7 +29,7 @@ export default function Faculty() {
               is_public
             )
           `)
-          .eq('role', 'faculty');
+          .in('role', ['faculty', 'admin']);
 
         if (error) throw error;
         
