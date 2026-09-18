@@ -83,6 +83,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  batch: p.academic_batch,
  department: p.department,
  email: p.email,
+ role: p.role,
  status: p.status || 'Active',
  questionnaire_data: p.questionnaire_data
  };
