@@ -49,8 +49,8 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                             <div className="font-bold text-[#5a5a5c]">Department</div>
                             <div className="col-span-2 font-medium">: Law & Academics</div>
                             
-                            <div className="font-bold text-[#5a5a5c]">Bank Account</div>
-                            <div className="col-span-2 font-medium">: {payload.transaction_id || "N/A"}</div>
+                            <div className="font-bold text-[#5a5a5c]">Disbursing Bank</div>
+                            <div className="col-span-2 font-medium">: ICICI Bank (024305013005)</div>
                         </div>
                     </div>
                     
@@ -132,14 +132,7 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                                 </tr>
                             </thead>
                             <tbody className="w-full flex-1 table table-fixed">
-                                <tr className="border-b border-[#f3f4f6]">
-                                    <td className="p-3">Professional Tax (PT)</td>
-                                    <td className="p-3 text-right font-medium">{Number(payload.professional_tax).toFixed(2)}</td>
-                                </tr>
-                                <tr className="border-b border-[#f3f4f6]">
-                                    <td className="p-3">Income Tax (TDS 192)</td>
-                                    <td className="p-3 text-right font-medium">{Number(payload.tds_amount).toFixed(2)}</td>
-                                </tr>
+                                
                                 <tr className="border-b border-[#f3f4f6] text-[#e74a6c]">
                                     <td className="p-3">Leave Without Pay (LOP)</td>
                                     <td className="p-3 text-right font-medium">{Number(payload.gross_lop_amount || payload.deductions).toFixed(2)}</td>
@@ -154,7 +147,7 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                             <tfoot className="w-full table table-fixed mt-auto">
                                 <tr className="bg-[#F6F4F0] font-bold border-t border-[#d1d1d1]">
                                     <td className="p-3">Total Deductions (B)</td>
-                                    <td className="p-3 text-right text-[#e11d48]">{Number(payload.professional_tax + payload.tds_amount + payload.deductions).toFixed(2)}</td>
+                                    <td className="p-3 text-right text-[#e11d48]">{Number(payload.deductions).toFixed(2)}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -186,7 +179,7 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                         </h4>
                         <ol className="list-decimal list-inside text-[10px] text-[#5a5a5c] space-y-2 font-sans leading-relaxed">
                             <li>This is a system generated payslip securely processed by PCL ERP.</li>
-                            <li>Income Tax has been deducted as per the applicable provisions of the Income Tax Act, 1961 (Section 192).</li>
+                            
                             <li>For any discrepancies, please contact the PCL Finance Department within 7 days.</li>
                             <li>This document is strictly confidential and encrypted specifically for the employee.</li>
                         </ol>

@@ -59,12 +59,12 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     doc.setFont("helvetica", "bold");
     doc.text("Payment Date:", 120, 70);
     doc.text("Payment Mode:", 120, 78);
-    doc.text("Transaction ID:", 120, 86);
+    doc.text("Disbursing Bank:", 120, 86);
     
     doc.setFont("helvetica", "normal");
     doc.text(payload.payment_date, 155, 70);
     doc.text(payload.payment_mode, 155, 78);
-    doc.text(payload.transaction_id || "N/A", 155, 86);
+    doc.text("ICICI (024305013005)", 155, 86);
 
     // --- LOP DETAILS ---
     doc.setDrawColor(200, 200, 200);
@@ -88,20 +88,11 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     // --- EARNINGS & DEDUCTIONS TABLES ---
     // Prepare Earnings Data
     const earningsData = [];
-    if (payload.salary_structure && payload.salary_structure.length > 0) {
-        payload.salary_structure.forEach(comp => {
-            earningsData.push([comp.name, Number(payload.base_pay * (comp.percentage / 100)).toFixed(2)]);
-        });
-    } else {
-        earningsData.push(["Basic Pay", Number(payload.base_pay).toFixed(2)]);
-    }
-    earningsData.push([{ content: "Total Gross Pay", styles: { fontStyle: 'bold' } }, { content: Number(payload.base_pay).toFixed(2), styles: { fontStyle: 'bold', textColor: [5, 150, 105] } }]);
+    earningsData.push(["Consolidated Pay", Number(payload.base_pay).toFixed(2)]);
+    earningsData.push([{ content: "Total Earnings (A)", styles: { fontStyle: 'bold' } }, { content: Number(payload.base_pay).toFixed(2), styles: { fontStyle: 'bold', textColor: [5, 150, 105] } }]);
 
     // Prepare Deductions Data
     const deductionsData = [];
-    if (payload.professional_tax > 0) deductionsData.push(["Professional Tax", Number(payload.professional_tax).toFixed(2)]);
-    if (payload.tds_amount > 0) deductionsData.push([`TDS (${payload.tds_percentage}%)`, Number(payload.tds_amount).toFixed(2)]);
-    
     const rawLopAmt = payload.gross_lop_amount || payload.deductions;
     if (rawLopAmt > 0) {
         deductionsData.push([{ content: "LOP Deduction", styles: { textColor: [225, 29, 72] } }, { content: Number(rawLopAmt).toFixed(2), styles: { textColor: [225, 29, 72] } }]);
@@ -110,8 +101,8 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
         deductionsData.push([{ content: "LOP Waiver Credit", styles: { textColor: [5, 150, 105], fillColor: [236, 253, 245] } }, { content: `- ${Number(payload.lop_waived_amount).toFixed(2)}`, styles: { textColor: [5, 150, 105], fillColor: [236, 253, 245] } }]);
     }
     
-    const totalDeductions = payload.professional_tax + payload.tds_amount + payload.deductions;
-    deductionsData.push([{ content: "Total Deductions", styles: { fontStyle: 'bold' } }, { content: Number(totalDeductions).toFixed(2), styles: { fontStyle: 'bold', textColor: [225, 29, 72] } }]);
+    const totalDeductions = payload.deductions;
+    deductionsData.push([{ content: "Total Deductions (B)", styles: { fontStyle: 'bold' } }, { content: Number(totalDeductions).toFixed(2), styles: { fontStyle: 'bold', textColor: [225, 29, 72] } }]);
 
     // Render AutoTables
     autoTable(doc, {

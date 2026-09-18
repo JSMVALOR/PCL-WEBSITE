@@ -20,7 +20,8 @@ export const ADMIN_NAV_GROUPS = [
         children: [
           { id: "users", label: "User Management", icon: "fa-solid fa-user-gear" },
           { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
-          { id: "leavemanagement", label: "Leave Management", icon: "fa-solid fa-mug-hot" }
+          { id: "leavemanagement", label: "Leave Management", icon: "fa-solid fa-mug-hot" },
+          { id: "faculty_attendance", label: "Faculty Attendance", icon: "fa-solid fa-user-clock" }
         ]
       },
       {

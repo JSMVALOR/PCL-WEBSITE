@@ -58,6 +58,38 @@ export default function FacultyLeave({ isEmbedded = false, }) {
             setIsSubmitting(false);
             return;
         }
+        
+        // HR Clubbing Rule Validation
+        const start = new Date(fromDate);
+        const end = new Date(toDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        
+        if (leaveType === "Casual Leave (CL)") {
+            if (diffDays > 2) {
+                setStatusMessage({ type: "error", text: "HR Rule: Maximum 2 Casual Leaves can be combined (Clubbing Rule)." });
+                setIsSubmitting(false);
+                return;
+            }
+            
+            // Check accrual balance
+            const currentMonth = new Date().getMonth() + 1;
+            const accruedCL = currentMonth; // 1 per month
+            let usedCL = 0;
+            leaveHistory.forEach(l => {
+                if (l.leave_type === "Casual Leave (CL)" && (l.status === 'approved' || l.status === 'pending')) {
+                    const s = new Date(l.start_date);
+                    const e = new Date(l.end_date);
+                    usedCL += Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
+                }
+            });
+            
+            if (usedCL + diffDays > accruedCL) {
+                setStatusMessage({ type: "error", text: `HR Rule: Insufficient balance. You have accrued ${accruedCL} CLs so far, and used/requested ${usedCL}.` });
+                setIsSubmitting(false);
+                return;
+            }
+        }
 
         try {
             const payload = {

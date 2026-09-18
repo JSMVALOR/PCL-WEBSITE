@@ -104,12 +104,24 @@ export default function AdminPayroll() {
             if (facultyData) {
                 const currentMonthStart = new Date();
                 currentMonthStart.setDate(1);
+                currentMonthStart.setHours(0,0,0,0);
+                
+                const currentMonthEnd = new Date(currentMonthStart);
+                currentMonthEnd.setMonth(currentMonthEnd.getMonth() + 1);
+                currentMonthEnd.setDate(0);
+                currentMonthEnd.setHours(23,59,59,999);
                 
                 const { data: leaves } = await supabase
                     .from('faculty_leaves')
                     .select('faculty_id, start_date, end_date')
                     .eq('status', 'approved')
                     .gte('start_date', currentMonthStart.toISOString().split('T')[0]);
+
+                const { data: attendanceLogs } = await supabase
+                    .from('faculty_attendance_log')
+                    .select('faculty_id, date, status')
+                    .eq('status', 'absent')
+                    .gte('date', currentMonthStart.toISOString().split('T')[0]);
 
                 const { data: previousRolls } = await supabase
                     .from('faculty_payroll')
@@ -131,6 +143,10 @@ export default function AdminPayroll() {
                             totalLeaveDays += diff;
                         }
                     });
+
+                    // Add manually enforced Admin absences
+                    const enforcedAbsences = (attendanceLogs || []).filter(log => log.faculty_id === f.id).length;
+                    totalLeaveDays += enforcedAbsences;
 
                     const lopDays = Math.max(0, totalLeaveDays - config.allowedPaidLeaves);
                     

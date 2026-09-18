@@ -80,6 +80,7 @@ import FacultyAttendance from './components/Faculty/FacultyAttendance/FacultyAtt
 // ==========================================
 // 5. ADMIN PORTAL MODULES
 // ==========================================
+import AdminFacultyAttendance from './components/Admin/AdminFacultyAttendance/AdminFacultyAttendance';
 import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
 import UserManagement from './components/Admin/UserManagement/UserManagement';
 import AdminCourseBuilder from './components/Admin/AdminTimetableBuilder/AdminCourseBuilder';
@@ -331,7 +332,8 @@ export default function App() {
         case 'markscontroller': return <AdminMarksController />;
         case 'allocations': return <AdminMentorship />;
         case 'adminapprovals': return <AdminApprovals />;
-        case 'leavemanagement': return <AdminLeaveManagement />;        case 'finance': return <AdminFees />;
+        case 'leavemanagement': return <AdminLeaveManagement />;
+        case 'faculty_attendance': return <AdminFacultyAttendance />;        case 'finance': return <AdminFees />;
         case 'adminpayroll': return <AdminPayroll />;
         case 'mootcourt': return <AdminMootCourt />;
         case 'placements': return <AdminPlacements />;
