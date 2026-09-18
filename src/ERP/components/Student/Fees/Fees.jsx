@@ -233,10 +233,10 @@ export default function Fees({}) {
      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-2 animate-fade-in">
          <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i className="fa-solid fa-building-columns"></i> College Bank Details</p>
          <div className="flex flex-col gap-2">
-             <div className="flex justify-between text-xs"><span className="text-gray-500 dark:text-white/60 font-medium">Bank Name</span><span className="font-black text-gray-900 dark:text-white tracking-tight">HDFC Bank Ltd.</span></div>
-             <div className="flex justify-between text-xs"><span className="text-gray-500 dark:text-white/60 font-medium">Account Name</span><span className="font-black text-gray-900 dark:text-white tracking-tight">Prudentia College of Law</span></div>
-             <div className="flex justify-between text-xs items-center"><span className="text-gray-500 dark:text-white/60 font-medium">Account No.</span><div className="flex items-center gap-2"><span className="font-mono font-black text-gray-900 dark:text-white tracking-tight">50200012345678</span><button type="button" onClick={() => navigator.clipboard.writeText('50200012345678')} className="text-amber-500 hover:text-amber-600"><i className="fa-regular fa-copy"></i></button></div></div>
-             <div className="flex justify-between text-xs items-center"><span className="text-gray-500 dark:text-white/60 font-medium">IFSC Code</span><div className="flex items-center gap-2"><span className="font-mono font-black text-gray-900 dark:text-white tracking-tight">HDFC0001234</span><button type="button" onClick={() => navigator.clipboard.writeText('HDFC0001234')} className="text-amber-500 hover:text-amber-600"><i className="fa-regular fa-copy"></i></button></div></div>
+             <div className="flex justify-between text-xs"><span className="text-gray-500 dark:text-white/60 font-medium">Bank Name</span><span className="font-black text-gray-900 dark:text-white tracking-tight">ICICI Bank</span></div>
+             <div className="flex justify-between text-xs"><span className="text-gray-500 dark:text-white/60 font-medium">Account Name</span><span className="font-black text-gray-900 dark:text-white tracking-tight">PRUDENTIA COLLEGE OF LAW</span></div>
+             <div className="flex justify-between text-xs items-center"><span className="text-gray-500 dark:text-white/60 font-medium">Account No.</span><div className="flex items-center gap-2"><span className="font-mono font-black text-gray-900 dark:text-white tracking-tight">024305013005</span><button type="button" onClick={() => navigator.clipboard.writeText('024305013005')} className="text-amber-500 hover:text-amber-600"><i className="fa-regular fa-copy"></i></button></div></div>
+             <div className="flex justify-between text-xs items-center"><span className="text-gray-500 dark:text-white/60 font-medium">IFSC Code</span><div className="flex items-center gap-2"><span className="font-mono font-black text-gray-900 dark:text-white tracking-tight">ICIC0000243</span><button type="button" onClick={() => navigator.clipboard.writeText('ICIC0000243')} className="text-amber-500 hover:text-amber-600"><i className="fa-regular fa-copy"></i></button></div></div>
          </div>
      </div>
  )}
@@ -246,8 +246,8 @@ export default function Fees({}) {
          <div>
              <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 flex items-center gap-2"><i className="fa-brands fa-google-pay"></i> College UPI ID</p>
              <div className="flex items-center gap-2 mt-2">
-                <p className="text-sm font-black text-gray-900 dark:text-white font-mono tracking-tight">prudentia@hdfcbank</p>
-                <button type="button" onClick={() => navigator.clipboard.writeText('prudentia@hdfcbank')} className="text-emerald-500 hover:text-emerald-600"><i className="fa-regular fa-copy"></i></button>
+                <p className="text-sm font-black text-gray-900 dark:text-white font-mono tracking-tight">prudentia@icici</p>
+                <button type="button" onClick={() => navigator.clipboard.writeText('prudentia@icici')} className="text-emerald-500 hover:text-emerald-600"><i className="fa-regular fa-copy"></i></button>
              </div>
          </div>
          <div className="w-12 h-12 bg-white rounded-lg p-1 shadow-sm flex items-center justify-center">
@@ -259,7 +259,7 @@ export default function Fees({}) {
  {verificationData.mode === 'Demand Draft' && (
      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-2 animate-fade-in">
          <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-2 flex items-center gap-2"><i className="fa-solid fa-money-check"></i> DD Instructions</p>
-         <p className="text-xs text-gray-600 dark:text-white/70 leading-relaxed font-medium">Draw the Demand Draft in favor of <strong className="text-gray-900 dark:text-white font-black">"Prudentia College of Law"</strong>, payable at <strong className="text-gray-900 dark:text-white font-black">Hyderabad</strong>. Submit the physical DD to the accounts office.</p>
+         <p className="text-xs text-gray-600 dark:text-white/70 leading-relaxed font-medium">Draw the Demand Draft in favor of <strong className="text-gray-900 dark:text-white font-black">"PRUDENTIA COLLEGE OF LAW"</strong>, payable at <strong className="text-gray-900 dark:text-white font-black">Hyderabad</strong>. Submit the physical DD to the accounts office.</p>
      </div>
  )}
  
