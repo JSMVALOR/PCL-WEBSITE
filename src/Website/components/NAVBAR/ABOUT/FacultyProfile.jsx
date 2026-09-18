@@ -7,14 +7,15 @@ import DOMPurify from 'dompurify';
 
 const ALL_TABS = [
   { id: 'education', label: 'Education' },
-  { id: 'research', label: 'Research & Pubs' },
+  { id: 'research', label: 'Areas of Expertise' },
   { id: 'projects', label: 'Projects' },
   { id: 'patents', label: 'Patents' },
   { id: 'awards', label: 'Awards' }
 ];
 
 const SkeletonLoader = () => (
-  <div className="min-h-screen w-full bg-[var(--bg-color)] flex flex-col lg:flex-row px-6 md:px-12 py-32 gap-16 max-w-7xl mx-auto">
+  
+<div className="min-h-screen w-full bg-[var(--bg-color)] flex flex-col lg:flex-row px-6 md:px-12 py-32 gap-16 max-w-7xl mx-auto relative items-start">
     {/* Left Skeleton */}
     <div className="w-full lg:w-5/12 shrink-0 space-y-6">
       <div className="w-full aspect-[3/4] bg-white/[0.03] animate-pulse rounded-[2rem]"></div>
@@ -94,7 +95,8 @@ export default function FacultyProfile() {
 
   if (!faculty) {
     return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[var(--bg-color)] text-[var(--text-color)] px-6 text-center">
+      
+<div className="min-h-screen w-full flex flex-col items-center justify-center bg-[var(--bg-color)] text-[var(--text-color)] px-6 text-center">
         <h2 className="text-4xl mb-4 font-bold">Profile Not Found</h2>
         <p className="text-[var(--text-muted)] mb-8 font-sans">This faculty member's profile is unavailable or private.</p>
         <button
@@ -124,7 +126,7 @@ export default function FacultyProfile() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.1 }}
                       key={idx} 
-                      className="relative text-sm md:text-base text-[var(--text-color)]/90 leading-relaxed group"
+                      className="relative text-sm md:text-base text-[var(--text-color)]/90 leading-relaxed group text-justify"
                   >
                       {/* Timeline dot */}
                       <div className="absolute w-2 h-2 bg-[var(--primary-color)] rounded-full -left-[29px] top-2 shadow-[0_0_10px_var(--primary-glow)] transition-transform group-hover:scale-150"></div>
@@ -136,7 +138,8 @@ export default function FacultyProfile() {
   };
 
   return (
-    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden font-sans">
+    
+<div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] font-sans">
       
       {/* Decorative Background Element */}
       <div className="fixed top-0 right-0 w-[40vw] h-[40vw] bg-[var(--primary-color)] rounded-full blur-[200px] opacity-[0.03] pointer-events-none z-0" />
@@ -144,7 +147,7 @@ export default function FacultyProfile() {
       <div className="relative z-20 pt-28 pb-32 px-6 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
         {/* LEFT COLUMN: Image & Details */}
-        <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 self-start">
+        <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 h-fit pb-10">
           <Link
             to="/about/faculty"
             className="inline-flex items-center text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors mb-8 uppercase tracking-widest text-xs font-bold focus:outline-none w-max self-start"
@@ -217,7 +220,7 @@ export default function FacultyProfile() {
               transition={{ delay: 0.3 }}
               className="mb-16"
             >
-              <div className="text-base md:text-lg text-[var(--text-color)]/80 leading-relaxed font-light space-y-4">
+              <div className="text-base md:text-lg text-[var(--text-color)]/80 leading-relaxed font-light space-y-4 text-justify">
                 {faculty.bio.split('\n').filter(p => p.trim()).map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
@@ -287,5 +290,5 @@ export default function FacultyProfile() {
         </div>
       </div>
     </div>
-  );
+      );
 }
