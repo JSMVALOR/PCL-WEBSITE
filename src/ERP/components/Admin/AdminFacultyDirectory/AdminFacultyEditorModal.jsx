@@ -268,14 +268,14 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <div className="flex gap-3 mb-6">
  <div className="relative overflow-hidden group">
  <input type="file" accept="image/*" onChange={onSelectFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} type="button" className="bg-themeAccent text-gray-900 dark:text-white px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition group-hover:bg-themeAccent/90 flex items-center gap-2">
+ <div className="bg-themeAccent text-gray-900 px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition group-hover:bg-themeAccent/90 flex items-center gap-2 pointer-events-none">
  <i className="fa-solid fa-upload"></i> Upload New
- </button>
+ </div>
  </div>
  <button 
  type="button" 
  onClick={loadCurrentPhotoForCrop}
- className="bg-neutral-100 text-themeText border border-neutral-200 hover:border-neutral-300 hover:bg-themeBorder hover:bg-white/10 border border-gray-300 dark:border-white/10 px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition flex items-center gap-2"
+ className="bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/10 text-themeText px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition flex items-center gap-2"
  >
  <i className="fa-solid fa-crop-simple"></i> Adjust Current
  </button>
