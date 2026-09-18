@@ -181,7 +181,13 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                         </div>
                     ) : (
                         <div className="flex flex-col gap-3">
-                            {facultyData.map(fac => (
+                            {facultyData.length === 0 ? (
+                                <div className="w-full py-16 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4 mt-2">
+                                    <i className="fa-solid fa-users-slash text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4"></i>
+                                    <h3 className="text-lg lg:text-xl font-black text-themeText tracking-tight">No Faculty Records Found</h3>
+                                    <p className="text-xs lg:text-sm text-themeTextSec mt-2 max-w-sm mx-auto font-medium">There are currently no users with the faculty role registered in the system.</p>
+                                </div>
+                            ) : facultyData.map(fac => (
                                 <div key={fac.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl gap-4 hover:border-themeAccent/20 transition-colors group">
                                     
                                     <div className="flex items-center gap-4">
