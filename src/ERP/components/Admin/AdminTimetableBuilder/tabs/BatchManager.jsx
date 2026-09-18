@@ -89,7 +89,7 @@ export default function CohortManager() {
     const handleDeleteProgram = async (id) => {
         if(!window.confirm("Are you sure you want to delete this Degree Program? This will fail if there are existing cohorts attached to it.")) return;
         
-        const { error } = await supabase.from('programs').delete().eq('id', id);
+        const { error } = await supabase.from('academic_programs').delete().eq('id', id);
         if (error) {
             console.error(error);
             window.erpDialog?.alert("Cannot delete this program. It is likely being used by existing cohorts.");
