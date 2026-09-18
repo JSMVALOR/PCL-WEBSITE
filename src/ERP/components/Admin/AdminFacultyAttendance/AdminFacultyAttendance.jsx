@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
-import { format, parseISO } from 'date-fns';
-import { useERP } from '../../../../context/ErpContext';
+
+import { useERP } from '../../../context/ErpContext';
 
 export default function AdminFacultyAttendance({ isEmbedded = false }) {
-    const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+    const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('en-CA'));
     const [facultyData, setFacultyData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
@@ -317,7 +317,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                         <div key={log.id} className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4 flex flex-col gap-2">
                                             <div className="flex justify-between items-start">
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-themeAccent flex items-center gap-1.5"><i className="fa-solid fa-user-shield"></i> {log.admin?.full_name || 'Admin'}</span>
-                                                <span className="text-[9px] font-bold text-themeTextSec">{format(new Date(log.created_at), 'MMM d, h:mm a')}</span>
+                                                <span className="text-[9px] font-bold text-themeTextSec">{new Date(log.created_at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                                             </div>
                                             <p className="text-sm font-bold text-themeText">Changed status to: <span className={log.new_status === 'absent' ? 'text-rose-500' : 'text-emerald-500'}>{log.new_status.toUpperCase()}</span></p>
                                             <div className="bg-black/5 dark:bg-[#121212] p-2 rounded-lg mt-1">
