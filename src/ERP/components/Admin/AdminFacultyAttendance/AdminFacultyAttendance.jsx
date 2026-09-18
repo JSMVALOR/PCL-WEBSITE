@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 import { format, parseISO } from 'date-fns';
+import { useERP } from '../../../../context/ErpContext';
 
 export default function AdminFacultyAttendance({ isEmbedded = false }) {
     const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [facultyData, setFacultyData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
+    const { userSession } = useERP();
+    const [auditModal, setAuditModal] = useState({ isOpen: false, facultyId: null, newStatus: '', previousStatus: '' });
+    const [auditReason, setAuditReason] = useState('');
+    const [auditHistory, setAuditHistory] = useState([]);
+    const [showHistoryModal, setShowHistoryModal] = useState(false);
 
     useEffect(() => {
         fetchAttendanceData();
@@ -72,9 +78,18 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
         }
     };
 
-    const handleMarkStatus = async (facultyId, status) => {
+    const handleMarkStatus = (facultyId, status, currentStatus) => {
+        setAuditModal({ isOpen: true, facultyId, newStatus: status, previousStatus: currentStatus });
+        setAuditReason('');
+    };
+
+    const confirmMarkStatus = async (e) => {
+        e.preventDefault();
+        const { facultyId, newStatus, previousStatus } = auditModal;
+        
         try {
             setActionLoading(facultyId);
+            setAuditModal({ isOpen: false, facultyId: null, newStatus: '', previousStatus: '' });
             
             // Upsert into faculty_attendance_log
             const payload = {
@@ -99,6 +114,16 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                 }
             }
 
+            // 3. Write to Audit Trail
+            await supabase.from('attendance_audit_logs').insert([{
+                faculty_id: facultyId,
+                admin_id: userSession.db_id,
+                date: selectedDate,
+                previous_status: previousStatus || 'pending',
+                new_status: newStatus,
+                action_reason: auditReason
+            }]);
+
             fetchAttendanceData();
         } catch (error) {
             console.error(error);
@@ -107,6 +132,22 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             setActionLoading(null);
         }
     };
+
+    const fetchAuditHistory = async (facultyId) => {
+        try {
+            const { data } = await supabase
+                .from('attendance_audit_logs')
+                .select('*, admin:admin_id(full_name)')
+                .eq('faculty_id', facultyId)
+                .order('created_at', { ascending: false })
+                .limit(10);
+            if(data) {
+                setAuditHistory(data);
+                setShowHistoryModal(true);
+            }
+        } catch(e) { console.error(e); }
+    };
+
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeAccent/30 ${!isEmbedded ? "min-h-screen bg-transparent text-themeText font-sans" : ""}`}>
@@ -191,7 +232,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                         <div className="flex items-center gap-2 shrink-0">
                                             {fac.status !== 'present' && (
                                                 <button 
-                                                    onClick={() => handleMarkStatus(fac.id, 'present')}
+                                                    onClick={() => handleMarkStatus(fac.id, 'present', fac.status)}
                                                     disabled={actionLoading === fac.id}
                                                     className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-emerald-500/20 text-gray-400 hover:text-emerald-500 transition-colors flex items-center justify-center border border-transparent hover:border-emerald-500/30"
                                                     title="Force Mark Present"
@@ -201,7 +242,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                             )}
                                             {fac.status !== 'absent' && (
                                                 <button 
-                                                    onClick={() => handleMarkStatus(fac.id, 'absent')}
+                                                    onClick={() => handleMarkStatus(fac.id, 'absent', fac.status)}
                                                     disabled={actionLoading === fac.id}
                                                     className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-500 transition-colors flex items-center justify-center border border-transparent hover:border-rose-500/30"
                                                     title="Force Mark Absent (LOP)"
@@ -209,6 +250,13 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                                     {actionLoading === fac.id ? <i className="fa-solid fa-spinner fa-spin text-[10px]"></i> : <i className="fa-solid fa-xmark text-[10px]"></i>}
                                                 </button>
                                             )}
+                                            <button 
+                                                onClick={() => fetchAuditHistory(fac.id)}
+                                                className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex items-center justify-center border border-transparent hover:border-white/20 ml-2"
+                                                title="View Edit History"
+                                            >
+                                                <i className="fa-solid fa-clock-rotate-left text-[10px]"></i>
+                                            </button>
                                         </div>
 
                                     </div>
@@ -217,6 +265,72 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                         </div>
                     )}
                 </div>
+
+
+                {/* AUDIT REASON MODAL */}
+                {auditModal.isOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+                        <div className="bg-themeElevated border border-black/10 dark:border-white/10 w-full max-w-sm rounded-[2rem] overflow-hidden shadow-2xl flex flex-col">
+                            <div className="p-6 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-[#161616]">
+                                <h3 className="text-lg font-black text-themeText tracking-tight">Override Confirmation</h3>
+                                <p className="text-[10px] text-themeTextSec uppercase tracking-widest font-bold mt-1">This action modifies payroll deductions.</p>
+                            </div>
+                            <form onSubmit={confirmMarkStatus} className="p-6 flex flex-col gap-5">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Mandatory Reason / Note</label>
+                                    <textarea 
+                                        required
+                                        autoFocus
+                                        value={auditReason}
+                                        onChange={(e) => setAuditReason(e.target.value)}
+                                        placeholder="e.g., Unnotified absence, left campus early..."
+                                        className="w-full h-24 bg-black/5 dark:bg-[#121212] border border-black/10 dark:border-white/10 rounded-xl p-3 text-sm text-themeText outline-none focus:border-themeAccent/50 transition-colors resize-none"
+                                    ></textarea>
+                                </div>
+                                <div className="flex gap-3 mt-2">
+                                    <button type="button" onClick={() => setAuditModal({isOpen:false})} className="flex-1 py-3 rounded-xl bg-black/5 dark:bg-white/5 text-themeText font-bold text-xs uppercase tracking-widest hover:bg-black/10 dark:hover:bg-white/10 transition-colors">Cancel</button>
+                                    <button type="submit" className="flex-1 py-3 rounded-xl bg-themeAccent text-white font-bold text-xs uppercase tracking-widest shadow-md hover:bg-themeAccent/90 transition-colors">Confirm & Log</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* AUDIT HISTORY MODAL */}
+                {showHistoryModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+                        <div className="bg-themeElevated border border-black/10 dark:border-white/10 w-full max-w-md rounded-[2rem] overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
+                            <div className="p-6 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-[#161616] flex justify-between items-center">
+                                <div>
+                                    <h3 className="text-lg font-black text-themeText tracking-tight">Edit History</h3>
+                                    <p className="text-[10px] text-themeTextSec uppercase tracking-widest font-bold mt-1">Admin Audit Trail</p>
+                                </div>
+                                <button onClick={() => setShowHistoryModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-themeTextSec hover:text-themeText">
+                                    <i className="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
+                                {auditHistory.length === 0 ? (
+                                    <p className="text-xs text-themeTextSec text-center italic py-4">No override history found.</p>
+                                ) : (
+                                    auditHistory.map(log => (
+                                        <div key={log.id} className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4 flex flex-col gap-2">
+                                            <div className="flex justify-between items-start">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-themeAccent flex items-center gap-1.5"><i className="fa-solid fa-user-shield"></i> {log.admin?.full_name || 'Admin'}</span>
+                                                <span className="text-[9px] font-bold text-themeTextSec">{format(new Date(log.created_at), 'MMM d, h:mm a')}</span>
+                                            </div>
+                                            <p className="text-sm font-bold text-themeText">Changed status to: <span className={log.new_status === 'absent' ? 'text-rose-500' : 'text-emerald-500'}>{log.new_status.toUpperCase()}</span></p>
+                                            <div className="bg-black/5 dark:bg-[#121212] p-2 rounded-lg mt-1">
+                                                <p className="text-xs text-themeText italic">"{log.action_reason}"</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );
