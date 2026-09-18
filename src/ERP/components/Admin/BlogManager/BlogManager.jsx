@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import PageHeader from '../../shared/PageHeader/PageHeader';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-export default function BlogManager({ isHubView = false }) {
+export default function BlogManager({ isEmbedded = false,  isHubView = false }) {
  const [blogs, setBlogs] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
  const [isEditing, setIsEditing] = useState(false);

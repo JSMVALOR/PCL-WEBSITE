@@ -10,7 +10,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { generateComponentPDF } from "../../../DocumentTemplates/pdfEngine";
 import { useRef } from "react";
 
-export default function Fees({}) {
+export default function Fees({ isEmbedded = false }) {
  const { userSession } = useERP();
  const studentId = userSession?.db_id || userSession?.id;
 

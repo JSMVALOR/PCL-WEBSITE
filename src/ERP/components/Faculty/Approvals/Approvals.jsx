@@ -5,7 +5,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 import { Badge } from "../../ui/Badge";
 
-export default function FacultyApprovals({}) {
+export default function FacultyApprovals({ isEmbedded = false }) {
  const { userSession } = useERP();
  const [activeTab, setActiveTab] = useState("mentee_leaves"); // 'mentee_leaves', 'mentee_grievances', 'report_grievance'
  const [isLoading, setIsLoading] = useState(true);

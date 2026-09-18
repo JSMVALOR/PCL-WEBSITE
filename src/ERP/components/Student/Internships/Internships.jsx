@@ -20,7 +20,7 @@ const writeCache = (key, data) => {
 const INPUT_CLS = "w-full bg-white dark:bg-[#121212] border-gray-200 dark:border-white/5 border-gray-200 dark:border-white/5BorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition";
 const LABEL_CLS = "block text-[9px] lg:text-[13px] font-medium text-gray-500 dark:text-white/50 opacity-70 mb-1.5 ml-1";
 
-export default function Internships({}) {
+export default function Internships({ isEmbedded = false }) {
  const { userSession } = useERP();
 
  // --- MAIN STATE ---

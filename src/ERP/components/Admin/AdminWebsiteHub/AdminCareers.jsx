@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-export default function AdminCareers({ isHubView = false }) {
+export default function AdminCareers({ isEmbedded = false,  isHubView = false }) {
  const [jobs, setJobs] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
  const [isEditing, setIsEditing] = useState(false);

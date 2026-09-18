@@ -5,7 +5,7 @@ import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function AdminApprovals({}) {
+export default function AdminApprovals({ isEmbedded = false }) {
  const [facultyLeaves, setFacultyLeaves] = useState([]);
   const handleLeaveAction = () => {};
   const [activeTab, setActiveTab] = useState("profile_updates"); // 'faculty_leaves', 'escalated_grievances'

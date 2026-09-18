@@ -5,7 +5,7 @@ import AdminMootCourt from "../../Admin/AdminMootCourt/AdminMootCourt";
 import AdminPlacements from "../../Admin/AdminPlacements/AdminPlacements";
 import AdminLegalAid from "../../Admin/AdminLegalAid/AdminLegalAid";
 
-export default function FacultyClinicsHub({}) {
+export default function FacultyClinicsHub({ isEmbedded = false }) {
  const [activeTab, setActiveTab] = useState("mootcourt");
 
  const tabs = [

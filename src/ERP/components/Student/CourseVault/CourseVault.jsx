@@ -5,7 +5,7 @@ import { useERP } from "../../../context/ErpContext";
 import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function CourseVault({}) {
+export default function CourseVault({ isEmbedded = false }) {
  const [materials, setMaterials] = useState([]);
  const [subjects, setSubjects] = useState([]);
  const [isLoading, setIsLoading] = useState(true);

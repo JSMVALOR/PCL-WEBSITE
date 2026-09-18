@@ -7,7 +7,7 @@ import { Badge } from "../../ui/Badge";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { generatePDF } from "../../../DocumentTemplates/pdfGenerator";
 
-export default function ClassRoster({}) {
+export default function ClassRoster({ isEmbedded = false }) {
  const { userSession } = useERP();
 
  // --- ZERO-LAG CACHE INITIALIZATION ---

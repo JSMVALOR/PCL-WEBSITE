@@ -4,7 +4,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 import PageHeader from "../../shared/PageHeader/PageHeader"; 
 
-export default function Attendance({}) {
+export default function Attendance({ isEmbedded = false }) {
  const { userSession } = useERP();
 
  const [attendanceData, setAttendanceData] = useState([]);

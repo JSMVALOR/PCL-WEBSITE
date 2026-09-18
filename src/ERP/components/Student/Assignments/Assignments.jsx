@@ -17,7 +17,7 @@ const writeCache = (key, data) => {
  try { sessionStorage.setItem(key, JSON.stringify(data)); } catch {}
 };
 
-export default function Assignments({}) {
+export default function Assignments({ isEmbedded = false }) {
  const { userSession } = useERP();
 
  // --- STATE (instant from cache) ---

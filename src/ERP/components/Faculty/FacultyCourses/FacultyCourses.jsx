@@ -9,7 +9,7 @@ import FacultyAttendance from "../FacultyAttendance/FacultyAttendance";
 import FacultyAssignments from "../FacultyAssignments/FacultyAssignments";
 import ClassRoster from "../ClassRoster/ClassRoster";
 
-export default function FacultyCourses({ setActiveTab }) {
+export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  const { userSession } = useERP();
  
  const [courses, setCourses] = useState(() => {
