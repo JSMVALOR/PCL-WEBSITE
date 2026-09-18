@@ -24,7 +24,7 @@ const provisionClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 
 const CACHE_KEY = 'admin_user_directory';
 
-export default function UserManagement({ isHubView = false }) {
+export default function UserManagement({ isHubView = false, isEmbedded = false }) {
  const [activeTab, setActiveTab] = useState("students"); // 'students', 'faculty', 'disciplinary'
  const [showProvisionModal, setShowProvisionModal] = useState(false);
  const [isProvisioning, setIsProvisioning] = useState(false);
@@ -224,7 +224,7 @@ export default function UserManagement({ isHubView = false }) {
     }
   };
 
-  const openProvisionWizard = ({ isEmbedded = false }) => {
+  const openProvisionWizard = () => {
  setNewUserRole("student");
  setNewUserName("");
     setNewUserEmail("");
@@ -233,7 +233,7 @@ export default function UserManagement({ isHubView = false }) {
  setShowProvisionModal(true);
  };
 
- const closeProvisionWizard = ({ isEmbedded = false }) => {
+ const closeProvisionWizard = () => {
  setShowProvisionModal(false);
  };
 
@@ -350,7 +350,7 @@ export default function UserManagement({ isHubView = false }) {
     }
 };
 
-  const getSortedFilteredList = ({ isEmbedded = false }) => {
+  const getSortedFilteredList = () => {
     let list = [...(usersData[activeTab] || [])];
     if (searchQuery) {
       const query = searchQuery.toLowerCase();

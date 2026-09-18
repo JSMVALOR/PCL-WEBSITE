@@ -11,12 +11,12 @@ export default function ClassRoster({}) {
  const { userSession } = useERP();
 
  // --- ZERO-LAG CACHE INITIALIZATION ---
- const getCachedClasses = ({ isEmbedded = false }) => {
+ const getCachedClasses = () => {
  try { return JSON.parse(sessionStorage.getItem('jsmerp_faculty_classes_cache')) || []; }
  catch { return []; }
  };
  
- const getCachedActiveClass = ({ isEmbedded = false }) => {
+ const getCachedActiveClass = () => {
  try { return sessionStorage.getItem('jsmerp_faculty_active_class_cache') || ""; }
  catch { return ""; }
  };
@@ -263,7 +263,7 @@ export default function ClassRoster({}) {
  }
  };
 
- const generateQRCode = ({ isEmbedded = false }) => {
+ const generateQRCode = () => {
  const targetClass = facultyClasses.find(c => c.id === activeClass);
  if (!targetClass) return;
 

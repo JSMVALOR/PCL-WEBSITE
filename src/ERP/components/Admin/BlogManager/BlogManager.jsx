@@ -43,7 +43,7 @@ export default function BlogManager({ isHubView = false }) {
  }
  };
 
- const handleCreateNew = ({ isEmbedded = false }) => {
+ const handleCreateNew = () => {
  setCurrentBlog(null);
  setAuthorContact(null);
  setFormData({ title: "", slug: "", author_name: "", author_erp_id: "",  content: "", is_public: false });

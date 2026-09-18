@@ -7,7 +7,7 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminApprovals({}) {
  const [facultyLeaves, setFacultyLeaves] = useState([]);
-  const handleLeaveAction = ({ isEmbedded = false }) => {};
+  const handleLeaveAction = () => {};
   const [activeTab, setActiveTab] = useState("profile_updates"); // 'faculty_leaves', 'escalated_grievances'
  const [isLoading, setIsLoading] = useState(true);
  const [isProcessing, setIsProcessing] = useState(false);

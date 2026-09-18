@@ -83,7 +83,7 @@ export default function Assignments({}) {
  setSubmitSuccess(false);
  setSubmitError("");
  };
- const closeModal = ({ isEmbedded = false }) => {
+ const closeModal = () => {
  setSelectedTask(null);
  setSubmissionUrl("");
  setSubmitSuccess(false);

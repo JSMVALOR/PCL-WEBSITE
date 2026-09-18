@@ -142,7 +142,7 @@ export default function Fees({}) {
  const totalPending = feeBreakdown.filter(f => f.status === 'pending').reduce((sum, item) => sum + Number(item.amount), 0);
  const progressPercent = totalExpected === 0 ? 100 : Math.round((totalPaid / totalExpected) * 100);
 
- const initiatePayment = ({ isEmbedded = false }) => {
+ const initiatePayment = () => {
         if (currentTotal === 0 || selectedFees.length === 0) return;
         setIsVerificationModalOpen(true);
     };

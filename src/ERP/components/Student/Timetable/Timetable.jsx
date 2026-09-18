@@ -95,7 +95,7 @@ export default function Timetable({}) {
  return () => clearInterval(timer);
  }, []);
 
- const exportCalendar = ({ isEmbedded = false }) => {
+ const exportCalendar = () => {
  const fakeSchedule = schedule.reduce((acc, curr) => {
  acc[curr.day] = acc[curr.day] || [];
  acc[curr.day].push({
@@ -119,7 +119,7 @@ export default function Timetable({}) {
  document.body.removeChild(a);
  };
 
- const renderTodayTimeline = ({ isEmbedded = false }) => {
+ const renderTodayTimeline = () => {
  // Fallback to Monday if it's Sunday, just so the demo isn't empty, otherwise use exact today
  const actualDayNum = new Date().getDay();
  const daysMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
@@ -194,7 +194,7 @@ export default function Timetable({}) {
  );
  };
 
- const renderWeeklyGrid = ({ isEmbedded = false }) => {
+ const renderWeeklyGrid = () => {
  const uniqueSubjects = [];
  const seen = new Set();
  schedule.forEach(c => {

@@ -157,7 +157,7 @@ export default function FacultyTimetable({}) {
  }
  };
 
- const renderTimeline = ({ isEmbedded = false }) => {
+ const renderTimeline = () => {
  const actualDayNum = new Date().getDay();
  const daysMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
  let currentDayName = daysMap[actualDayNum];

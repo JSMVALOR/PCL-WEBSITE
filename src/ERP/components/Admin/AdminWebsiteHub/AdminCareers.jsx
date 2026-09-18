@@ -37,7 +37,7 @@ export default function AdminCareers({ isHubView = false }) {
  }
  };
 
- const handleCreateNew = ({ isEmbedded = false }) => {
+ const handleCreateNew = () => {
  setCurrentJob(null);
  setFormData({ title: "", department: "Faculty", type: "Full-time", location: "On-Campus", description: "", is_active: true });
  setIsEditing(true);

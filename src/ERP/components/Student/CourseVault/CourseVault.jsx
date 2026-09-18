@@ -91,7 +91,7 @@ export default function CourseVault({}) {
  }
  };
 
- const getTypesList = ({ isEmbedded = false }) => {
+ const getTypesList = () => {
  const types = new Set(materials.map(m => m.type));
  return ['All', ...Array.from(types)];
  };
