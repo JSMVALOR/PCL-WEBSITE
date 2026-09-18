@@ -8,7 +8,6 @@ import LeaveRequests from "./LeaveRequests";
 import LeaveCalendar from "./LeaveCalendar";
 import LeaveReview from "./LeaveReview"; // Detailed view of a request
 import ReplacementEngine from "./ReplacementEngine";
-import AdminPayroll from '../AdminPayroll/AdminPayroll';
 
 export default function AdminLeaveManagement({ isHubView = false }) {
  const [activeTab, setActiveTab] = useState("dashboard");
@@ -28,7 +27,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  { id: "dashboard", label: "Overview", icon: "fa-chart-pie" },
  { id: "requests", label: "Leave Requests", icon: "fa-inbox" },
  { id: "calendar", label: "Calendar", icon: "fa-calendar-days" },
- { id: "payroll", label: "Payroll Engine", icon: "fa-file-invoice-dollar" }
+ 
  ];
 
  return (
@@ -77,7 +76,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  {activeTab === "dashboard" && <LeaveDashboard setActiveTab={setActiveTab} />}
  {activeTab === "requests" && <LeaveRequests onReviewRequest={handleReviewRequest} />}
  {activeTab === "calendar" && <LeaveCalendar />}
- {activeTab === "payroll" && <AdminPayroll />}
+ 
             {activeTab === "review" && selectedRequest && (
  <LeaveReview request={selectedRequest} onClose={handleCloseReview} onAssignReplacement={() => setActiveTab("replacement")} />
  )}

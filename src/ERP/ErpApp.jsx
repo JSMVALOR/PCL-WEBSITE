@@ -88,6 +88,7 @@ import AdminTimetableHQ from './components/Admin/AdminTimetableBuilder/AdminTime
 import AdminMarksController from './components/Admin/AdminMarksController/AdminMarksController';
 import AdminMentorship from './components/Admin/AdminMentorship/AdminMentorship';
 import AdminApprovals from './components/Admin/AdminApprovals/AdminApprovals';
+import AdminPayroll from './components/Admin/AdminPayroll/AdminPayroll';
 import AdminLeaveManagement from './components/Admin/LeaveManagement/AdminLeaveManagement';
 import AdminNotices from './components/Admin/notices/AdminNotices';
 import AdminFees from './components/Admin/AdminFees/AdminFees';

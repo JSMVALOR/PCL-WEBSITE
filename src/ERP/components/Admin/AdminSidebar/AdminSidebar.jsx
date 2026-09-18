@@ -27,7 +27,8 @@ export const ADMIN_NAV_GROUPS = [
       {
                 id: "finance_group", label: "Finance & Ledger", icon: "fa-solid fa-indian-rupee-sign",
         children: [
-          { id: "finance", label: "Institutional Ledger", icon: "fa-solid fa-vault" }
+          { id: "finance", label: "Institutional Ledger", icon: "fa-solid fa-vault" },
+          { id: "adminpayroll", label: "Faculty Payroll", icon: "fa-solid fa-file-invoice-dollar" }
         ]
       }
     ]
