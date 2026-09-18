@@ -21,6 +21,29 @@ export default function FacultyLeave({ isEmbedded = false, }) {
     const [substituteId, setSubstituteId] = useState("");
     const [statusMessage, setStatusMessage] = useState({ type: "", text: "" });
 
+    // Calculate Balances
+    const currentMonth = new Date().getMonth() + 1;
+    const accruedCL = currentMonth;
+    
+    let usedCL = 0;
+    let usedOD = 0;
+    let usedWinter = 0;
+    let usedSummer = 0;
+    
+    leaveHistory.forEach(l => {
+        if (l.status === 'approved' || l.status === 'pending') {
+            const s = new Date(l.start_date);
+            const e = new Date(l.end_date);
+            const days = Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
+            
+            if (l.leave_type === "Casual Leave (CL)") usedCL += days;
+            else if (l.leave_type === "On Duty (OD)") usedOD += days;
+            else if (l.leave_type === "Winter Vacation") usedWinter += days;
+            else if (l.leave_type === "Summer Vacation") usedSummer += days;
+        }
+    });
+
+
     const fetchLeaveData = async () => {
         if (!userSession?.db_id) return;
         try {
@@ -65,29 +88,48 @@ export default function FacultyLeave({ isEmbedded = false, }) {
         const diffTime = Math.abs(end - start);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         
+        // Advanced Leave Policy Enforcement
+        let usedDays = 0;
+        leaveHistory.forEach(l => {
+            if (l.leave_type === leaveType && (l.status === 'approved' || l.status === 'pending')) {
+                const s = new Date(l.start_date);
+                const e = new Date(l.end_date);
+                usedDays += Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
+            }
+        });
+
         if (leaveType === "Casual Leave (CL)") {
             if (diffDays > 2) {
-                setStatusMessage({ type: "error", text: "HR Rule: Maximum 2 Casual Leaves can be combined (Clubbing Rule)." });
-                setIsSubmitting(false);
-                return;
+                setStatusMessage({ type: "error", text: "HR Rule: Maximum 2 Casual Leaves can be combined." });
+                setIsSubmitting(false); return;
             }
-            
-            // Check accrual balance
+            const accruedCL = new Date().getMonth() + 1; // 1 per month based on calendar year
+            if (usedDays + diffDays > accruedCL) {
+                setStatusMessage({ type: "error", text: `HR Rule: Insufficient balance. Accrued: ${accruedCL}, Used/Requested: ${usedDays}.` });
+                setIsSubmitting(false); return;
+            }
+        } else if (leaveType === "On Duty (OD)") {
+            if (usedDays + diffDays > 30) {
+                setStatusMessage({ type: "error", text: `HR Rule: OD limit exceeded. Max 30 days/year. Used: ${usedDays}.` });
+                setIsSubmitting(false); return;
+            }
+        } else if (leaveType === "Winter Vacation") {
+            if (usedDays + diffDays > 15) {
+                setStatusMessage({ type: "error", text: `HR Rule: Winter Vacation limit exceeded. Max 15 days/year.` });
+                setIsSubmitting(false); return;
+            }
+        } else if (leaveType === "Summer Vacation") {
+            if (usedDays + diffDays > 15) {
+                setStatusMessage({ type: "error", text: `HR Rule: Summer Vacation limit exceeded. Max 15 days/year.` });
+                setIsSubmitting(false); return;
+            }
+        } else if (leaveType === "Earned Leave (EL)") {
+            // EL is tracked manually via HR backend for encashment, but we allow requesting it.
+            // A warning can be placed that it requires 1 year of employment.
             const currentMonth = new Date().getMonth() + 1;
-            const accruedCL = currentMonth; // 1 per month
-            let usedCL = 0;
-            leaveHistory.forEach(l => {
-                if (l.leave_type === "Casual Leave (CL)" && (l.status === 'approved' || l.status === 'pending')) {
-                    const s = new Date(l.start_date);
-                    const e = new Date(l.end_date);
-                    usedCL += Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
-                }
-            });
-            
-            if (usedCL + diffDays > accruedCL) {
-                setStatusMessage({ type: "error", text: `HR Rule: Insufficient balance. You have accrued ${accruedCL} CLs so far, and used/requested ${usedCL}.` });
-                setIsSubmitting(false);
-                return;
+            if (currentMonth !== 5 && currentMonth !== 6) {
+                // If they want to ENCASH it, it's May-June. If they want to TAKE it, maybe anytime?
+                // We'll just let Admin decide on approval, but warn them.
             }
         }
 
@@ -233,11 +275,12 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Leave Category</label>
  <div className="relative">
  <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
- <option value="Casual Leave (CL)">Casual Leave (CL)</option>
- <option value="Medical Leave (ML)">Medical Leave (ML)</option>
- <option value="Earned Leave (EL)">Earned Leave (EL)</option>
+ <option value="Casual Leave (CL)">Casual Leave (CL) [12/yr]</option>
+ <option value="Earned Leave (EL)">Earned Leave (EL) [Rollover]</option>
+ <option value="On Duty (OD)">On Duty (OD) [30/yr]</option>
+ <option value="Winter Vacation">Winter Vacation [15/yr]</option>
+ <option value="Summer Vacation">Summer Vacation [15/yr]</option>
  <option value="Loss of Pay (LOP)">Loss of Pay (LOP)</option>
- <option value="Official Duty (OD)">Official Duty (OD)</option>
  </select>
  <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/30 pointer-events-none text-xs"></i>
  </div>
