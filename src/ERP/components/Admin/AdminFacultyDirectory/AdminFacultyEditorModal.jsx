@@ -40,7 +40,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  .select(`
  id, full_name, email, department,
  faculty_profiles (
- designation, specialisation, bio, degrees, office_address,
+ designation, specialisation, bio, education, research, projects, patents, awards, office_address,
  phone, linkedin_url, scholar_url, image_url, is_public
  )
  `)
@@ -49,13 +49,31 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  if (error) throw error;
  
+
+ const parseText = (val) => {
+   if (!val) return '';
+   if (typeof val === 'string') {
+     try {
+       const p = JSON.parse(val);
+       return typeof p === 'string' ? p : val;
+     } catch (e) {
+       return val;
+     }
+   }
+   return String(val);
+ };
+
  setFormData({
  full_name: data.full_name || '',
  department: data.department || '',
  designation: data.faculty_profiles?.designation || '',
  specialisation: data.faculty_profiles?.specialisation || '',
  bio: data.faculty_profiles?.bio || '',
- degrees: data.faculty_profiles?.degrees || '',
+ education: parseText(data.faculty_profiles?.education),
+ research: parseText(data.faculty_profiles?.research),
+ projects: parseText(data.faculty_profiles?.projects),
+ patents: parseText(data.faculty_profiles?.patents),
+ awards: parseText(data.faculty_profiles?.awards),
  office_address: data.faculty_profiles?.office_address || '',
  phone: data.faculty_profiles?.phone || '',
  linkedin_url: data.faculty_profiles?.linkedin_url || '',
@@ -179,7 +197,11 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  designation: formData.designation,
  specialisation: formData.specialisation,
  bio: formData.bio,
- degrees: formData.degrees,
+ education: formData.education ? JSON.stringify(formData.education) : null,
+ research: formData.research ? JSON.stringify(formData.research) : null,
+ projects: formData.projects ? JSON.stringify(formData.projects) : null,
+ patents: formData.patents ? JSON.stringify(formData.patents) : null,
+ awards: formData.awards ? JSON.stringify(formData.awards) : null,
  office_address: formData.office_address,
  phone: formData.phone,
  linkedin_url: formData.linkedin_url,
