@@ -144,7 +144,7 @@ export default function FacultyProfile() {
       <div className="relative z-20 pt-28 pb-32 px-6 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
         {/* LEFT COLUMN: Image & Details */}
-        <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32">
+        <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 self-start">
           <Link
             to="/about/faculty"
             className="inline-flex items-center text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors mb-8 uppercase tracking-widest text-xs font-bold focus:outline-none w-max self-start"
