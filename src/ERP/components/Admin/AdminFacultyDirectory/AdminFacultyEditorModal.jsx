@@ -154,6 +154,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  const handleSubmit = async (e) => {
  e.preventDefault();
+ if (!window.confirm("Are you sure you want to save these changes to the public profile?")) return;
  setSaving(true);
  
  try {
@@ -168,13 +169,16 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  .from('avatars')
  .upload(fileName, blob, { contentType: 'image/jpeg', upsert: true });
 
- if (uploadError) throw uploadError;
- 
- const { data: { publicUrl } } = supabase.storage
- .from('avatars')
- .getPublicUrl(fileName);
- 
- finalImageUrl = publicUrl;
+ if (uploadError) {
+     console.error("Image upload failed (Check if 'avatars' bucket exists):", uploadError);
+     window.alert("Warning: Could not upload the image. Please ensure the 'avatars' storage bucket exists in Supabase. The text changes will still be saved.");
+ } else {
+     const { data: { publicUrl } } = supabase.storage
+     .from('avatars')
+     .getPublicUrl(fileName);
+     
+     finalImageUrl = publicUrl;
+ }
  }
  }
 
@@ -237,7 +241,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <div className="bg-[#fcfcfc] w-full max-w-4xl rounded-[2rem] flex flex-col max-h-[90vh] overflow-hidden border border-black/10 dark:border-white/20">
  
  {/* HEADER */}
- <div className="bg-themePanel/85 backdrop-blur-2xl px-8 py-6 relative shrink-0 border-b border-neutral-100 flex justify-between items-center z-10">
+ <div className="bg-themePanel/85 backdrop-blur-2xl px-8 py-6 relative shrink-0 border-b border-black/5 dark:border-white/10 flex justify-between items-center z-10">
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-2xl bg-themeAccent/10 flex items-center justify-center">
  <i className="fa-solid fa-user-pen text-themeAccent text-xl"></i>
@@ -247,17 +251,17 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <p className="text-[13px] font-medium text-themeTextSec mt-1">Manage public identity and details</p>
  </div>
  </div>
- <button type="button" onClick={onClose} className="w-10 h-10 bg-neutral-50 hover:bg-neutral-100 rounded-full border border-neutral-200 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
+ <button type="button" onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-black/40 hover:bg-black/10 dark:hover:bg-white/10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
  <i className="fa-solid fa-xmark text-base"></i>
  </button>
  </div>
 
  {/* SCROLLABLE CONTENT */}
- <div className="overflow-y-auto flex-1 bg-neutral-50/50 no-scrollbar p-8">
+ <div className="overflow-y-auto flex-1 bg-black/5 dark:bg-black/40 no-scrollbar p-8">
  <form id="faculty-edit-form" onSubmit={handleSubmit} className="flex flex-col gap-10">
  
  {/* PHOTO SECTION */}
- <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-neutral-100 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-black/5 dark:border-white/10 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden">
  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-themeAccent to-themeAccent/20"></div>
  
  <div className="flex-1 w-full flex flex-col">
@@ -282,7 +286,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  </div>
  
  {imgSrc && (
- <div className="mt-2 border-2 border-dashed border-neutral-200 rounded-2xl overflow-hidden flex justify-center bg-neutral-50 p-4 max-h-72">
+ <div className="mt-2 border-2 border-dashed border-black/5 dark:border-white/10 rounded-2xl overflow-hidden flex justify-center bg-black/5 dark:bg-black/40 p-4 max-h-72">
  <ReactCrop
  crop={crop}
  onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -305,7 +309,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  </div>
 
  {/* DETAILS SECTION */}
- <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-neutral-100 flex flex-col gap-6 relative overflow-hidden">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-black/5 dark:border-white/10 flex flex-col gap-6 relative overflow-hidden">
  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neutral-200 to-transparent"></div>
  
  <h4 className="text-[15px] font-semibold text-themeText tracking-normal mb-2 flex items-center gap-2">
@@ -374,7 +378,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  </div>
 
  {/* FOOTER */}
- <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-neutral-100 flex justify-end shrink-0 gap-4 z-10">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-black/5 dark:border-white/10 flex justify-end shrink-0 gap-4 z-10">
  <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-gray-300 dark:border-white/10 hover:text-themeText transition">
  Cancel
  </button>
