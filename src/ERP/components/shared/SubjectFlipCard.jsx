@@ -8,8 +8,7 @@ const SUBJECT_COLORS = {
     purple: { text: 'text-[#AF52DE]', solid: 'bg-[#AF52DE]', gradient: 'from-[#AF52DE]/20 to-transparent' },
     orange: { text: 'text-[#FF9500]', solid: 'bg-[#FF9500]', gradient: 'from-[#FF9500]/20 to-transparent' },
     rose: { text: 'text-[#FF2D55]', solid: 'bg-[#FF2D55]', gradient: 'from-[#FF2D55]/20 to-transparent' },
-    amber: { text: 'text-[#FFCC00]', solid: 'bg-[#FFCC00]', gradient: 'from-[#FFCC00]/20 to-transparent' },
-};
+    amber: { text: 'text-[#FFCC00]', solid: 'bg-[#FFCC00]', gradient: 'from-[#FFCC00]/20 to-transparent' } };
 
 export default function SubjectFlipCard({ subject, nextClass, faculty, color = 'blue' }) {
     const c = SUBJECT_COLORS[color] || SUBJECT_COLORS.blue;
@@ -24,7 +23,7 @@ export default function SubjectFlipCard({ subject, nextClass, faculty, color = '
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${c.gradient} blur-2xl rounded-full opacity-60 pointer-events-none -mr-10 -mt-10`}></div>
 
             <div className="flex justify-between items-start mb-4 relative z-10">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${c.solid} text-white shrink-0 bg-opacity-90 backdrop-blur-md border border-white/20`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${c.solid} text-gray-900 dark:text-white shrink-0 bg-opacity-90 backdrop-blur-md border border-white/20`}>
                     <i className="fa-solid fa-book-open text-sm drop-shadow-sm"></i>
                 </div>
                 {nextClass && (

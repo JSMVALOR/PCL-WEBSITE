@@ -5,3 +5,4 @@ export { default as FacultySyllabusProgression } from './FacultySyllabusProgress
 export { default as FacultyCourseHealth } from './FacultyCourseHealth';
 export { default as AdminCampusPulse } from './AdminCampusPulse';
 export { default as AdminSystemVitals } from './AdminSystemVitals';
+export { default as DashboardGreetingBanner } from './DashboardGreetingBanner';

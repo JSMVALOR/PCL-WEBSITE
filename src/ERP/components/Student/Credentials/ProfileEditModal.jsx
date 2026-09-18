@@ -54,7 +54,10 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  emergencyName: profileData.questionnaire_data?.emergencyName || '',
  emergencyRelation: profileData.questionnaire_data?.emergencyRelation || '',
  emergencyPhone: profileData.questionnaire_data?.emergencyPhone || '',
- profile_picture_url: profileData.profile_picture_url || ''
+ profile_picture_url: profileData.profile_picture_url || '',
+        parent_name: profileData.parent_name || '',
+        parent_phone: profileData.parent_phone || '',
+        parent_email: profileData.parent_email || ''
  });
 
  // Cropping State
@@ -139,6 +142,9 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  blood_group: formData.blood_group || null,
  dob: formData.dob || null,
  profile_picture_url: formData.profile_picture_url || null,
+            parent_name: formData.parent_name || null,
+            parent_phone: formData.parent_phone || null,
+            parent_email: formData.parent_email || null,
  questionnaire_data: {
  ...profileData.questionnaire_data,
  currentAddress: formData.currentAddress || null,
@@ -204,9 +210,9 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  <i className="fa-solid fa-arrow-left"></i>
  </button>
  <div>
- <h2 className="text-xl lg:text-2xl font-black text-themeText tracking-tight">Edit Profile</h2>
+ <h2 className="text-xl lg:text-2xl font-semibold tracking-tight text-themeText tracking-tight">Edit Profile</h2>
  {userRole === 'student' && (
- <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mt-0.5"><i className="fa-solid fa-shield-halved mr-1"></i> Requires Admin Approval</p>
+ <p className="text-[10px] font-bold text-amber-500 tracking-normal mt-0.5"><i className="fa-solid fa-shield-halved mr-1"></i> Requires Admin Approval</p>
  )}
  </div>
  </div>
@@ -215,7 +221,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  <button type="button" 
  onClick={handleSubmit} 
  disabled={isSubmitting || uploadingImage} 
- className="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest bg-themeAccent text-themeApp hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 hover:scale-105 active:scale-95"
+ className="px-6 py-2.5 rounded-full text-[14px] font-medium tracking-normal bg-themeAccent text-themeApp hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 hover:scale-105 active:scale-95"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Saving...</> : <><i className="fa-solid fa-check"></i> Save Changes</>}
  </button>
@@ -226,19 +232,19 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  <div className="flex-1 w-full max-w-4xl mx-auto px-6 lg:px-12 py-10 flex flex-col gap-10">
  
  {hasPendingRequest ? (
- <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border-amber-500/30 ring-1 ring-amber-500/30 rounded-2xl p-10 text-center flex flex-col items-center justify-center">
+ <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border-amber-500/30 ring-1 ring-amber-500/30 rounded-2xl p-10 text-center flex flex-col items-center justify-center">
  <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mb-6">
  <i className="fa-solid fa-hourglass-half text-3xl text-amber-500"></i>
  </div>
- <h3 className="text-xl font-black text-themeText mb-2">Pending Request</h3>
+ <h3 className="text-xl font-semibold tracking-tight text-themeText mb-2">Pending Request</h3>
  <p className="text-sm font-medium text-themeTextSec max-w-md">Your profile update is currently under review by the administration. You will be notified once it is approved.</p>
  </div>
  ) : (
  <>
  {/* Avatar Section */}
- <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] rounded-[2rem] rounded-3xl p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+ <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] rounded-[2rem] rounded-3xl p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
  <div className="absolute top-0 right-0 w-full max-w-[16rem] md:w-64 h-64 bg-themeAccent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
- <h3 className="text-xs font-black uppercase tracking-widest text-themeTextSec w-full text-left absolute top-6 left-8">Profile Picture</h3>
+ <h3 className="text-[14px] font-medium tracking-normal text-themeTextSec w-full text-left absolute top-6 left-8">Profile Picture</h3>
  
  <div className="relative group cursor-pointer mt-4" onClick={() => fileInputRef.current?.click()}>
  <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full bg-themePanel border-theme border-themeBorderStrong border-4 border-themePanel ring-2 ring-themeBorder flex items-center justify-center overflow-hidden transition group-hover:ring-themeAccent">
@@ -249,11 +255,11 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  )}
  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
  {uploadingImage ? (
- <i className="fa-solid fa-circle-notch fa-spin text-white text-2xl"></i>
+ <i className="fa-solid fa-circle-notch fa-spin text-gray-900 dark:text-white text-2xl"></i>
  ) : (
  <>
- <i className="fa-solid fa-upload text-white mb-2 text-xl"></i>
- <span className="text-[9px] font-black text-white uppercase tracking-widest">Update Photo</span>
+ <i className="fa-solid fa-upload text-gray-900 dark:text-white mb-2 text-xl"></i>
+ <span className="text-[9px] font-black text-gray-900 dark:text-white tracking-normal">Update Photo</span>
  </>
  )}
  </div>
@@ -271,17 +277,17 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  </div>
 
  {/* Personal Details */}
- <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] rounded-[2rem] rounded-3xl p-8">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-6 flex items-center gap-2">
+ <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] rounded-[2rem] rounded-3xl p-8">
+ <h3 className="text-[14px] font-medium tracking-normal text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-id-card text-themeAccent"></i> Personal Details
  </h3>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Phone Number</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Phone Number</label>
  <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" placeholder="+91 9876543210" />
  </div>
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Blood Group</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Blood Group</label>
  <select value={formData.blood_group} onChange={e => setFormData({...formData, blood_group: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition appearance-none font-medium">
  <option value="">Select...</option>
  <option>A+</option><option>A-</option>
@@ -291,32 +297,54 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  </select>
  </div>
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Date of Birth</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Date of Birth</label>
  <input min="2026-09-14" type="date" value={formData.dob} onChange={e => setFormData({...formData, dob: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" />
  </div>
  <div className="flex flex-col gap-2 md:col-span-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Current Address</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Current Address</label>
  <input type="text" value={formData.currentAddress} onChange={e => setFormData({...formData, currentAddress: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" placeholder="Full residential address" />
  </div>
  </div>
  </div>
 
- {/* Emergency Contact */}
- <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] rounded-[2rem] rounded-3xl p-8">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-6 flex items-center gap-2">
+ 
+                        {/* Parent / Guardian Details */}
+                        <div className="bg-themePanel/50 rounded-3xl p-6 lg:p-8 border border-black/5 dark:border-white/5 space-y-6 mb-6">
+                            <h3 className="text-[15px] font-semibold text-themeText tracking-normal flex items-center gap-3">
+                                <i className="fa-solid fa-users text-themeAccent"></i> Parent / Guardian Details
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec tracking-normal">Parent Name</label>
+                                    <input type="text" name="parent_name" value={formData.parent_name || ''} onChange={handleChange} className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition-all" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec tracking-normal">Parent Phone</label>
+                                    <input type="text" name="parent_phone" value={formData.parent_phone || ''} onChange={handleChange} className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition-all" />
+                                </div>
+                                <div className="space-y-2 md:col-span-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec tracking-normal">Parent Email (For Portal Login)</label>
+                                    <input type="email" name="parent_email" value={formData.parent_email || ''} onChange={handleChange} className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition-all" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Emergency Contact */}
+ <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] rounded-[2rem] rounded-3xl p-8">
+ <h3 className="text-[14px] font-medium tracking-normal text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-heart-pulse text-rose-500"></i> Emergency Contact
  </h3>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="flex flex-col gap-2 md:col-span-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Contact Name</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Contact Name</label>
  <input type="text" value={formData.emergencyName} onChange={e => setFormData({...formData, emergencyName: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" placeholder="Full Name" />
  </div>
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Relationship</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Relationship</label>
  <input type="text" value={formData.emergencyRelation} onChange={e => setFormData({...formData, emergencyRelation: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" placeholder="e.g. Father, Mother" />
  </div>
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec ml-1">Emergency Phone</label>
+ <label className="text-[13px] font-medium text-themeTextSec ml-1">Emergency Phone</label>
  <input type="tel" value={formData.emergencyPhone} onChange={e => setFormData({...formData, emergencyPhone: e.target.value})} className="bg-themePanel border-theme border-themeBorderStrong rounded-xl px-5 py-3.5 text-sm text-themeText outline-none focus:border-themeAccent focus:ring-4 focus:ring-themeAccent/10 transition font-medium" placeholder="+91 9876543210" />
  </div>
  </div>
@@ -329,9 +357,9 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  {isCropping && upImg && (
  <div className="fixed inset-0 z-[10000] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-6">
  <div className="bg-themePanel border-theme border-themeBorderStrong p-6 rounded-3xl w-full max-w-2xl flex flex-col items-center border border-black/10 dark:border-white/20">
- <h3 className="text-lg font-black text-themeText mb-6">Crop Profile Picture</h3>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText mb-6">Crop Profile Picture</h3>
  
- <div className="w-full max-h-[50vh] overflow-auto flex justify-center bg-black/20 rounded-xl mb-6">
+ <div className="w-full max-h-[50vh] overflow-auto flex justify-center bg-gray-50 dark:bg-black/20 rounded-xl mb-6">
  <ReactCrop
  crop={crop}
  onChange={(c) => setCrop(c)}
@@ -347,14 +375,14 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  <div className="flex gap-4 w-full justify-end">
  <button type="button" 
  onClick={() => { setIsCropping(false); setUpImg(null); if(fileInputRef.current) fileInputRef.current.value = ''; }} 
- className="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest text-themeTextSec hover:bg-themePanel border-theme border-themeBorderStrong transition-colors"
+ className="px-6 py-2.5 rounded-full text-[14px] font-medium tracking-normal text-themeTextSec hover:bg-themePanel border-theme border-themeBorderStrong transition-colors"
  >
  Cancel
  </button>
  <button type="button" 
  onClick={uploadCroppedImage}
  disabled={!completedCrop?.width || !completedCrop?.height}
- className="px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest bg-themeAccent text-themeApp hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
+ className="px-6 py-2.5 rounded-full text-[14px] font-medium tracking-normal bg-themeAccent text-themeApp hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
  >
  <i className="fa-solid fa-crop-simple"></i> Confirm Crop
  </button>

@@ -6,7 +6,7 @@ import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function Leave({ isEmbedded = false }) {
+export default function Leave({ isEmbedded = false, }) {
  const { userSession } = useERP();
 
  // --- MAIN STATE ---
@@ -32,11 +32,7 @@ export default function Leave({ isEmbedded = false }) {
  const [documentUrl, setDocumentUrl] = useState('');
   const fileInputRef = useRef(null);
   const [documentFile, setDocumentFile] = useState(null);
-  const [blackouts, setBlackouts] = useState(() => {
-    const cached = sessionStorage.getItem(`stu_blackouts`);
-    return cached ? JSON.parse(cached) : [];
-  });
-
+  
  // --- DATA SYNC ENGINE ---
  const fetchLeaveHistory = async () => {
  const studentId = userSession?.db_id || userSession?.id;
@@ -81,24 +77,7 @@ export default function Leave({ isEmbedded = false }) {
         throw new Error("End date cannot be before start date.");
       }
       
-      // Blackout Dates check
-      for (const b of blackouts) {
-        const bStart = new Date(b.start_date);
-        const bEnd = new Date(b.end_date);
-        bStart.setHours(0,0,0,0);
-        bEnd.setHours(23,59,59,999);
-        
-        if (
-            (start >= bStart && start <= bEnd) || 
-            (end >= bStart && end <= bEnd) || 
-            (start <= bStart && end >= bEnd)
-        ) {
-            throw new Error(`Leaves are locked during this period: ${b.title}`);
-        }
-      }
-
-
- // Calculate exact days
+      // Calculate exact days
  const diffTime = Math.abs(end - start);
  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
@@ -113,24 +92,24 @@ export default function Leave({ isEmbedded = false }) {
  }
 
  // Generate Request ID
- const reqId = `LR-${Math.floor(1000 + Math.random() * 9000)}`;
+    const reqId = `LR-${Math.floor(1000 + Math.random() * 9000)}`;
 
- // Write to Ledger
- const { error: dbError } = await supabase
- .from('leave_requests')
- .insert({
-    student_id: studentId,
-    start_date: fromDate,
-    end_date: toDate,
-    total_days: diffDays,
-    reason: reason,
-    status: 'pending',
-    // mentor_id will be mapped if the student has a mentor in the mentorship table, 
-    // but for this legacy component we will let the DB or mentor fetch handle it 
-    // or just leave it null for Admin review.
-});
+    // 1. Fetch Student's Mentor
+    const { data: mentorData } = await supabase.from('mentorship').select('faculty_id').eq('student_id', studentId).maybeSingle();
+    const activeMentorId = mentorData?.faculty_id || null;
 
- if (dbError) throw dbError;
+    // Write to Ledger
+    const { error: dbError } = await supabase
+    .from('leave_requests')
+    .insert({ student_id: studentId,
+        mentor_id: activeMentorId,
+        start_date: fromDate,
+        end_date: toDate,
+        total_days: diffDays,
+        reason: reason,
+        status: 'pending'
+    });
+    if (dbError) throw dbError;
 
  // Notify Admin
  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
@@ -180,7 +159,7 @@ export default function Leave({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
 
  <PageHeader 
  icon="fa-solid fa-calendar-minus"
@@ -210,7 +189,7 @@ export default function Leave({ isEmbedded = false }) {
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText tracking-tight ml-2`}><i className="fa-solid fa-clock-rotate-left text-themeTextSec opacity-70 mr-2"></i> Request History</h2>
 
  {leaveRequests.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-transparent border-theme border-dashed border-black/10 dark:border-white/20 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-3 lg:mb-4"></i>
  <h3 className="text-sm lg:text-base font-black text-themeText">No Leave Records</h3>
  <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-themeTextSec opacity-70 mt-1 lg:mt-2">You have a clean attendance record.</p>
@@ -267,74 +246,60 @@ export default function Leave({ isEmbedded = false }) {
 
  {/* 4. NEW LEAVE MODAL */}
  {showRequestModal && (
- <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
- <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 max-h-[90vh] flex flex-col">
-
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-5 lg:p-6 text-themeText relative border-b-theme border-black/10 dark:border-white/20 shrink-0">
- <div className="absolute top-0 right-0 w-48 h-48 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
- <div className="relative z-10 flex justify-between items-start">
+ <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+ <div className="bg-white dark:bg-[#121212] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-white/[0.08] shadow-2xl flex flex-col max-h-[90vh]">
+ 
+ <div className="p-6 border-b border-white/[0.08] shrink-0 flex justify-between items-start bg-[#161616]">
  <div>
- <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText">Apply for Leave</h3>
- <p className={`text-[10px] lg:text-xs ${theme.text.secondary} font-medium`}>This request will be routed to your assigned mentor or HOD.</p>
+ <h3 className="text-xl font-black tracking-tight mb-1 text-gray-900 dark:text-white">Apply for Leave</h3>
+ <p className="text-[10px] text-gray-500 dark:text-white/50 font-bold uppercase tracking-widest">Routed to your mentor or HOD.</p>
  </div>
- <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeTextSec hover:text-themeText hover:bg-neutral-800 border border-black/5 dark:border-white/10 transition-colors shrink-0">
+ <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-gray-300 dark:border-white/10 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-white/10 transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
- </div>
 
- <div className="overflow-y-auto no-scrollbar flex-1">
- <form onSubmit={handleRequestSubmit} className="p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
+ <div className="overflow-y-auto no-scrollbar flex-1 bg-white dark:bg-[#121212]">
+ <form onSubmit={handleRequestSubmit} className="p-6 flex flex-col gap-6">
 
  {statusMessage.text && (
- <div className={`p-4 rounded-[2rem] text-[9px] lg:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border-theme animate-fade-in ${statusMessage.type === "success" ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-emerald-400" : "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-rose-400"
- }`}>
- <i className={`fa-solid ${statusMessage.type === "success" ? "fa-check-circle" : "fa-triangle-exclamation"}`}></i>
+ <div className={`p-4 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 border ${statusMessage.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-rose-500/10 border-rose-500/20 text-rose-400"}`}>
+ <i className={`fa-solid ${statusMessage.type === "success" ? "fa-check" : "fa-triangle-exclamation"}`}></i>
  {statusMessage.text}
  </div>
  )}
 
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>Leave Category</label>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Leave Category</label>
  <div className="relative">
- <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition appearance-none cursor-pointer">
+ <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
  <option value="Medical Leave">Medical Leave</option>
  <option value="Official Duty">Official Duty (Moot, Sports, etc.)</option>
  <option value="Personal Leave">Personal / Family Leave</option>
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-70 pointer-events-none"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/30 pointer-events-none text-xs"></i>
  </div>
  </div>
 
- <div className="grid grid-cols-2 gap-4 lg:gap-5">
+ <div className="grid grid-cols-2 gap-4">
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>From Date</label>
- <input min="2026-09-14" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-3 lg:px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition [color-scheme:dark]" required />
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">From Date</label>
+ <input min="2026-09-14" type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition [color-scheme:dark]" required />
  </div>
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>To Date</label>
- <input min="2026-09-14" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-3 lg:px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition [color-scheme:dark]" required />
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">To Date</label>
+ <input min="2026-09-14" type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition [color-scheme:dark]" required />
  </div>
- </div>
-
- <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>Reason for Leave</label>
- <textarea
- rows="3"
- value={reason}
- onChange={(e) => setReason(e.target.value)}
- placeholder="Please provide specific details..."
- className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition resize-none placeholder:text-neutral-600"
- required
- ></textarea>
  </div>
 
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>Supporting Document (Optional)</label>
- <input
- type="file"
- ref={fileInputRef}
- onChange={e => {
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Reason for Leave</label>
+ <textarea rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide specific details..." className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 dark:text-white focus:border-amber-500 outline-none transition resize-none placeholder:text-gray-400 dark:text-white/30" required></textarea>
+ </div>
+
+ <div>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Supporting Document (Optional)</label>
+ <input type="file" ref={fileInputRef} onChange={e => {
  const file = e.target.files[0];
  if (file && file.size > 5 * 1024 * 1024) {
  window.erpDialog.alert("File size exceeds 5MB limit. Please upload a smaller file.");
@@ -342,33 +307,23 @@ export default function Leave({ isEmbedded = false }) {
  return;
  }
  setDocumentFile(file);
- }}
- className="hidden"
- accept=".pdf,.jpg,.png"
- />
- <div onClick={() => fileInputRef.current.click()} className="border-2 border-dashed border-black/5 dark:border-white/10 hover:border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 transition-colors rounded-[2rem] p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
- <i className="fa-solid fa-cloud-arrow-up text-2xl lg:text-3xl text-neutral-600 group-hover:text-themeAccent mb-2 lg:mb-3 transition-colors"></i>
- <p className="text-[10px] lg:text-xs font-bold text-themeText">{documentFile ? documentFile.name : "Upload Medical Cert. or Proof"}</p>
- <p className="text-[9px] lg:text-[10px] font-medium text-themeTextSec opacity-70 mt-1">PDF, JPG or PNG (Max 5MB)</p>
+ }} className="hidden" accept=".pdf,.jpg,.png" />
+ <div onClick={() => fileInputRef.current.click()} className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 hover:border-amber-500/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
+ <div className="w-12 h-12 rounded-full bg-white/5 text-gray-500 dark:text-white/50 group-hover:text-amber-500 flex items-center justify-center mb-3 transition-colors">
+ <i className="fa-solid fa-cloud-arrow-up text-lg"></i>
+ </div>
+ <p className="text-xs font-bold text-gray-900 dark:text-white mb-1">Upload Medical Cert. or Proof</p>
+ <p className="text-[10px] font-medium text-gray-400 dark:text-white/30 uppercase tracking-widest">PDF, JPG or PNG (Max 5MB)</p>
+ {documentFile && (
+ <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-lg text-xs font-bold flex items-center gap-2">
+ <i className="fa-solid fa-file-check"></i> {documentFile.name}
+ </div>
+ )}
  </div>
  </div>
 
- <button
- type="submit"
- disabled={isSubmitting || !fromDate || !toDate || !reason}
- className={`w-full mt-2 py-4 rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex justify-center items-center gap-2 overflow-hidden group shrink-0 ${isSubmitting || !fromDate || !toDate || !reason
- ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-neutral-600 cursor-not-allowed border border-black/10 dark:border-white/20'
- : 'bg-amber-500 text-[#050505] hover:bg-amber-400 active:scale-[0.98]'
- }`}
- >
- {!isSubmitting && fromDate && toDate && reason && (
- <div className="absolute inset-0 w-full h-full -translate-x-full group-hover:"></div>
- )}
- {isSubmitting ? (
- <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Submitting...</>
- ) : (
- <><i className="fa-solid fa-paper-plane"></i> Submit Application</>
- )}
+ <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+ {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> Submit Application</>}
  </button>
  </form>
  </div>

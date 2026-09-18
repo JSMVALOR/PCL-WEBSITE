@@ -6,7 +6,7 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 
-export default function StudentApprovals({ isEmbedded = false }) {
+export default function StudentApprovals({ isEmbedded = false, }) {
  const { userSession } = useERP();
  const [activeTab, setActiveTab] = useState("leaves"); // 'leaves' or 'grievances'
  const [isLoading, setIsLoading] = useState(true);
@@ -24,15 +24,13 @@ export default function StudentApprovals({ isEmbedded = false }) {
  const minDateStr = tomorrow.toISOString().split('T')[0];
 
  // Leave Form
- const [leaveData, setLeaveData] = useState({
- startDate: minDateStr,
+ const [leaveData, setLeaveData] = useState({ startDate: minDateStr,
  endDate: minDateStr,
  reason: ""
  });
 
  // Grievance Form
- const [grievanceData, setGrievanceData] = useState({
- accusedId: "",
+ const [grievanceData, setGrievanceData] = useState({ accusedId: "",
  category: "Academics",
  description: ""
  });
@@ -208,30 +206,30 @@ export default function StudentApprovals({ isEmbedded = false }) {
  switch(status.toLowerCase()) {
  case 'approved':
  case 'resolved':
- return <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest border-emerald-500/30 border">{status}</span>;
+ return <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 text-[13px] font-medium border-emerald-500/30 border">{status}</span>;
  case 'rejected':
  case 'dismissed':
- return <span className="px-2 py-1 rounded bg-rose-500/40 text-rose-400 text-[10px] font-black uppercase tracking-widest border-rose-500/30 border">{status}</span>;
+ return <span className="px-2 py-1 rounded bg-rose-500/40 text-rose-400 text-[13px] font-medium border-rose-500/30 border">{status}</span>;
  case 'investigating':
- return <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest border-blue-500/30 border">{status}</span>;
+ return <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400 text-[13px] font-medium border-blue-500/30 border">{status}</span>;
  default:
- return <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-widest border-amber-500/30 border">{status}</span>;
+ return <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-400 text-[13px] font-medium border-amber-500/30 border">{status}</span>;
  }
  };
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  <PageHeader icon="fa-solid fa-file-signature" title="Approvals & Grievances" subtitle="Track your formal requests and resolutions." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl w-fit relative z-10 overflow-x-auto no-scrollbar">
  <button type="button" 
  onClick={() => setActiveTab('leaves')}
- className={`px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Leave Requests
  </button>
  <button type="button" 
  onClick={() => setActiveTab('grievances')}
- className={`px-6 py-2.5 rounded-lg text-xs lg:text-sm font-black uppercase tracking-widest transition ${activeTab === 'grievances' ? 'bg-rose-500 text-white' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'grievances' ? 'bg-rose-500 text-gray-900 dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Grievances
  </button>
@@ -257,22 +255,22 @@ export default function StudentApprovals({ isEmbedded = false }) {
  
  {activeTab === 'leaves' ? (
  <form onSubmit={submitLeave} className="flex flex-col gap-4">
- <h2 className="text-lg font-black text-themeText mb-2"><i className="fa-solid fa-calendar-minus mr-2 text-themeAccent"></i> New Leave Request</h2>
+ <h2 className="text-lg font-semibold tracking-tight text-themeText mb-2"><i className="fa-solid fa-calendar-minus mr-2 text-themeAccent"></i> New Leave Request</h2>
  
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">Start Date</label>
- <input type="date" min={minDateStr} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.startDate} onChange={e => setLeaveData({...leaveData, startDate: e.target.value})} />
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Start Date</label>
+ <input type="date" min={minDateStr} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.startDate} onChange={e => setLeaveData({ ...leaveData, startDate: e.target.value})} />
  </div>
  <div>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">End Date</label>
- <input type="date" min={minDateStr} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.endDate} onChange={e => setLeaveData({...leaveData, endDate: e.target.value})} />
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">End Date</label>
+ <input type="date" min={minDateStr} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.endDate} onChange={e => setLeaveData({ ...leaveData, endDate: e.target.value})} />
  </div>
  </div>
 
  <div>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">Reason for Leave</label>
- <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Provide a detailed reason..." value={leaveData.reason} onChange={e => setLeaveData({...leaveData, reason: e.target.value})}></textarea>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Reason for Leave</label>
+ <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Provide a detailed reason..." value={leaveData.reason} onChange={e => setLeaveData({ ...leaveData, reason: e.target.value})}></textarea>
  </div>
 
  <button disabled={isSubmitting || !mentor} type="submit" className="btn-erp">
@@ -281,14 +279,14 @@ export default function StudentApprovals({ isEmbedded = false }) {
  </form>
  ) : (
  <form onSubmit={submitGrievance} className="flex flex-col gap-4">
- <h2 className="text-lg font-black text-rose-500 mb-2"><i className="fa-solid fa-triangle-exclamation mr-2"></i> Report Grievance</h2>
+ <h2 className="text-lg font-semibold tracking-tight text-rose-500 mb-2"><i className="fa-solid fa-triangle-exclamation mr-2"></i> Report Grievance</h2>
  
  <div>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">Accused Individual</label>
- <select required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.accusedId} onChange={e => setGrievanceData({...grievanceData, accusedId: e.target.value})}>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Accused Individual</label>
+ <select required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.accusedId} onChange={e => setGrievanceData({ ...grievanceData, accusedId: e.target.value})}>
  <option value="" disabled>Select the individual...</option>
  {allProfiles.map(p => (
- <option key={p.id} value={p.id}>{p.full_name} ({p.role})</option>
+ <option key={p.id} value={p.id}>{p.full_name} ({ p.role})</option>
  ))}
  </select>
  {mentor && grievanceData.accusedId === mentor.id && (
@@ -297,8 +295,8 @@ export default function StudentApprovals({ isEmbedded = false }) {
  </div>
 
  <div>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">Category</label>
- <select required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.category} onChange={e => setGrievanceData({...grievanceData, category: e.target.value})}>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Category</label>
+ <select required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.category} onChange={e => setGrievanceData({ ...grievanceData, category: e.target.value})}>
  <option>Academics</option>
  <option>Harassment</option>
  <option>Mentorship Issue</option>
@@ -308,11 +306,11 @@ export default function StudentApprovals({ isEmbedded = false }) {
  </div>
 
  <div>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5">Description</label>
- <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details of the incident..." value={grievanceData.description} onChange={e => setGrievanceData({...grievanceData, description: e.target.value})}></textarea>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Description</label>
+ <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details of the incident..." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
  </div>
 
- <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-white font-black uppercase tracking-widest text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
+ <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-gray-900 dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
  {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit Grievance"}
  </button>
  </form>
@@ -324,31 +322,31 @@ export default function StudentApprovals({ isEmbedded = false }) {
  {/* RIGHT PANE: History Ledger */}
  <div className="lg:col-span-7 flex flex-col gap-4">
  <div className="flex justify-between items-end mb-1">
- <h2 className="text-base lg:text-lg font-black text-themeText tracking-tight">{activeTab === 'leaves' ? 'Leave History' : 'Grievance History'}</h2>
+ <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">{activeTab === 'leaves' ? 'Leave History' : 'Grievance History'}</h2>
  </div>
 
  <div className="flex flex-col gap-3">
  {activeTab === 'leaves' ? (
  leaves.length === 0 ? (
- <div className="w-full py-16 border-2 border-dashed border-black/10 dark:border-white/20 rounded-[2rem] flex flex-col items-center justify-center bg-white/5 backdrop-blur-[80px] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className={`fa-solid fa-bed text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4`}></i>
  <h3 className={`${theme.text.heading} text-lg lg:text-xl text-themeText tracking-tight`}>No Leave Requests</h3>
- <p className={`${theme.text.secondary} text-[10px] lg:text-xs mt-2 max-w-xs font-bold uppercase tracking-widest opacity-80`}>You haven't requested any leaves.</p>
+ <p className={`${theme.text.secondary} text-[10px] lg:text-xs mt-2 max-w-xs font-bold tracking-normal opacity-80`}>You haven't requested any leaves.</p>
 </div>
  ) : (
  leaves.map(req => (
  <div key={req.id} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
- <p className="text-sm font-black text-themeText mb-0.5">{req.start_date} to {req.end_date}</p>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">{req.total_days} Day(s)</p>
+ <p className="text-[15px] font-semibold text-themeText mb-0.5">{req.start_date} to {req.end_date}</p>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal">{req.total_days} Day(s)</p>
  </div>
  {getStatusBadge(req.status)}
  </div>
  <p className="text-xs text-themeTextSec font-medium border-l-2 border-black/5 dark:border-white/10 pl-3 py-1">{req.reason}</p>
  {req.admin_remarks && (
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-2.5 rounded-lg border border-black/5 dark:border-white/10 mt-1">
- <p className="text-[9px] font-black uppercase tracking-widest text-themeAccent mb-1">Faculty Remarks</p>
+ <p className="text-[12px] font-medium text-themeAccent mb-1">Faculty Remarks</p>
  <p className="text-xs text-themeText">{req.admin_remarks}</p>
  </div>
  )}
@@ -365,7 +363,7 @@ export default function StudentApprovals({ isEmbedded = false }) {
  <div key={grievance.id} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border-rose-500/20 border p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
- <p className="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-1">{grievance.category}</p>
+ <p className="text-[13px] font-medium text-rose-500 mb-1">{grievance.category}</p>
  <p className="text-xs font-bold text-themeText">Against: {grievance.profiles?.full_name}</p>
  </div>
  {getStatusBadge(grievance.status)}
@@ -373,7 +371,7 @@ export default function StudentApprovals({ isEmbedded = false }) {
  <p className="text-xs text-themeTextSec font-medium border-l-2 border-rose-500/30 pl-3 py-1">{grievance.description}</p>
  {grievance.resolution_notes && (
  <div className="bg-rose-500/5 p-2.5 rounded-lg border border-rose-500/10 mt-1">
- <p className="text-[9px] font-black uppercase tracking-widest text-rose-400 mb-1">Resolution Notes</p>
+ <p className="text-[12px] font-medium text-rose-400 mb-1">Resolution Notes</p>
  <p className="text-xs text-themeText">{grievance.resolution_notes}</p>
  </div>
  )}

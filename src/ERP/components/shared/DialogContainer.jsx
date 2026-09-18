@@ -11,8 +11,7 @@ export default function DialogContainer() {
         message: '',
         inputValue: '',
         onConfirm: () => {},
-        onCancel: () => {},
-    });
+        onCancel: () => {} });
 
     useEffect(() => {
         registerDialogContainer(setDialogState);
@@ -57,11 +56,11 @@ export default function DialogContainer() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", delay: 0.1, stiffness: 400, damping: 25 }}
-                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-500" : "bg-white/20 border-white/30 text-white"}`}
+                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-500" : "bg-white/20 border-white/30 text-gray-900 dark:text-white"}`}
                             >
                                 <i className={`fa-solid text-xl ${(isConfirm || isPrompt) ? "fa-circle-question" : (isError ? "fa-xmark" : "fa-check")}`}></i>
                             </motion.div>
-                            <h3 className="font-black tracking-widest uppercase text-white text-lg drop-shadow-sm dark:drop-shadow-md">
+                            <h3 className="font-black tracking-widest uppercase text-gray-900 dark:text-white text-lg drop-shadow-sm dark:drop-shadow-md">
                                 {dialogState.title}
                             </h3>
                         </div>
@@ -85,20 +84,20 @@ export default function DialogContainer() {
                                         if (e.key === 'Enter') dialogState.onConfirm(dialogState.inputValue);
                                         if (e.key === 'Escape') dialogState.onCancel();
                                     }}
-                                    className="w-full bg-black/20 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-rose-500/50 outline-none transition placeholder:text-white/40"
+                                    className="w-full bg-gray-50 dark:bg-black/20 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white focus:border-rose-500/50 outline-none transition placeholder:text-gray-400 dark:text-white/40"
                                     placeholder="Type here..."
                                 />
                             </div>
                         )}
 
                         {/* Footer Controls */}
-                        <div className="p-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 relative z-10">
+                        <div className="p-4 border-t border-gray-300 dark:border-white/10 flex flex-col sm:flex-row gap-3 relative z-10">
                             {(isConfirm || isPrompt) && (
                                 <motion.button 
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={dialogState.onCancel}
-                                    className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/10 hover:border-white/30 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all"
+                                    className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:border-white/30 rounded-xl font-bold tracking-normal text-[10px] transition-all"
                                 >
                                     Cancel
                                 </motion.button>
@@ -107,7 +106,7 @@ export default function DialogContainer() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => isPrompt ? dialogState.onConfirm(dialogState.inputValue) : dialogState.onConfirm()}
-                                className={`flex-1 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] transition-colors shadow-lg ${(isConfirm || isPrompt) ? "bg-rose-500 hover:bg-rose-400 text-white shadow-rose-500/30" : "bg-white/20 hover:bg-white/30 text-white shadow-none"}`}
+                                className={`flex-1 py-3 rounded-xl font-black tracking-normal text-[10px] transition-colors shadow-lg ${(isConfirm || isPrompt) ? "bg-rose-500 hover:bg-rose-400 text-gray-900 dark:text-white shadow-rose-500/30" : "bg-white/20 hover:bg-white/30 text-gray-900 dark:text-white shadow-none"}`}
                             >
                                 {isPrompt ? 'Submit' : (isConfirm ? ((dialogState.title?.toLowerCase() || "").includes("sign out") || (dialogState.title?.toLowerCase() || "").includes("session") ? "Sign Out" : "Confirm") : "Understood")}
                             </motion.button>

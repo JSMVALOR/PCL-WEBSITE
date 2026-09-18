@@ -56,7 +56,7 @@ Requirements: ${formData.message}`,
                     to_email: formData.email, name: formData.contact_person, ticket_id: ticketId,
                     message_preview: formData.message.substring(0, 100) + '...'
                 });
-            } catch(e) { console.warn(e); }
+            } catch (e) { console.warn(e); }
 
             if (error) throw error;
             setGeneratedTicket(ticketId);

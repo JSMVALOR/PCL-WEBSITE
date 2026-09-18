@@ -51,13 +51,13 @@ export default function FacultyCourseHealth() {
   }, [userSession]);
 
   return (
-    <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 sm:p-6 relative flex-1 min-w-0 w-full h-full flex flex-col">
+    <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-none rounded-[20px] p-4 sm:p-6 relative flex-1 min-w-0 w-full h-full flex flex-col">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-3">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-1 flex items-center gap-2">
+            <h3 className="text-[14px] font-medium tracking-normal text-themeText mb-1 flex items-center gap-2">
                 <i className="fa-solid fa-heart-pulse text-rose-500"></i> Course Health Monitor
             </h3>
-            <p className="text-[10px] text-themeTextSec uppercase tracking-widest">Average Class Attendance</p>
+            <p className="text-[10px] text-themeTextSec tracking-normal">Average Class Attendance</p>
           </div>
           {alertCourse ? (
             <div className="flex items-center gap-2 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 shrink-0">

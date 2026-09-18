@@ -1,7 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState } from 'react';
-import { theme } from '../../../Shared/theme';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../context/ErpContext';
 
@@ -102,25 +101,34 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
     };
 
     return (
-        <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className={`w-full max-w-3xl bg-themeElevated backdrop-blur-[80px] backdrop-blur-2xl shadow-premium border border-black/10 dark:border-white/20 shadow-premiumElevated rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh]`}>
-                
-                <div className="p-6 md:p-8 border-b-theme border-black/10 dark:border-white/20 flex flex-col gap-2 shrink-0">
-                    <div className="w-12 h-12 bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner flex items-center justify-center text-themeAccent mb-4 shadow-premiumElevated">
-                        <i className="fa-solid fa-clipboard-list text-xl"></i>
-                    </div>
-                    <h2 className={`${theme.text.heading} text-2xl`}>Comprehensive Onboarding Details</h2>
-                    <p className={theme.text.secondary}>
-                        Please complete your mandatory institutional records. Once submitted, this record will be <strong className="text-themeText">permanently locked</strong> and can only be modified by Administration.
-                    </p>
+        <div className="fixed inset-0 z-[9999] bg-themeApp animate-fade-in flex flex-col overflow-hidden">
+            {/* Immersive Top Bar */}
+            <div className="px-6 py-6 lg:px-12 lg:py-8 border-b border-black/5 dark:border-white/5 bg-themePanel/50 backdrop-blur-2xl flex justify-between items-center shrink-0">
+                <div>
+                    <h3 className="text-2xl lg:text-3xl font-black text-themeText tracking-tight">Comprehensive Onboarding</h3>
+                    <p className="text-xs lg:text-sm font-bold tracking-widest text-themeAccent uppercase mt-2">Institutional Records Synchronization</p>
                 </div>
+                <div className="w-12 h-12 bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-full shadow-inner flex items-center justify-center text-themeAccent shadow-premiumElevated">
+                    <i className="fa-solid fa-clipboard-list text-xl"></i>
+                </div>
+            </div>
 
-                <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
-                    <form id="questionnaire-form" onSubmit={handleSubmit} className="flex flex-col gap-8">
+            {/* Scrollable Form Body */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-12 flex justify-center bg-gray-50 dark:bg-[#0A0A0A]">
+                <div className="w-full max-w-4xl flex flex-col gap-8">
+                    
+                    <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-3xl flex flex-col gap-2">
+                        <h4 className="text-amber-500 font-bold flex items-center gap-2"><i className="fa-solid fa-lock"></i> Mandatory Record Lock</h4>
+                        <p className="text-sm font-medium text-themeTextSec leading-relaxed">
+                            Please complete your mandatory institutional records accurately. Once submitted, this record will be <strong>permanently locked</strong> to your ERP ID and can only be modified by the Central Administration.
+                        </p>
+                    </div>
+
+                    <form id="questionnaire-form" onSubmit={handleSubmit} className="flex flex-col gap-10 bg-themePanel/85 backdrop-blur-2xl p-8 lg:p-12 rounded-[2.5rem] border border-black/5 dark:border-white/5 shadow-2xl">
                         
                         {/* Section 1: Academic & Professional Details */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Background</h3>
+                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Background</h3>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
@@ -160,7 +168,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                         {/* Section 2: Personal & Identity Details */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Personal & Identity Details</h3>
+                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Personal & Identity Details</h3>
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
@@ -202,7 +210,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                         {/* Section 3: Family & Emergency */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Family & Emergency Contacts</h3>
+                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Family & Emergency Contacts</h3>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
@@ -238,26 +246,29 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                     </form>
                 </div>
+            </div>
 
-                <div className="p-6 md:p-8 border-t-theme border-black/10 dark:border-white/20 bg-themeApp shrink-0 flex items-center justify-between">
-                    <p className="text-xs text-themeTextSec">
-                        <i className="fa-solid fa-lock mr-2 text-themeAccent"></i>
-                        Record will be locked upon submission.
+            {/* Floating Action Footer */}
+            <div className="p-6 lg:p-8 border-t border-black/5 dark:border-white/5 bg-themePanel/85 backdrop-blur-2xl flex justify-center shrink-0 shadow-[0_-20px_40px_rgba(0,0,0,0.05)] z-20">
+                <div className="w-full max-w-4xl flex items-center justify-between">
+                    <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest hidden sm:block">
+                        <i className="fa-solid fa-shield-halved mr-2 text-themeAccent"></i> Encrypted Sync
                     </p>
                     <div className="flex gap-4">
-                        {onSkip && (<button type="button" onClick={onSkip} className="px-6 py-2 rounded-xl text-xs font-bold text-white/50 hover:text-white transition-colors">
-                            Skip for now
-                        </button>)}
-                        <button type="submit" form="questionnaire-form" disabled={isLoading || formData.emergencyPhone.length !== 10 || formData.aadharNumber.length !== 12 || !formData.linkedInProfile.includes('linkedin.com/')} className={`${theme.action.btnPrimary} ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        {onSkip && (
+                            <button type="button" onClick={onSkip} className="px-8 py-4 rounded-2xl text-xs font-bold text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 transition-colors uppercase tracking-widest">
+                                Skip for now
+                            </button>
+                        )}
+                        <button type="submit" form="questionnaire-form" disabled={isLoading || formData.emergencyPhone.length !== 10 || formData.aadharNumber.length !== 12 || !formData.linkedInProfile.includes('linkedin.com/')} className="px-8 py-4 bg-themeAccent hover:opacity-90 rounded-2xl text-themeApp text-sm font-black transition-colors flex items-center gap-3 uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-themeAccent/20">
                             {isLoading ? (
-                                <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting...</>
+                                <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Syncing...</>
                             ) : (
-                                <><i className="fa-solid fa-check"></i> Submit & Lock Record</>
+                                <><i className="fa-solid fa-lock text-lg"></i> Lock & Submit</>
                             )}
                         </button>
                     </div>
                 </div>
-
             </div>
         </div>
     );

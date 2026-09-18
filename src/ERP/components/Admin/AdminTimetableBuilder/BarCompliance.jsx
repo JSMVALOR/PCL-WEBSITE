@@ -1,10 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-export default function BarCompliance({ isEmbedded = false }) {
+export default function BarCompliance({}) {
  const [complianceData, setComplianceData] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
 
@@ -75,7 +74,7 @@ export default function BarCompliance({ isEmbedded = false }) {
  }, []);
 
  return (
- <div className="bg-themePanel/85 backdrop-blur-2xl p-6 rounded-themePanel border border-white/5">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-6 rounded-themePanel border border-gray-200 dark:border-white/5">
  <h2 className="text-xl font-bold text-themeText mb-1">Bar Council Compliance Engine</h2>
  <p className="text-themeTextSec text-sm mb-6">Rule-28 Checking: Identifying faculty members with less than 36 teaching hours.</p>
  
@@ -88,19 +87,19 @@ export default function BarCompliance({ isEmbedded = false }) {
  <div className="flex justify-between items-center">
  <span className="font-bold text-lg text-themeText">{fac.name}</span>
  {fac.compliant ? (
- <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1.5 bg-emerald-500/20 rounded-md text-emerald-400"><i className="fa-solid fa-check"></i> Compliant</span>
+ <span className="text-[13px] font-medium px-2.5 py-1.5 bg-emerald-500/20 rounded-md text-emerald-400"><i className="fa-solid fa-check"></i> Compliant</span>
  ) : (
- <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1.5 bg-rose-500/20 rounded-md text-rose-400"><i className="fa-solid fa-triangle-exclamation"></i> Action Required</span>
+ <span className="text-[13px] font-medium px-2.5 py-1.5 bg-rose-500/20 rounded-md text-rose-400"><i className="fa-solid fa-triangle-exclamation"></i> Action Required</span>
  )}
  </div>
- <div className="flex justify-between items-center mt-2 text-sm bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-white/5">
+ <div className="flex justify-between items-center mt-2 text-sm bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-gray-200 dark:border-white/5">
  <span className="text-themeTextSec font-bold text-xs">Total Teaching Hours</span>
- <span className={`font-black text-lg ${fac.compliant ? 'text-emerald-400' : 'text-rose-400'}`}>{fac.totalHours.toFixed(1)} <span className="text-[10px] uppercase tracking-widest opacity-80">hrs</span></span>
+ <span className={`font-black text-lg ${fac.compliant ? 'text-emerald-400' : 'text-rose-400'}`}>{fac.totalHours.toFixed(1)} <span className="text-[10px] tracking-normal opacity-80">hrs</span></span>
  </div>
  </div>
  ))}
  {complianceData.length === 0 && (
- <div className="col-span-2 text-center text-themeTextSec py-8 border-2 border-dashed border-white/5 rounded-themePanel bg-themeApp">
+ <div className="col-span-2 text-center text-themeTextSec py-8 border-2 border-dashed border-gray-200 dark:border-white/5 rounded-themePanel bg-themeApp">
  <i className="fa-solid fa-chalkboard-user text-3xl mb-3 opacity-50"></i>
  <p className="text-sm font-bold">No faculty timetable data found.</p>
  </div>

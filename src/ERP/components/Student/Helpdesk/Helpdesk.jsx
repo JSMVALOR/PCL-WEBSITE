@@ -6,7 +6,7 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-export default function Helpdesk({ isEmbedded = false }) {
+export default function Helpdesk({ isEmbedded = false, }) {
  const { userSession } = useERP();
 
  // --- MAIN STATE ---
@@ -25,14 +25,12 @@ export default function Helpdesk({ isEmbedded = false }) {
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [statusMessage, setStatusMessage] = useState({ type: "", text: "" });
 
- const [ticketForm, setTicketForm] = useState({
- category: "",
+ const [ticketForm, setTicketForm] = useState({ category: "",
  subject: "",
  description: ""
  });
 
- const [grievanceForm, setGrievanceForm] = useState({
- description: ""
+ const [grievanceForm, setGrievanceForm] = useState({ description: ""
  });
  const [grievanceStatus, setGrievanceStatus] = useState({ type: "", text: "" });
 
@@ -74,8 +72,7 @@ export default function Helpdesk({ isEmbedded = false }) {
 
  const { error } = await supabase
  .from('helpdesk_tickets')
- .insert({
- ticket_id: ticketId,
+ .insert({ ticket_id: ticketId,
  user_id: userId,
  category: ticketForm.category,
  subject: ticketForm.subject,
@@ -131,8 +128,7 @@ export default function Helpdesk({ isEmbedded = false }) {
 
  const { error } = await supabase
  .from('grievances')
- .insert({
- tracking_code: randomHex,
+ .insert({ tracking_code: randomHex,
  description: grievanceForm.description,
  severity: severity,
  status: 'PENDING'
@@ -165,7 +161,7 @@ export default function Helpdesk({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
 
  <PageHeader 
  icon="fa-solid fa-headset" 
@@ -174,22 +170,29 @@ export default function Helpdesk({ isEmbedded = false }) {
  rightContent={
  <button type="button"
  onClick={() => setShowTicketModal(true)}
- className="px-6 py-3.5 bg-themeAccent hover:bg-themeAccentMuted text-themeApp rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 transition"
+ className="px-6 py-3.5 bg-themeAccent hover:bg-themeAccentMuted text-themeApp rounded-xl text-[14px] font-medium tracking-normal flex items-center justify-center gap-2 whitespace-nowrap active:scale-95 transition"
  >
  <i className="fa-solid fa-plus text-lg"></i> Raise New Ticket
  </button>
  }
  />
 
- {/* TICKETS CONTENT */}
- <div className="flex flex-col gap-4 lg:gap-5 animate-fade-in mt-2">
- <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText tracking-tight ml-2`}><i className="fa-solid fa-ticket text-themeTextSec opacity-80 mr-2"></i> My Support Tickets</h2>
+ {/* TAB NAVIGATION */}
+                <div className="flex bg-themeElevated/50 backdrop-blur-2xl p-1.5 rounded-[1.25rem] w-fit mb-4">
+                    <button type="button" onClick={() => setActiveTab('tickets')} className={`px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === 'tickets' ? 'bg-themePanel shadow-sm text-themeText' : 'text-themeTextSec hover:text-themeText'}`}>IT Helpdesk</button>
+                    <button type="button" onClick={() => setActiveTab('grievance')} className={`px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === 'grievance' ? 'bg-rose-500/10 text-rose-500 shadow-sm' : 'text-themeTextSec hover:text-rose-500'}`}>Grievance Cell</button>
+                </div>
+
+                {activeTab === 'tickets' ? (
+                /* TICKETS CONTENT */
+                <div className="flex flex-col gap-4 lg:gap-5 animate-fade-in">
+                    <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText tracking-tight ml-2`}><i className="fa-solid fa-ticket text-themeTextSec opacity-80 mr-2"></i> My Support Tickets</h2>
 
  {tickets.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-transparent border-theme border-dashed border-black/10 dark:border-white/20 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-clipboard-check text-4xl lg:text-5xl text-neutral-700 mb-3 lg:mb-4"></i>
  <h3 className="text-sm lg:text-base font-black text-themeText">No Active Tickets</h3>
- <p className={`text-[9px] lg:text-[10px] font-bold uppercase tracking-widest ${theme.text.muted} mt-1 lg:mt-2`}>You haven't raised any support requests yet.</p>
+ <p className={`text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mt-1 lg:mt-2`}>You haven't raised any support requests yet.</p>
  </div>
  ) : (
  tickets.map((ticket) => (
@@ -197,19 +200,19 @@ export default function Helpdesk({ isEmbedded = false }) {
 
  <div className="flex-1 w-full">
  <div className="flex items-center gap-3 mb-2 lg:mb-3">
- <span className={`text-[9px] lg:text-[10px] font-bold ${theme.text.muted} uppercase tracking-widest bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20 `}>
+ <span className={`text-[9px] lg:text-[10px] font-bold ${theme.text.muted} tracking-normal bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20 `}>
  {ticket.ticket_id}
  </span>
- <span className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border-theme ${getCategoryTheme(ticket.category)}`}>
+ <span className={`text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border-theme ${getCategoryTheme(ticket.category)}`}>
  {ticket.category}
  </span>
  </div>
- <h3 className="text-base lg:text-lg font-black text-themeText group-hover:text-[var(--primary-color)] bg-white/50 dark:bg-transparent transition-colors mb-2 leading-tight">{ticket.subject}</h3>
- <p className={`text-[9px] lg:text-[10px] font-bold uppercase tracking-widest ${theme.text.secondary}`}><span className={theme.text.muted}>Raised on:</span> {new Date(ticket.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+ <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText group-hover:text-[var(--primary-color)] bg-white/50 dark:bg-transparent transition-colors mb-2 leading-tight">{ticket.subject}</h3>
+ <p className={`text-[9px] lg:text-[13px] font-medium ${theme.text.secondary}`}><span className={theme.text.muted}>Raised on:</span> {new Date(ticket.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
  </div>
 
  <div className="flex flex-col items-start lg:items-end gap-3 shrink-0 border-t-theme lg:border-t-0 lg:border-l-theme border-black/10 dark:border-white/20 pt-4 lg:pt-0 lg:pl-6 w-full lg:w-auto">
- <span className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg flex items-center justify-center gap-1.5 border-theme w-full lg:w-auto ${ticket.status === 'resolved' ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent border-black/5 dark:border-white/10' : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-[var(--primary-color)] bg-white/50 dark:bg-transparent border-black/5 dark:border-white/10 '
+ <span className={`text-[9px] lg:text-[13px] font-medium px-3 py-1.5 rounded-lg flex items-center justify-center gap-1.5 border-theme w-full lg:w-auto ${ticket.status === 'resolved' ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent border-black/5 dark:border-white/10' : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-[var(--primary-color)] bg-white/50 dark:bg-transparent border-black/5 dark:border-white/10 '
  }`}>
  {ticket.status === 'resolved' ? <i className="fa-solid fa-check-double"></i> : <i className="fa-solid fa-clock"></i>}
  {ticket.status === 'open' ? 'In Progress' : 'Resolved'}
@@ -221,10 +224,46 @@ export default function Helpdesk({ isEmbedded = false }) {
  </div>
  </div>
  ))
- )}
- </div>
+                    )}
+                </div>
+                ) : (
+                <>
+                /* GRIEVANCE CONTENT */
+                <div className="flex flex-col gap-6 animate-fade-in w-full max-w-4xl mt-2">
+                    <div className="bg-rose-500/5 border border-rose-500/20 rounded-3xl p-6 lg:p-8 flex flex-col gap-4">
+                        <div className="flex items-center gap-3 text-rose-500 mb-2">
+                            <i className="fa-solid fa-shield-halved text-3xl"></i>
+                            <h3 className="text-2xl font-black tracking-tight">Anonymous Grievance Cell</h3>
+                        </div>
+                        <p className="text-sm font-medium text-themeTextSec leading-relaxed">
+                            Report critical issues such as ragging, harassment, or other serious violations. Your submission is 100% anonymous and goes directly to the Central Approvals Command Center.
+                        </p>
+                        
+                        <form onSubmit={handleGrievanceSubmit} className="flex flex-col gap-4 mt-4">
+                            {grievanceStatus.text && (
+                                <div className={`p-4 rounded-xl text-xs font-bold ${grievanceStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'}`}>
+                                    {grievanceStatus.text}
+                                </div>
+                            )}
+                            <textarea
+                                rows="5"
+                                value={grievanceForm.description}
+                                onChange={(e) => setGrievanceForm({ ...grievanceForm, description: e.target.value })}
+                                placeholder="Describe the incident securely..."
+                                className="w-full bg-black/5 dark:bg-white/5 border border-rose-500/20 rounded-2xl px-5 py-4 text-sm font-medium text-themeText focus:border-rose-500 outline-none transition resize-none placeholder:text-rose-500/50"
+                                required
+                            ></textarea>
+                            <button type="submit" disabled={isSubmitting} className="bg-rose-500 hover:bg-rose-600 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-2xl transition w-fit flex items-center gap-2 mt-2">
+                                {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                                Submit Securely
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                </>
+                )}
 
- {/* NEW TICKET MODAL */}
+                {/* NEW TICKET MODAL */}
  {showTicketModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
  <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]">
@@ -233,7 +272,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="flex justify-between items-start relative z-10">
  <div>
- <h3 className="text-lg lg:text-xl font-black tracking-tight mb-1 text-themeText">Create Support Ticket</h3>
+ <h3 className="text-lg lg:text-xl font-semibold tracking-tight tracking-tight mb-1 text-themeText">Create Support Ticket</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.muted} font-medium`}>We usually respond within 24 hours.</p>
  </div>
  <button type="button" onClick={() => setShowTicketModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText hover:border-amber-500 transition-colors shrink-0">
@@ -246,7 +285,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  <form onSubmit={handleRequestSubmit} className="p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
 
  {statusMessage.text && (
- <div className={`p-4 rounded-[2rem] text-[9px] lg:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border-theme animate-fade-in ${statusMessage.type === "success" ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent" : "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-rose-400"
+ <div className={`p-4 rounded-[2rem] text-[9px] lg:text-[13px] font-medium flex items-center gap-2 border-theme animate-fade-in ${statusMessage.type === "success" ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent" : "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-rose-400"
  }`}>
  <i className={`fa-solid ${statusMessage.type === "success" ? "fa-check-circle" : "fa-triangle-exclamation"}`}></i>
  {statusMessage.text}
@@ -254,7 +293,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  )}
 
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>Department</label>
+ <label className={`block text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mb-2 ml-1`}>Department</label>
  <div className="relative">
  <select
  value={ticketForm.category}
@@ -273,7 +312,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  </div>
 
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>Subject</label>
+ <label className={`block text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mb-2 ml-1`}>Subject</label>
  <input
  type="text"
  value={ticketForm.subject}
@@ -285,7 +324,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  </div>
 
  <div>
- <label className={`block text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${theme.text.muted} mb-2 ml-1`}>Detailed Explanation</label>
+ <label className={`block text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mb-2 ml-1`}>Detailed Explanation</label>
  <textarea
  rows="4"
  value={ticketForm.description}
@@ -299,7 +338,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  <button
  type="submit"
  disabled={isSubmitting}
- className={`w-full mt-2 py-4 rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex justify-center items-center gap-2 overflow-hidden group shrink-0 ${isSubmitting
+ className={`w-full mt-2 py-4 rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex justify-center items-center gap-2 overflow-hidden group shrink-0 ${isSubmitting
  ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-neutral-600 cursor-not-allowed border border-black/10 dark:border-white/20 '
  : 'bg-amber-500 text-[#050505] hover:bg-amber-400 active:scale-[0.98]'
  }`}

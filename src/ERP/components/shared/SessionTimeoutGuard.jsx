@@ -94,10 +94,10 @@ export default function SessionTimeoutGuard({ children }) {
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.95, opacity: 0, y: 10 }}
                             transition={{ type: "spring", damping: 25, stiffness: 400 }}
-                            className="w-full max-w-md bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl overflow-hidden"
+                            className="w-full max-w-md bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl overflow-hidden"
                         >
                             <div className="p-8 flex flex-col items-center text-center gap-4">
-                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#FF3B30] to-[#FF453A] flex items-center justify-center text-white mb-2 shadow-sm border border-white/20">
+                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#FF3B30] to-[#FF453A] flex items-center justify-center text-gray-900 dark:text-white mb-2 shadow-sm border border-white/20">
                                     <i className="fa-solid fa-shield-halved text-2xl animate-pulse"></i>
                                 </div>
                                 
@@ -113,13 +113,13 @@ export default function SessionTimeoutGuard({ children }) {
                                 <div className="flex w-full gap-3 mt-4">
                                     <button type="button" 
                                         onClick={executeLogout}
-                                        className="flex-1 py-3 px-4 bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border border-black/5 dark:border-white/5 rounded-lg font-bold uppercase tracking-widest text-[11px] hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+                                        className="flex-1 py-3 px-4 bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border border-black/5 dark:border-white/5 rounded-lg font-bold tracking-normal text-[11px] hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
                                     >
                                         Log Out Now
                                     </button>
                                     <button type="button" 
                                         onClick={continueSession}
-                                        className="flex-[2] py-3 px-4 bg-[#34C759] text-white rounded-lg font-bold uppercase tracking-widest text-[11px] hover:bg-[#32B353] transition-colors shadow-sm"
+                                        className="flex-[2] py-3 px-4 bg-[#34C759] text-gray-900 dark:text-white rounded-lg font-bold tracking-normal text-[11px] hover:bg-[#32B353] transition-colors shadow-sm"
                                     >
                                         <i className="fa-solid fa-bolt mr-2"></i> Continue Session
                                     </button>

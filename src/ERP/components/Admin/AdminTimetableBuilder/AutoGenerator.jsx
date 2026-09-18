@@ -1,11 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { theme } from '../../../../Shared/theme';
 import { notifyBatchWhatsApp } from '../../../../Shared/utils/whatsappIntegration';
-import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function AutoGenerator({ isEmbedded = false }) {
+export default function AutoGenerator({}) {
  const [isGenerating, setIsGenerating] = useState(false);
  const [progress, setProgress] = useState('');
 
@@ -71,10 +69,10 @@ export default function AutoGenerator({ isEmbedded = false }) {
  throw new Error("No active classrooms found. Please add classrooms in the Schedule Manager.");
  }
 
- // 3. Fetch available subjects & faculties
- const { data: subjects } = await supabase.from('subjects').select('id, name, faculty_id');
+ // 3. Fetch active cohorts and their exact subjects
+ const { data: subjects } = await supabase.from('cohort_subjects').select('id, batch_id, master_subject_id, faculty_id, master_subjects(name, credits)');
  if (!subjects || subjects.length === 0) {
- throw new Error("No subjects found.");
+ throw new Error("No subjects have been assigned to cohorts yet. Please assign subjects in the Faculty Allocator.");
  }
 
  // 4. Fetch active batches
@@ -97,8 +95,9 @@ export default function AutoGenerator({ isEmbedded = false }) {
  const batchName = batch.name;
  const batchSchedule = {}; // day -> time -> bool
  
- // Assign some random subjects to this batch for demonstration
- const batchSubjects = [...subjects].sort(() => 0.5 - Math.random()).slice(0, 4);
+ // Pull EXACT subjects belonging to this specific cohort
+ const batchSubjects = subjects.filter(s => s.batch_id === batch.id);
+ if (batchSubjects.length === 0) continue; // Skip batches with no subjects assigned
  
  for (const subject of batchSubjects) {
  let assignedCount = 0;
@@ -138,8 +137,8 @@ export default function AutoGenerator({ isEmbedded = false }) {
  roomSchedule[selectedRoom][day][slot.s] = true;
  
  newTimetable.push({
- batch: batchName,
- subject_id: subject.id,
+ batch_id: batch.id,
+ cohort_subject_id: subject.id,
  room_id: selectedRoom,
  faculty_id: fId || null,
  day_of_week: day,
@@ -193,7 +192,7 @@ export default function AutoGenerator({ isEmbedded = false }) {
  <button type="button"
  onClick={generateTimetable}
  disabled={isGenerating}
- className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
+ className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
  >
  {isGenerating ? (
  <span className="flex items-center gap-3">
@@ -211,7 +210,7 @@ export default function AutoGenerator({ isEmbedded = false }) {
  )}
  </button>
  {progress && (
- <p className={`mt-4 text-sm font-bold text-themeAccent animate-pulse uppercase tracking-widest`}>
+ <p className={`mt-4 text-sm font-bold text-themeAccent animate-pulse tracking-normal`}>
  {progress}
  </p>
  )}

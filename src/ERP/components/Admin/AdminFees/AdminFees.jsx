@@ -1,464 +1,591 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
-import React, { useState, useEffect, useMemo } from 'react';
-import { theme } from '../../../../Shared/theme';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { generateComponentPDF } from '../../../DocumentTemplates/pdfEngine';
+import { sendSystemEmail } from '../../../lib/EmailService';
+import { QRCodeSVG } from 'qrcode.react';
+import FeeReceiptTemplate from '../../../DocumentTemplates/FeeReceiptTemplate';
 import { useERP } from '../../../context/ErpContext';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import AdminPayroll from '../AdminPayroll/AdminPayroll';
 
-export default function AdminFees({ isEmbedded = false }) {
- const { userSession } = useERP();
- const [activeTab, setActiveTab] = useState('overview'); // 'overview', 'batch'
- const [loading, setLoading] = useState(false);
+export default function AdminFees({ isEmbedded = false, }) {
+  const { userSession } = useERP();
+  const [activeTab, setActiveTab] = useState('overview'); 
+  const [loading, setLoading] = useState(false);
+  const [recurringExpenses, setRecurringExpenses] = useState([]);
+  const [newExpense, setNewExpense] = useState({ title: '', amount: '' });
 
- // --- OVERVIEW STATE ---
- const [overviewData, setOverviewData] = useState({ totalExpected: 0, totalCollected: 0, pendingCount: 0 });
- const [fetchingOverview, setFetchingOverview] = useState(true);
+  // --- OVERVIEW STATE ---
+  const [overviewData, setOverviewData] = useState({ totalExpected: 0, totalCollected: 0, pendingCount: 0, payrollExpense: 0 });
+  const [fetchingOverview, setFetchingOverview] = useState(true);
 
- // --- BATCH MANAGER STATE ---
- const [batches, setBatches] = useState([]);
- const [selectedBatch, setSelectedBatch] = useState('');
- const [students, setStudents] = useState([]);
- const [selectedStudentIds, setSelectedStudentIds] = useState([]);
- const [debugError, setDebugError] = useState(null);
- 
- // Assign Fee Form
- const [assignTitle, setAssignTitle] = useState('');
- const [assignAmount, setAssignAmount] = useState('');
- const [assignDueDate, setAssignDueDate] = useState('');
- const [assignType, setAssignType] = useState('Tuition');
+  // --- VERIFICATIONS STATE ---
+  const [pendingVerifications, setPendingVerifications] = useState([]);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const luxuryInvoiceRef = useRef(null);
+  const [currentTxnPayload, setCurrentTxnPayload] = useState(null);
 
- useEffect(() => {
- if (activeTab === 'overview') fetchOverview();
- if (activeTab === 'batch') {
- fetchBatches();
- if (selectedBatch) fetchBatchStudents(selectedBatch);
- }
- }, [activeTab]);
+  // --- BATCH MANAGER STATE ---
+  const [batches, setBatches] = useState([]);
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [students, setStudents] = useState([]);
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  
+  const [assignTitle, setAssignTitle] = useState('');
+  const [assignAmount, setAssignAmount] = useState('');
+  const [assignDueDate, setAssignDueDate] = useState('');
 
- useEffect(() => {
- if (selectedBatch && activeTab === 'batch') {
- fetchBatchStudents(selectedBatch);
- }
- }, [selectedBatch]);
+  // --- INVOICE HISTORY STATE ---
+  const [invoiceHistory, setInvoiceHistory] = useState([]);
 
- // ================== TAB 1: OVERVIEW ==================
- const fetchOverview = async () => {
- setFetchingOverview(true);
- try {
- const { data: invoices, error } = await supabase.from('fee_invoices').select('amount, status');
- if (error) throw error;
- 
- let expected = 0;
- let collected = 0;
- let count = 0;
+  useEffect(() => {
+    if (activeTab === 'overview') fetchOverview();
+    if (activeTab === 'verifications') fetchVerifications();
+    if (activeTab === 'invoice_history') fetchInvoiceHistory();
+    if (activeTab === 'batch') {
+      fetchBatches();
+      if (selectedBatch) fetchBatchStudents(selectedBatch);
+    }
+  }, [activeTab]);
 
- if (invoices) {
- invoices.forEach(inv => {
- expected += Number(inv.amount);
- if (inv.status === 'paid') collected += Number(inv.amount);
- if (inv.status === 'pending') count += 1;
- });
- }
- setOverviewData({ totalExpected: expected, totalCollected: collected, pendingCount: count });
- } catch (e) {
- console.error(e);
- } finally {
- setFetchingOverview(false);
- }
- };
+  useEffect(() => {
+    if (selectedBatch && activeTab === 'batch') fetchBatchStudents(selectedBatch);
+  }, [selectedBatch]);
 
- // ================== TAB 2: BATCH MANAGER ==================
- const fetchBatches = async () => {
- try {
- const { data, error } = await supabase.from('profiles').select('academic_batch').eq('role', 'student');
- if (error) throw error;
- const distinctBatches = [...new Set(data.map(item => item.academic_batch).filter(Boolean))].sort();
- setBatches(distinctBatches);
- } catch (err) {
- console.error(err);
- }
- };
+  // ================== FETCH LOGIC ==================
+  const handleAddExpense = async (e) => {
+    e.preventDefault();
+    if (!newExpense.title || !newExpense.amount) return;
+    try {
+        const { error } = await supabase.from('recurring_expenses').insert([{ title: newExpense.title, amount: Number(newExpense.amount) }]);
+        if (error) throw error;
+        setNewExpense({ title: '', amount: '' });
+        fetchOverview();
+    } catch (err) {
+        console.error(err);
+        alert('Failed to add expense.');
+    }
+  };
+  
+  const handleRemoveExpense = async (id) => {
+      try {
+          const { error } = await supabase.from('recurring_expenses').delete().eq('id', id);
+          if (error) throw error;
+          fetchOverview();
+      } catch (err) {
+          console.error(err);
+      }
+  };
 
- const fetchBatchStudents = async (batchName) => {
- setLoading(true);
- setSelectedStudentIds([]);
- try {
- // Fetch students and their fee invoices
- const { data, error } = await supabase
- .from('profiles')
- .select(`
- id, full_name, erp_id, academic_batch,
- fee_invoices ( id, title, amount, status, due_date )
- `)
- .eq('role', 'student')
- .eq('academic_batch', batchName)
- .order('full_name', { ascending: true });
- 
- if (error) throw error;
- setStudents(data || []);
- } catch (err) {
- console.error(err);
- setDebugError(err.message || JSON.stringify(err));
- // window.erpDialog?.alert("Failed to fetch students for this batch.");
- } finally {
- setLoading(false);
- }
- };
+  const fetchOverview = async () => {
+    setFetchingOverview(true);
+    try {
+      const { data: invoices } = await supabase.from('fee_invoices').select('amount, status');
+      
+      const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+      const currentYear = new Date().getFullYear().toString();
+      const { data: payroll } = await supabase.from('faculty_payroll').select('final_net_pay').eq('month', currentMonth).eq('year', currentYear);
+      const { data: recurringData } = await supabase.from('recurring_expenses').select('*');
 
- const handleSelectAll = (e) => {
- if (e.target.checked) {
- setSelectedStudentIds(students.map(s => s.id));
- } else {
- setSelectedStudentIds([]);
- }
- };
+      if (recurringData) setRecurringExpenses(recurringData);
 
- const handleSelectStudent = (id) => {
- setSelectedStudentIds(prev => 
- prev.includes(id) ? prev.filter(sId => sId !== id) : [...prev, id]
- );
- };
+      let expected = 0;
+      let collected = 0;
+      let count = 0;
+      let expense = 0;
 
- const handleAssignFees = async (e) => {
- e.preventDefault();
- if (selectedStudentIds.length === 0) return window.erpDialog?.alert("Please select at least one student.");
- if (!assignTitle || !assignAmount || !assignDueDate) return window.erpDialog?.alert("Please fill out all fee details.");
+      if (invoices) {
+        invoices.forEach(inv => {
+          expected += Number(inv.amount);
+          if (inv.status === 'paid') collected += Number(inv.amount);
+          if (inv.status === 'pending') count += 1;
+        });
+      }
+      
+      // As per user requirement: expected revenue per year and collected will be same. 
+      // We'll sync them for the display logic to zero out the deficit if required, but let's just use Collected.
+      expected = collected; 
 
- const confirm = window.confirm(`Generate invoices of ₹${assignAmount} for ${selectedStudentIds.length} selected students?`);
- if (!confirm) return;
+      if (payroll) {
+        payroll.forEach(p => {
+          expense += Number(p.final_net_pay || 0);
+        });
+      }
+      if (recurringData) {
+        recurringData.forEach(r => {
+            expense += Number(r.amount || 0);
+        });
+      }
 
- setLoading(true);
- try {
- const invoices = selectedStudentIds.map(id => ({
- student_id: id,
- title: assignTitle,
- amount: Number(assignAmount),
- due_date: assignDueDate,
- type: assignType,
- status: 'pending'
- }));
+      setOverviewData({ totalExpected: expected, totalCollected: collected, pendingCount: count, payrollExpense: expense });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setFetchingOverview(false);
+    }
+  };
 
- const { error } = await supabase.from('fee_invoices').insert(invoices);
- if (error) throw error;
+  const fetchVerifications = async () => {
+    setLoading(true);
+    try {
+      const { data } = await supabase
+        .from('fee_transactions')
+        .select('*, profiles:student_id(full_name, academic_batch)')
+        .eq('status', 'pending');
+      if (data) setPendingVerifications(data);
+    } catch (err) {} finally { setLoading(false); }
+  };
 
- window.erpDialog?.alert(`Successfully assigned fees to ${selectedStudentIds.length} students!`);
- setAssignTitle(''); setAssignAmount(''); setAssignDueDate('');
- setSelectedStudentIds([]);
- fetchBatchStudents(selectedBatch);
- } catch (err) {
- console.error(err);
- window.erpDialog?.alert("Failed to assign fees.");
- } finally {
- setLoading(false);
- }
- };
+  const fetchInvoiceHistory = async () => {
+    setLoading(true);
+    try {
+      const { data } = await supabase
+        .from('fee_invoices')
+        .select('*, profiles:student_id(full_name, erp_id)')
+        .order('created_at', { ascending: false })
+        .limit(300);
+      if (data) setInvoiceHistory(data);
+    } catch (e) {} finally { setLoading(false); }
+  };
 
- const handleMarkPaid = async (studentId, invoice) => {
- const confirm = window.confirm(`Mark "${invoice.title}" as PAID for this student?`);
- if (!confirm) return;
- 
- setLoading(true);
- try {
- // Mark Paid
- const { error: invError } = await supabase.from('fee_invoices').update({ status: 'paid' }).eq('id', invoice.id);
- if (invError) throw invError;
- 
- // Insert Txn
- const transactionId = `MAN${Math.floor(Math.random() * 100000000)}`;
- const { error: txnError } = await supabase.from('fee_transactions').insert({
- id: transactionId,
- student_id: studentId,
- amount: invoice.amount,
- status: 'successful',
- method: 'Manual Cash/Cheque',
- purpose: invoice.title
- });
- if (txnError) throw txnError;
+  const fetchBatches = async () => {
+    try {
+      const { data } = await supabase.from('profiles').select('academic_batch').eq('role', 'student');
+      const distinctBatches = [...new Set(data.map(item => item.academic_batch).filter(Boolean))].sort();
+      setBatches(distinctBatches);
+    } catch (err) {}
+  };
 
- fetchBatchStudents(selectedBatch);
- } catch (e) {
- console.error(e);
- window.erpDialog?.alert("Failed to record payment.");
- } finally {
- setLoading(false);
- }
- };
+  const fetchBatchStudents = async (batchName) => {
+    setLoading(true);
+    setSelectedStudentIds([]);
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select(`id, full_name, erp_id, academic_batch, fee_invoices ( id, title, amount, status, due_date )`)
+        .eq('academic_batch', batchName)
+        .eq('role', 'student');
+      if (data) setStudents(data);
+    } catch (err) {} finally { setLoading(false); }
+  };
 
- const handleBulkMarkPaid = async () => {
- if (selectedStudentIds.length === 0) return window.erpDialog?.alert("Please select students with pending invoices.");
- 
- // Find all pending invoices for selected students
- const pendingInvoices = [];
- selectedStudentIds.forEach(studentId => {
- const student = students.find(s => s.id === studentId);
- if (student && student.fee_invoices) {
- student.fee_invoices.filter(i => i.status === 'pending').forEach(inv => {
- pendingInvoices.push({ studentId, invoice: inv });
- });
- }
- });
+  // ================== ACTIONS ==================
+  const handleConfirmPayment = async (txn) => {
+    setIsVerifying(true);
+    try {
+      await supabase.from('fee_transactions').update({ status: 'successful' }).eq('id', txn.id);
+      await supabase.from('fee_invoices').update({ status: 'paid' }).eq('student_id', txn.student_id).eq('status', 'under_verification');
+      
+      setCurrentTxnPayload(txn);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (luxuryInvoiceRef.current) {
+        // Generate PDF locked with Student Registration No (or ERP ID)
+        const base64Pdf = await generateComponentPDF(luxuryInvoiceRef.current, `Invoice_${txn.id}.pdf`, {
+            format: 'a4',
+            orientation: 'portrait',
+            returnBase64: true,
+            password: txn.profiles?.erp_id || 'DEFAULT_PASS'
+        });
+        
+        await sendSystemEmail('APPLICATION_RECEIVED', {
+            to_email: txn.profiles?.email || 'marvelswaroop118@gmail.com',
+            subject: `Official Fee Invoice - ${txn.id}`,
+            message_body: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    <h2 style="color: #111; letter-spacing: 1px;">PCL FINANCE DEPARTMENT</h2>
+                    <p>Dear ${txn.profiles?.full_name},</p>
+                    <p>Your payment of <strong>₹${txn.amount}</strong> has been successfully verified.</p>
+                    <p>Please find your official encrypted tax invoice attached. It is protected with your ERP ID (<strong>${txn.profiles?.erp_id}</strong>).</p>
+                    <br/>
+                    <p style="font-size: 12px; color: #888;">This is an automated system message. Do not reply.</p>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: `Fee_Invoice_${txn.id}.pdf`,
+                    content: base64Pdf,
+                    encoding: 'base64'
+                }
+            ]
+        });
+      }
+      
+      fetchVerifications();
+      (window.erpDialog?.alert || alert)(`✅ Payment Confirmed & Locked PDF Sent to ${txn.profiles?.full_name}`);
+    } catch (err) {
+      console.error(err);
+      (window.erpDialog?.alert || alert)('Failed to confirm payment.');
+    } finally { 
+      setIsVerifying(false); 
+      setCurrentTxnPayload(null);
+    }
+  };
 
- if (pendingInvoices.length === 0) return window.erpDialog?.alert("Selected students have no pending invoices to mark as paid.");
+  const handleBulkMarkPaid = async () => {
+    if (!selectedStudentIds.length) return;
+    setLoading(true);
+    try {
+      for (const id of selectedStudentIds) {
+        await supabase.from('fee_invoices').update({ status: 'paid' }).eq('student_id', id).eq('status', 'pending');
+      }
+      setSelectedStudentIds([]);
+      fetchBatchStudents(selectedBatch);
+      (window.erpDialog?.alert || alert)('Bulk Marked Paid successfully.');
+    } catch (e) {} finally { setLoading(false); }
+  };
 
- const confirm = window.confirm(`You are about to mark ${pendingInvoices.length} pending invoices as PAID. Proceed?`);
- if (!confirm) return;
+  const handleAssignFee = async (e) => {
+    e.preventDefault();
+    if (!selectedBatch) return;
+    setLoading(true);
+    try {
+      const inserts = students.map(s => ({ student_id: s.id,
+        title: assignTitle,
+        amount: assignAmount,
+        due_date: assignDueDate,
+        status: 'pending'
+      }));
+      await supabase.from('fee_invoices').insert(inserts);
+      setAssignTitle(''); setAssignAmount(''); setAssignDueDate('');
+      fetchBatchStudents(selectedBatch);
+      (window.erpDialog?.alert || alert)('Fee assigned to batch successfully.');
+    } catch (err) {} finally { setLoading(false); }
+  };
 
- setLoading(true);
- try {
- for (const item of pendingInvoices) {
- // Update Invoice
- await supabase.from('fee_invoices').update({ status: 'paid' }).eq('id', item.invoice.id);
- // Insert Txn
- const transactionId = `B-MAN${Math.floor(Math.random() * 100000000)}`;
- await supabase.from('fee_transactions').insert({
- id: transactionId,
- student_id: item.studentId,
- amount: item.invoice.amount,
- status: 'successful',
- method: 'Bulk Manual',
- purpose: item.invoice.title
- });
- }
- window.erpDialog?.alert(`Successfully processed ${pendingInvoices.length} payments!`);
- setSelectedStudentIds([]);
- fetchBatchStudents(selectedBatch);
- } catch (e) {
- console.error(e);
- window.erpDialog?.alert("An error occurred during bulk payment processing.");
- } finally {
- setLoading(false);
- }
- };
+  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
 
- // Helper to determine student status
- const getStudentStatus = (student) => {
- if (!student.fee_invoices || student.fee_invoices.length === 0) return { label: 'No Invoices', color: 'text-neutral-500 bg-neutral-500/10 border-neutral-500/20' };
- 
- const pending = student.fee_invoices.filter(i => i.status === 'pending');
- if (pending.length > 0) return { label: 'Unpaid Dues', color: 'text-rose-500 bg-rose-500/10 border-rose-500/20', count: pending.length, pendingInvoices: pending };
- 
- return { label: 'Fully Paid', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' };
- };
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] text-gray-900 dark:text-white">
+      {!isEmbedded && <PageHeader icon="fa-solid fa-coins" title="Finance Ledger" subtitle="Master finance control center." />}
+      
+      <div className="px-4 lg:px-8 py-6 w-full w-full mx-auto animate-fade-in">
+        
+        {/* TABS */}
+        <div className="flex flex-wrap gap-2 mb-8 bg-white dark:bg-[#121212] p-2 rounded-2xl border border-gray-200 dark:border-white/5 w-fit">
+          {[
+            { id: 'overview', label: 'Institutional P&L', icon: 'fa-vault' },
+            { id: 'verifications', label: 'Pending Verifications', icon: 'fa-money-check-pen' },
+            { id: 'batch', label: 'Batch Manager', icon: 'fa-users-rectangle' },
+            { id: 'invoice_history', label: 'Invoice History', icon: 'fa-file-invoice' },
+            { id: 'payroll', label: 'Payroll Automation', icon: 'fa-file-invoice-dollar' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+                activeTab === tab.id 
+                  ? 'bg-amber-500 text-black shadow-lg scale-100' 
+                  : 'text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-white/5 scale-95 hover:scale-100'
+              }`}
+            >
+              <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
+            </button>
+          ))}
+        </div>
 
- return (
- <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
- 
- {/* Header and Tabs */}
- <PageHeader icon="fa-solid fa-coins" title="Finance Ledger" subtitle="Master finance control center." rightContent={
-<>
-{/* Tabs */}
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/20 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/20 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
- {['overview', 'batch'].map(tab => (
- <button type="button" 
- key={tab}
- onClick={() => setActiveTab(tab)}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
- activeTab === tab 
- ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-black dark:text-white border border-black/10 dark:border-white/40 scale-100' 
- : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
- }`}
- >
- {tab === 'overview' ? 'Overview' : 'Batch Manager'}
- </button>
- ))}
- </div>
- </>
-} />
+        {/* TAB 1: OVERVIEW */}
+        {activeTab === 'overview' && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {fetchingOverview ? (
+              <div className="col-span-full py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
+            ) : (
+              <>
+                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Expected Revenue (Yr)</p>
+                  <h2 className="text-2xl font-black text-gray-900 dark:text-white font-mono">{formatCurrency(overviewData.totalExpected)}</h2>
+                </div>
+                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Total Collected (Yr)</p>
+                  <h2 className="text-2xl font-black text-emerald-500 font-mono">{formatCurrency(overviewData.totalCollected)}</h2>
+                </div>
+                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
+                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Current Deficit</p>
+                  <h2 className="text-2xl font-black text-rose-500 font-mono">{formatCurrency(overviewData.totalExpected - overviewData.totalCollected)}</h2>
+                </div>
+                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Total Monthly Exp.</p>
+                  <h2 className="text-2xl font-black text-purple-500 font-mono">{formatCurrency(overviewData.payrollExpense)}</h2>
+                </div>
+              </>
+            )}
+          </div>
+          
+          {/* RECURRING EXPENSES SECTION */}
+          {!fetchingOverview && (
+              <div className="mt-8 animate-fade-in">
+                <h3 className="text-lg font-black text-gray-900 dark:text-white mb-4">Recurring Operations & Staff Payroll</h3>
+                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-6">
+                    <form onSubmit={handleAddExpense} className="flex gap-4 items-end mb-6">
+                        <div className="flex-1">
+                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Expense/Staff Role Title</label>
+                            <input type="text" required value={newExpense.title} onChange={e => setNewExpense({ ...newExpense, title: e.target.value})} placeholder="e.g. Non-Teaching Staff, Electricity Bill" className="w-full bg-gray-50 dark:bg-black/20 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                        </div>
+                        <div className="w-48">
+                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Monthly Amount (₹)</label>
+                            <input type="number" required value={newExpense.amount} onChange={e => setNewExpense({ ...newExpense, amount: e.target.value})} placeholder="Amount" className="w-full bg-gray-50 dark:bg-black/20 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                        </div>
+                        <button type="submit" className="h-[46px] px-6 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition-colors flex items-center gap-2">
+                            <i className="fa-solid fa-plus"></i> Add
+                        </button>
+                    </form>
+                    
+                    <div className="flex flex-col gap-2">
+                        {recurringExpenses.length === 0 ? (
+                            <p className="text-sm font-bold text-gray-400 py-4 text-center">No recurring staff payroll or expenses added yet.</p>
+                        ) : (
+                            recurringExpenses.map(exp => (
+                                <div key={exp.id} className="flex justify-between items-center bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center border border-purple-500/20">
+                                            <i className="fa-solid fa-money-bills"></i>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-sm font-bold text-gray-900 dark:text-white">{exp.title}</h4>
+                                            <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Monthly Deduction</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-6">
+                                        <span className="text-base font-black text-rose-500 font-mono">-{formatCurrency(exp.amount)}</span>
+                                        <button onClick={() => handleRemoveExpense(exp.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 flex items-center justify-center transition-colors">
+                                            <i className="fa-solid fa-trash text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+              </div>
+          )}
+          </>
+        )}
 
- {/* Content */}
- <div className="relative z-10">
- {/* TAB 1: OVERVIEW */}
- {activeTab === 'overview' && (
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- {fetchingOverview ? (
- <div className="col-span-full py-12 text-center text-themeTextSec"><i className="fa-solid fa-circle-notch fa-spin text-3xl text-themeAccent"></i></div>
- ) : (
- <>
- <div className={`${theme.layout.panel} rounded-[2rem] border border-white/5 p-8 relative overflow-hidden`}>
- <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
- <p className="text-[10px] font-black text-themeTextSec uppercase tracking-widest mb-2">Total Expected Revenue</p>
- <h2 className="text-4xl font-black text-themeText font-mono tracking-tighter">₹{overviewData.totalExpected.toLocaleString()}</h2>
- </div>
- <div className={`${theme.layout.panel} rounded-[2rem] border border-white/5 p-8 relative overflow-hidden`}>
- <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500"></div>
- <p className="text-[10px] font-black text-themeTextSec uppercase tracking-widest mb-2">Total Collected</p>
- <h2 className="text-4xl font-black text-emerald-500 font-mono tracking-tighter">₹{overviewData.totalCollected.toLocaleString()}</h2>
- </div>
- <div className={`${theme.layout.panel} rounded-[2rem] border border-white/5 p-8 relative overflow-hidden`}>
- <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-500"></div>
- <p className="text-[10px] font-black text-themeTextSec uppercase tracking-widest mb-2">Pending Invoices</p>
- <h2 className="text-4xl font-black text-rose-500 font-mono tracking-tighter">{overviewData.pendingCount}</h2>
- <p className="text-xs font-bold text-themeTextSec mt-3">Deficit: <span className="text-themeText font-black">₹{(overviewData.totalExpected - overviewData.totalCollected).toLocaleString()}</span></p>
- </div>
- </>
- )}
- </div>
- )}
+        {/* TAB 2: VERIFICATIONS */}
+        {activeTab === 'verifications' && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-black text-gray-900 dark:text-white">Pending Clearances</h3>
+            {loading ? (
+              <div className="py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
+            ) : pendingVerifications.length === 0 ? (
+              <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-4 border border-emerald-500/20">
+                  <i className="fa-solid fa-check-double text-2xl"></i>
+                </div>
+                <h4 className="text-gray-900 dark:text-white font-black text-sm">All Clear!</h4>
+                <p className="text-gray-500 dark:text-white/50 text-xs font-bold mt-1 max-w-sm text-center">There are no pending fee verifications at the moment. You're all caught up.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {pendingVerifications.map(txn => (
+                  <div key={txn.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 flex flex-col gap-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-sm font-black text-gray-900 dark:text-white">{txn.profiles?.full_name}</h4>
+                        <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase">{txn.profiles?.academic_batch}</p>
+                      </div>
+                      <span className="px-2 py-1 bg-amber-500/10 text-amber-500 text-[9px] font-black uppercase rounded-md border border-amber-500/20">Pending</span>
+                    </div>
+                    <div className="bg-gray-100 dark:bg-[#1A1A1A] rounded-xl p-3 border border-gray-200 dark:border-white/5">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-white/50">Amount</span>
+                        <span className="text-xs font-black text-gray-900 dark:text-white font-mono">₹{txn.amount}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-white/50">Ref ID</span>
+                        <span className="text-[10px] font-medium text-white/80">{txn.transaction_id}</span>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => handleConfirmPayment(txn)}
+                      disabled={isVerifying}
+                      className="w-full py-2.5 bg-emerald-500/10 hover:bg-emerald-500 hover:text-black text-emerald-500 rounded-xl text-xs font-black transition-colors flex justify-center items-center gap-2"
+                    >
+                      <i className="fa-solid fa-check"></i> Verify & Send Receipt
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
- {/* TAB 2: BATCH MANAGER */}
- {activeTab === 'batch' && (
- <div className="flex flex-col gap-6">
- {/* Top Control Bar */}
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-[2rem] p-6 flex flex-col md:flex-row gap-6 items-end justify-between">
- <div className="w-full md:w-1/3">
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 pl-1">Select Academic Batch</label>
- <div className="relative">
- <select 
- value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-white/5 hover:border-black/5 dark:border-white/10 text-themeText rounded-xl px-4 py-3.5 text-sm font-bold transition-colors appearance-none outline-none focus:border-themeAccent"
- >
- <option value="" disabled>Select Batch to Manage...</option>
- {batches.map(b => <option key={b} value={b}>{b}</option>)}
- </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec text-xs pointer-events-none"></i>
- </div>
- </div>
+        {/* TAB 3: BATCH MANAGER */}
+        {activeTab === 'batch' && (
+          <div className="flex flex-col xl:flex-row gap-6">
+            {/* Left: List & Bulk Actions */}
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="flex justify-between items-center bg-white dark:bg-[#121212] p-2 pr-4 rounded-2xl border border-gray-200 dark:border-white/5">
+                <select 
+                  value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}
+                  className="bg-transparent text-sm font-bold text-gray-900 dark:text-white px-4 py-2 outline-none w-64 appearance-none"
+                >
+                  <option value="" disabled>Select Academic Batch</option>
+                  {batches.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+                {selectedStudentIds.length > 0 && (
+                  <button onClick={handleBulkMarkPaid} className="bg-emerald-500 text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-400 transition-colors">
+                    Mark {selectedStudentIds.length} Paid
+                  </button>
+                )}
+              </div>
 
- {selectedBatch && (
- <div className="flex gap-4">
- <button type="button" 
- onClick={handleBulkMarkPaid}
- disabled={selectedStudentIds.length === 0 || loading}
- className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 hover:bg-emerald-500 hover:text-white px-6 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
- >
- <i className="fa-solid fa-check-double"></i> Mark Selected Paid
- </button>
- </div>
- )}
- </div>
+              { loading ? (
+                <div className="py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
+              ) : !selectedBatch ? (
+                <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-300 dark:text-white/20 mb-4 border border-gray-200 dark:border-white/5">
+                      <i className="fa-solid fa-layer-group text-2xl"></i>
+                    </div>
+                    <h4 className="text-gray-900 dark:text-white font-black text-sm">Select a Batch</h4>
+                    <p className="text-gray-500 dark:text-white/50 text-xs font-bold mt-1">Choose an academic batch from the dropdown above to view students and assign fees.</p>
+                </div>
+              ) : students.length === 0 ? (
+                <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-300 dark:text-white/20 mb-4 border border-gray-200 dark:border-white/5">
+                      <i className="fa-solid fa-users-slash text-2xl"></i>
+                    </div>
+                    <h4 className="text-gray-900 dark:text-white font-black text-sm">No Students Found</h4>
+                    <p className="text-gray-500 dark:text-white/50 text-xs font-bold mt-1">There are no students enrolled in {selectedBatch}.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {students.map(s => {
+                    const pendingInv = s.fee_invoices?.filter(i => i.status === 'pending') || [];
+                    const isSelected = selectedStudentIds.includes(s.id);
+                    return (
+                      <div 
+                        key={s.id} 
+                        onClick={() => pendingInv.length > 0 && setSelectedStudentIds(prev => isSelected ? prev.filter(id => id !== s.id) : [...prev, s.id])}
+                        className={`bg-white dark:bg-[#121212] border ${isSelected ? 'border-emerald-500' : 'border-gray-200 dark:border-white/5'} rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-colors hover:bg-white/5`}
+                      >
+                        <div>
+                          <h4 className="text-sm font-black text-gray-900 dark:text-white">{s.full_name}</h4>
+                          <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{s.erp_id}</p>
+                        </div>
+                        <div className="text-right">
+                          {pendingInv.length > 0 ? (
+                            <span className="text-xs font-black text-rose-500 font-mono">Dues: ₹{pendingInv.reduce((a,b)=>a+Number(b.amount),0)}</span>
+                          ) : (
+                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest"><i className="fa-solid fa-check-circle"></i> Clear</span>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
 
- {/* Assign Fees Panel (Only visible if students are selected) */}
- {selectedBatch && selectedStudentIds.length > 0 && (
- <div className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-[2rem] p-6 animate-fade-in flex flex-col xl:flex-row gap-6 xl:items-end">
- <div className="flex-1">
- <h3 className="text-sm font-black text-themeText uppercase tracking-widest mb-4 flex items-center gap-2">
- <i className="fa-solid fa-file-invoice text-themeAccent"></i> Assign New Fee to {selectedStudentIds.length} Students
- </h3>
- <form id="assign-fee-form" onSubmit={handleAssignFees} className="grid grid-cols-1 md:grid-cols-4 gap-4">
- <div>
- <input type="text" value={assignTitle} onChange={e => setAssignTitle(e.target.value)} required placeholder="Invoice Title (e.g. Exam Fee)" className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-themeAccent text-themeText" />
- </div>
- <div>
- <input type="number" value={assignAmount} onChange={e => setAssignAmount(e.target.value)} required placeholder="Amount (₹)" min="1" className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-mono outline-none focus:border-themeAccent text-themeText" />
- </div>
- <div>
- <input min="2026-09-14" type="date" value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-themeAccent text-themeText" />
- </div>
- <div>
- <select value={assignType} onChange={e => setAssignType(e.target.value)} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-themeAccent text-themeText appearance-none">
- {['Tuition', 'Hostel', 'Library', 'Examination', 'Fine', 'Other'].map(t => <option key={t} value={t}>{t}</option>)}
- </select>
- </div>
- </form>
- </div>
- <button form="assign-fee-form" type="submit" disabled={loading} className="btn-erp">
- Generate Invoices
- </button>
- </div>
- )}
+            {/* Right: Assign Fee Form */}
+            <div className="w-full xl:w-96 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-6 h-fit shrink-0">
+              <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest mb-6">Assign Bulk Fee</h3>
+              <form onSubmit={handleAssignFee} className="flex flex-col gap-4">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Fee Title</label>
+                  <input type="text" required value={assignTitle} onChange={e => setAssignTitle(e.target.value)} placeholder="e.g. Sem 4 Tuition" className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Amount (₹)</label>
+                  <input type="number" required value={assignAmount} onChange={e => setAssignAmount(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Due Date</label>
+                  <input type="date" required value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                </div>
+                <button type="submit" disabled={!selectedBatch || loading} className="w-full mt-2 py-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-black transition-colors disabled:opacity-50">
+                  Deploy to {selectedBatch || 'Batch'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
- {/* Spreadsheet Grid */}
- {selectedBatch && (
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-[2rem] overflow-hidden flex flex-col min-h-[400px]">
- {loading ? (
- <div className="flex-1 flex items-center justify-center py-20">
- <i className="fa-solid fa-circle-notch fa-spin text-3xl text-themeAccent"></i>
- </div>
- ) : (students.length === 0 || debugError) ? (
- <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
- <i className="fa-solid fa-users-slash text-4xl text-themeTextSec/50 mb-4"></i>
- <h3 className="text-sm font-black text-themeText tracking-widest uppercase mb-2">
- {debugError ? "Database Error" : "No Students Found"}
- </h3>
- <p className="text-xs font-bold text-themeTextSec max-w-md">
- {debugError ? debugError : `There are no students enrolled in ${selectedBatch}.`}
- </p>
- </div>
- ) : (
- <div className="overflow-x-auto">
- <table className="w-full text-left border-collapse">
- <thead>
- <tr className="bg-themeElevated/50 border-b border-white/5">
- <th className="p-4 w-12 text-center">
- <input 
- type="checkbox" 
- checked={selectedStudentIds.length === students.length && students.length > 0}
- onChange={handleSelectAll}
- className="w-4 h-4 rounded border-white/5 text-themeAccent focus:ring-themeAccent bg-themeElevated/90 backdrop-blur-2xl cursor-pointer"
- />
- </th>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Student Details</th>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Status</th>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Pending Amount</th>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec text-right">Actions</th>
- </tr>
- </thead>
- <tbody>
- {students.map(student => {
- const status = getStudentStatus(student);
- const isSelected = selectedStudentIds.includes(student.id);
- const totalPending = status.pendingInvoices ? status.pendingInvoices.reduce((sum, inv) => sum + Number(inv.amount), 0) : 0;
- 
- return (
- <tr key={student.id} className={`border-b border-white/5/50 transition-colors ${isSelected ? 'bg-themeAccent/5' : 'hover:bg-themeElevated/30'}`}>
- <td className="p-4 text-center">
- <input 
- type="checkbox"
- checked={isSelected}
- onChange={() => handleSelectStudent(student.id)}
- className="w-4 h-4 rounded border-white/5 text-themeAccent focus:ring-themeAccent bg-themeElevated/90 backdrop-blur-2xl cursor-pointer"
- />
- </td>
- <td className="p-4">
- <div className="flex flex-col">
- <span className="font-black text-themeText text-sm">{student.full_name}</span>
- <span className="text-[10px] font-bold text-themeTextSec font-mono">{student.erp_id}</span>
- </div>
- </td>
- <td className="p-4">
- <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[10px] font-black uppercase tracking-widest ${status.color}`}>
- {status.count ? <><i className="fa-solid fa-circle-exclamation"></i> {status.label} ({status.count})</> : status.label}
- </span>
- </td>
- <td className="p-4">
- {totalPending > 0 ? (
- <span className="font-mono font-black text-rose-500">₹{totalPending.toLocaleString()}</span>
- ) : (
- <span className="font-mono font-bold text-themeTextSec">₹0</span>
- )}
- </td>
- <td className="p-4 text-right">
- {status.pendingInvoices && status.pendingInvoices.length > 0 ? (
- <div className="flex flex-col gap-2 items-end">
- {status.pendingInvoices.map(inv => (
- <button type="button" 
- key={inv.id}
- onClick={() => handleMarkPaid(student.id, inv)}
- className="text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:text-white border border-emerald-500/30 hover:bg-emerald-500 px-3 py-1.5 rounded transition flex items-center gap-2"
- >
- Mark Paid: {inv.title} (₹{inv.amount})
- </button>
- ))}
- </div>
- ) : (
- <span className="text-[10px] font-black uppercase text-themeTextSec/50 tracking-widest">-</span>
- )}
- </td>
- </tr>
- );
- })}
- </tbody>
- </table>
- </div>
- )}
- </div>
- )}
- </div>
- )}
- </div>
- </div>
- </div>
- );
+        {/* TAB 4: INVOICE HISTORY */}
+        {activeTab === 'invoice_history' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {loading ? (
+              <div className="col-span-full py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
+            ) : (
+              <>
+                {/* Pending List */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-rose-500"></div>
+                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Pending Dues (Requires Follow-up)</h3>
+                  </div>
+                  <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+                    {invoiceHistory.filter(i => i.status === 'pending').length === 0 ? (
+                      <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                        <i className="fa-solid fa-file-invoice text-gray-300 dark:text-white/20 text-xl mb-3"></i>
+                        <p className="text-gray-500 dark:text-white/50 text-xs font-bold">No pending dues found.</p>
+                      </div>
+                    ) : invoiceHistory.filter(i => i.status === 'pending').map(inv => (
+                      <div key={inv.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-xl p-4 flex justify-between items-center">
+                        <div>
+                          <h4 className="text-sm font-black text-gray-900 dark:text-white">{inv.profiles?.full_name}</h4>
+                          <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{inv.title}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-black text-rose-500 font-mono">₹{inv.amount}</span>
+                          <p className="text-[9px] font-bold text-rose-500/50 uppercase tracking-widest">Due {new Date(inv.due_date).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cleared List */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Cleared & Sent</h3>
+                  </div>
+                  <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+                    {invoiceHistory.filter(i => i.status === 'paid' || i.status === 'successful').length === 0 ? (
+                      <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                        <i className="fa-solid fa-receipt text-gray-300 dark:text-white/20 text-xl mb-3"></i>
+                        <p className="text-gray-500 dark:text-white/50 text-xs font-bold">No cleared invoices yet.</p>
+                      </div>
+                    ) : invoiceHistory.filter(i => i.status === 'paid' || i.status === 'successful').map(inv => (
+                      <div key={inv.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-xl p-4 flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity">
+                        <div>
+                          <h4 className="text-sm font-black text-gray-900 dark:text-white">{inv.profiles?.full_name}</h4>
+                          <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{inv.title}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-black text-emerald-500 font-mono">₹{inv.amount}</span>
+                          <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20">
+                            <i className="fa-solid fa-check text-[10px]"></i>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* TAB 5: PAYROLL AUTOMATION */}
+        {activeTab === 'payroll' && (
+          <AdminPayroll />
+        )}
+
+      </div>
+    
+            {/* Hidden Document Templates for PDF Generation */}
+            <div className="hidden">
+                <FeeReceiptTemplate ref={luxuryInvoiceRef} invoiceData={currentTxnPayload} studentData={currentTxnPayload?.profiles} />
+            </div>
+        </div>
+    );
 }

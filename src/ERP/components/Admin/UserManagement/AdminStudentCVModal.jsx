@@ -6,8 +6,7 @@ import generatePDF, { Resolution, Margin } from 'react-to-pdf';
 const S = {
  row: { display: "flex", justifyContent: "space-between", alignItems: "baseline" },
  ul: { margin: "4px 0 0 20px", padding: 0, listStyleType: "disc" },
- li: { marginBottom: "2px" },
-};
+ li: { marginBottom: "2px" } };
 
 const SectionHeading = ({ text, style }) => (
  <h2 style={{ fontSize: "10pt", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "10px", pageBreakAfter: "avoid", ...style }}>
@@ -150,16 +149,16 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
 
  return (
  <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
- <div className="w-full max-w-6xl mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-white/5">
+ <div className="w-full w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-gray-200 dark:border-white/5">
  
  {/* Header */}
- <div className="flex justify-between items-center p-6 border-b-theme border-white/5 bg-themePanel/85 backdrop-blur-2xl">
+ <div className="flex justify-between items-center p-6 border-b-theme border-gray-200 dark:border-white/5 bg-themePanel/85 backdrop-blur-2xl">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-500">
  <i className="fa-solid fa-file-pdf"></i>
  </div>
  <div>
- <h2 className="text-lg font-black text-themeText uppercase tracking-widest tracking-tight">Student Portfolio CV</h2>
+ <h2 className="text-lg font-semibold tracking-tight text-themeText tracking-normal tracking-tight">Student Portfolio CV</h2>
  <p className="text-xs font-bold text-themeTextSec">Live ERP Generated Document</p>
  </div>
  </div>
@@ -167,7 +166,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  <button type="button" 
  onClick={handleExport}
  disabled={isLoading || isExporting}
- className="bg-emerald-500 hover:bg-emerald-400 text-themeText px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition flex items-center gap-2 disabled:opacity-50"
+ className="bg-emerald-500 hover:bg-emerald-400 text-themeText px-5 py-2.5 rounded-lg text-[13px] font-medium transition flex items-center gap-2 disabled:opacity-50"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>} 
  Export PDF
@@ -183,7 +182,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  {isLoading ? (
  <div className="flex flex-col items-center justify-center py-20 text-emerald-500/50">
  <i className="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
- <p className="text-sm font-black uppercase tracking-widest text-themeTextSec">Fetching Verified Records...</p>
+ <p className="text-[15px] font-semibold tracking-normal text-themeTextSec">Fetching Verified Records...</p>
  </div>
  ) : erpData ? (
  <div className="w-full max-w-[794px] bg-themePanel/85 backdrop-blur-2xl rounded-md overflow-hidden shrink-0" style={{ minHeight: '1123px' }}>
@@ -196,8 +195,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  color: "#000000",
  display: "flex",
  flexDirection: "column",
- overflow: "hidden",
- }}>
+ overflow: "hidden" }}>
  {ModernTemplate(erpData, {})}
  </div>
  </div>

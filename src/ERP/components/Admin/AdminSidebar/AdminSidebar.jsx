@@ -5,56 +5,74 @@ import { useERP } from "../../../context/ErpContext";
 
 export const ADMIN_NAV_GROUPS = [
   {
-    category: "Master Engine",
+    category: "Main",
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
-      { 
-        id: "hq_group", label: "Headquarters", icon: "fa-solid fa-building-shield",
+      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
+      { id: "notices", label: "Broadcasts", icon: "fa-solid fa-bullhorn" }
+    ]
+  },
+  {
+    category: "Administration",
+    links: [
+      {
+        id: "users_group", label: "People & HR", icon: "fa-solid fa-users",
         children: [
-          { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
-          { id: "leavemanagement", label: "Faculty Leaves", icon: "fa-solid fa-mug-hot" },
-          { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
-          { id: "users", label: "User Management", icon: "fa-solid fa-users-gear" },
-          { id: "notices", label: "Broadcasts", icon: "fa-solid fa-bullhorn" }
+          { id: "users", label: "User Management", icon: "fa-solid fa-user-gear" },
+          { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
+          { id: "leavemanagement", label: "Leave Management", icon: "fa-solid fa-mug-hot" }
+        ]
+      },
+      {
+                id: "finance_group", label: "Finance & Ledger", icon: "fa-solid fa-indian-rupee-sign",
+        children: [
+          { id: "finance", label: "Institutional Ledger", icon: "fa-solid fa-vault" }
         ]
       }
     ]
   },
   {
-    category: "Portals",
+    category: "Academics",
     links: [
       {
-        id: "academics_group", label: "Academics", icon: "fa-solid fa-graduation-cap",
+        id: "academic_group", label: "Academic Control", icon: "fa-solid fa-graduation-cap",
         children: [
-          { id: "academic", label: "Overview Hub", icon: "fa-solid fa-chart-pie" },
+          { id: "academic", label: "Academic Hub", icon: "fa-solid fa-chart-pie" },
+          { id: "attendance_issues", label: "Attendance Issues", icon: "fa-solid fa-clipboard-question" },
           { id: "coursebuilder", label: "Course Builder", icon: "fa-solid fa-book-open" },
+          { id: "markscontroller", label: "Marks Dispatcher", icon: "fa-solid fa-file-signature" },
           { id: "timetablebuilder", label: "Timetable Engine", icon: "fa-solid fa-calendar-days" },
-          { id: "examinations", label: "Examinations", icon: "fa-solid fa-file-contract" },
           { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
-        ]
-      },
-      {
-        id: "operations_group", label: "Operations", icon: "fa-solid fa-gears",
-        children: [
-          { id: "operations", label: "Overview Hub", icon: "fa-solid fa-chart-line" },
-          { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
-          { id: "finance", label: "Finance Ledger", icon: "fa-solid fa-indian-rupee-sign" }
         ]
       },
       {
         id: "clinics_group", label: "Clinical Programs", icon: "fa-solid fa-scale-balanced",
         children: [
-          { id: "clinics", label: "Overview Hub", icon: "fa-solid fa-chart-pie" },
+          { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
           { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
           { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" },
           { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" }
         ]
+      }
+    ]
+  },
+  {
+    category: "IT & Systems",
+    links: [
+      {
+        id: "web_group", label: "Website Control", icon: "fa-solid fa-globe",
+        children: [
+          { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
+          { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
+          { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" }
+        ]
       },
       {
-        id: "it_web_group", label: "Website & IT", icon: "fa-solid fa-globe",
+        id: "sys_group", label: "System Config", icon: "fa-solid fa-gears",
         children: [
-          { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
-          { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
+          { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
+          { id: "whatsapp", label: "WhatsApp API", icon: "fa-brands fa-whatsapp" },
+          { id: "parent-preview", label: "Parent Portal", icon: "fa-solid fa-user-group" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
         ]
       }
@@ -64,9 +82,9 @@ export const ADMIN_NAV_GROUPS = [
 
 const BOTTOM_NAV_LINKS = [
   { id: "dashboard", label: "Home", icon: "fa-solid fa-server" },
-  { id: "sql", label: "Database", icon: "fa-solid fa-database" },
-  { id: "siteeditor", label: "CMS", icon: "fa-solid fa-pen-nib" },
-  { id: "academic", label: "Academic", icon: "fa-solid fa-graduation-cap" }
+  { id: "users", label: "Users", icon: "fa-solid fa-users" },
+  { id: "finance", label: "Finance", icon: "fa-solid fa-indian-rupee-sign" },
+  { id: "siteeditor", label: "Website", icon: "fa-solid fa-globe" }
 ];
 
 export const ADMIN_NAV_EXPANDED = ADMIN_NAV_GROUPS;

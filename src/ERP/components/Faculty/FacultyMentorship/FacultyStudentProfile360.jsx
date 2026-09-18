@@ -1,7 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { theme } from '../../../../Shared/theme';
 
 export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }) {
  const [achievements, setAchievements] = useState(() => {
@@ -94,7 +93,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  <i className="fa-solid fa-xmark"></i>
  </button>
  <div className="flex gap-2">
- <button type="button" onClick={() => window.erpDialog.alert("Messages engine linking...")} className="px-4 py-2 rounded-lg bg-themeElevated border border-themeBorder text-[10px] font-black text-themeText uppercase tracking-widest hover:border-themeAccent transition-colors">
+ <button type="button" onClick={() => window.erpDialog.alert("Messages engine linking...")} className="px-4 py-2 rounded-lg bg-themeElevated border border-themeBorder text-[10px] font-black text-themeText tracking-normal hover:border-themeAccent transition-colors">
  <i className="fa-regular fa-envelope text-themeAccent mr-2"></i> Message
  </button>
  <button type="button" onClick={onSchedule} className="btn-erp">
@@ -104,12 +103,12 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  </div>
 
  <div className="flex items-center gap-5 relative z-10">
- <div className="w-20 h-20 rounded-2xl bg-themeElevated border-2 border-themeBorder flex items-center justify-center text-themeAccent text-3xl font-black">
+ <div className="w-20 h-20 rounded-2xl bg-themeElevated border-2 border-themeBorder flex items-center justify-center text-themeAccent text-3xl font-semibold tracking-tight">
  {mentee.full_name?.charAt(0)?.toUpperCase()}
  </div>
  <div>
- <h2 className="text-2xl lg:text-3xl font-black text-themeText tracking-tight mb-1">{mentee.full_name}</h2>
- <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest flex items-center gap-3">
+ <h2 className="text-2xl lg:text-3xl font-semibold tracking-tight text-themeText tracking-tight mb-1">{mentee.full_name}</h2>
+ <p className="text-xs font-bold text-themeTextSec tracking-normal flex items-center gap-3">
  <span><i className="fa-solid fa-id-card text-themeAccent/70 mr-1"></i> {mentee.erp_id}</span>
  <span className="w-1 h-1 rounded-full bg-themeBorderStrong"></span>
  <span className="text-emerald-500">Active Mentee</span>
@@ -122,22 +121,22 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  
  {/* Academic Snapshot (Mocked for future DB integration) */}
  <div>
- <h3 className="text-sm font-black uppercase tracking-widest text-themeTextSec mb-4 flex items-center gap-2">
+ <h3 className="text-[15px] font-semibold tracking-normal text-themeTextSec mb-4 flex items-center gap-2">
  <i className="fa-solid fa-graduation-cap text-themeAccent"></i> Academic Snapshot
  </h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="bg-themePanel border border-themeBorder p-4 rounded-xl flex items-center gap-4">
  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg"><i className="fa-solid fa-clipboard-user"></i></div>
  <div>
- <p className="text-2xl font-black text-themeText leading-none mb-1">87%</p>
- <p className="text-[9px] font-bold uppercase tracking-widest text-themeTextSec">Overall Attendance</p>
+ <p className="text-2xl font-semibold tracking-tight text-themeText leading-none mb-1">87%</p>
+ <p className="text-[12px] font-medium text-themeTextSec">Overall Attendance</p>
  </div>
  </div>
  <div className="bg-themePanel border border-themeBorder p-4 rounded-xl flex items-center gap-4">
  <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center text-lg"><i className="fa-solid fa-chart-line"></i></div>
  <div>
- <p className="text-2xl font-black text-themeText leading-none mb-1">7.8</p>
- <p className="text-[9px] font-bold uppercase tracking-widest text-themeTextSec">CGPA (Current)</p>
+ <p className="text-2xl font-semibold tracking-tight text-themeText leading-none mb-1">7.8</p>
+ <p className="text-[12px] font-medium text-themeTextSec">CGPA (Current)</p>
  </div>
  </div>
  </div>
@@ -146,11 +145,11 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  {/* Pending Approvals / Achievements */}
  <div>
  <div className="flex justify-between items-center mb-4">
- <h3 className="text-sm font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+ <h3 className="text-[15px] font-semibold tracking-normal text-themeTextSec flex items-center gap-2">
  <i className="fa-solid fa-trophy text-amber-500"></i> Achievement Portfolio
  </h3>
  {pendingCount > 0 && (
- <span className="bg-amber-500/20 text-amber-500 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-amber-500/30">
+ <span className="bg-amber-500/20 text-amber-500 px-2 py-1 rounded-md text-[12px] font-medium border border-amber-500/30">
  {pendingCount} Pending
  </span>
  )}
@@ -169,7 +168,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  <div key={a.id} className={`bg-themePanel border ${isPending ? 'border-amber-500/30' : 'border-themeBorder'} p-4 rounded-xl flex flex-col gap-3 group`}>
  <div className="flex justify-between items-start">
  <div>
- <p className="text-[9px] font-black uppercase tracking-widest text-themeAccent mb-1">{a.category}</p>
+ <p className="text-[12px] font-medium text-themeAccent mb-1">{a.category}</p>
  <h4 className="text-sm lg:text-base font-bold text-themeText">{a.title}</h4>
  <p className="text-xs font-medium text-themeTextSec">{a.issuer} • {new Date(a.date_achieved).toLocaleDateString()}</p>
  </div>
@@ -178,13 +177,13 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  
  {isPending && (
  <div className="flex gap-2 mt-2 pt-3 border-t border-themeBorder">
- <button type="button" onClick={() => openVerifyModal(a.id, 'verified')} className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+ <button type="button" onClick={() => openVerifyModal(a.id, 'verified')} className="flex-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 py-2 rounded-lg text-[13px] font-medium transition-colors">
  <i className="fa-solid fa-check mr-1"></i> Verify
  </button>
- <button type="button" onClick={() => openVerifyModal(a.id, 'revision_requested')} className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+ <button type="button" onClick={() => openVerifyModal(a.id, 'revision_requested')} className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 py-2 rounded-lg text-[13px] font-medium transition-colors">
  <i className="fa-solid fa-rotate-left mr-1"></i> Revise
  </button>
- <button type="button" onClick={() => openVerifyModal(a.id, 'rejected')} className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">
+ <button type="button" onClick={() => openVerifyModal(a.id, 'rejected')} className="flex-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 py-2 rounded-lg text-[13px] font-medium transition-colors">
  <i className="fa-solid fa-xmark mr-1"></i> Reject
  </button>
  </div>
@@ -214,7 +213,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[105] flex items-center justify-center p-4">
  <div className="bg-themePanel w-full max-w-sm rounded-xl overflow-hidden border border-themeBorder">
  <div className="p-5 border-b border-themeBorder">
- <h3 className="text-lg font-black text-themeText">Mark as {actionType}</h3>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText">Mark as {actionType}</h3>
  <p className="text-xs text-themeTextSec mt-1">Leave an optional remark for the student.</p>
  </div>
  <div className="p-5">
@@ -228,7 +227,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  </div>
  <div className="p-5 border-t border-themeBorder bg-themePanel/85 backdrop-blur-2xl flex justify-end gap-3">
  <button type="button" onClick={() => setShowVerifyModal(false)} className="px-4 py-2 rounded-lg text-xs font-bold text-themeTextSec hover:text-themeText">Cancel</button>
- <button type="button" onClick={handleVerifySubmit} className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest text-white ${actionType === 'verified' ? 'bg-emerald-500' : actionType === 'rejected' ? 'bg-rose-500' : 'bg-blue-500'}`}>
+ <button type="button" onClick={handleVerifySubmit} className={`px-4 py-2 rounded-lg text-[14px] font-medium tracking-normal text-gray-900 dark:text-white ${actionType === 'verified' ? 'bg-emerald-500' : actionType === 'rejected' ? 'bg-rose-500' : 'bg-blue-500'}`}>
  Confirm
  </button>
  </div>

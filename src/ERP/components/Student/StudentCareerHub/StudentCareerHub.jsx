@@ -2,7 +2,6 @@
 import { motion } from 'framer-motion';
 import React, { useState } from "react";
 import { theme } from '../../../../Shared/theme';
-import PageHeader from "../../shared/PageHeader/PageHeader";
 import MootCourt from "../MootCourt/MootCourt";
 import Internships from "../Internships/Internships";
 import Achievements from "../Achievements/Achievements";
@@ -35,7 +34,7 @@ export default function StudentCareerHub() {
 
  return (
  <div className="w-full h-auto xl:h-[calc(100vh-9rem)] xl:min-h-[600px] min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
- <div className="relative z-20 w-full max-w-7xl mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+ <div className="relative z-20 w-full w-full mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
  <div className="flex-1 flex flex-col gap-6 overflow-visible xl:overflow-y-auto custom-scrollbar pb-10 xl:pb-0 h-auto xl:h-full relative xl:pr-2">
  <div className="w-full flex flex-col gap-6 lg:gap-8 animate-fade-in">
  {/* ═══ MASTER HUB HEADER ═══ */}
@@ -44,12 +43,12 @@ export default function StudentCareerHub() {
  
 
  <div className="flex items-center gap-4 lg:gap-5 relative z-10">
- <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-[1rem] bg-black/20 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0">
- <i className="fa-solid fa-briefcase text-white text-2xl lg:text-3xl"></i>
+ <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-[1rem] bg-gray-50 dark:bg-black/20 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0">
+ <i className="fa-solid fa-briefcase text-gray-900 dark:text-white text-2xl lg:text-3xl"></i>
  </div>
  <div>
- <span className="px-2 lg:px-2.5 py-1 bg-white/20 text-white border border-white/30 rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest mb-1.5 lg:mb-2 inline-block">Professional Development</span>
- <h1 className={`${theme.text.display} text-2xl lg:text-3xl tracking-tight text-white mb-1`}>Career & Clinics</h1>
+ <span className="px-2 lg:px-2.5 py-1 bg-white/20 text-gray-900 dark:text-white border border-white/30 rounded-md text-[8px] lg:text-[12px] font-medium mb-1.5 lg:mb-2 inline-block">Professional Development</span>
+ <h1 className={`${theme.text.display} text-2xl lg:text-3xl tracking-tight text-gray-900 dark:text-white mb-1`}>Career & Clinics</h1>
  <p className="text-white/80 text-xs lg:text-sm font-medium tracking-wide">Manage mooting, internships, and build your professional CV.</p>
  </div>
  </div>
@@ -61,10 +60,10 @@ export default function StudentCareerHub() {
  <button type="button"
  key={cat.id}
  onClick={() => handleCategoryChange(cat.id)}
- className={`px-4 py-2 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center gap-2 ${
+ className={`px-4 py-2 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center gap-2 ${
  activeCategory === cat.id 
- ? 'bg-white/20 text-white border border-white/40 backdrop-blur-md' 
- : 'bg-white/5 text-white/70 hover:bg-white/15 hover:text-white border border-transparent'
+ ? 'bg-white/20 text-gray-900 dark:text-white border border-white/40 backdrop-blur-md' 
+ : 'bg-white/5 text-white/70 hover:bg-white/15 hover:text-gray-900 dark:text-white border border-transparent'
  }`}
  >
  <i className={`fa-solid ${cat.icon}`}></i> {cat.label}
@@ -77,7 +76,7 @@ export default function StudentCareerHub() {
  <button type="button"
  key={t.id}
  onClick={() => setActiveTab(t.id)}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
+ className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === t.id 
  ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-themeText border border-black/10 dark:border-white/40 scale-100' 
  : 'text-themeTextSec opacity-80 hover:text-themeText hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'

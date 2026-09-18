@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import { useState, useEffect, useContext } from 'react';
-import { supabase } from '../supabase/supabaseClient';
 import { PreviewContext } from '../../../Website/context/PreviewContext';
+import { supabase } from '../../lib/supabase/supabaseClient';
 
 export function useSiteContent(pagePath, sectionName) {
     const [content, setContent] = useState(null);

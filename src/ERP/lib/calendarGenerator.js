@@ -1,6 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 // src/lib/calendarGenerator.js
-import { downloadFile } from "./pdfGenerator";
+import { downloadFile } from "../DocumentTemplates/pdfGenerator";
 
 /**
  * Formats a Date object into ICS standard datetime format (YYYYMMDDTHHMMSSZ)

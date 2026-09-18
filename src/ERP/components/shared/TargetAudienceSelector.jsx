@@ -79,7 +79,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                         key={m}
                         type="button" 
                         onClick={() => setMode(m)} 
-                        className={`flex-1 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-lg transition-all relative z-10 ${mode === m ? 'text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'}`}
+                        className={`flex-1 py-1.5 text-[11px] font-bold tracking-normal rounded-lg transition-all relative z-10 ${mode === m ? 'text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'}`}
                     >
                         {mode === m && (
                             <motion.div 
@@ -116,7 +116,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                     type="button"
                                     key={r} 
                                     onClick={() => toggleItem(r)}
-                                    className={`px-4 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${value.includes(r) ? 'bg-[#007AFF] text-white border-[#007AFF] shadow-md shadow-[#007AFF]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[#007AFF]/30'}`}
+                                    className={`px-4 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${value.includes(r) ? 'bg-[#007AFF] text-gray-900 dark:text-white border-[#007AFF] shadow-md shadow-[#007AFF]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[#007AFF]/30'}`}
                                 >
                                     {r}s
                                 </button>
@@ -131,7 +131,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                     type="button"
                                     key={b} 
                                     onClick={() => toggleItem(b)}
-                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-tight transition-all border ${value.includes(b) ? 'bg-[#007AFF] text-white border-[#007AFF] shadow-md shadow-[#007AFF]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[#007AFF]/30'}`}
+                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-tight transition-all border ${value.includes(b) ? 'bg-[#007AFF] text-gray-900 dark:text-white border-[#007AFF] shadow-md shadow-[#007AFF]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[#007AFF]/30'}`}
                                 >
                                     {b}
                                 </button>
@@ -178,7 +178,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                             >
                                                 <span className="text-[13px] font-bold text-[#1C1C1E] dark:text-[#F2F2F7] tracking-tight">{user.full_name}</span>
                                                 <div className="flex gap-2 items-center mt-1">
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#007AFF] bg-[#007AFF]/10 px-1.5 py-0.5 rounded">{user.erp_id}</span>
+                                                    <span className="text-[13px] font-medium text-[#007AFF] bg-[#007AFF]/10 px-1.5 py-0.5 rounded">{user.erp_id}</span>
                                                     <span className="text-[10px] font-semibold text-[#8E8E93] uppercase">{user.role}</span>
                                                     {user.academic_batch && <span className="text-[10px] font-semibold text-[#8E8E93] truncate max-w-[100px]">• {user.academic_batch}</span>}
                                                 </div>

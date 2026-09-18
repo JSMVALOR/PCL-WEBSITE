@@ -10,7 +10,7 @@ export default function FacultyAdvisingHub() {
 
     return (
         <div className="w-full animate-fade-in selection:bg-[#007AFF]/20 min-h-screen bg-transparent text-[#1C1C1E] dark:text-[#F2F2F7]">
-            <div className="max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12">
+            <div className="w-full mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12">
                 <PageHeader 
                     icon="fa-solid fa-people-arrows" 
                     title="Advising Center" 

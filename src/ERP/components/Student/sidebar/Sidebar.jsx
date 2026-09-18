@@ -19,9 +19,8 @@ export const STUDENT_NAV_MEGA = [
           { id: "vault", label: "Course Vault", icon: "fa-solid fa-book" },
           { id: "attendance", label: "Attendance", icon: "fa-solid fa-clipboard-user" },
           { id: "assignments", label: "Assignments", icon: "fa-solid fa-file-pen" },
-          { id: "timetable", label: "Timetable", icon: "fa-solid fa-calendar-days" },
-          { id: "examinations", label: "Examinations", icon: "fa-solid fa-file-contract" }
-        ] 
+          { id: "timetable", label: "Timetable", icon: "fa-solid fa-calendar-days" }
+        ]
       },
       {
         id: "career_group", label: "Career", icon: "fa-solid fa-briefcase",

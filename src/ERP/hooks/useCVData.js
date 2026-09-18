@@ -33,23 +33,20 @@ export default function useCVData(studentId) {
                     name: profile.full_name || "Student",
                     email: profile.email || "",
                     phone: profile.phone || "Update in Profile",
-                    linkedin: profile.linkedin_url || "Update in Profile",
-                },
+                    linkedin: profile.linkedin_url || "Update in Profile" },
                 academic: {
                     degree: profile.department || (isLLM ? "LL.M. (Master of Laws)" : "B.B.A. LL.B. (Hons.)"),
                     university: "JSM University, School of Law",
                     duration: `${admYear} – ${gradYear}`,
                     cgpa: analytics.cgpa ? `${analytics.cgpa.toFixed(2)} / 10.0` : "Awaiting Data",
-                    rank: analytics.batch_rank ? `${analytics.batch_rank} / ${analytics.batch_total}` : "N/A",
-                },
+                    rank: analytics.batch_rank ? `${analytics.batch_rank} / ${analytics.batch_total}` : "N/A" },
                 experience: experiences,
                 mootCourt: allAch.filter((a) => a.category === "Moot Court"),
                 awards: allAch.filter((a) => a.category === "Awards"),
                 publications: allAch.filter((a) => a.category === "Publications"),
                 certifications: allAch.filter((a) => a.category === "Certifications"),
                 extracurriculars: allAch.filter((a) => a.category === "Extracurriculars"),
-                docId: `${profile.id}-${new Date().getFullYear()}`,
-            };
+                docId: `${profile.id}-${new Date().getFullYear()}` };
 
             setErpData(newData);
         } catch (err) {

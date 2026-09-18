@@ -19,7 +19,7 @@ export default function OrganizationDirectory() {
             // Fetch all active profiles
             const { data, error } = await supabase
                 .from('profiles')
-                .select('id, full_name, email, role, profile_picture_url, phone_number')
+                .select('id, full_name, email, role, profile_picture_url, phone, erp_id, department')
                 .in('role', ['faculty', 'student'])
                 .order('full_name', { ascending: true });
 
@@ -51,9 +51,10 @@ export default function OrganizationDirectory() {
             {/* Header & Controls */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-xl backdrop-blur-xl border border-black/5 dark:border-white/10 shrink-0">
+                    
                     <button type="button" 
                         onClick={() => setActiveTab('faculty')}
-                        className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
+                        className={`px-6 py-2 rounded-lg text-xs font-bold tracking-normal transition-all ${
                             activeTab === 'faculty' ? 'bg-white dark:bg-[#1C1C1E] text-[#007AFF] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
                         }`}
                     >
@@ -61,12 +62,15 @@ export default function OrganizationDirectory() {
                     </button>
                     <button type="button" 
                         onClick={() => setActiveTab('student')}
-                        className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
+                        className={`px-6 py-2 rounded-lg text-xs font-bold tracking-normal transition-all ${
                             activeTab === 'student' ? 'bg-white dark:bg-[#1C1C1E] text-[#007AFF] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
                         }`}
                     >
                         Students ({members.student.length})
                     </button>
+                    
+                    
+
                 </div>
 
                 <div className="relative w-full md:w-64">
@@ -90,7 +94,7 @@ export default function OrganizationDirectory() {
                 ) : filteredMembers.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-64 text-[#8E8E93] gap-3">
                         <i className="fa-regular fa-address-book text-4xl opacity-50"></i>
-                        <p className="text-xs font-bold uppercase tracking-widest">No members found</p>
+                        <p className="text-xs font-bold tracking-normal">No members found</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -103,13 +107,13 @@ export default function OrganizationDirectory() {
                                     exit={{ opacity: 0, scale: 0.9 }}
                                     transition={{ duration: 0.2 }}
                                     key={member.id}
-                                    className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-5 flex items-center gap-4 group"
+                                    className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-5 flex items-center gap-4 group"
                                 >
                                     <div className="w-16 h-16 rounded-xl bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 shadow-inner overflow-hidden flex items-center justify-center shrink-0">
                                         {member.profile_picture_url ? (
                                             <img src={member.profile_picture_url} alt={member.full_name} className="w-full h-full object-cover" />
                                         ) : (
-                                            <span className="text-lg font-black text-[#8E8E93]">
+                                            <span className="text-lg font-semibold tracking-tight text-[#8E8E93]">
                                                 {member.full_name ? member.full_name.substring(0,2).toUpperCase() : 'US'}
                                             </span>
                                         )}
@@ -128,10 +132,10 @@ export default function OrganizationDirectory() {
                                                 <i className="fa-solid fa-envelope w-3"></i>
                                                 <span className="truncate">{member.email || 'No email provided'}</span>
                                             </div>
-                                            {(member.department || member.phone_number) && (
+                                            {(member.department || member.phone) && (
                                                 <div className="flex items-center gap-2 truncate">
                                                     <i className="fa-solid fa-building w-3"></i>
-                                                    <span className="truncate">{member.department || member.phone_number}</span>
+                                                    <span className="truncate">{member.department || member.phone}</span>
                                                 </div>
                                             )}
                                         </div>

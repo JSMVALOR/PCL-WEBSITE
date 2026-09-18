@@ -1,10 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 
-export default function AdminSystemSettings({ isEmbedded = false }) {
+export default function AdminSystemSettings({}) {
  const { alert } = useERP();
  const [settings, setSettings] = useState({
  lock_days: 7,
@@ -72,25 +71,25 @@ export default function AdminSystemSettings({ isEmbedded = false }) {
  }
 
  return (
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-3xl p-6 lg:p-8">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-3xl p-6 lg:p-8">
  <div className="mb-8">
- <h2 className="text-2xl font-black text-themeText">System Parameters</h2>
+ <h2 className="text-2xl font-semibold tracking-tight text-themeText">System Parameters</h2>
  <p className="text-sm font-medium text-themeTextSec mt-1">Configure global rules for attendance, grading, and operations.</p>
  </div>
 
  <form onSubmit={handleSave} className="max-w-2xl flex flex-col gap-8">
  {/* Attendance Engine Settings */}
- <div className="flex flex-col gap-5 bg-themeApp/50 p-6 rounded-2xl border border-white/5">
+ <div className="flex flex-col gap-5 bg-themeApp/50 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg">
  <i className="fa-solid fa-clipboard-user"></i>
  </div>
- <h3 className="text-lg font-black text-themeText">Attendance Engine</h3>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText">Attendance Engine</h3>
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+ <label className="text-[13px] font-medium text-themeTextSec flex items-center gap-2">
  <i className="fa-solid fa-lock text-rose-500"></i> Backdate Lock (Days)
  </label>
  <input 
@@ -100,13 +99,13 @@ export default function AdminSystemSettings({ isEmbedded = false }) {
  required
  value={settings.lock_days}
  onChange={(e) => setSettings({...settings, lock_days: parseInt(e.target.value)})}
- className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
+ className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
  />
  <p className="text-[10px] text-themeTextSec font-medium">Number of days a faculty can go back to mark attendance before it locks.</p>
  </div>
 
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+ <label className="text-[13px] font-medium text-themeTextSec flex items-center gap-2">
  <i className="fa-solid fa-triangle-exclamation text-amber-500"></i> Debar Threshold (%)
  </label>
  <input 
@@ -116,7 +115,7 @@ export default function AdminSystemSettings({ isEmbedded = false }) {
  required
  value={settings.debar_percentage}
  onChange={(e) => setSettings({...settings, debar_percentage: parseInt(e.target.value)})}
- className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
+ className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
  />
  <p className="text-[10px] text-themeTextSec font-medium">Minimum global attendance % required before a student is flagged.</p>
  </div>

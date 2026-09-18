@@ -1,10 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useEffect, useState, useRef } from 'react';
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { Clock, Calendar, ArrowRight } from 'lucide-react';
 import fallbackLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
 import styles from '../PROGRAMS/Programs.module.css';

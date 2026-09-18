@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { Badge } from "../../ui/Badge";
 import WeeklyChart from "../../shared/WeeklyChart";
@@ -18,7 +17,7 @@ const SUBJECT_COLORS = {
  gray: { bg: 'bg-themeElevated', text: 'text-themeTextSec', border: 'border-themeBorder', solid: 'bg-themeBorderStrong' }
 };
 
-export default function FacultyTimetable({ isEmbedded = false }) {
+export default function FacultyTimetable({}) {
  const { userSession } = useERP();
  const [activeTab, setActiveTab] = useState('timeline');
  const [selectedLecture, setSelectedLecture] = useState(null);
@@ -158,7 +157,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  }
  };
 
- const renderTimeline = () => {
+ const renderTimeline = ({ isEmbedded = false }) => {
  const actualDayNum = new Date().getDay();
  const daysMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
  let currentDayName = daysMap[actualDayNum];
@@ -191,7 +190,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  return (
  <div key={lec.id} className={`flex gap-6 relative group ${isPast ? 'opacity-40 grayscale-[50%]' : ''}`}>
  <div className="w-16 flex flex-col items-end shrink-0 pt-4">
- <span className="text-xs font-black text-themeText">{lec.time}</span>
+ <span className="text-[14px] font-medium text-themeText">{lec.time}</span>
  <span className="text-[9px] font-bold text-themeTextSec">{lec.endTime}</span>
  </div>
  
@@ -207,7 +206,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div>
  <div className="flex items-center gap-2 mb-2">
  <div className={`w-2 h-2 rounded-full ${c.solid}`}></div>
- <h3 className={`text-lg font-black tracking-tight ${isCurrent ? c.text : 'text-themeText'}`}>{lec.subject}</h3>
+ <h3 className={`text-lg font-semibold tracking-tight tracking-tight ${isCurrent ? c.text : 'text-themeText'}`}>{lec.subject}</h3>
  </div>
  <div className="flex items-center gap-4 mt-3">
  <span className="text-xs font-bold text-themeTextSec flex items-center gap-1.5"><i className="fa-solid fa-graduation-cap"></i> {lec.semester}</span>
@@ -215,7 +214,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
  </div>
  
- <button type="button" onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="bg-emerald-500 hover:opacity-90 text-themeApp px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-opacity">
+ <button type="button" onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="bg-emerald-500 hover:opacity-90 text-themeApp px-4 py-2 rounded-lg text-[13px] font-medium transition-opacity">
  Mark Attd
  </button>
  </div>
@@ -236,10 +235,10 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  const renderRequests = () => (
  <div className="flex flex-col gap-6 animate-fade-in w-full">
  <div className="bg-themePanel border border-themeBorder rounded-2xl p-6">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeTextSec mb-4">Request Form</h3>
+ <h3 className="text-[14px] font-medium tracking-normal text-themeTextSec mb-4">Request Form</h3>
  <form onSubmit={submitRequest} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Request Type</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Request Type</label>
  <select value={requestType} onChange={e => setRequestType(e.target.value)} className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none">
  <option value="Extra Class">Extra Class</option>
  <option value="One-Time Reschedule">One-Time Reschedule</option>
@@ -249,7 +248,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
  {(requestType === 'One-Time Reschedule' || requestType === 'Permanent Shift') && (
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Original Class (To Shift)</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Original Class (To Shift)</label>
  <select value={reqScheduleId} onChange={e => setReqScheduleId(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none">
  <option value="">Select a class...</option>
  {schedule.map(s => <option key={s.id} value={s.id}>{s.subject} - {s.day} {s.time}</option>)}
@@ -257,34 +256,34 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
  )}
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Subject</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Subject</label>
  <select value={reqSubjectId} onChange={e => setReqSubjectId(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none">
  {mySubjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
  </select>
  </div>
  {requestType === 'Permanent Shift' ? (
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">New Day of Week</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">New Day of Week</label>
  <select value={reqNewDay} onChange={e => setReqNewDay(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none">
  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(d => <option key={d} value={d}>{d}</option>)}
  </select>
  </div>
  ) : (
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Requested Date</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Requested Date</label>
  <input min="2026-09-14" type="date" value={reqDate} onChange={e => setReqDate(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  )}
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">New Start Time</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">New Start Time</label>
  <input type="time" value={reqStartTime} onChange={e => setReqStartTime(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">New End Time</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">New End Time</label>
  <input type="time" value={reqEndTime} onChange={e => setReqEndTime(e.target.value)} required className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  <div className="lg:col-span-3">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Reason</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Reason</label>
  <input type="text" value={reqReason} onChange={e => setReqReason(e.target.value)} required placeholder="Brief reason for request..." className="w-full bg-themeElevated border border-themeBorderStrong focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none" />
  </div>
  <div className="lg:col-span-3 flex justify-end">
@@ -294,20 +293,20 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
 
  <div className="flex flex-col gap-4">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeTextSec mt-2">Request History</h3>
+ <h3 className="text-[14px] font-medium tracking-normal text-themeTextSec mt-2">Request History</h3>
  {requests.length === 0 ? (
  <p className="text-xs font-bold text-themeTextSec">No requests found.</p>
  ) : requests.map(req => (
  <div key={req.id} className="bg-themePanel border border-themeBorder rounded-2xl p-5 flex items-center justify-between">
  <div>
  <div className="flex items-center gap-3 mb-1">
- <span className="px-2 py-1 bg-themeElevated border border-themeBorderStrong rounded-md text-[9px] font-black uppercase tracking-widest text-themeTextSec">{req.request_type}</span>
- <span className={`text-[10px] font-black uppercase tracking-widest ${
+ <span className="px-2 py-1 bg-themeElevated border border-themeBorderStrong rounded-md text-[12px] font-medium text-themeTextSec">{req.request_type}</span>
+ <span className={`text-[13px] font-medium ${
  req.status === 'Approved' ? 'text-emerald-500' : 
  req.status === 'Rejected' ? 'text-rose-500' : 'text-amber-500'
  }`}>{req.status}</span>
  </div>
- <h4 className="text-sm font-black text-themeText">{req.subject?.name}</h4>
+ <h4 className="text-[15px] font-semibold text-themeText">{req.subject?.name}</h4>
  <p className="text-xs font-bold text-themeTextSec mt-1">
  {new Date(req.requested_date).toLocaleDateString()} ({req.requested_start_time?.slice(0,5)} - {req.requested_end_time?.slice(0,5)})
  </p>
@@ -318,7 +317,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
  );
 
- const LectureSideSheet = () => {
+ const LectureSideSheet = ({ isEmbedded = false }) => {
  if (!selectedLecture) return null;
  const c = SUBJECT_COLORS[selectedLecture.color] || SUBJECT_COLORS.gray;
 
@@ -330,18 +329,18 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div className={`absolute top-0 right-0 w-48 h-48 ${c.solid} opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
  <div className="flex justify-between items-start mb-6 relative z-10">
  <Badge variant="outline" className={`${c.text} ${c.border}`}>{selectedLecture.day}, {selectedLecture.time} - {selectedLecture.endTime}</Badge>
- <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-themeText flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-gray-50 dark:bg-black/20 text-themeText flex items-center justify-center transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
- <h2 className={`text-2xl font-black tracking-tight mb-2 ${c.text} relative z-10`}>{selectedLecture.subject}</h2>
+ <h2 className={`text-2xl font-semibold tracking-tight tracking-tight mb-2 ${c.text} relative z-10`}>{selectedLecture.subject}</h2>
  <div className="flex items-center gap-4 text-xs font-bold text-themeTextSec relative z-10">
  <span className="flex items-center gap-1.5"><i className="fa-solid fa-graduation-cap"></i> {selectedLecture.semester}</span>
  <span className="flex items-center gap-1.5"><i className="fa-solid fa-location-dot"></i> {selectedLecture.room}</span>
  </div>
  </div>
  <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-8 custom-scrollbar">
- <button type="button" onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="w-full bg-emerald-500 hover:opacity-90 text-themeApp py-4 rounded-xl text-sm font-black uppercase tracking-widest transition-opacity flex items-center justify-center gap-2">
+ <button type="button" onClick={() => window.erpDialog.alert("Please navigate to the Academic Hub -> Attendance module to mark attendance.")} className="w-full bg-emerald-500 hover:opacity-90 text-themeApp py-4 rounded-xl text-[15px] font-semibold tracking-normal transition-opacity flex items-center justify-center gap-2">
  <i className="fa-solid fa-clipboard-check text-lg"></i> Launch Attendance Interface
  </button>
  </div>
@@ -352,7 +351,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  <PageHeader 
  icon="fa-solid fa-calendar-days"
  title="Teaching Workspace"
@@ -364,7 +363,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
+ className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab.toLowerCase() 
  ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-themeText border border-black/10 dark:border-white/40 scale-100' 
  : 'text-themeTextSec opacity-80 hover:text-themeText hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
@@ -386,7 +385,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  {renderWeeklyGrid()}
  <div className="lg:hidden p-8 border border-themeBorder border-dashed rounded-2xl text-center flex flex-col items-center justify-center bg-themePanel mt-4">
  <i className="fa-solid fa-desktop text-3xl text-themeTextSec mb-4"></i>
- <h3 className="text-sm font-black text-themeText mb-1">Desktop Recommended</h3>
+ <h3 className="text-[15px] font-semibold text-themeText mb-1">Desktop Recommended</h3>
  <p className="text-xs font-bold text-themeTextSec">The weekly timetable chart requires a larger screen. Please use a tablet or desktop, or switch to the 'Timeline' view.</p>
  </div>
  </>
@@ -397,15 +396,15 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div className="w-full xl:w-80 shrink-0 flex flex-col gap-6 sticky top-32">
  <div className="bg-themePanel border border-themeBorder rounded-2xl p-6 relative overflow-hidden group">
  <div className="absolute -right-12 -top-12 w-32 h-32 bg-themeAccent/10 rounded-full blur-2xl transition"></div>
- <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-4">Today's Pulse</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-4">Today's Pulse</h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="flex flex-col gap-1">
- <span className="text-3xl font-black text-themeText">{schedule.length}</span>
- <span className="text-[9px] font-black uppercase tracking-widest text-themeTextSec">Classes</span>
+ <span className="text-3xl font-semibold tracking-tight text-themeText">{schedule.length}</span>
+ <span className="text-[12px] font-medium text-themeTextSec">Classes</span>
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-3xl font-black text-amber-500">{requests.filter(r => r.status === 'Pending').length}</span>
- <span className="text-[9px] font-black uppercase tracking-widest text-themeTextSec">Pending Reqs</span>
+ <span className="text-3xl font-semibold tracking-tight text-amber-500">{requests.filter(r => r.status === 'Pending').length}</span>
+ <span className="text-[12px] font-medium text-themeTextSec">Pending Reqs</span>
  </div>
  </div>
  </div>

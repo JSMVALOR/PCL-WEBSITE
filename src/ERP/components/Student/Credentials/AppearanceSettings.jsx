@@ -6,6 +6,7 @@ export default function AppearanceSettings() {
     const { activeTheme, changeTheme, navLayout, changeNavLayout, sidebarMode, changeSidebarMode } = useERP();
 
     const themes = [
+        { id: 'apple-hig-light', name: 'Cupertino Glass', desc: 'Native Apple Aesthetic', icon: 'fa-apple', gradient: 'bg-gradient-to-br from-[#F2F2F7] via-white to-[#E5E5EA]', accent: 'bg-[#007AFF]' },
         { id: 'dark-luxury', name: 'Obsidian Glass', desc: 'Ultra-Dark Slate & Gold', icon: 'fa-moon', gradient: 'bg-gradient-to-br from-neutral-800 via-[#0a0a0a] to-black', accent: 'bg-[#D4AF37]' },
         { id: 'marble-executive', name: 'Arctic Frost', desc: 'Bright Crystal & Blue', icon: 'fa-sun', gradient: 'bg-gradient-to-br from-slate-50 via-white to-slate-200', accent: 'bg-[#1E3A8A]' },
         { id: 'midnight-justice', name: 'Midnight Sapphire', desc: 'Deep Ocean & Platinum', icon: 'fa-cloud-moon', gradient: 'bg-gradient-to-br from-slate-800 via-[#0B1120] to-blue-950', accent: 'bg-[#E2E8F0]' },
@@ -24,7 +25,7 @@ export default function AppearanceSettings() {
                 </div>
                 <div>
                     <h2 className={`${theme.text.heading} text-2xl`}>Appearance</h2>
-                    <p className={`${theme.text.secondary} text-xs uppercase tracking-widest mt-1`}>Customize your environment</p>
+                    <p className={`${theme.text.secondary} text-xs tracking-normal mt-1`}>Customize your environment</p>
                 </div>
             </div>
 
@@ -45,8 +46,8 @@ export default function AppearanceSettings() {
                         
                         <div className="relative z-10 flex flex-col gap-4">
                             <div className="flex items-center justify-between w-full">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/10 ${t.gradient} shadow-lg`}>
-                                    <i className={`fa-solid ${t.icon} text-white`}></i>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-gray-300 dark:border-white/10 ${t.gradient} shadow-lg`}>
+                                    <i className={`fa-solid ${t.icon} text-gray-900 dark:text-white`}></i>
                                 </div>
                                 {activeTheme === t.id && (
                                     <div className="w-6 h-6 rounded-full bg-themeAccent/20 flex items-center justify-center border border-themeAccent/50 text-themeAccent">
@@ -58,14 +59,14 @@ export default function AppearanceSettings() {
                             {/* Mini UI Preview */}
                             <div className={`w-full h-16 rounded-lg overflow-hidden border border-black/10 dark:border-white/10 flex shadow-inner ${t.gradient}`}>
                                 {/* Mini Sidebar */}
-                                <div className={`w-1/4 h-full border-r border-black/5 dark:border-white/10 ${t.id === 'marble-executive' ? 'bg-white/60' : 'bg-black/40'}`}>
-                                    <div className={`w-full h-2 mt-2 ${t.id === 'marble-executive' ? 'bg-black/20' : 'bg-white/20'} mx-auto w-3/4 rounded-full`}></div>
+                                <div className={`w-1/4 h-full border-r border-black/5 dark:border-white/10 ${['apple-hig-light', 'marble-executive'].includes(t.id) ? 'bg-white/60' : 'bg-black/40'}`}>
+                                    <div className={`w-full h-2 mt-2 ${['apple-hig-light', 'marble-executive'].includes(t.id) ? 'bg-gray-50 dark:bg-black/20' : 'bg-white/20'} mx-auto w-3/4 rounded-full`}></div>
                                     <div className={`w-full h-1 mt-2 ${t.accent} mx-auto w-1/2 rounded-full`}></div>
                                 </div>
                                 {/* Mini Content */}
                                 <div className="w-3/4 h-full p-2 flex flex-col gap-1">
-                                    <div className={`w-1/3 h-1.5 rounded-full ${t.id === 'marble-executive' ? 'bg-black/40' : 'bg-white/40'}`}></div>
-                                    <div className={`w-full h-6 rounded-md border border-black/5 dark:border-white/5 mt-1 ${t.id === 'marble-executive' ? 'bg-white/60' : 'bg-black/40'}`}></div>
+                                    <div className={`w-1/3 h-1.5 rounded-full ${['apple-hig-light', 'marble-executive'].includes(t.id) ? 'bg-black/40' : 'bg-white/40'}`}></div>
+                                    <div className={`w-full h-6 rounded-md border border-black/5 dark:border-white/5 mt-1 ${['apple-hig-light', 'marble-executive'].includes(t.id) ? 'bg-white/60' : 'bg-black/40'}`}></div>
                                 </div>
                             </div>
                             
@@ -73,7 +74,7 @@ export default function AppearanceSettings() {
                                 <h3 className={`font-black text-sm tracking-tight mb-1 ${activeTheme === t.id ? 'text-themeAccent' : 'text-themeText'}`}>
                                     {t.name}
                                 </h3>
-                                <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} leading-relaxed`}>{t.desc}</p>
+                                <p className={`text-[10px] tracking-normal ${theme.text.muted} leading-relaxed`}>{t.desc}</p>
                             </div>
                         </div>
                     </button>
@@ -85,7 +86,7 @@ export default function AppearanceSettings() {
                 
                 {/* Desktop Navigation */}
                 <div className="flex flex-col gap-5">
-                    <h3 className={`text-xs font-black text-themeText uppercase tracking-widest flex items-center gap-2 px-1`}>
+                    <h3 className={`text-[14px] font-medium text-themeText tracking-normal flex items-center gap-2 px-1`}>
                         <i className="fa-solid fa-layer-group text-themeAccent"></i> Desktop Navigation
                     </h3>
                     <div className="flex flex-col gap-4">
@@ -98,7 +99,7 @@ export default function AppearanceSettings() {
                             </div>
                             <div className="flex-1 text-left">
                                 <h3 className={`font-black text-sm ${navLayout === 'classic' ? 'text-themeAccent' : 'text-themeText'}`}>Classic Sidebar</h3>
-                                <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} mt-1`}>Traditional vertical sidebar</p>
+                                <p className={`text-[10px] tracking-normal ${theme.text.muted} mt-1`}>Traditional vertical sidebar</p>
                             </div>
                         </button>
 
@@ -111,7 +112,7 @@ export default function AppearanceSettings() {
                             </div>
                             <div className="flex-1 text-left">
                                 <h3 className={`font-black text-sm ${navLayout === 'topnav' ? 'text-themeAccent' : 'text-themeText'}`}>Mega-Menu</h3>
-                                <p className={`text-[10px] uppercase tracking-widest ${theme.text.muted} mt-1`}>Modern horizontal top bar</p>
+                                <p className={`text-[10px] tracking-normal ${theme.text.muted} mt-1`}>Modern horizontal top bar</p>
                             </div>
                         </button>
                     </div>

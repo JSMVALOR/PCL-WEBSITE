@@ -17,8 +17,7 @@ export default function SubmitBlog() {
         affiliation: '',
         title: '',
         content: '',
-        imageUrl: '',
-    });
+        imageUrl: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');

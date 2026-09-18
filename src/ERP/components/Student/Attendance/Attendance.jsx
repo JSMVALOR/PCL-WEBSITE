@@ -1,11 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 import PageHeader from "../../shared/PageHeader/PageHeader"; 
 
-export default function Attendance({ isEmbedded = false }) {
+export default function Attendance({}) {
  const { userSession } = useERP();
 
  const [attendanceData, setAttendanceData] = useState([]);
@@ -21,7 +20,40 @@ export default function Attendance({ isEmbedded = false }) {
  
  // QR Scanner State
  const [scanToken, setScanToken] = useState("");
- const [scanStatus, setScanStatus] = useState("idle"); // idle, scanning, success, error
+  const [scanStatus, setScanStatus] = useState("idle");
+ const [showAppealModal, setShowAppealModal] = useState(false);
+ const [appealRecord, setAppealRecord] = useState(null);
+ const [appealReason, setAppealReason] = useState("");
+ const [isAppealing, setIsAppealing] = useState(false);
+
+ const handleFileAppeal = async () => {
+    if(!appealReason.trim()) return window.erpDialog?.alert("Please provide a reason.");
+    setIsAppealing(true);
+    try {
+        const ticketId = 'TKT-' + Date.now().toString().slice(-6);
+        const { error } = await supabase.from('helpdesk_tickets').insert({
+            ticket_id: ticketId,
+            user_id: userSession.db_id,
+            category: 'Attendance',
+            subject: `Missing Attendance Appeal: ${activeSubject.course_name} on ${new Date(appealRecord.date).toLocaleDateString()}`,
+            description: JSON.stringify({ reason: appealReason,
+                session_id: appealRecord.session_id,
+                student_id: userSession.db_id,
+                record_id: appealRecord.id
+            }),
+            status: 'open',
+            admin_reply: 'Pending Review'
+        });
+        if(error) throw error;
+        window.erpDialog?.alert("Appeal filed successfully. The Admin will review it.");
+        setShowAppealModal(false);
+        setAppealReason("");
+    } catch (e) {
+        window.erpDialog?.alert("Failed to file appeal.");
+    } finally {
+        setIsAppealing(false);
+    }
+ };
 
  const fetchAcademicData = useCallback(async () => {
  const studentId = userSession?.db_id || userSession?.id;
@@ -82,9 +114,9 @@ export default function Attendance({ isEmbedded = false }) {
  else if (record.status === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
 
  // Add to ledger
- subjectMap[subjId].records.push({
- id: record.id,
+ subjectMap[subjId].records.push({ id: record.id,
  date: session.date,
+ session_id: session.id,
  start_time: 'N/A',
  status: record.status,
  room: 'N/A'
@@ -124,6 +156,26 @@ export default function Attendance({ isEmbedded = false }) {
  }, [userSession]);
 
  useEffect(() => { fetchAcademicData(); }, [fetchAcademicData]);
+
+    useEffect(() => {
+        if (!userSession?.db_id) return;
+        
+        const channel = supabase
+            .channel('student-attendance-updates')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'attendance_records', filter: `student_id=eq.${userSession.db_id}` },
+                (payload) => {
+                    fetchAcademicData();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [userSession, fetchAcademicData]);
+
 
  const handleScanQR = async (e) => {
  e.preventDefault();
@@ -189,7 +241,7 @@ export default function Attendance({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
 
  {/* 1. MASTER HEADER */}
  <PageHeader 
@@ -212,12 +264,12 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="w-full lg:w-1/2 flex flex-col gap-4 relative z-10">
  <div className="flex justify-between items-end">
  <div>
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1">Overall Semester Health</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">Overall Semester Health</p>
  <h2 className={`text-5xl font-black ${getHealthTextClass(overallAttendance)}`}>{overallAttendance}%</h2>
  </div>
  <div className="text-right">
- <p className="text-[9px] font-black uppercase tracking-widest text-themeTextSec mb-1">Minimum Required</p>
- <p className="text-sm font-black text-themeText">75%</p>
+ <p className="text-[12px] font-medium text-themeTextSec mb-1">Minimum Required</p>
+ <p className="text-[15px] font-semibold text-themeText">75%</p>
  </div>
  </div>
  
@@ -232,7 +284,7 @@ export default function Attendance({ isEmbedded = false }) {
  ></div>
  </div>
  
- <div className="flex justify-between text-[9px] font-bold uppercase tracking-widest text-themeTextSec px-1">
+ <div className="flex justify-between text-[12px] font-medium text-themeTextSec px-1">
  <span>0%</span>
  <span>100%</span>
  </div>
@@ -241,7 +293,7 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="mt-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-start gap-3">
  <i className="fa-solid fa-triangle-exclamation text-rose-500 mt-0.5"></i>
  <div>
- <p className="text-xs font-black text-rose-500">Action Required</p>
+ <p className="text-[14px] font-medium text-rose-500">Action Required</p>
  <p className="text-[10px] font-bold text-rose-400 mt-0.5">You are falling below the university attendance mandate. Contact your mentor.</p>
  </div>
  </div>
@@ -251,27 +303,27 @@ export default function Attendance({ isEmbedded = false }) {
  {/* Stat Cards */}
  <div className="w-full lg:w-1/2 grid grid-cols-2 gap-4 relative z-10">
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-4 rounded-xl border border-black/10 dark:border-white/20 flex flex-col">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1">Classes Attended</p>
- <p className="text-2xl font-black text-themeText">{totalAttended}</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">Classes Attended</p>
+ <p className="text-2xl font-semibold tracking-tight text-themeText">{totalAttended}</p>
  </div>
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-4 rounded-xl border border-black/10 dark:border-white/20 flex flex-col">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1">Classes Missed</p>
- <p className="text-2xl font-black text-rose-500">{totalMissed}</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">Classes Missed</p>
+ <p className="text-2xl font-semibold tracking-tight text-rose-500">{totalMissed}</p>
  </div>
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-4 rounded-xl border border-black/10 dark:border-white/20 flex flex-col">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1">Medical Leaves</p>
- <p className="text-2xl font-black text-amber-500">{totalMedical}</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">Medical Leaves</p>
+ <p className="text-2xl font-semibold tracking-tight text-amber-500">{totalMedical}</p>
  </div>
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-4 rounded-xl border border-black/10 dark:border-white/20 flex flex-col">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1">Approved Leaves</p>
- <p className="text-2xl font-black text-blue-500">{totalApproved}</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">Approved Leaves</p>
+ <p className="text-2xl font-semibold tracking-tight text-blue-500">{totalApproved}</p>
  </div>
  </div>
  </div>
 
  {/* 3. SUBJECT-WISE BREAKDOWN */}
  <div className="flex flex-col gap-4">
- <h2 className="text-xl font-black text-themeText tracking-tight">Subject Breakdown</h2>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">Subject Breakdown</h2>
  
  {isLoading ? (
  <div className="flex flex-col gap-6 w-full animate-pulse opacity-70 p-4 mt-6">
@@ -279,7 +331,7 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="h-48 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
 </div>
  ) : attendanceData.length === 0 ? (
- <div className="py-24 text-center border-2 border-dashed border-black/10 dark:border-white/20 rounded-2xl bg-themePanel/30 px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-book-blank text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-themeText font-black">No Verified Records</h3>
  <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">No classes have been marked for you yet.</p>
@@ -299,14 +351,14 @@ export default function Attendance({ isEmbedded = false }) {
  <div>
  <div className="flex items-center gap-2 mb-1">
  <span className={`w-3 h-3 rounded-full ${getHealthColor(percentage).split(' ')[0]}`}></span>
- <p className="text-[9px] font-black uppercase tracking-widest text-themeTextSec truncate max-w-[150px]">{subject.course_code}</p>
+ <p className="text-[12px] font-medium text-themeTextSec truncate max-w-[150px]">{subject.course_code}</p>
  </div>
- <h3 className="text-lg font-black text-themeText leading-tight group-hover:text-themeAccent transition-colors">{subject.course_name}</h3>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText leading-tight group-hover:text-themeAccent transition-colors">{subject.course_name}</h3>
  </div>
- <h2 className={`text-2xl font-black ${getHealthTextClass(percentage)} shrink-0`}>{percentage}%</h2>
+ <h2 className={`text-2xl font-semibold tracking-tight ${getHealthTextClass(percentage)} shrink-0`}>{percentage}%</h2>
  </div>
  
- <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-themeTextSec bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-3 rounded-xl border border-black/10 dark:border-white/20 justify-around">
+ <div className="flex items-center gap-4 text-[13px] font-medium text-themeTextSec bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-3 rounded-xl border border-black/10 dark:border-white/20 justify-around">
  <div className="text-center">
  <span className="block text-emerald-500 text-sm mb-0.5">{subject.present}</span> Present
  </div>
@@ -339,7 +391,7 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
  <div className="w-full max-w-sm bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] rounded-2xl overflow-hidden flex flex-col relative">
  <div className="p-4 border-b border-black/10 dark:border-white/20 flex justify-between items-center bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
- <h3 className="text-sm font-black text-themeText uppercase tracking-widest">Live Attendance</h3>
+ <h3 className="text-[15px] font-semibold text-themeText tracking-normal">Live Attendance</h3>
  <button type="button" onClick={() => setShowScanner(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
@@ -358,8 +410,8 @@ export default function Attendance({ isEmbedded = false }) {
  </div>
  
  <div className="text-center w-full">
- <h4 className="text-lg font-black text-themeText mb-1">Enter QR Token</h4>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-4">Provided by your faculty on screen</p>
+ <h4 className="text-lg font-semibold tracking-tight text-themeText mb-1">Enter QR Token</h4>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal mb-4">Provided by your faculty on screen</p>
  
  <input 
  type="text"
@@ -392,8 +444,8 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="w-full max-w-md h-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-l border-black/10 dark:border-white/20 flex flex-col animate-slide-in-right">
  <div className="p-6 border-b border-black/10 dark:border-white/20 flex justify-between items-start bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 shrink-0">
  <div>
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1">{activeSubject.course_code}</p>
- <h2 className="text-xl font-black text-themeText leading-tight">{activeSubject.course_name}</h2>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">{activeSubject.course_code}</p>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText leading-tight">{activeSubject.course_name}</h2>
  <p className="text-xs font-bold text-themeTextSec mt-2"><i className="fa-solid fa-user-tie mr-1"></i> {activeSubject.faculty_name}</p>
  </div>
  <button type="button" onClick={() => setActiveSubject(null)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors shrink-0">
@@ -405,18 +457,18 @@ export default function Attendance({ isEmbedded = false }) {
  {/* Prediction Engine */}
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-5 rounded-2xl border border-black/10 dark:border-white/20 relative overflow-hidden">
  <div className="absolute top-0 right-0 w-24 h-24 bg-themeAccent/5 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl pointer-events-none"></div>
- <h3 className="text-xs font-black text-themeText uppercase tracking-widest mb-4 flex items-center gap-2">
+ <h3 className="text-[14px] font-medium text-themeText tracking-normal mb-4 flex items-center gap-2">
  <i className="fa-solid fa-wand-magic-sparkles text-themeAccent"></i> Prediction Engine
  </h3>
  
  <div className="flex items-center justify-between mb-2">
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Current</p>
- <p className="text-sm font-black text-themeText">{activeSubject.total_classes === 0 ? 0 : Math.round((activeSubject.present / activeSubject.total_classes) * 100)}%</p>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal">Current</p>
+ <p className="text-[15px] font-semibold text-themeText">{activeSubject.total_classes === 0 ? 0 : Math.round((activeSubject.present / activeSubject.total_classes) * 100)}%</p>
  </div>
  
  <div className="flex items-center justify-between">
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">If you miss next class</p>
- <p className="text-sm font-black text-rose-500">
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal">If you miss next class</p>
+ <p className="text-[15px] font-semibold text-rose-500">
  {activeSubject.total_classes === 0 ? 0 : Math.round((activeSubject.present / (activeSubject.total_classes + 1)) * 100)}%
  </p>
  </div>
@@ -424,7 +476,7 @@ export default function Attendance({ isEmbedded = false }) {
  
  {/* Timeline */}
  <div>
- <h3 className="text-xs font-black text-themeText uppercase tracking-widest mb-4">Class Timeline</h3>
+ <h3 className="text-[14px] font-medium text-themeText tracking-normal mb-4">Class Timeline</h3>
  <div className="flex flex-col gap-3">
  {activeSubject.records.length === 0 ? (
  <p className="text-xs font-bold text-themeTextSec">No records available.</p>
@@ -448,15 +500,22 @@ export default function Attendance({ isEmbedded = false }) {
  {/* Details */}
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-3 rounded-xl border border-black/10 dark:border-white/20 flex-1 mb-2 last:mb-0">
  <div className="flex justify-between items-start mb-1">
- <p className="text-xs font-black text-themeText">{new Date(rec.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
- <p className={`text-[9px] font-black uppercase tracking-widest ${
+ <p className="text-[14px] font-medium text-themeText">{new Date(rec.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+ <p className={`text-[12px] font-medium ${
  rec.status === 'present' ? 'text-emerald-500' :
  rec.status === 'absent' ? 'text-rose-500' : 'text-amber-500'
  }`}>{rec.status.replace('_', ' ')}</p>
  </div>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">
- {rec.start_time?.substring(0, 5)} • Room {rec.room}
- </p>
+ <div className="flex justify-between items-center">
+    <p className="text-[10px] font-bold text-themeTextSec tracking-normal">
+        {rec.start_time?.substring(0, 5)} • Room {rec.room}
+    </p>
+    {rec.status === 'absent' && (
+        <button type="button" onClick={() => { setAppealRecord(rec); setShowAppealModal(true); }} className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-gray-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-themeText transition-colors">
+            File Appeal
+        </button>
+    )}
+</div>
  </div>
  </div>
  ))
@@ -468,6 +527,32 @@ export default function Attendance({ isEmbedded = false }) {
  </div>
  )}
  </div>
- </div>
- );
+             {/* APPEAL MODAL */}
+            {showAppealModal && appealRecord && (
+                <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+                    <div className="w-full max-w-md bg-white dark:bg-[#121212] border border-gray-300 dark:border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-4">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Appeal Missing Attendance</h3>
+                            <button onClick={() => setShowAppealModal(false)} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white"><i className="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <p className="text-sm font-medium text-white/70">
+                            Filing appeal for <span className="text-gray-900 dark:text-white font-bold">{activeSubject?.course_name}</span> on <span className="text-gray-900 dark:text-white font-bold">{new Date(appealRecord.date).toLocaleDateString()}</span>.
+                        </p>
+                        <textarea
+                            className="w-full h-32 bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl p-4 text-sm font-medium text-gray-900 dark:text-white outline-none resize-none focus:border-amber-500/50"
+                            placeholder="Explain why you were marked absent incorrectly..."
+                            value={appealReason}
+                            onChange={(e) => setAppealReason(e.target.value)}
+                        />
+                        <div className="flex justify-end gap-3 mt-2">
+                            <button onClick={() => setShowAppealModal(false)} className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-900 dark:text-white text-sm font-bold transition-colors">Cancel</button>
+                            <button onClick={handleFileAppeal} disabled={isAppealing} className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-black transition-colors">
+                                {isAppealing ? 'Submitting...' : 'Submit Appeal'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }

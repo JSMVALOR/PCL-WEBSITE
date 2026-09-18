@@ -1,8 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useMemo, useEffect } from 'react';
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import DOMPurify from 'dompurify';
 
 const ALL_TABS = [
@@ -72,7 +72,7 @@ export default function FacultyProfile() {
             } else {
                 setFaculty(null);
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         } finally {
             setLoading(false);

@@ -13,8 +13,7 @@ const SUBJECT_COLORS = {
     purple: { bg: 'bg-purple-500/10', text: 'text-purple-500', border: 'border-purple-500/20', solid: 'bg-purple-500', shadow: 'shadow-purple-500/20' },
     orange: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/20', solid: 'bg-orange-500', shadow: 'shadow-orange-500/20' },
     rose: { bg: 'bg-rose-500/10', text: 'text-rose-500', border: 'border-rose-500/20', solid: 'bg-rose-500', shadow: 'shadow-rose-500/20' },
-    amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', border: 'border-amber-500/20', solid: 'bg-amber-500', shadow: 'shadow-amber-500/20' },
-};
+    amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', border: 'border-amber-500/20', solid: 'bg-amber-500', shadow: 'shadow-amber-500/20' } };
 
 export default function WeeklyChart({ schedule = [], onLectureClick, role = 'student', isDrawMode = false, onSlotClick }) {
     
@@ -57,7 +56,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
     };
 
     return (
-        <div className="bg-themePanel/80 backdrop-blur-md border border-white/5 rounded-[2rem] shadow-xl flex flex-col w-full relative overflow-hidden">
+        <div className="bg-themePanel/80 backdrop-blur-md border border-gray-200 dark:border-white/5 rounded-[2rem] shadow-xl flex flex-col w-full relative overflow-hidden">
             {/* Header Gradient Accent */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-themeAccent/20 via-themeAccent to-themeAccent/20 z-50"></div>
             
@@ -65,8 +64,8 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                 <div className="min-w-[900px] flex flex-col">
                     
                     {/* Header: Days */}
-                    <div className="flex border-b border-white/5 bg-themeElevated/60 sticky top-0 z-40 backdrop-blur-xl">
-                        <div className="w-24 shrink-0 border-r border-white/5 bg-themeElevated/60 sticky left-0 z-50 backdrop-blur-xl flex items-center justify-center">
+                    <div className="flex border-b border-gray-200 dark:border-white/5 bg-themeElevated/60 sticky top-0 z-40 backdrop-blur-xl">
+                        <div className="w-24 shrink-0 border-r border-gray-200 dark:border-white/5 bg-themeElevated/60 sticky left-0 z-50 backdrop-blur-xl flex items-center justify-center">
                             <i className="fa-regular fa-clock text-themeTextSec opacity-50"></i>
                         </div>
                         
@@ -74,10 +73,10 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                             const todayDayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
                             const isToday = day === todayDayName;
                             return (
-                                <div key={day} className={`flex-1 py-5 text-center border-r border-white/5/30 last:border-r-0 relative group ${isToday ? 'bg-themeAccent/5' : ''}`}>
+                                <div key={day} className={`flex-1 py-5 text-center border-r border-gray-200 dark:border-white/5/30 last:border-r-0 relative group ${isToday ? 'bg-themeAccent/5' : ''}`}>
                                     <div className="absolute inset-0 bg-themeAccent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                                    <span className={`text-[11px] font-black uppercase tracking-widest drop-shadow-sm ${isToday ? 'text-themeAccent' : 'text-themeText'}`}>{day}</span>
-                                    {isToday && <div className="mt-1"><span className="text-[7px] font-black uppercase tracking-widest bg-themeAccent text-white px-1.5 py-0.5 rounded-full">Today</span></div>}
+                                    <span className={`text-[11px] font-black tracking-normal drop-shadow-sm ${isToday ? 'text-themeAccent' : 'text-themeText'}`}>{day}</span>
+                                    {isToday && <div className="mt-1"><span className="text-[7px] font-black tracking-normal bg-themeAccent text-gray-900 dark:text-white px-1.5 py-0.5 rounded-full">Today</span></div>}
                                 </div>
                             );
                         })}
@@ -87,7 +86,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                     <div className="flex relative bg-themeApp/30 w-full">
                         
                         {/* Y-Axis: Time Labels */}
-                        <div className="w-24 shrink-0 border-r border-white/5 bg-themePanel/90 sticky left-0 z-30 shadow-[4px_0_15px_rgba(0,0,0,0.1)] backdrop-blur-md" style={{ height: `${(END_HOUR - START_HOUR + 1) * HOUR_HEIGHT + GRID_OFFSET_Y * 2}px` }}>
+                        <div className="w-24 shrink-0 border-r border-gray-200 dark:border-white/5 bg-themePanel/90 sticky left-0 z-30 shadow-[4px_0_15px_rgba(0,0,0,0.1)] backdrop-blur-md" style={{ height: `${(END_HOUR - START_HOUR + 1) * HOUR_HEIGHT + GRID_OFFSET_Y * 2}px` }}>
                             {timeLabels.map((time, index) => (
                                 <div 
                                     key={time} 
@@ -107,7 +106,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                                 {timeLabels.map((time, index) => (
                                     <div 
                                         key={`line-${index}`} 
-                                        className="absolute w-full border-t border-white/5/20 border-dashed"
+                                        className="absolute w-full border-t border-gray-200 dark:border-white/5/20 border-dashed"
                                         style={{ top: `${index * HOUR_HEIGHT + GRID_OFFSET_Y}px` }}
                                     ></div>
                                 ))}
@@ -120,7 +119,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                                 const isToday = day === todayDayName;
                                 
                                 return (
-                                    <div key={day} className={`flex-1 border-r border-white/5/20 last:border-r-0 relative min-w-[120px] z-10 group/col hover:bg-themeElevated/10 transition-colors ${isToday ? 'bg-themeAccent/[0.03]' : ''}`}>
+                                    <div key={day} className={`flex-1 border-r border-gray-200 dark:border-white/5/20 last:border-r-0 relative min-w-[120px] z-10 group/col hover:bg-themeElevated/10 transition-colors ${isToday ? 'bg-themeAccent/[0.03]' : ''}`}>
                                         {dayClasses.map(cls => {
                                             const style = getBlockStyle(cls.time, cls.endTime);
                                             const c = SUBJECT_COLORS[cls.color] || SUBJECT_COLORS.blue;
@@ -141,7 +140,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                                                     
                                                     <div className="pl-2.5 h-full flex flex-col justify-between">
                                                         <div>
-                                                            <h4 className={`text-xs font-black leading-tight ${c.text} drop-shadow-sm flex items-center gap-1.5`}>
+                                                            <h4 className={`text-[14px] font-medium leading-tight ${c.text} drop-shadow-sm flex items-center gap-1.5`}>
                                                                 {cls.subject}
                                                                 {cls.isDraft && <i className="fa-solid fa-pen-ruler text-[8px] opacity-70" title="Draft"></i>}
                                                             </h4>

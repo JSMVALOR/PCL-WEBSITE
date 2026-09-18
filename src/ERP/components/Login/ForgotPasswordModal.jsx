@@ -58,7 +58,7 @@ export default function ForgotPasswordModal({ onClose }) {
                     <div className="w-14 h-14 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/5 dark:border-white/10 flex items-center justify-center mb-6 shadow-inner">
                         <i className="fa-solid fa-unlock-keyhole text-2xl text-themeAccent"></i>
                     </div>
-                    <h2 className="text-2xl font-black text-themeText tracking-tight mb-2">Account Recovery</h2>
+                    <h2 className="text-2xl font-semibold tracking-tight text-themeText tracking-tight mb-2">Account Recovery</h2>
                     <p className="text-xs font-bold text-themeTextSec leading-relaxed">
                         Submit a password reset request to the Administration. You will receive a temporary password once approved.
                     </p>
@@ -69,13 +69,13 @@ export default function ForgotPasswordModal({ onClose }) {
                         <div className="w-16 h-16 rounded-md bg-emerald-500/10 flex items-center justify-center mb-4 border border-emerald-500/20">
                             <i className="fa-solid fa-check text-3xl text-emerald-500"></i>
                         </div>
-                        <h3 className="text-lg font-black text-themeText mb-2">Request Submitted</h3>
+                        <h3 className="text-lg font-semibold tracking-tight text-themeText mb-2">Request Submitted</h3>
                         <p className="text-xs font-bold text-themeTextSec mb-8">
                             Your request has been forwarded to the Administration. Please monitor your registered contact channels for updates.
                         </p>
                         <button type="button" 
                             onClick={onClose}
-                            className="w-full py-4 rounded-lg bg-themeApp border border-white/5 hover:border-black/5 dark:border-white/10 text-sm font-black uppercase tracking-wider text-themeText transition"
+                            className="w-full py-4 rounded-lg bg-themeApp border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 text-[15px] font-semibold uppercase tracking-wider text-themeText transition"
                         >
                             Return to Login
                         </button>
@@ -97,7 +97,7 @@ export default function ForgotPasswordModal({ onClose }) {
                                 type="text"
                                 value={institutionalId}
                                 onChange={(e) => setInstitutionalId(e.target.value)}
-                                className="w-full bg-themeApp border border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec placeholder:font-normal placeholder:normal-case shadow-inner"
+                                className="w-full bg-themeApp border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec placeholder:font-normal placeholder:normal-case shadow-inner"
                                 placeholder="e.g. PCL-STU-2026"
                                 required
                             />
@@ -111,7 +111,7 @@ export default function ForgotPasswordModal({ onClose }) {
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
                                 rows={3}
-                                className="w-full bg-themeApp border border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec placeholder:font-normal resize-none shadow-inner"
+                                className="w-full bg-themeApp border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec placeholder:font-normal resize-none shadow-inner"
                                 placeholder="Briefly explain why you need a reset (e.g. Forgot password, locked out)"
                                 required
                             ></textarea>

@@ -1,11 +1,11 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useEffect, useState } from 'react';
+import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight, AlertCircle, Loader2 } from 'lucide-react';
 import * as Icons from 'lucide-react';
 
-import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 import styles from '../../PROGRAMS/Programs.module.css';
 
 // Eager load all images in ASSETS/CAMPUS
@@ -107,16 +107,14 @@ export default function FacilityDetail() {
                 style={{
                   backgroundImage:
                     'linear-gradient(var(--primary-color) 1px, transparent 1px), linear-gradient(90deg, var(--primary-color) 1px, transparent 1px)',
-                  backgroundSize: '32px 32px',
-                }}
+                  backgroundSize: '32px 32px' }}
                 aria-hidden="true"
               />
             )}
             <div
               className="absolute inset-0"
               style={{
-                background: 'radial-gradient(400px 300px at 50% 50%, var(--primary-glow), transparent 70%)',
-              }}
+                background: 'radial-gradient(400px 300px at 50% 50%, var(--primary-glow), transparent 70%)' }}
               aria-hidden="true"
             />
             <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-16 z-10">

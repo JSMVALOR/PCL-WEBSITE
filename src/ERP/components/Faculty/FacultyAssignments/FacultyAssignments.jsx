@@ -1,11 +1,11 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 import { useERP } from "../../../context/ErpContext";
 
-export default function FacultyAssignments({ subjectContext }, isEmbedded = false) {
+export default function FacultyAssignments({ subjectContext }) {
  const { userSession } = useERP();
  const [assignments, setAssignments] = useState(() => {
  const cached = sessionStorage.getItem(`fac_assignments_${userSession?.db_id}`);
@@ -147,14 +147,14 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  try {
  await supabase.from('assignments').delete().eq('id', id);
  setAssignments(prev => prev.filter(a => a.id !== id));
- } catch(error) {
+ } catch (error) {
  console.error("Error deleting:", error);
  }
  };
 
  return (
  <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full max-w-7xl mx-auto flex flex-col gap-8 pb-12' : 'flex flex-col gap-4'}`}>
+ <div className={`${!subjectContext ? 'w-full w-full mx-auto flex flex-col gap-8 pb-12' : 'flex flex-col gap-4'}`}>
  
  {/* HEADER */}
  {!subjectContext && (
@@ -165,7 +165,7 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  rightContent={
  <button type="button" 
  onClick={() => setShowForm(!showForm)}
- className={`px-6 py-3.5 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 ${
+ className={`px-6 py-3.5 rounded-xl text-gray-900 dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${
  showForm ? 'bg-neutral-600 hover:bg-neutral-700' : 'bg-themeAccent hover:bg-themeAccent/90'
  }`}
  >
@@ -179,7 +179,7 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  {subjectContext && (
  <button type="button" 
  onClick={() => setShowForm(!showForm)}
- className={`px-6 py-3 rounded-xl text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 ${
+ className={`px-6 py-3 rounded-xl text-gray-900 dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${
  showForm ? 'bg-neutral-600' : 'bg-themeAccent'
  }`}
  >
@@ -190,23 +190,23 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* CREATE FORM */}
  {showForm && (
- <div className="bg-themePanel border border-themeBorder rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
+ <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5Border rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
  <div className="flex items-center gap-3 mb-2">
  <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg">
  <i className="fa-solid fa-file-signature"></i>
  </div>
  <div>
- <h2 className="text-xl font-black text-themeText">Issue New Assignment</h2>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Offline Submission Tracker</p>
+ <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Issue New Assignment</h2>
+ <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-normal mt-0.5">Offline Submission Tracker</p>
  </div>
  </div>
 
  <form onSubmit={handlePublish} className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {!subjectContext && (
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Subject *</label>
+ <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Subject *</label>
  <select 
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
+ className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
  value={formData.subject_id}
  onChange={(e) => setFormData({...formData, subject_id: e.target.value})}
  required
@@ -221,9 +221,9 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* Batch */}
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Target Batch *</label>
+ <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Target Batch *</label>
  <select 
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
+ className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
  value={formData.batch}
  onChange={(e) => setFormData({...formData, batch: e.target.value})}
  required
@@ -237,10 +237,10 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* Title */}
  <div className="flex flex-col gap-2 md:col-span-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Assignment Title *</label>
+ <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Assignment Title *</label>
  <input 
  type="text"
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors"
+ className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
  placeholder="e.g., Constitutional Law Research Paper"
  value={formData.title}
  onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -250,9 +250,9 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* Description */}
  <div className="flex flex-col gap-2 md:col-span-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Instructions / Description</label>
+ <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Instructions / Description</label>
  <textarea 
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors resize-none h-24"
+ className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors resize-none h-24"
  placeholder="Optional instructions for the batch..."
  value={formData.description}
  onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -261,11 +261,11 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* Total Marks */}
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Max Marks *</label>
+ <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Max Marks *</label>
  <input 
  type="number"
  min="1"
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors"
+ className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
  value={formData.total_marks}
  onChange={(e) => setFormData({...formData, total_marks: e.target.value})}
  required
@@ -274,10 +274,10 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* Due Date */}
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Offline Due Date *</label>
+ <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Offline Due Date *</label>
  <input 
  type="datetime-local"
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors [color-scheme:dark]"
+ className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors [color-scheme:dark]"
  value={formData.due_date}
  onChange={(e) => setFormData({...formData, due_date: e.target.value})}
  required
@@ -299,13 +299,13 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
 
  {/* ASSIGNMENTS LIST */}
  <div className="flex flex-col gap-4">
- <h2 className="text-xl font-black text-themeText tracking-tight">Active Assignments</h2>
+ <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white tracking-tight">Active Assignments</h2>
  
  {assignments.filter(a => subjectContext ? a.subject_id === subjectContext.id : true).length === 0 ? (
- <div className="py-24 text-center border-2 border-dashed border-themeBorder rounded-2xl bg-themePanel/30 px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
- <h3 className="text-lg lg:text-xl text-themeText font-black">No Assignments Issued</h3>
- <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
+ <h3 className="text-lg lg:text-xl text-gray-900 dark:text-white font-black">No Assignments Issued</h3>
+ <p className="text-xs lg:text-sm text-gray-500 dark:text-white/50 opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
  </div>
  ) : (
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -314,25 +314,25 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  const isPastDue = dueDate < new Date();
  
  return (
- <div key={assign.id} className="bg-themePanel border border-themeBorder rounded-2xl p-5 hover:border-themeAccent/50 transition flex flex-col gap-4 group">
+ <div key={assign.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5Border rounded-2xl p-5 hover:border-gray-200 dark:border-white/5Accent/50 transition flex flex-col gap-4 group">
  
  <div className="flex justify-between items-start">
  <div>
  <div className="flex items-center gap-2 mb-2">
- <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${isPastDue ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
+ <span className={`px-2 py-0.5 rounded text-[12px] font-medium ${isPastDue ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
  {isPastDue ? 'Past Due' : 'Active'}
  </span>
- <span className="bg-themeElevated px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest text-themeTextSec">
+ <span className="bg-gray-100 dark:bg-[#1A1A1A] px-2 py-0.5 rounded text-[12px] font-medium text-gray-500 dark:text-white/50">
  {assign.batch}
  </span>
  </div>
- <h3 className="text-lg font-black text-themeText leading-tight">{assign.title}</h3>
- <p className="text-[11px] font-bold text-themeTextSec mt-1">{assign.subject?.code} - {assign.subject?.name}</p>
+ <h3 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white leading-tight">{assign.title}</h3>
+ <p className="text-[11px] font-bold text-gray-500 dark:text-white/50 mt-1">{assign.subject?.code} - {assign.subject?.name}</p>
  </div>
  
  <button type="button" 
  onClick={() => handleDelete(assign.id)}
- className="w-8 h-8 rounded-full bg-themeElevated border border-themeBorder flex items-center justify-center text-themeTextSec hover:text-rose-500 hover:border-rose-500/50 transition opacity-0 group-hover:opacity-100"
+ className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border flex items-center justify-center text-gray-500 dark:text-white/50 hover:text-rose-500 hover:border-rose-500/50 transition opacity-0 group-hover:opacity-100"
  title="Delete Assignment"
  >
  <i className="fa-solid fa-trash text-xs"></i>
@@ -340,21 +340,21 @@ export default function FacultyAssignments({ subjectContext }, isEmbedded = fals
  </div>
  
  {assign.description && (
- <p className="text-xs text-themeTextSec line-clamp-2 leading-relaxed bg-themeElevated/50 p-3 rounded-xl border border-themeBorder/50">
+ <p className="text-xs text-gray-500 dark:text-white/50 line-clamp-2 leading-relaxed bg-gray-100 dark:bg-[#1A1A1A]/50 p-3 rounded-xl border border-gray-200 dark:border-white/5Border/50">
  {assign.description}
  </p>
  )}
  
- <div className="flex items-center justify-between mt-auto pt-2 border-t border-themeBorder/50">
- <div className="flex items-center gap-2 text-themeTextSec">
+ <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-200 dark:border-white/5Border/50">
+ <div className="flex items-center gap-2 text-gray-500 dark:text-white/50">
  <i className="fa-regular fa-calendar text-sm"></i>
- <span className="text-[10px] font-black uppercase tracking-widest">
+ <span className="text-[13px] font-medium">
  Due {dueDate.toLocaleDateString()}
  </span>
  </div>
- <div className="flex items-center gap-2 text-themeText">
+ <div className="flex items-center gap-2 text-gray-900 dark:text-white">
  <i className="fa-solid fa-star text-amber-500 text-sm"></i>
- <span className="text-xs font-black">{assign.total_marks} Marks</span>
+ <span className="text-[14px] font-medium">{assign.total_marks} Marks</span>
  </div>
  </div>
  </div>

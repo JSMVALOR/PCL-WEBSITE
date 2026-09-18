@@ -1,7 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
-import { theme } from '../../../Shared/theme';
 import { useERP } from "../../context/ErpContext";
 import { STUDENT_NAV_MEGA as STUDENT_NAV_GROUPS } from '../Student/sidebar/Sidebar';
 import { FACULTY_NAV_MEGA as FACULTY_NAV_GROUPS } from '../Faculty/FacultySidebar/FacultySidebar';
@@ -172,7 +171,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                         <div className="flex flex-col gap-6">
                             {navGroups.map((group, idx) => (
                                 <div key={idx} className="animate-slide-up" style={{ animationDelay: `${idx * 40}ms` }}>
-                                    <p className="text-[10px] font-black text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 uppercase tracking-widest mb-3 pl-1">
+                                    <p className="text-[10px] font-black text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 tracking-normal mb-3 pl-1">
                                         {group.category}
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
@@ -193,7 +192,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                                                             <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_#f59e0b]"></span>
                                                         )}
                                                     </div>
-                                                    <span className="text-[11px] font-black uppercase tracking-widest text-left leading-snug">{link.label}</span>
+                                                    <span className="text-[11px] font-black tracking-normal text-left leading-snug">{link.label}</span>
                                                 </button>
                                             )
                                         })}
@@ -207,7 +206,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                         <div className="mt-8 animate-slide-up" style={{ animationDelay: `${navGroups.length * 40}ms` }}>
                             <button type="button"
                                 onClick={() => handleTabSwitch('credentials')}
-                                className="w-full flex items-center justify-center gap-3 text-[#1C1C1E] dark:text-[#F2F2F7] bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs uppercase tracking-widest font-black border border-black/10 dark:border-black/5 dark:border-white/10 hover:border-themeAccent active:bg-themeElevated transition shadow-premiumElevated mb-4"
+                                className="w-full flex items-center justify-center gap-3 text-[#1C1C1E] dark:text-[#F2F2F7] bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs tracking-normal font-black border border-black/10 dark:border-black/5 dark:border-white/10 hover:border-themeAccent active:bg-themeElevated transition shadow-premiumElevated mb-4"
                             >
                                 <i className="fa-solid fa-user-gear text-lg"></i> Settings & Credentials
                             </button>
@@ -222,7 +221,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                                         onLogout();
                                     }
                                 }}
-                                className="w-full flex items-center justify-center gap-3 text-rose-500 bg-rose-500/10 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs uppercase tracking-widest font-black border border-rose-500/20 hover:border-rose-500 active:bg-rose-950 transition shadow-premiumElevated"
+                                className="w-full flex items-center justify-center gap-3 text-rose-500 bg-rose-500/10 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs tracking-normal font-black border border-rose-500/20 hover:border-rose-500 active:bg-rose-950 transition shadow-premiumElevated"
                             >
                                 <i className="fa-solid fa-power-off text-lg"></i> Terminate Session
                             </button>

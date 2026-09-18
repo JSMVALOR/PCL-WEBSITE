@@ -32,6 +32,7 @@ export const FACULTY_NAV_MEGA = [
       {
         id: "admin_group", label: "Admin", icon: "fa-solid fa-building-columns",
         children: [
+          { id: "payroll", label: "My Payroll", icon: "fa-solid fa-file-invoice-dollar" },
           { id: "facultyleave", label: "Time Off", icon: "fa-solid fa-mug-hot" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
         ]

@@ -6,11 +6,11 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 export default function AdminAcademicHub() {
     const navigate = useNavigate();
 
-    const cards = [{"id": "coursebuilder", "title": "Course Builder", "icon": "fa-book-open", "desc": "Manage semesters, subjects, and Bar compliance."} , {"id": "timetablebuilder", "title": "Timetable Builder", "icon": "fa-calendar-days", "desc": "Manually schedule classes and auto-generate grids."}, {"id": "examinations", "title": "Examinations", "icon": "fa-file-contract", "desc": "Schedule and manage academic exams."}, {"id": "allocations", "title": "Mentorship", "icon": "fa-people-arrows", "desc": "Allocate faculty mentors to students."}];
+    const cards = [{"id": "coursebuilder", "title": "Course Builder", "icon": "fa-book-open", "desc": "Manage semesters, subjects, and Bar compliance."} , {"id": "timetablebuilder", "title": "Timetable Builder", "icon": "fa-calendar-days", "desc": "Manually schedule classes and auto-generate grids."}, {"id": "allocations", "title": "Mentorship", "icon": "fa-people-arrows", "desc": "Allocate faculty mentors to students."}, {"id": "markscontroller", "title": "Marks Dispatcher", "icon": "fa-file-signature", "desc": "OU Internal marks tracking and CSV exports."}];
 
     return (
         <div className="w-full animate-fade-in selection:bg-[#007AFF]/20 min-h-screen bg-transparent text-[#1C1C1E] dark:text-[#F2F2F7]">
-            <div className="max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12">
+            <div className="w-full mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12">
                 <PageHeader 
                     icon="fa-solid fa-graduation-cap" 
                     title="Academic Center" 
@@ -22,7 +22,7 @@ export default function AdminAcademicHub() {
                         <div 
                             key={card.id}
                             onClick={() => navigate(`/admin/${card.id}`)}
-                            className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-6 lg:p-8 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition duration-300 group flex flex-col gap-4 cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
+                            className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-6 lg:p-8 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition duration-300 group flex flex-col gap-4 cursor-pointer shadow-none shadow-none"
                         >
                             <div className="w-12 h-12 rounded-[1rem] bg-[#007AFF]/10 flex items-center justify-center border border-[#007AFF]/20 shrink-0 group-hover:scale-110 transition-transform duration-300">
                                 <i className={`fa-solid ${card.icon} text-[#007AFF] text-xl`}></i>

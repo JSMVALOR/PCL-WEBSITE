@@ -1,8 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../context/ErpContext";
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 
 export default function BirthdayWidget() {
     const { userSession } = useERP();
@@ -50,15 +50,15 @@ export default function BirthdayWidget() {
 
     if (loading) {
         return (
-            <div className="w-full h-full shrink-0 flex flex-col bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-sm dark:shadow-sm rounded-2xl p-6 relative overflow-hidden">
+            <div className="w-full h-full shrink-0 flex flex-col bg-transparent p-6 relative overflow-hidden">
                 <div className="flex justify-between items-center mb-5 shrink-0 relative z-10">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+                    <h3 className="text-[13px] font-medium tracking-normal text-themeTextSec flex items-center gap-2">
                         <i className="fa-solid fa-cake-candles"></i> Birthdays Today
                     </h3>
                 </div>
                 <div className="flex flex-col items-center justify-center h-full opacity-50">
                     <i className="fa-solid fa-circle-notch fa-spin text-2xl text-themeTextSec mb-4"></i>
-                    <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Checking calendar...</p>
+                    <p className="text-[13px] font-medium text-themeTextSec tracking-normal">Checking calendar...</p>
                 </div>
             </div>
         );
@@ -66,32 +66,32 @@ export default function BirthdayWidget() {
 
     if (!birthdays || birthdays.length === 0) {
     return (
-        <div className="w-full h-full shrink-0 flex flex-col bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 relative overflow-hidden">
+        <div className="w-full h-full shrink-0 flex flex-col bg-transparent p-6 relative overflow-hidden">
             <div className="flex justify-between items-center mb-5 shrink-0 relative z-10">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+                <h3 className="text-[13px] font-medium tracking-normal text-themeTextSec flex items-center gap-2">
                     <i className="fa-solid fa-cake-candles"></i> Birthdays Today
                 </h3>
             </div>
             <div className="flex flex-col items-center justify-center h-full opacity-50">
                 <i className="fa-solid fa-calendar-day text-2xl text-themeTextSec mb-4"></i>
-                <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">No Birthdays Today</p>
+                <p className="text-[13px] font-medium text-themeTextSec tracking-normal">No Birthdays Today</p>
             </div>
         </div>
     );
 }
 
     return (
-        <div className="w-full h-full shrink-0 flex flex-col bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-sm dark:shadow-sm rounded-2xl p-6 relative overflow-hidden group">
+        <div className="w-full h-full shrink-0 flex flex-col bg-transparent p-6 relative overflow-hidden group">
             {/* Ambient Background for Party Vibe */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF2D55]/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none transition-opacity duration-700 opacity-50 group-hover:opacity-100"></div>
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#FF9500]/10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3 pointer-events-none transition-opacity duration-700 opacity-50 group-hover:opacity-100"></div>
 
             <div className="flex justify-between items-center mb-5 shrink-0 relative z-10">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+                <h3 className="text-[13px] font-medium tracking-normal text-themeTextSec flex items-center gap-2">
                     <i className="fa-solid fa-cake-candles text-[#FF2D55]"></i> Birthdays Today
                 </h3>
                 {isAdmin && (
-                    <span className="text-[8px] font-bold uppercase tracking-widest text-[#FF9500] bg-[#FF9500]/10 px-2 py-0.5 rounded flex items-center gap-1">
+                    <span className="text-[11px] font-medium tracking-normal text-[#FF9500] bg-[#FF9500]/10 px-2 py-0.5 rounded flex items-center gap-1">
                         <i className="fa-solid fa-bolt"></i> Auto-Sync Active
                     </span>
                 )}
@@ -104,10 +104,10 @@ export default function BirthdayWidget() {
                             <i className="fa-solid fa-gift text-xl bg-clip-text text-transparent bg-gradient-to-r from-[#FF2D55] to-[#FF9500]"></i>
                         </div>
                     </div>
-                    <h4 className="text-sm font-black text-themeText leading-tight mb-1">
+                    <h4 className="text-[17px] font-semibold text-themeText tracking-tight mb-1">
                         Happy Birthday! <span className="text-lg">🎉</span>
                     </h4>
-                    <p className="text-[10px] text-themeTextSec font-bold uppercase tracking-widest">
+                    <p className="text-[10px] text-themeTextSec font-bold tracking-normal">
                         Wishing our Prudentia family a fantastic day
                     </p>
                 </div>
@@ -123,8 +123,8 @@ export default function BirthdayWidget() {
                                 )}
                             </div>
                             <div className="flex flex-col text-left pr-2">
-                                <span className="text-[11px] font-bold text-themeText leading-none mb-1 group-hover:text-[#FF2D55] transition-colors">{person.full_name}</span>
-                                <span className="text-[8px] font-bold uppercase tracking-widest text-themeTextSec leading-none">{person.role}</span>
+                                <span className="text-[15px] font-medium text-themeText leading-none mb-1 group-hover:text-[#FF2D55] transition-colors">{person.full_name}</span>
+                                <span className="text-[11px] font-medium tracking-normal text-themeTextSec leading-none">{person.role}</span>
                             </div>
                         </div>
                     ))}

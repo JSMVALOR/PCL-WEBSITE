@@ -64,7 +64,7 @@ Message: ${formData.message}`,
           to_email: formData.email, name: formData.name, ticket_id: ticketId,
           message_preview: formData.message.substring(0, 100) + '...'
         });
-      } catch(e) { console.warn(e); }
+      } catch (e) { console.warn(e); }
 
       setStatus({ type: 'success', message: `Message sent! Your Ticket ID is ${ticketId}` });
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });

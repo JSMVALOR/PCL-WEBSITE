@@ -17,7 +17,7 @@ export default function ErpSkeleton() {
       </div>
       
       {/* Dashboard Body Skeleton */}
-      <div className="flex-1 w-full max-w-7xl mx-auto py-6 flex flex-col gap-6 w-full">
+      <div className="flex-1 w-full w-full mx-auto py-6 flex flex-col gap-6 w-full">
         <div className="flex gap-4 mb-4">
             <div className="w-1/3 h-10 bg-themeBorder rounded-xl animate-pulse"></div>
             <div className="w-1/4 h-10 bg-themeBorder rounded-xl animate-pulse hidden md:block"></div>

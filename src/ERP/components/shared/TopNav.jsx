@@ -73,7 +73,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                         setActiveTab(navItem.id);
                                     }
                                 }}
-                                className={`h-full flex items-center gap-1.5 px-3 xl:px-4 text-[11px] font-bold uppercase tracking-widest transition-colors outline-none ${
+                                className={`h-full flex items-center gap-1.5 px-3 xl:px-4 text-[11px] font-bold tracking-normal transition-colors outline-none ${
                                     (activeDropdown === navItem.id || isNavActive) ? 'text-themeAccent' : 'text-themeText hover:text-themeAccent'
                                 }`}
                             >
@@ -154,6 +154,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                     
                     {/* Layout Switcher */}
 
+                    
                     <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] transition-all relative group outline-none shadow-sm">
                         <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
                         {notices?.length > 0 && (
@@ -184,7 +185,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                 <span className="text-[13px] font-bold text-themeText group-hover/profile:text-themeAccent transition-colors duration-300 truncate max-w-[120px] tracking-tight">
                                     {displayName}
                                 </span>
-                                <span className="text-[9px] font-black text-themeTextSec uppercase tracking-widest mt-0.5">
+                                <span className="text-[9px] font-black text-themeTextSec tracking-normal mt-0.5">
                                     Settings
                                 </span>
                             </div>
@@ -233,7 +234,6 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                                 const confirmed = await window.erpDialog?.confirm("Are you sure you want to securely sign out?", "End Session");
                                                 if (confirmed) {
                                                     onLogout();
-                                                    window.location.href = '/';
                                                 }
                                             }}
                                             className="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-rose-500/10 transition-colors text-rose-500 text-[12px] font-bold mt-1"
@@ -257,7 +257,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                     window.location.href = '/';
                                 }}
                                 title="Return to Main Website"
-                                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-themeElevated hover:bg-themeElevated/80 text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm outline-none"
+                                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-themeElevated hover:bg-themeElevated/80 text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] text-[13px] font-medium transition-colors shadow-sm outline-none"
                             >
                                 <i className="fa-solid fa-earth-americas text-[11px]"></i>
                                 <span>Website</span>

@@ -70,7 +70,7 @@ function ToastItem({ toast, onRemove }) {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, x: 100, scale: 0.9 }}
-            className="bg-[#1C1C1E] dark:bg-[#2C2C2E]/90 backdrop-blur-2xl border border-white/10 text-white p-4 lg:p-5 rounded-2xl shadow-2xl flex flex-col gap-3 min-w-[320px] pointer-events-auto"
+            className="bg-[#1C1C1E] dark:bg-[#2C2C2E]/90 backdrop-blur-2xl border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white p-4 lg:p-5 rounded-2xl shadow-2xl flex flex-col gap-3 min-w-[320px] pointer-events-auto"
         >
             <div className="flex items-center justify-between gap-6">
                 <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ function ToastItem({ toast, onRemove }) {
                     <span className="text-xs lg:text-sm font-bold tracking-wide">{toast.message}</span>
                 </div>
                 {toast.type === 'undo' && (
-                    <button onClick={handleUndo} className="px-5 py-2 bg-white text-black hover:opacity-80 rounded-xl text-[10px] font-black uppercase tracking-widest transition shadow-lg shrink-0">
+                    <button onClick={handleUndo} className="px-5 py-2 bg-white text-black hover:opacity-80 rounded-xl text-[13px] font-medium transition shadow-lg shrink-0">
                         Undo Action
                     </button>
                 )}

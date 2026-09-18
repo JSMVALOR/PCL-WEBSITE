@@ -1,6 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from "react";
-import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 // Import modular components
@@ -10,7 +9,7 @@ import MentorshipTransfers from "./MentorshipTransfers";
 import MentorshipReports from "./MentorshipReports";
 import MentorshipLogs from "./MentorshipLogs";
 
-export default function AdminMentorship({ isHubView = false , isEmbedded = false}) {
+export default function AdminMentorship({ isEmbedded = false,  isHubView = false }) {
  const [activeTab, setActiveTab] = useState("dashboard");
 
  const tabs = [
@@ -23,7 +22,7 @@ export default function AdminMentorship({ isHubView = false , isEmbedded = false
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  
  {/* Header and Tabs */}
  {!isHubView && (
@@ -35,7 +34,7 @@ export default function AdminMentorship({ isHubView = false , isEmbedded = false
  <button type="button"
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
+ className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab.id ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'
  }`}
  >

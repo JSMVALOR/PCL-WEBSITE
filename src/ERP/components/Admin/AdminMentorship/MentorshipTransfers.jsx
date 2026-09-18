@@ -1,10 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function MentorshipTransfers({ isEmbedded = false }) {
+export default function MentorshipTransfers({}) {
  const [mentors, setMentors] = useState([]);
  const [sourceMentorId, setSourceMentorId] = useState("");
  const [targetMentorId, setTargetMentorId] = useState("");
@@ -161,11 +159,11 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  {isProcessing && (
  <div className="fixed bottom-6 right-6 bg-themeElevated/90 backdrop-blur-2xl px-5 py-3 rounded-full border border-black/5 dark:border-white/10 flex items-center gap-3 animate-fade-in z-50">
  <i className="fa-solid fa-circle-notch fa-spin text-themeAccent text-sm"></i>
- <span className="text-xs font-black uppercase tracking-widest text-themeAccent">{actionMessage}</span>
+ <span className="text-[14px] font-medium tracking-normal text-themeAccent">{actionMessage}</span>
  </div>
  )}
 
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6">
+ <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Transfer Mentees</span>
  <i className="fa-solid fa-right-left text-themeTextSec"></i>
@@ -179,7 +177,7 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  {/* Source Selection */}
  <div className="flex-1 flex flex-col gap-4">
  <div className="flex flex-col gap-1">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Current Mentor (Source)</label>
+ <label className="text-[13px] font-medium text-themeTextSec">Current Mentor (Source)</label>
  <select 
  value={sourceMentorId} 
  onChange={(e) => setSourceMentorId(e.target.value)}
@@ -196,18 +194,18 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  <div className="flex flex-col gap-2 mt-2">
  <div className="flex justify-between items-center bg-themeElevated/90 backdrop-blur-2xl p-3 border border-black/5 dark:border-white/10 rounded-lg">
  <span className="text-xs font-bold text-themeText">Total Mentees Assigned</span>
- <span className="text-xs font-black bg-themePanel/85 backdrop-blur-2xl px-2 py-1 rounded border border-white/5">{mentees.length}</span>
+ <span className="text-[14px] font-medium bg-white dark:bg-[#121212] backdrop-blur-2xl px-2 py-1 rounded border border-gray-200 dark:border-white/5">{mentees.length}</span>
  </div>
 
  {mentees.length > 0 ? (
  <div className="border border-black/5 dark:border-white/10 rounded-lg overflow-hidden flex flex-col mt-2">
  <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 flex justify-between items-center border-b-[length:var(--border-width)] border-black/5 dark:border-white/10">
- <button type="button" onClick={selectAll} className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">
+ <button type="button" onClick={selectAll} className="text-[13px] font-medium text-indigo-500 hover:text-indigo-400">
  {selectedMentees.size === mentees.length ? "Deselect All" : "Select All"}
  </button>
  <span className="text-[10px] font-bold text-themeTextSec">{selectedMentees.size} Selected</span>
  </div>
- <div className="max-h-[300px] overflow-y-auto bg-themePanel/85 backdrop-blur-2xl flex flex-col divide-y divide-themeBorder">
+ <div className="max-h-[300px] overflow-y-auto bg-white dark:bg-[#121212] backdrop-blur-2xl flex flex-col divide-y divide-themeBorder">
  {mentees.map(student => (
  <label key={student.id} className="flex items-center gap-3 p-3 hover:bg-themeElevated/90 backdrop-blur-2xl cursor-pointer transition-colors">
  <input 
@@ -218,7 +216,7 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  />
  <div className="flex flex-col">
  <span className="text-xs font-bold text-themeText">{student.name}</span>
- <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest">{student.erp_id} • {student.programme}</span>
+ <span className="text-[9px] font-bold text-themeTextSec tracking-normal">{student.erp_id} • {student.programme}</span>
  </div>
  </label>
  ))}
@@ -242,7 +240,7 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  {/* Target Selection */}
  <div className="flex-1 flex flex-col gap-4">
  <div className="flex flex-col gap-1">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">New Mentor (Target)</label>
+ <label className="text-[13px] font-medium text-themeTextSec">New Mentor (Target)</label>
  <select 
  value={targetMentorId} 
  onChange={(e) => setTargetMentorId(e.target.value)}
@@ -259,7 +257,7 @@ export default function MentorshipTransfers({ isEmbedded = false }) {
  <button type="button"
  onClick={handleTransfer}
  disabled={!sourceMentorId || !targetMentorId || selectedMentees.size === 0 || isProcessing}
- className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
+ className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-gray-900 dark:text-white rounded-2xl text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
  >
  <i className="fa-solid fa-paper-plane"></i> Execute Transfer ({selectedMentees.size} Students)
  </button>

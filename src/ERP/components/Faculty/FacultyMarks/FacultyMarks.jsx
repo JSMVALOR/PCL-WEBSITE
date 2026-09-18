@@ -1,11 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 
-export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
+export default function FacultyMarks({ subjectContext }) {
  const { userSession } = useERP();
  
  // Selection State
@@ -218,7 +217,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
                 }));
                 await supabase.from('student_marks').upsert(legacyPayload, { onConflict: 'student_id, subject_name, exam_type' });
             }
-        } catch(e) {
+        } catch (e) {
             console.error("Failed to sync to legacy student_marks", e);
         }
 
@@ -228,7 +227,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  window.erpDialog?.alert("Marks saved successfully!");
  fetchStudentsAndMarks(); // Refresh to get real IDs back
  
- } catch(error) {
+ } catch (error) {
  console.error("Save Error:", error);
  window.erpDialog?.alert("Failed to save marks.");
  } finally {
@@ -244,7 +243,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
 
  return (
  <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full max-w-7xl mx-auto flex flex-col gap-8 pb-12' : 'flex flex-col gap-4'}`}>
+ <div className={`${!subjectContext ? 'w-full w-full mx-auto flex flex-col gap-8 pb-12' : 'flex flex-col gap-4'}`}>
  
  {/* HEADER */}
  {!subjectContext && (
@@ -260,7 +259,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  <button type="button" 
  onClick={handleSaveMarks}
  disabled={isSaving || gradedCount === 0}
- className="px-8 py-3.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-white text-[10px] font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"
+ className="px-8 py-3.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"
  >
  {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-cloud-arrow-up"></i>}
  {isSaving ? 'Saving...' : 'Save Grades'}
@@ -276,7 +275,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  {!subjectContext && (
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Subject</label>
+ <label className="text-[13px] font-medium text-themeTextSec">Subject</label>
  <select 
  className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
  value={selectedSubject}
@@ -289,7 +288,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  )}
  
  <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Target Batch</label>
+ <label className="text-[13px] font-medium text-themeTextSec">Target Batch</label>
  <select 
  className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
  value={selectedBatch}
@@ -303,7 +302,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
 
  {selectedSubject && selectedBatch && (
  <div className="flex flex-col gap-2 animate-fade-in border-t border-themeBorder pt-4">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+ <label className="text-[13px] font-medium text-themeTextSec flex items-center gap-2">
  Assessment Type <i className="fa-solid fa-arrow-turn-down text-[8px]"></i>
  </label>
  <select 
@@ -328,7 +327,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
 
  {isGenericAssessment && (
  <div className="flex flex-col gap-2 animate-fade-in border-t border-themeBorder pt-4">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Maximum Marks Base *</label>
+ <label className="text-[13px] font-medium text-themeTextSec">Maximum Marks Base *</label>
  <input 
  type="number"
  min="1"
@@ -346,24 +345,24 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  <div className="bg-themePanel border border-themeBorder rounded-2xl p-6 flex-1 flex flex-col justify-center animate-slide-in-right relative overflow-hidden">
  <div className="absolute top-0 right-0 w-32 h-32 bg-themeAccent/5 rounded-full blur-2xl"></div>
  
- <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-4">Grading Analytics</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-4">Grading Analytics</h3>
  
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
  <div className="flex flex-col">
- <span className="text-3xl font-black text-themeText">{gradedCount}<span className="text-sm text-themeTextSec font-bold">/{students.length}</span></span>
- <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Graded</span>
+ <span className="text-3xl font-semibold tracking-tight text-themeText">{gradedCount}<span className="text-sm text-themeTextSec font-bold">/{students.length}</span></span>
+ <span className="text-[9px] font-bold text-themeTextSec tracking-normal mt-1">Graded</span>
  </div>
  <div className="flex flex-col border-l border-themeBorder pl-4">
- <span className="text-3xl font-black text-themeText">{maxMarks}</span>
- <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Max Base</span>
+ <span className="text-3xl font-semibold tracking-tight text-themeText">{maxMarks}</span>
+ <span className="text-[9px] font-bold text-themeTextSec tracking-normal mt-1">Max Base</span>
  </div>
  <div className="flex flex-col border-l border-themeBorder pl-4">
- <span className="text-3xl font-black text-amber-500">{average}</span>
- <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Class Avg</span>
+ <span className="text-3xl font-semibold tracking-tight text-amber-500">{average}</span>
+ <span className="text-[9px] font-bold text-themeTextSec tracking-normal mt-1">Class Avg</span>
  </div>
  <div className="flex flex-col border-l border-themeBorder pl-4">
- <span className="text-3xl font-black text-emerald-500">{highest}</span>
- <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Highest</span>
+ <span className="text-3xl font-semibold tracking-tight text-emerald-500">{highest}</span>
+ <span className="text-[9px] font-bold text-themeTextSec tracking-normal mt-1">Highest</span>
  </div>
  </div>
  </div>
@@ -372,7 +371,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
 
  {/* SPREADSHEET GRID */}
  {(!selectedSubject || !selectedBatch || !selectedAssessmentType || (isGenericAssessment && !maxMarksOverride)) && (
- <div className="py-24 text-center border-2 border-dashed border-themeBorder rounded-2xl bg-themePanel/30 px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-list-check text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-themeText font-black">Ready to Grade</h3>
  <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">Select a Subject, Batch, and Assessment Type above to load the grading roster.</p>
@@ -385,11 +384,11 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  <table className="w-full text-left border-collapse">
  <thead>
  <tr className="bg-themeElevated/50 border-b border-themeBorder">
- <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec w-24">Roll No</th>
- <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Student Name</th>
- <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec w-32 text-center">ERP ID</th>
- <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-themeAccent w-48 text-right bg-themeAccent/5">Marks Obtained</th>
- <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec w-32 text-right">Percentage</th>
+ <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec w-24">Roll No</th>
+ <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec">Student Name</th>
+ <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec w-32 text-center">ERP ID</th>
+ <th className="px-6 py-4 text-[13px] font-medium text-themeAccent w-48 text-right bg-themeAccent/5">Marks Obtained</th>
+ <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec w-32 text-right">Percentage</th>
  </tr>
  </thead>
  <tbody>
@@ -401,13 +400,13 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  return (
  <tr key={student.id} className="border-b border-themeBorder/50 hover:bg-themeElevated/20 transition-colors group">
  <td className="px-6 py-3">
- <span className="text-xs font-black text-themeTextSec font-mono">{student.roll_number}</span>
+ <span className="text-[14px] font-medium text-themeTextSec font-mono">{student.roll_number}</span>
  </td>
  <td className="px-6 py-3">
  <span className="text-sm font-bold text-themeText">{student.full_name}</span>
  </td>
  <td className="px-6 py-3 text-center">
- <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">{student.erp_id}</span>
+ <span className="text-[10px] font-bold text-themeTextSec tracking-normal">{student.erp_id}</span>
  </td>
  <td className="px-6 py-3 text-right bg-themeAccent/5 group-hover:bg-themeAccent/10 transition-colors">
  <div className="flex items-center justify-end gap-2">
@@ -417,7 +416,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  min="0"
  max={maxMarks}
  placeholder="—"
- className="w-20 bg-themeApp border border-themeBorder rounded-lg px-3 py-2 text-right text-sm font-black text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition"
+ className="w-20 bg-themeApp border border-themeBorder rounded-lg px-3 py-2 text-right text-[15px] font-semibold text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition"
  value={hasMark ? mark : ""}
  onChange={(e) => handleMarkChange(student.id, e.target.value)}
  />
@@ -425,7 +424,7 @@ export default function FacultyMarks({ subjectContext }, isEmbedded = false) {
  </div>
  </td>
  <td className="px-6 py-3 text-right">
- <span className={`text-sm font-black ${
+ <span className={`text-[15px] font-semibold ${
  hasMark 
  ? Number(percentage) >= 75 ? 'text-emerald-500' 
  : Number(percentage) >= 50 ? 'text-amber-500' 

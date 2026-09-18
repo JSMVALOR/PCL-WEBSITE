@@ -7,6 +7,7 @@ import { useERP } from '../../context/ErpContext';
 import { Capacitor } from '@capacitor/core';
 import { AnimatePresence, motion } from "framer-motion";
 import ForgotPasswordModal from './ForgotPasswordModal';
+import ParentLogin from './ParentLogin';
 import campusImg from '../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
 import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo.svg';
 
@@ -27,6 +28,7 @@ export default function Login() {
     const [lockoutTimer, setLockoutTimer] = useState(0);
     const [captcha, setCaptcha] = useState({ num1: 0, num2: 0, answer: '' });
     const [showForgotModal, setShowForgotModal] = useState(false);
+    const [showParentLogin, setShowParentLogin] = useState(false);
 
     useEffect(() => {
         if (userSession && !isAppLoading) {
@@ -145,16 +147,22 @@ export default function Login() {
                         className="tlh-btn !py-3 !px-5"
                     >
                         <i className="fa-solid fa-arrow-left text-xs"></i>
-                        <span className="text-xs font-bold uppercase tracking-widest">Website</span>
+                        <span className="text-xs font-bold tracking-normal">Website</span>
                     </button>
                 </div>
             )}
 
+
             {/* Glass Container Form */}
-            <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-8 md:p-10 overflow-hidden">
+            <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-8 md:p-10 overflow-hidden">
+                {showParentLogin ? (
+                    <ParentLogin onBack={() => setShowParentLogin(false)} onLoginSuccess={() => window.location.reload()} />
+                ) : (
+                    <>
+
                 <div className="text-center mb-8">
                     <img src={pclLogo} alt="PCL Logo" className="w-16 h-16 mx-auto mb-4 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
-                    <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] uppercase tracking-widest">Prudentia</h2>
+                    <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
                     <h3 className="text-sm font-medium text-[var(--text-muted)] mb-3 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
                     <p className="text-[var(--primary-color)] text-[10px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-3 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
                 </div>
@@ -237,9 +245,9 @@ export default function Login() {
                                 </label>
                                 <div className="flex items-stretch w-full rounded-xl border border-rose-500/40 overflow-hidden focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all bg-[var(--bg-color)] shadow-inner">
                                     <div className="flex items-center justify-center gap-2 bg-rose-500/10 px-6 border-r border-rose-500/30">
-                                        <span className="text-xl font-black text-rose-500">{captcha.num1}</span>
+                                        <span className="text-xl font-semibold tracking-tight text-rose-500">{captcha.num1}</span>
                                         <i className="fa-solid fa-plus text-rose-400 text-[10px]"></i>
-                                        <span className="text-xl font-black text-rose-500">{captcha.num2}</span>
+                                        <span className="text-xl font-semibold tracking-tight text-rose-500">{captcha.num2}</span>
                                         <i className="fa-solid fa-equals text-rose-400 text-[10px] ml-1"></i>
                                     </div>
                                     <input
@@ -247,7 +255,7 @@ export default function Login() {
                                         pattern="\d*"
                                         value={captcha.answer}
                                         onChange={handleCaptchaChange}
-                                        className="flex-1 bg-transparent py-4 px-6 text-xl font-black text-[var(--text-color)] outline-none text-center"
+                                        className="flex-1 bg-transparent py-4 px-6 text-xl font-semibold tracking-tight text-[var(--text-color)] outline-none text-center"
                                         placeholder="?"
                                         required
                                     />
@@ -273,7 +281,16 @@ export default function Login() {
                         )}
                     </button>
                 </form>
+
+                            <div className="mt-8 pt-6 border-t border-black/5 dark:border-white/5">
+                                <button onClick={() => setShowParentLogin(true)} type="button" className="w-full py-3 bg-themeElevated hover:bg-themeElevated/80 rounded-xl text-themeTextSec text-xs font-bold transition flex items-center justify-center gap-2">
+                                    <i className="fa-solid fa-users"></i> Access Parent Portal
+                                </button>
+                            </div>
+                    </>
+                )}
             </div>
+
 
             {showForgotModal && (
                 <ForgotPasswordModal onClose={() => setShowForgotModal(false)} />

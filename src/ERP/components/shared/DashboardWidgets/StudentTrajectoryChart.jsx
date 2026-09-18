@@ -50,11 +50,11 @@ export default function StudentTrajectoryChart() {
   }, [userSession]);
 
   return (
-    <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 sm:p-6 relative flex-[2] min-w-0 w-full">
+    <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-none rounded-[20px] p-4 sm:p-6 relative flex-[2] min-w-0 w-full">
       <div className="flex justify-between items-end mb-6">
           <div>
-            <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-1">Academic Trajectory</h3>
-            <p className="text-[10px] text-themeTextSec uppercase tracking-widest">GPA Progression over time</p>
+            <h3 className="text-[14px] font-medium tracking-normal text-themeText mb-1">Academic Trajectory</h3>
+            <p className="text-[10px] text-themeTextSec tracking-normal">GPA Progression over time</p>
           </div>
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${trend.diff >= 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-rose-500/10 border-rose-500/20'}`}>
               <i className={`fa-solid ${trend.diff >= 0 ? 'fa-arrow-trend-up text-emerald-500' : 'fa-arrow-trend-down text-rose-500'} text-[10px]`}></i>
@@ -71,7 +71,7 @@ export default function StudentTrajectoryChart() {
         {data.length === 0 && !loading && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center">
                 <i className="fa-solid fa-chart-area text-themeTextSec opacity-20 text-4xl mb-3"></i>
-                <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">No GPA Data Available</span>
+                <span className="text-[10px] font-bold text-themeTextSec tracking-normal">No GPA Data Available</span>
             </div>
         )}
         <ResponsiveContainer width="100%" height="100%">

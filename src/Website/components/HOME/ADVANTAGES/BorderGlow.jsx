@@ -61,8 +61,7 @@ const BorderGlow = ({
   coneSpread = 25,
   animated = false,
   colors = ['#c084fc', '#f472b6', '#38bdf8'],
-  fillOpacity = 0.5,
-}) => {
+  fillOpacity = 0.5 }) => {
   const cardRef = useRef(null);
 
   const getCenterOfElement = useCallback((el) => {
@@ -124,8 +123,7 @@ const BorderGlow = ({
     }});
     animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
       onUpdate: v => card.style.setProperty('--edge-proximity', v),
-      onEnd: () => card.classList.remove('sweep-active'),
-    });
+      onEnd: () => card.classList.remove('sweep-active') });
   }, [animated]);
 
   const glowVars = buildGlowVars(glowColor, glowIntensity);
@@ -143,8 +141,7 @@ const BorderGlow = ({
         '--cone-spread': coneSpread,
         '--fill-opacity': fillOpacity,
         ...glowVars,
-        ...buildGradientVars(colors),
-      }}
+        ...buildGradientVars(colors) }}
     >
       <span className="edge-light" />
       <div className="border-glow-inner">

@@ -1,116 +1,124 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function AdminCampusPulse({ className = "" }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({
+    studentsPresent: 0,
+    studentsTotal: 0,
+    facultyPresent: 0,
+    facultyTotal: 0
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
     
-    const fetchAttendance = async () => {
+    const fetchLivePresence = async () => {
         try {
-            // Fetch past 7 days attendance
-            const today = new Date();
-            const past7Days = Array.from({length: 7}, (_, i) => {
-                const d = new Date();
-                d.setDate(today.getDate() - (6 - i));
-                return { 
-                    dateStr: d.toISOString().split('T')[0], 
-                    name: d.toLocaleDateString('en-US', { weekday: 'short' }),
-                    students: 0,
-                    faculty: 0
-                };
-            });
+            // 1. Get total counts
+            const { data: profiles, error: pError } = await supabase
+                .from('profiles')
+                .select('role');
+                
+            let sTotal = 0;
+            let fTotal = 0;
+            if (profiles) {
+                sTotal = profiles.filter(p => p.role === 'student').length;
+                fTotal = profiles.filter(p => p.role === 'faculty').length;
+            }
 
-            // In a real scenario with massive data, we'd use an RPC: `get_attendance_trends`
-            // For now, we'll fetch recently updated attendance records
-            const { data: attData, error } = await supabase
+            // 2. Get today's attendance
+            const today = new Date().toISOString().split('T')[0];
+            const { data: attData, error: aError } = await supabase
                 .from('attendance')
-                .select('date, status, profiles!inner(role)')
-                .gte('date', past7Days[0].dateStr)
+                .select('status, profiles!inner(role)')
+                .eq('date', today)
                 .eq('status', 'present');
 
-            if (!error && attData && attData.length > 0) {
-                attData.forEach(record => {
-                    const dayIdx = past7Days.findIndex(d => d.dateStr === record.date);
-                    if (dayIdx !== -1) {
-                        if (record.profiles?.role === 'student') past7Days[dayIdx].students++;
-                        if (record.profiles?.role === 'faculty') past7Days[dayIdx].faculty++;
-                    }
-                });
-            } else { past7Days.forEach(d => { d.students = 0; d.faculty = 0; }); }
+            let sPresent = 0;
+            let fPresent = 0;
+            if (attData) {
+                sPresent = attData.filter(a => a.profiles?.role === 'student').length;
+                fPresent = attData.filter(a => a.profiles?.role === 'faculty').length;
+            }
 
             if (isMounted) {
-                setData(past7Days);
+                setData({
+                    studentsPresent: sPresent,
+                    studentsTotal: sTotal || 1, // prevent division by zero
+                    facultyPresent: fPresent,
+                    facultyTotal: fTotal || 1
+                });
                 setLoading(false);
             }
-        } catch (err) {
-            console.warn("Failed to sync attendance:", err);
+        } catch (error) {
+            console.error("Failed to load presence:", error);
             if (isMounted) setLoading(false);
         }
     };
 
-    fetchAttendance();
+    fetchLivePresence();
     return () => { isMounted = false; };
   }, []);
 
+  const studentPct = Math.round((data.studentsPresent / data.studentsTotal) * 100) || 0;
+  const facultyPct = Math.round((data.facultyPresent / data.facultyTotal) * 100) || 0;
+
   return (
-    <div className={`bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 relative min-w-0 w-full flex flex-col ${className}`}>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 shrink-0 relative z-10 gap-4">
-          <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-themeText mb-1 flex items-center gap-2">
-                <i className="fa-solid fa-users-viewfinder text-themeAccent"></i> Campus Attendance
-            </h3>
-            <p className="text-[10px] text-themeTextSec uppercase tracking-widest">Verified Daily Presence (Students & Faculty)</p>
-          </div>
-          
-          <div className="flex items-center gap-3 bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-black/5 dark:border-white/10">
-              <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-[#007AFF]"></div>
-                  <span className="text-[9px] font-bold text-themeText uppercase tracking-widest">Students</span>
-              </div>
-              <div className="w-px h-3 bg-black/10 dark:bg-white/10"></div>
-              <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-[#34C759]"></div>
-                  <span className="text-[9px] font-bold text-themeText uppercase tracking-widest">Faculty</span>
-              </div>
-          </div>
-      </div>
-      
-      <div className="flex-1 min-h-[250px] w-full mt-2 relative z-10">
-        {loading ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center opacity-50">
-                <i className="fa-solid fa-circle-notch fa-spin text-2xl text-themeTextSec mb-3"></i>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Syncing Biometrics...</span>
+    <div className={`w-full bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl flex flex-col p-5 relative ${className}`}>
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+            <div>
+                <h3 className="text-[11px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+                    <i className="fa-solid fa-satellite-dish text-themeAccent animate-pulse"></i> Live Presence
+                </h3>
+                <p className="text-[10px] font-bold text-themeText mt-1 opacity-70">
+                    {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                </p>
             </div>
-        ) : (
-            <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 30, left: -20, bottom: 0 }}>
-                <defs>
-                <linearGradient id="colorStudentsPulse" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#007AFF" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#007AFF" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="colorFacultyPulse" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#34C759" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#34C759" stopOpacity={0}/>
-                </linearGradient>
-                </defs>
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dx={-10} />
-                <Tooltip allowEscapeViewBox={{ x: true, y: true }} 
-                    contentStyle={{ backgroundColor: 'var(--theme-panel)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: 'var(--theme-text)', fontSize: '12px', fontWeight: 'bold' }}
-                    itemStyle={{ color: 'var(--theme-text)' }}
-                />
-                <Area type="monotone" dataKey="students" stroke="#007AFF" strokeWidth={3} fillOpacity={1} fill="url(#colorStudentsPulse)" activeDot={{ r: 6, fill: '#007AFF', stroke: '#fff', strokeWidth: 2 }} />
-                <Area type="monotone" dataKey="faculty" stroke="#34C759" strokeWidth={3} fillOpacity={1} fill="url(#colorFacultyPulse)" activeDot={{ r: 6, fill: '#34C759', stroke: '#fff', strokeWidth: 2 }} />
-            </AreaChart>
-            </ResponsiveContainer>
-        )}
-      </div>
+            {loading ? (
+                <div className="w-4 h-4 border-2 border-themeAccent border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+                <div className="bg-emerald-500/10 text-emerald-500 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                    Active
+                </div>
+            )}
+        </div>
+
+        {/* Student Presence */}
+        <div className="mb-4">
+            <div className="flex justify-between items-end mb-2">
+                <span className="text-[11px] font-black text-themeText uppercase tracking-widest">Students</span>
+                <span className="text-xs font-black text-themeText">{data.studentsPresent} <span className="text-[9px] text-themeTextSec">/ {data.studentsTotal}</span></span>
+            </div>
+            <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
+                <div 
+                    className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out relative"
+                    style={{ width: `${studentPct}%` }}
+                >
+                    <div className="absolute top-0 right-0 bottom-0 w-4 bg-gradient-to-r from-transparent to-white/50 blur-[2px]"></div>
+                </div>
+            </div>
+        </div>
+
+        {/* Faculty Presence */}
+        <div>
+            <div className="flex justify-between items-end mb-2">
+                <span className="text-[11px] font-black text-themeText uppercase tracking-widest">Faculty</span>
+                <span className="text-xs font-black text-themeText">{data.facultyPresent} <span className="text-[9px] text-themeTextSec">/ {data.facultyTotal}</span></span>
+            </div>
+            <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
+                <div 
+                    className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-out relative"
+                    style={{ width: `${facultyPct}%` }}
+                >
+                    <div className="absolute top-0 right-0 bottom-0 w-4 bg-gradient-to-r from-transparent to-white/50 blur-[2px]"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
   );
 }

@@ -2,7 +2,7 @@
 import React from 'react';
 import { theme } from '../../../../Shared/theme';
 
-export default function PageHeader({ icon, title, subtitle, rightContent, isEmbedded = false }) {
+export default function PageHeader({ isEmbedded = false,  icon, title, subtitle, rightContent }) {
     return (
         <div className={`flex flex-col md:flex-row md:items-end justify-between gap-6 ${!isEmbedded ? `${theme.layout.panel} p-4 md:p-6 lg:p-8 border-themeBorder` : ""}`}>
             {!isEmbedded && (

@@ -137,7 +137,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[var(--card-bg)] border border-[var(--primary-color)] text-[var(--primary-color)] px-5 py-2.5 rounded-md text-[10px] font-black uppercase tracking-widest whitespace-nowrap shadow-[0_10px_30px_rgba(212,175,55,0.2)] z-50 flex items-center gap-2"
+              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[var(--card-bg)] border border-[var(--primary-color)] text-[var(--primary-color)] px-5 py-2.5 rounded-md text-[13px] font-medium whitespace-nowrap shadow-[0_10px_30px_rgba(212,175,55,0.2)] z-50 flex items-center gap-2"
             >
               <i className="fa-solid fa-paper-plane"></i> OTP Sent to Email
             </motion.div>
@@ -151,14 +151,14 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-rose-500/10 border border-rose-500 text-rose-500 px-5 py-2.5 rounded-md text-[10px] font-black uppercase tracking-widest whitespace-nowrap shadow-[0_10px_30px_rgba(244,63,94,0.2)] z-50 flex items-center gap-2"
+              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-rose-500/10 border border-rose-500 text-rose-500 px-5 py-2.5 rounded-md text-[13px] font-medium whitespace-nowrap shadow-[0_10px_30px_rgba(244,63,94,0.2)] z-50 flex items-center gap-2"
             >
               <i className="fa-solid fa-triangle-exclamation"></i> {showErrorToast}
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-8 md:p-10 overflow-hidden">
+        <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-8 md:p-10 overflow-hidden">
             {/* Glossy top highlight */}
             
             
@@ -166,8 +166,8 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                 <div className="w-16 h-16 rounded-md bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/30 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.15)]">
                     <i className="fa-solid fa-shield-halved text-2xl text-[var(--primary-color)]"></i>
                 </div>
-                <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] uppercase tracking-widest text-center">Verification</h2>
-                <p className="text-center text-xs font-bold uppercase tracking-widest text-neutral-500">Enter the 4-digit code</p>
+                <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal text-center">Verification</h2>
+                <p className="text-center text-xs font-bold tracking-normal text-neutral-500">Enter the 4-digit code</p>
             </div>
 
             {state === "success" ? (
@@ -228,7 +228,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                                                 animate={{ y: 0, opacity: 1, scale: 1 }}
                                                 exit={{ y: -10, opacity: 0, scale: 0.8 }}
                                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`text-2xl md:text-3xl font-black ${state === 'error' ? 'text-rose-500' : 'text-[var(--text-color)]'}`}
+                                                className={`text-2xl md:text-3xl font-semibold tracking-tight ${state === 'error' ? 'text-rose-500' : 'text-[var(--text-color)]'}`}
                                             >
                                                 {char}
                                             </motion.span>
@@ -291,7 +291,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
 
                     <button type="button" 
                         onClick={onLogout} 
-                        className="text-[10px] uppercase tracking-widest font-black text-neutral-500 hover:text-rose-500 transition-colors mt-2"
+                        className="text-[10px] tracking-normal font-black text-neutral-500 hover:text-rose-500 transition-colors mt-2"
                     >
                         Cancel & Sign Out
                     </button>

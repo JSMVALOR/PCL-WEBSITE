@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 import WeeklyChart from '../../../shared/WeeklyChart';
 
-export default function ScheduleBuilder({ isEmbedded = false }) {
+export default function ScheduleBuilder({}) {
  const [schedule, setSchedule] = useState([]);
  const [subjects, setSubjects] = useState([]);
  const [rooms, setRooms] = useState([]);
- const [semesters, setSemesters] = useState([]);
+ const [batches, setBatches] = useState([]);
  const [faculties, setFaculties] = useState([]);
  
  const [loading, setLoading] = useState(true);
@@ -49,8 +49,8 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
 
  // 3. Fetch Active Semesters (to construct batch names)
  const { data: semData } = await supabase.from('academic_semesters').select('id, name, programme').eq('is_active_globally', true);
- setSemesters(semData || []);
- if (semData?.length > 0 && !semData.find(s => `${s.programme} - ${s.name}` === selectedBatch)) {
+ setBatches(semData || []);
+ if (semData?.length > 0 && !semData.find(s => `${s.academic_programs?.code} - ${s.name}` === selectedBatch)) {
  setSelectedBatch(`${semData[0].programme} - ${semData[0].name}`);
  }
 
@@ -247,7 +247,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  <div className="flex flex-col gap-6 animate-fade-in pb-12 relative">
  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
  <div>
- <h2 className="text-xl font-black text-themeText">Timetable Builder</h2>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText">Timetable Builder</h2>
  <p className="text-xs font-bold text-themeTextSec">Construct exact schedules directly injected into student and faculty feeds.</p>
  </div>
  
@@ -259,15 +259,15 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  onChange={e => setSelectedBatch(e.target.value)} 
  className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold text-themeText outline-none appearance-none cursor-pointer hover:border-themeAccent transition-colors"
  >
- {semesters.map(s => (
- <option key={s.id} value={`${s.programme} - ${s.name}`}>{s.programme} - {s.name}</option>
+ {batches.map(s => (
+ <option key={s.id} value={`${s.academic_programs?.code} - ${s.name}`}>{s.academic_programs?.code} - {s.name}</option>
  ))}
  </select>
  </div>
  
  <button type="button" 
  onClick={() => setIsDrawMode(!isDrawMode)} 
- className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition whitespace-nowrap border ${isDrawMode ? 'bg-amber-500 text-white border-amber-500' : 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-themeText hover:border-themeAccent'}`}
+ className={`px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition whitespace-nowrap border ${isDrawMode ? 'bg-amber-500 text-gray-900 dark:text-white border-amber-500' : 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-themeText hover:border-themeAccent'}`}
  >
  <i className="fa-solid fa-paintbrush mr-2"></i> Draw Mode
  </button>
@@ -278,11 +278,11 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  {isDrawMode && (
  <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex flex-col md:flex-row items-center gap-4 animate-fade-in -mt-2">
  <div className="flex items-center gap-2 shrink-0">
- <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white">
+ <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-gray-900 dark:text-white">
  <i className="fa-solid fa-palette text-sm"></i>
  </div>
  <div>
- <p className="text-xs font-black text-amber-500 uppercase tracking-wider leading-tight">Active Brush</p>
+ <p className="text-[14px] font-medium text-amber-500 uppercase tracking-wider leading-tight">Active Brush</p>
  <p className="text-[10px] font-bold text-themeTextSec">Click grid to paint a 1-hour slot.</p>
  </div>
  </div>
@@ -303,7 +303,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  <button type="button" onClick={() => setPendingDraws([])} className="px-3 py-2 rounded-lg text-[10px] font-black uppercase text-amber-500 hover:bg-amber-500/10 transition-colors">
  Clear
  </button>
- <button type="button" onClick={handleSaveDraws} className="px-4 py-2 rounded-lg text-xs font-black uppercase bg-amber-500 text-white hover:bg-amber-600 transition-colors">
+ <button type="button" onClick={handleSaveDraws} className="px-4 py-2 rounded-lg text-[14px] font-medium uppercase bg-amber-500 text-gray-900 dark:text-white hover:bg-amber-600 transition-colors">
  Save {pendingDraws.length} {pendingDraws.length === 1 ? 'Class' : 'Classes'}
  </button>
  </div>
@@ -322,11 +322,11 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  {/* CREATE MODAL */}
  {isCreating && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
- <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-lg rounded-themePanel overflow-hidden border border-white/5 flex flex-col">
- <div className="px-6 py-5 border-b border-white/5 bg-themeElevated/50 flex justify-between items-center">
+ <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-lg rounded-themePanel overflow-hidden border border-gray-200 dark:border-white/5 flex flex-col">
+ <div className="px-6 py-5 border-b border-gray-200 dark:border-white/5 bg-themeElevated/50 flex justify-between items-center">
  <div>
- <h3 className="text-lg font-black text-themeText">Schedule New Class</h3>
- <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-0.5">{selectedBatch}</p>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText">Schedule New Class</h3>
+ <p className="text-[13px] font-medium text-themeTextSec mt-0.5">{selectedBatch}</p>
  </div>
  <button type="button" onClick={() => setIsCreating(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:bg-themeBorderStrong text-themeText transition-colors">
  <i className="fa-solid fa-xmark text-sm"></i>
@@ -335,7 +335,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  
  <form onSubmit={handleCreate} className="p-6 flex flex-col gap-5">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Subject</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Subject</label>
  <select value={subjectId} onChange={e => setSubjectId(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none appearance-none transition-colors">
  {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
  </select>
@@ -343,7 +343,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  
  <div className="grid grid-cols-2 gap-4">
  <div className="col-span-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Faculty</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Faculty</label>
  <select value={facultyId} onChange={e => setFacultyId(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none appearance-none transition-colors">
  <option value="">-- Select Faculty --</option>
  {faculties.map(f => <option key={f.id} value={f.id}>{f.full_name}</option>)}
@@ -354,16 +354,16 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  </div>
 
  <div className="col-span-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Classroom</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Classroom</label>
  <select value={roomId} onChange={e => setRoomId(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none appearance-none transition-colors">
  {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
  </select>
  </div>
  </div>
 
- <div className="grid grid-cols-3 gap-4 border-t border-white/5 pt-5">
+ <div className="grid grid-cols-3 gap-4 border-t border-gray-200 dark:border-white/5 pt-5">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Day</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Day</label>
  <select value={day} onChange={e => setDay(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none appearance-none transition-colors">
  <option value="1">Monday</option>
  <option value="2">Tuesday</option>
@@ -375,11 +375,11 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  </select>
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Start Time</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Start Time</label>
  <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark transition-colors" />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">End Time</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">End Time</label>
  <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark transition-colors" />
  </div>
  </div>
@@ -395,7 +395,7 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  {/* MANAGE/DELETE MODAL */}
  {selectedClass && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
- <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-sm rounded-themePanel overflow-hidden border border-white/5 flex flex-col relative">
+ <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-sm rounded-themePanel overflow-hidden border border-gray-200 dark:border-white/5 flex flex-col relative">
  <button type="button" onClick={() => setSelectedClass(null)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText transition-colors z-10">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
@@ -404,22 +404,22 @@ export default function ScheduleBuilder({ isEmbedded = false }) {
  <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 flex items-center justify-center text-2xl mb-2">
  <i className="fa-regular fa-calendar-minus"></i>
  </div>
- <h3 className="text-xl font-black text-themeText">{selectedClass.subject}</h3>
+ <h3 className="text-xl font-semibold tracking-tight text-themeText">{selectedClass.subject}</h3>
  <p className="text-sm font-bold text-themeTextSec">{selectedClass.day}, {selectedClass.time} - {selectedClass.endTime}</p>
  
  <div className="flex flex-col gap-1 mt-4 w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-xl p-4">
  <div className="flex justify-between items-center">
- <span className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Faculty</span>
+ <span className="text-[13px] font-medium text-themeTextSec">Faculty</span>
  <span className="text-xs font-bold text-themeText">{selectedClass.faculty}</span>
  </div>
  <div className="w-full h-px bg-themeBorder my-1"></div>
  <div className="flex justify-between items-center">
- <span className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Room</span>
+ <span className="text-[13px] font-medium text-themeTextSec">Room</span>
  <span className="text-xs font-bold text-themeText">{selectedClass.room}</span>
  </div>
  </div>
  
- <button type="button" onClick={handleDeleteClass} className="w-full bg-rose-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-rose-600 transition-colors mt-6">
+ <button type="button" onClick={handleDeleteClass} className="w-full bg-rose-500 text-gray-900 dark:text-white px-4 py-3 rounded-xl text-[14px] font-medium tracking-normal hover:bg-rose-600 transition-colors mt-6">
  Delete Class
  </button>
  </div>

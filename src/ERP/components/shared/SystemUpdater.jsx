@@ -1,8 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
-import { supabase } from "../../../Shared/lib/supabase/supabaseClient";
 import { motion } from 'framer-motion';
 
 export default function SystemUpdater({ children }) {
@@ -78,10 +78,10 @@ export default function SystemUpdater({ children }) {
                     initial={{ scale: 0.95, y: 10, opacity: 0 }}
                     animate={{ scale: 1, y: 0, opacity: 1 }}
                     transition={{ type: "spring", damping: 25, stiffness: 400 }}
-                    className="w-full max-w-sm bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl overflow-hidden p-8 flex flex-col items-center text-center"
+                    className="w-full max-w-sm bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl overflow-hidden p-8 flex flex-col items-center text-center"
                 >
                     <div className="w-20 h-20 bg-gradient-to-br from-[#007AFF] to-[#5AC8FA] rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-white/20">
-                        <i className="fa-solid fa-cloud-arrow-down text-white text-3xl animate-bounce"></i>
+                        <i className="fa-solid fa-cloud-arrow-down text-gray-900 dark:text-white text-3xl animate-bounce"></i>
                     </div>
                     
                     <h1 className="text-[22px] font-bold text-[#1C1C1E] dark:text-[#F2F2F7] tracking-tight mb-2">System Update</h1>
@@ -91,7 +91,7 @@ export default function SystemUpdater({ children }) {
 
                     <div className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl p-4 w-full text-left mb-8 shadow-inner">
                         <div className="flex justify-between items-center mb-3 pb-3 border-b border-black/5 dark:border-white/5">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-[#8E8E93]">Version</span>
+                            <span className="text-[11px] font-bold tracking-normal text-[#8E8E93]">Version</span>
                             <span className="text-[13px] font-bold text-[#007AFF]">v {updateInfo.version_name}</span>
                         </div>
                         <div className="text-[13px] font-medium text-[#3A3A3C] dark:text-[#EBEBF5]/60 whitespace-pre-line leading-relaxed">
@@ -101,7 +101,7 @@ export default function SystemUpdater({ children }) {
 
                     <button type="button" 
                         onClick={handleDownloadUpdate}
-                        className="w-full py-3.5 rounded-xl bg-[#007AFF] text-white font-bold text-[13px] uppercase tracking-widest flex justify-center items-center gap-3 shadow-sm hover:bg-[#006DEB] transition-colors"
+                        className="w-full py-3.5 rounded-xl bg-[#007AFF] text-gray-900 dark:text-white font-bold text-[13px] tracking-normal flex justify-center items-center gap-3 shadow-sm hover:bg-[#006DEB] transition-colors"
                     >
                         <i className="fa-solid fa-download"></i>
                         Download & Install

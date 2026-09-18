@@ -428,7 +428,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  if (data && !error) {
  setTopClicks(data.map(d => ({ text: d.element_text, count: d.click_count })));
  }
- } catch(e) {}
+ } catch (e) {}
  };
  fetchInteractions();
  }, []);
@@ -565,21 +565,21 @@ export default function AdminSiteEditor({ isHubView = false }) {
  )}
 
  {/* Custom Horizontal Navbar matching public site */}
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl p-2 flex flex-wrap gap-2 relative z-[100]">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-2 flex flex-wrap gap-2 relative z-[100]">
  {navTree.map((item, idx) => {
  if (item.isParent) {
  return (
  <div key={idx} className="relative group">
- <button type="button" onClick={(e) => e.preventDefault()} className={`px-4 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-colors flex items-center gap-2 whitespace-nowrap ${selectedPage.startsWith(item.path) ? 'bg-themeAccent/10 text-themeAccent' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}>
+ <button type="button" onClick={(e) => e.preventDefault()} className={`px-4 py-2.5 rounded-lg text-[11px] font-black tracking-normal transition-colors flex items-center gap-2 whitespace-nowrap ${selectedPage.startsWith(item.path) ? 'bg-themeAccent/10 text-themeAccent' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}>
  {item.label} <i className="fa-solid fa-chevron-down text-[10px]"></i>
  </button>
  {/* Dropdown */}
- <div className="absolute top-full left-0 mt-1 w-48 bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition z-50 overflow-hidden flex flex-col p-1">
+ <div className="absolute top-full left-0 mt-1 w-48 bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition z-50 overflow-hidden flex flex-col p-1">
  {item.children.map(child => (
  <button type="button" 
  key={child.path}
  onClick={() => { setSelectedPage(child.path); setSelectedSection(siteStructure[child.path].sections[0].id); }}
- className={`px-4 py-3 text-left text-xs font-bold rounded-lg transition-colors ${selectedPage === child.path ? 'bg-themeAccent text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
+ className={`px-4 py-3 text-left text-xs font-bold rounded-lg transition-colors ${selectedPage === child.path ? 'bg-themeAccent text-gray-900 dark:text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
  >
  {child.label}
  </button>
@@ -592,7 +592,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <button type="button" 
  key={idx}
  onClick={() => { setSelectedPage(item.path); setSelectedSection(siteStructure[item.path].sections[0].id); }}
- className={`px-4 py-2.5 rounded-lg text-[11px] font-black uppercase tracking-widest transition-colors whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
+ className={`px-4 py-2.5 rounded-lg text-[11px] font-black tracking-normal transition-colors whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-gray-900 dark:text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
  >
  {item.label}
  </button>
@@ -611,7 +611,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  {topClicks.length > 0 && (
  <div className="bg-[#1c1c1c] border border-emerald-500/20 rounded-xl p-4 flex flex-col relative overflow-hidden shrink-0">
  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
- <h2 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2 relative z-10">
+ <h2 className="text-[10px] font-black text-emerald-400 tracking-normal mb-3 flex items-center gap-2 relative z-10">
  <i className="fa-solid fa-crosshairs"></i> Exact Click Tracking Insights
  </h2>
  <div className="flex flex-wrap gap-3 relative z-10">
@@ -629,19 +629,19 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="flex flex-col xl:flex-row gap-6 items-start relative">
  
  {/* Left Panel: Editor Form (Sticky) */}
- <div className={`${theme.layout.panel} rounded-themePanel border border-white/5 p-5 flex flex-col xl:flex-1 shrink-0 max-h-[calc(100vh-4rem)] overflow-y-auto sticky top-6 z-20`}>
+ <div className={`${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-5 flex flex-col xl:flex-1 shrink-0 max-h-[calc(100vh-4rem)] overflow-y-auto sticky top-6 z-20`}>
  
  {/* Section Selector */}
  <div className="mb-6">
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 pl-1">Page Section</label>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-2 pl-1">Page Section</label>
  <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
  {siteStructure[selectedPage]?.sections.map(section => (
  <button type="button"
  key={section.id}
  onClick={() => setSelectedSection(section.id)}
  className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors whitespace-nowrap border shrink-0 ${selectedSection === section.id 
- ? 'bg-themeAccent text-white border-themeAccent' 
- : 'bg-themeElevated/90 backdrop-blur-2xl text-themeText border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ ? 'bg-themeAccent text-gray-900 dark:text-white border-themeAccent' 
+ : 'bg-themeElevated/90 backdrop-blur-2xl text-themeText border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  {section.name}
  </button>
@@ -649,8 +649,8 @@ export default function AdminSiteEditor({ isHubView = false }) {
  </div>
  </div>
 
- <div className="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
- <h2 className="text-sm font-black text-themeText uppercase tracking-widest">{currentSectionConfig?.name}</h2>
+ <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200 dark:border-white/5">
+ <h2 className="text-[15px] font-semibold text-themeText tracking-normal">{currentSectionConfig?.name}</h2>
  {loading && <i className="fa-solid fa-circle-notch fa-spin text-themeAccent"></i>}
  </div>
 
@@ -658,14 +658,14 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-5">
  {currentSectionConfig?.fields.map(field => (
  <div key={field.key}>
- <label className="block text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 pl-1">
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5 pl-1">
  {field.label}
  </label>
  {field.type === 'select' ? (
  <select
  value={contentData[field.key] || ""}
  onChange={(e) => handleFieldChange(field.key, e.target.value)}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none"
  >
  <option value="" disabled>Select an option...</option>
  {field.options?.map(opt => (
@@ -679,7 +679,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  placeholder={field.placeholder || ""}
  maxLength={field.maxLength || 800}
  rows="4"
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none resize-y placeholder:text-themeTextSec/50"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none resize-y placeholder:text-themeTextSec/50"
  ></textarea>
  ) : (
  <input
@@ -688,7 +688,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  onChange={(e) => handleFieldChange(field.key, e.target.value)}
  placeholder={field.placeholder || ""}
  maxLength={field.maxLength || 80}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none placeholder:text-themeTextSec/50"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none placeholder:text-themeTextSec/50"
  />
  )}
  </div>
@@ -698,11 +698,11 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="h-4"></div>
  </div>
 
- <div className="mt-4 pt-4 border-t border-white/5">
+ <div className="mt-4 pt-4 border-t border-gray-200 dark:border-white/5">
  <button type="button"
  onClick={handleSave}
  disabled={isSaving || fetchError}
- className="w-full bg-themeAccent hover:bg-themeAccent/90 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+ className="w-full bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white px-4 py-3 rounded-xl text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
  >
  {isSaving ? (
  <><i className="fa-solid fa-circle-notch fa-spin"></i> Saving...</>
@@ -720,15 +720,15 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
  <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
- <span className="text-[10px] font-mono text-white/50 ml-4 font-bold tracking-widest uppercase">Live Preview — {siteStructure[selectedPage]?.name}</span>
+ <span className="text-[10px] font-mono text-gray-500 dark:text-white/50 ml-4 font-bold tracking-widest uppercase">Live Preview — {siteStructure[selectedPage]?.name}</span>
  </div>
  <button type="button" 
  onClick={() => setIsPreviewFullscreen(!isPreviewFullscreen)} 
- className="text-white/50 hover:text-white transition px-2 py-1 flex items-center gap-2 rounded bg-white/5 hover:bg-white/10"
+ className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition px-2 py-1 flex items-center gap-2 rounded bg-white/5 hover:bg-white/10"
  title={isPreviewFullscreen ? "Exit Fullscreen" : "Fullscreen Preview"}
  >
  <i className={`fa-solid ${isPreviewFullscreen ? 'fa-compress' : 'fa-expand'} text-[10px]`}></i>
- <span className="text-[10px] font-bold uppercase tracking-widest">{isPreviewFullscreen ? "Exit Fullscreen" : "Expand"}</span>
+ <span className="text-[13px] font-medium">{isPreviewFullscreen ? "Exit Fullscreen" : "Expand"}</span>
  </button>
  </div>
  

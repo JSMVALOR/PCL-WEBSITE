@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 
-export default function SemesterManager({ isEmbedded = false }) {
+export default function SemesterManager({}) {
  const [semesters, setSemesters] = useState([]);
  const [loading, setLoading] = useState(true);
  const [isCreating, setIsCreating] = useState(false);
@@ -81,28 +81,28 @@ export default function SemesterManager({ isEmbedded = false }) {
  <div className="flex flex-col gap-6 animate-fade-in relative">
  <div className="flex justify-between items-center">
  <div>
- <h2 className="text-xl font-black text-themeText">Semester Manager</h2>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText">Semester Manager</h2>
  <p className="text-xs font-bold text-themeTextSec">The global switch controlling the entire ERP's current academic state.</p>
  </div>
- <button type="button" onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">
+ <button type="button" onClick={() => setIsCreating(!isCreating)} className="bg-themeAccent text-themeApp px-4 py-2 rounded-lg text-[14px] font-medium tracking-normal hover:opacity-90 transition-opacity">
  {isCreating ? <><i className="fa-solid fa-xmark mr-2"></i> Cancel</> : <><i className="fa-solid fa-plus mr-2"></i> Create Semester</>}
  </button>
  </div>
 
  {isCreating && (
  <form onSubmit={handleCreate} className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-4 animate-fade-in">
- <h3 className="text-sm font-black text-themeText">Create New Semester</h3>
+ <h3 className="text-[15px] font-semibold text-themeText">Create New Semester</h3>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Academic Term Name</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Academic Term Name</label>
  <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Winter 2026" className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none" />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Start Date</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Start Date</label>
  <input min="2026-09-14" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">End Date</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">End Date</label>
  <input min="2026-09-14" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  </div>
@@ -115,11 +115,11 @@ export default function SemesterManager({ isEmbedded = false }) {
  <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl overflow-hidden">
  <div className="w-full overflow-x-auto">
  <table className="w-full text-left">
- <thead className="bg-themeElevated/90 backdrop-blur-2xl border-b border-white/5">
+ <thead className="bg-themeElevated/90 backdrop-blur-2xl border-b border-gray-200 dark:border-white/5">
  <tr>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Academic Term</th>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Timeline</th>
- <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec text-center">Global Switch</th>
+ <th className="p-4 text-[13px] font-medium text-themeTextSec">Academic Term</th>
+ <th className="p-4 text-[13px] font-medium text-themeTextSec">Timeline</th>
+ <th className="p-4 text-[13px] font-medium text-themeTextSec text-center">Global Switch</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-themeBorder">
@@ -136,7 +136,7 @@ export default function SemesterManager({ isEmbedded = false }) {
  <td className="p-4 text-center">
  <button type="button" 
  onClick={() => toggleActive(sem.id, sem.is_active_globally)}
- className={`inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border transition ${sem.is_active_globally ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10 hover:text-themeText hover:border-themeText'}`}
+ className={`inline-flex items-center gap-2 text-[13px] font-medium px-3 py-1.5 rounded-lg border transition ${sem.is_active_globally ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10 hover:text-themeText hover:border-themeText'}`}
  >
  {sem.is_active_globally ? <><i className="fa-solid fa-toggle-on text-lg"></i> Active</> : <><i className="fa-solid fa-toggle-off text-lg"></i> Inactive</>}
  </button>
@@ -151,7 +151,7 @@ export default function SemesterManager({ isEmbedded = false }) {
  <div className="bg-amber-500/10 border border-amber-500/20 p-4 rounded-xl flex items-start gap-4">
  <i className="fa-solid fa-triangle-exclamation text-amber-500 text-xl mt-1"></i>
  <div>
- <h4 className="text-sm font-black text-amber-500">Global Impact Warning</h4>
+ <h4 className="text-[15px] font-semibold text-amber-500">Global Impact Warning</h4>
  <p className="text-xs font-bold text-themeTextSec mt-1">Flipping the Global Switch immediately changes the active timetables, dashboards, and attendance sessions for all students and faculty in that programme.</p>
  </div>
  </div>

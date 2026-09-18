@@ -33,8 +33,7 @@ export const scheduleTimetableAlerts = async (timetableData) => {
                     body: `Starts in 15 minutes in ${session.room}`,
                     id: idCounter++,
                     schedule: { at: alertTime },
-                    sound: null,
-                });
+                    sound: null });
             }
         });
 

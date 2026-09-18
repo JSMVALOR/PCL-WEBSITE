@@ -1,8 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from "react";
-import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  const [isProcessing, setIsProcessing] = useState(false);
@@ -88,11 +86,11 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <h2 className={`font-bold tracking-tight text-xl lg:text-2xl text-themeText`}>{request.faculty?.name || 'Faculty Member'}</h2>
  <div className="flex flex-wrap gap-4 mt-2">
  <div>
- <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec">Employee ID</p>
+ <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec">Employee ID</p>
  <p className="text-xs lg:text-sm font-bold text-themeText mt-0.5">FAC-{request.faculty_id?.substring(0,6).toUpperCase() || 'N/A'}</p>
  </div>
  <div>
- <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec">Department</p>
+ <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec">Department</p>
  <p className="text-xs lg:text-sm font-bold text-themeText mt-0.5">{request.faculty?.department || 'School of Law'}</p>
  </div>
  </div>
@@ -106,32 +104,32 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  {/* Details Box */}
  <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-6">
  
- <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-white/5 pb-6">
+ <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-gray-200 dark:border-white/5 pb-6">
  <div>
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Leave Type</p>
+ <p className="text-[13px] font-medium text-themeTextSec">Leave Type</p>
  <div className="flex items-center gap-2 mt-1">
  <div className={`w-2 h-2 rounded-full bg-${request.policy?.color_theme || 'blue'}-500`}></div>
- <p className="text-lg font-black text-themeText">{request.policy?.name || 'General Leave'}</p>
+ <p className="text-lg font-semibold tracking-tight text-themeText">{request.policy?.name || 'General Leave'}</p>
  </div>
  </div>
  <div className="text-right">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Duration</p>
+ <p className="text-[13px] font-medium text-themeTextSec">Duration</p>
  <p className="text-sm font-bold text-themeText mt-1">
  {new Date(request.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - {new Date(request.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
  </p>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">{request.total_days} Days</p>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-0.5">{request.total_days} Days</p>
  </div>
  </div>
 
  <div className="mb-6">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2">Reason Provided</p>
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-white/5Strong">
+ <p className="text-[13px] font-medium text-themeTextSec mb-2">Reason Provided</p>
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-gray-200 dark:border-white/5Strong">
  <p className="text-sm text-themeText italic leading-relaxed">"{request.reason}"</p>
  </div>
  </div>
 
  <div>
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-3">Classes Affected</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-3">Classes Affected</p>
  {affectedClasses.length > 0 ? (
  <div className="flex flex-wrap gap-2">
  {affectedClasses.map((cls, idx) => (
@@ -145,9 +143,9 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  )}
  </div>
  
- <div className="mt-6 pt-6 border-t-[length:var(--border-width)] border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
- <p className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Class Replacement Status</p>
- <span className="bg-rose-500/10 border-[length:var(--border-width)] border-rose-500/20 text-rose-500 px-3 py-1 rounded text-[9px] lg:text-[10px] font-black uppercase tracking-widest w-fit">
+ <div className="mt-6 pt-6 border-t-[length:var(--border-width)] border-gray-200 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+ <p className="text-[13px] font-medium text-themeTextSec">Class Replacement Status</p>
+ <span className="bg-rose-500/10 border-[length:var(--border-width)] border-rose-500/20 text-rose-500 px-3 py-1 rounded text-[9px] lg:text-[13px] font-medium w-fit">
  {request.replacement_status === 'Assigned' ? 'Assigned' : 'Not Assigned'}
  </span>
  </div>
@@ -159,7 +157,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <div className="bg-amber-500/5 border-[length:var(--border-width)] border-amber-500/20 rounded-themePanel p-5">
  <div className="flex items-center gap-2 mb-3 text-amber-500">
  <i className="fa-solid fa-triangle-exclamation"></i>
- <span className="text-xs font-black uppercase tracking-widest">Important</span>
+ <span className="text-[14px] font-medium tracking-normal">Important</span>
  </div>
  <p className="text-xs text-amber-600/80 font-medium leading-relaxed mb-3">
  Faculty must produce valid supporting documents to the administration whenever requested.
@@ -175,21 +173,21 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <button type="button" 
  onClick={() => handleAction('ApproveAndReplace')}
  disabled={isProcessing}
- className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition flex items-center justify-center gap-2"
+ className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-gray-900 dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2"
  >
  <i className="fa-solid fa-user-clock"></i> Approve & Assign Replacement
  </button>
  <button type="button" 
  onClick={() => handleAction('Approve')}
  disabled={isProcessing}
- className="w-full py-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border-[length:var(--border-width)] border-emerald-500/20 rounded-xl text-xs font-black uppercase tracking-widest transition"
+ className="w-full py-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-gray-900 dark:text-white border-[length:var(--border-width)] border-emerald-500/20 rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Approve (No Replacement)
  </button>
  <button type="button" 
  onClick={() => handleAction('Reject')}
  disabled={isProcessing}
- className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-white text-rose-500 border border-white/5Strong rounded-xl text-xs font-black uppercase tracking-widest transition"
+ className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-gray-900 dark:text-white text-rose-500 border border-gray-200 dark:border-white/5Strong rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Reject
  </button>

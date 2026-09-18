@@ -41,8 +41,7 @@ export default function Preloader() {
                  maskImage: `url(${pclLogo})`,
                  maskSize: "contain",
                  maskRepeat: "no-repeat",
-                 maskPosition: "center",
-              }}></div>
+                 maskPosition: "center" }}></div>
               <div className="flex flex-col items-center leading-[1.1] text-[var(--accent)]">
                 <span className="font-bold tracking-[4px] md:tracking-[6px] text-3xl md:text-5xl font-['Outfit']">PRUDENTIA</span>
                 <span className="text-[10px] md:text-sm tracking-[5px] md:tracking-[8px] mt-2 font-['Outfit']">COLLEGE OF LAW</span>

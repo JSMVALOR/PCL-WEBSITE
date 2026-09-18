@@ -141,7 +141,7 @@ export const ErpProvider = ({ children }) => {
         
         // Fix for Tailwind dark mode classes - seamlessly sync the 'dark' class 
         // with our semantic themes so all dark: and light modes work properly.
-        if (activeTheme.includes('light') || ['marble-executive', 'structural-neo-brutalism'].includes(activeTheme)) {
+        if (activeTheme.includes('light') || ['apple-hig-light', 'marble-executive', 'structural-neo-brutalism'].includes(activeTheme)) {
             document.documentElement.classList.remove('dark');
         } else {
             document.documentElement.classList.add('dark');
@@ -202,8 +202,7 @@ export const ErpProvider = ({ children }) => {
                 role: normalizedRole,
                 academic_batch: profile.academic_batch,
                 questionnaire_completed: profile.questionnaire_completed || false,
-                profile_picture_url: profile.profile_picture_url || null,
-            };
+                profile_picture_url: profile.profile_picture_url || null };
 
             // Update UI and write to permanent cache securely
             setUserSession(sessionData);
@@ -276,8 +275,7 @@ export const ErpProvider = ({ children }) => {
             // Step 1: Check Auth Vault
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: emailToLogin,
-                password: password,
-            });
+                password: password });
 
             if (error) {
                 return { success: false, error: { message: "Invalid credentials. Please verify your ID and password." } };

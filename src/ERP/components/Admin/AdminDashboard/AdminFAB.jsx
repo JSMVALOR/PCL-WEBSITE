@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from 'react';
 
-export default function AdminFAB({ isEmbedded = false }) {
+export default function AdminFAB({}) {
  const [isOpen, setIsOpen] = useState(false);
 
  const actions = [
@@ -20,10 +20,10 @@ export default function AdminFAB({ isEmbedded = false }) {
  {actions.map((action, i) => (
  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} 
  key={i} 
- className="flex items-center gap-3 bg-themePanel/85 backdrop-blur-2xl border border-white/5 p-2 pr-4 rounded-lg hover:border-themeAccent hover:text-themeAccent transition group"
+ className="flex items-center gap-3 bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 p-2 pr-4 rounded-lg hover:border-themeAccent hover:text-themeAccent transition group"
  style={{ transitionDelay: `${(actions.length - i) * 30}ms` }}
  >
- <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center text-themeTextSec group-hover:bg-themeAccent group-hover:text-white transition-colors">
+ <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center text-themeTextSec group-hover:bg-themeAccent group-hover:text-gray-900 dark:text-white transition-colors">
  <i className={`fa-solid ${action.icon} text-xs`}></i>
  </div>
  <span className="text-[10px] font-black uppercase tracking-widest text-themeText group-hover:text-themeAccent whitespace-nowrap">{action.label}</span>
@@ -34,7 +34,7 @@ export default function AdminFAB({ isEmbedded = false }) {
  {/* Main Toggle Button */}
  <button type="button" 
  onClick={() => setIsOpen(!isOpen)}
- className={`w-14 h-14 rounded-lg bg-themeAccent text-white flex items-center justify-center transition-transform hover:scale-110 active:scale-95 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
+ className={`w-14 h-14 rounded-lg bg-themeAccent text-gray-900 dark:text-white flex items-center justify-center transition-transform hover:scale-110 active:scale-95 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
  >
  <i className="fa-solid fa-plus text-xl"></i>
  </button>

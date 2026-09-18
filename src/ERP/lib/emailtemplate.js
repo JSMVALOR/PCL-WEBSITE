@@ -57,6 +57,93 @@ const buttonStyles = `
 `;
 
 export const HTML_EMAIL_TEMPLATES = {
+
+    PARENT_LOGIN_OTP: (params) => {
+        const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+        
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Parent Portal - Verification Code</title>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+            
+            <div style="display: none; max-height: 0px; overflow: hidden;">
+                Your verification code is: ${params.otp}
+            </div>
+
+            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #050505; padding: 40px 20px;">
+                <tr>
+                    <td align="center">
+                        <table width="100%" max-width="500" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #0A0A0A; border: 1px solid #1A1A1A; border-radius: 24px; padding: 40px; margin: 0 auto; text-align: center;">
+                            <tr>
+                                <td>
+                                    <h1 style="color: #FFFFFF; font-size: 24px; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.5px;">Parent Portal Access</h1>
+                                    <p style="color: #8E8E93; font-size: 15px; line-height: 1.5; margin: 0 0 32px 0;">Use the verification code below to access your ward's academic records.</p>
+                                    
+                                    <div style="background-color: #1A1A1A; border: 1px solid #2C2C2E; border-radius: 16px; padding: 24px; margin-bottom: 32px;">
+                                        <p style="color: #8E8E93; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0;">Verification Code</p>
+                                        <div style="font-size: 42px; font-weight: 900; color: #EAB308; letter-spacing: 8px; line-height: 1;">${params.otp}</div>
+                                    </div>
+                                    
+                                    <p style="color: #666666; font-size: 13px; line-height: 1.5; margin: 0;">
+                                        Requested at ${timestamp}<br>
+                                        If you did not request this code, you can safely ignore this email.
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        <p style="color: #333333; font-size: 12px; margin-top: 32px; font-weight: 500;">
+                            © 2026 PRUDENTIA COLLEGE OF LAW
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        `;
+    },
+
+
+    PARENT_ABSENT_ALERT: (params) => `
+    <div style="${baseStyles}">
+        <div style="background-color: #f7f9fa; padding: 40px 20px; min-height: 100vh;">
+            <div style="${containerStyles}">
+                <div style="background: #ef4444; color: #ffffff; padding: 30px; text-align: center; border-bottom: 3px solid #dc2626;">
+                    <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 2px;">ATTENDANCE ALERT</h1>
+                </div>
+                <div style="padding: 40px 30px;">
+                    <p style="font-size: 16px; margin-bottom: 24px; color: #4b5563;">Dear Parent/Guardian,</p>
+                    <p style="font-size: 16px; margin-bottom: 24px; color: #4b5563;">
+                        This is an automated notification from the Prudentia College of Law Academic Engine.
+                    </p>
+                    <div style="background: #fee2e2; border-radius: 12px; padding: 24px; margin-bottom: 30px; border: 1px solid #fca5a5;">
+                        <h2 style="margin: 0 0 10px 0; font-size: 20px; color: #991b1b;">Student: ${params.student_name}</h2>
+                        <p style="margin: 0; font-size: 16px; color: #b91c1c;">
+                            <strong>Subject:</strong> ${params.subject}<br/>
+                            <strong>Date:</strong> ${params.date}<br/>
+                            <strong>Status:</strong> <span style="font-weight: 800; text-transform: uppercase;">Marked Absent</span>
+                        </p>
+                    </div>
+                    <p style="font-size: 14px; color: #6b7280; text-align: center; font-style: italic;">
+                        If you believe this is an error or wish to submit a medical leave request, please login to the Parent Portal.
+                    </p>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a href="${params.portal_link}" style="${buttonStyles}">Access Parent Portal</a>
+                    </div>
+                </div>
+                <div style="${footerStyles}">
+                    <p style="margin: 0; opacity: 0.8;">© 2026 JSM VALOR & Prudentia College of Law</p>
+                    <p style="margin: 5px 0 0 0; font-size: 10px; opacity: 0.6;">This is an automated, headless alert generated by the ERP engine.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    `,
+
     // 1. CREDENTIALS & ONBOARDING
     FIRST_CREDENTIALS: (params) => `
     <div style="${baseStyles} background-color: #f3f4f6; padding: 20px;">
@@ -1010,6 +1097,5 @@ z"/>
         </body>
         </html>
         `;
-    },
-    };
+    } };
 Object.assign(HTML_EMAIL_TEMPLATES, HTML_EXTRA_TEMPLATES);

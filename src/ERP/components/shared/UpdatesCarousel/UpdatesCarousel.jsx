@@ -15,9 +15,9 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
 
     
     slides.push(
-        <div key="notices" className="w-full h-full shrink-0 flex flex-col bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-sm dark:shadow-sm rounded-2xl p-6 relative">
+        <div key="notices" className="w-full h-full shrink-0 flex flex-col bg-transparent p-6 relative">
             <div className="flex justify-between items-center mb-5 shrink-0 relative z-10">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
+                <h3 className="text-[13px] font-medium tracking-normal text-themeTextSec flex items-center gap-2">
                     <i className="fa-solid fa-bullhorn"></i> Campus Notices
                 </h3>
                 {onNoticesClick && (
@@ -34,16 +34,16 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
                         className="p-4 bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-xl cursor-pointer group hover:bg-black/5 dark:hover:bg-white/15 transition-colors shrink-0 relative z-10" 
                     >
                         <div className="flex items-center gap-2 mb-2">
-                            <span className={`text-[8px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${n.priority === 'CRITICAL' || n.priority === 'URGENT' ? 'bg-rose-500 text-white' : n.priority === 'IMPORTANT' ? 'bg-amber-500 text-white' : 'bg-themeElevated text-themeTextSec border border-black/5 dark:border-white/5'}`}>{n.priority || 'UPDATE'}</span>
+                            <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${n.priority === 'CRITICAL' || n.priority === 'URGENT' ? 'bg-rose-500 text-gray-900 dark:text-white' : n.priority === 'IMPORTANT' ? 'bg-amber-500 text-gray-900 dark:text-white' : 'bg-themeElevated text-themeTextSec border border-black/5 dark:border-white/5'}`}>{n.priority || 'UPDATE'}</span>
                         </div>
-                        <p className="text-xs font-bold text-themeText group-hover:text-themeAccent transition-colors leading-relaxed line-clamp-2">{n.title || n.message}</p>
+                        <p className="text-[14px] font-medium text-themeText group-hover:text-themeAccent transition-colors leading-relaxed line-clamp-2">{n.title || n.message}</p>
                     </motion.div>
                 )) : (
                     <div className="py-6 text-center opacity-50 flex flex-col items-center h-full justify-center">
                         <div className="w-12 h-12 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center mb-4">
                             <i className="fa-regular fa-bell text-lg text-themeTextSec"></i>
                         </div>
-                        <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">No new notices</p>
+                        <p className="text-[10px] font-bold text-themeTextSec tracking-normal">No new notices</p>
                     </div>
                 )}
             </div>
@@ -68,7 +68,7 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
             </div>
 
             {slides.length > 1 && (
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/20 dark:bg-white/20 backdrop-blur-xl px-3 py-1.5 rounded-full">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-gray-50 dark:bg-black/20 dark:bg-white/20 backdrop-blur-xl px-3 py-1.5 rounded-full">
                     {slides.map((_, idx) => (
                         <button type="button" 
                             key={idx}

@@ -13,6 +13,7 @@ import pclLogo from '../Shared/Assets/LOGOS/pcl_logo.svg';
 // 1. AUTH & LAYOUT IMPORTS
 // ==========================================
 import Login from './components/Login/Login';
+import ParentDashboard from './components/Parent/ParentDashboard/ParentDashboard';
 import TopNav from './components/shared/TopNav';
 import MobileNav from './components/shared/MobileNav';
 import Sidebar from './components/Student/sidebar/Sidebar';
@@ -45,7 +46,6 @@ import CourseVault from './components/Student/CourseVault/CourseVault';
 import Attendance from './components/Student/Attendance/Attendance';
 import Assignments from './components/Student/Assignments/Assignments';
 import Timetable from './components/Student/Timetable/Timetable';
-import Examinations from './components/Student/Examinations/Examinations';
 import Mentorship from './components/Student/Mentorship/Mentorship';
 import Internships from './components/Student/Internships/Internships';
 import MootCourt from './components/Student/MootCourt/MootCourt';
@@ -61,6 +61,7 @@ import CVBuilder from './components/Student/CVBuilder/CVBuilder';
 // ==========================================
 import FacultyDashboard from './components/Faculty/FacultyDashboard/FacultyDashboard';
 import FacultyAssignments from './components/Faculty/FacultyAssignments/FacultyAssignments';
+import FacultyPayroll from './components/Faculty/FacultyPayroll/FacultyPayroll';
 import FacultyMarks from './components/Faculty/FacultyMarks/FacultyMarks';
 import Approvals from './components/Faculty/Approvals/Approvals';
 
@@ -83,45 +84,34 @@ import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
 import UserManagement from './components/Admin/UserManagement/UserManagement';
 import AdminCourseBuilder from './components/Admin/AdminTimetableBuilder/AdminCourseBuilder';
 import AdminTimetableHQ from './components/Admin/AdminTimetableBuilder/AdminTimetableHQ';
+import AdminMarksController from './components/Admin/AdminMarksController/AdminMarksController';
 import AdminMentorship from './components/Admin/AdminMentorship/AdminMentorship';
 import AdminApprovals from './components/Admin/AdminApprovals/AdminApprovals';
 import AdminLeaveManagement from './components/Admin/LeaveManagement/AdminLeaveManagement';
-import AdminExaminations from './components/Admin/Examinations/AdminExaminations';
 import AdminNotices from './components/Admin/notices/AdminNotices';
 import AdminFees from './components/Admin/AdminFees/AdminFees';
 import AdminMootCourt from './components/Admin/AdminMootCourt/AdminMootCourt';
 import AdminPlacements from './components/Admin/AdminPlacements/AdminPlacements';
 import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
 import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
+import AdminAttendanceIssues from './components/Admin/AdminAttendanceIssues/AdminAttendanceIssues';
+
 import SQLStudio from './components/Admin/AdminDashboard/SQLStudio';
 import AdminHelpdesk from './components/Admin/AdminHelpdesk/AdminHelpdesk';
+import AdminPayroll from './components/Admin/AdminPayroll/AdminPayroll';
 import AdminSiteEditor from './components/Admin/AdminSiteEditor/AdminSiteEditor';
 import EventsBoard from './components/notices/EventsBoard';
-import AdminOperationsHub from './components/Admin/AdminOperationsHub/AdminOperationsHub';
 import AdminAcademicHub from './components/Admin/AdminAcademicHub/AdminAcademicHub';
 import AdminClinicsHub from './components/Admin/AdminClinicsHub/AdminClinicsHub';
 import BlogManager from './components/Admin/BlogManager/BlogManager';
+import AdminCareers from './components/Admin/AdminWebsiteHub/AdminCareers';
 import SessionTimeoutGuard from './components/shared/SessionTimeoutGuard';
 import { RoleActionButton } from './components/shared/LiveHeaderComponents';
 import IntelligentBot from './components/shared/IntelligentBot';
 
 export default function App() {
   useEffect(() => {
-    const handleFormSubmit = (e) => {
-      // Ignore the login form so users don't get prompted when logging in
-      if (e.target && e.target.id === 'login-form') return;
-      if (e.target && e.target.closest && e.target.closest('.no-confirm-form')) return;
-      
-      const confirmed = window.confirm("Are you sure you want to submit this?");
-      if (!confirmed) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-    
-    // Add to window in capture phase to intercept before React
-    window.addEventListener("submit", handleFormSubmit, true);
-    return () => window.removeEventListener("submit", handleFormSubmit, true);
+
   }, []);
   const { userSession, isAppLoading, logout, notices, layoutPreference, navLayout } = useERP();
   
@@ -186,9 +176,7 @@ export default function App() {
       attendance: "Attendance Tracker",
       coursevault: "Course Vault",
       timetable: userSession?.role === 'faculty' ? "My Teaching Schedule" : "Academic Schedule & Hub",
-      assignments: userSession?.role === 'faculty' ? "Assignment Engine" : "Assignment Portal",
-      examinations: "Examinations Hub",
-      bidding: "Elective Bidding",
+      assignments: userSession?.role === 'faculty' ? "Assignment Engine" : "Assignment Portal",      bidding: "Elective Bidding",
       internships: "Internships & Training",
       mootcourt: "Moot Court Society",
       achievements: "Achievements Hub",
@@ -207,9 +195,7 @@ export default function App() {
       users: "Identity & Access Management",
       curriculum: "Master Timetable Builder",
       allocations: "Mentor Allocations",
-      adminapprovals: "Central Approvals",
-      adminexaminations: "Examinations Center",
-      finance: "Finance Ledger",
+      adminapprovals: "Central Approvals",      finance: "Finance Ledger",
       adminmootcourt: "Moot Court Society",
       placements: "Placements & Internships",
       legalaid: "Legal Aid Clinic",
@@ -227,7 +213,7 @@ export default function App() {
 
   if (isAppLoading) {
     return (
-      <div className="w-full h-screen bg-themeApp flex flex-col items-center justify-center selection:bg-themePanel">
+      <div className="w-full h-screen bg-gray-50 dark:bg-black flex flex-col items-center justify-center selection:bg-white dark:bg-[#121212]">
         <div 
           style={{
             width: '64px', 
@@ -242,7 +228,7 @@ export default function App() {
         />
         <div className="flex items-center gap-3">
           <i className="fa-solid fa-circle-notch fa-spin text-xl text-neutral-500"></i>
-          <h1 className="text-xl font-black tracking-widest text-themeText uppercase">Initializing ERP System...</h1>
+          <h1 className="text-xl font-black tracking-widest text-gray-900 dark:text-white uppercase">Initializing ERP System...</h1>
         </div>
       </div>
     );
@@ -264,6 +250,12 @@ export default function App() {
   const renderContent = () => {
     const role = userSession.role;
 
+    
+    // 🟢 PARENT ROUTES
+    if (role === 'parent') {
+      return <ParentDashboard onLogout={logout} />;
+    }
+
     // 🟢 STUDENT ROUTES
     if (role === 'student') {
       switch (activeTab) {
@@ -277,9 +269,7 @@ export default function App() {
         case 'vault': return <CourseVault />;
         case 'attendance': return <Attendance />;
         case 'assignments': return <Assignments />;
-        case 'timetable': return <Timetable />;
-        case 'examinations': return <Examinations />;
-        case 'mentorship': return <Mentorship />;
+        case 'timetable': return <Timetable />;        case 'mentorship': return <Mentorship />;
         case 'internships': return <Internships />;
         case 'mootcourt': return <MootCourt />;
         case 'fees': return <Fees />;
@@ -313,6 +303,7 @@ export default function App() {
         case 'materials': return <FacultyCourses setActiveTab={setActiveTab} />;
         case 'assignments': return <FacultyAssignments />;
         case 'marks': return <FacultyMarks />;
+        case 'payroll': return <FacultyPayroll />;
         
         case 'mentorship': return <FacultyMentorship />;
         case 'clinics': return <FacultyClinicsHub />;
@@ -329,27 +320,29 @@ export default function App() {
     // 🟣 ADMIN ROUTES
     if (role === 'admin') {
       switch (activeTab) {
-        case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />;
-        case 'operations': return <AdminOperationsHub />;
-        case 'academic': return <AdminAcademicHub />;
+        case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />;        case 'academic': return <AdminAcademicHub />;
         case 'clinics': return <AdminClinicsHub />;
         case 'blogs': return <BlogManager />;
+        case 'careers': return <AdminCareers />;
         case 'notices': return <Notices setActiveTab={setActiveTab} />;
         case 'users': return <UserManagement />;
         case 'coursebuilder': return <AdminCourseBuilder />;
         case 'timetablebuilder': return <AdminTimetableHQ />;
+        case 'markscontroller': return <AdminMarksController />;
         case 'allocations': return <AdminMentorship />;
         case 'adminapprovals': return <AdminApprovals />;
-        case 'leavemanagement': return <AdminLeaveManagement />;
-        case 'examinations': return <AdminExaminations />;
-        case 'finance': return <AdminFees />;
+        case 'leavemanagement': return <AdminLeaveManagement />;        case 'finance': return <AdminFees />;
+        case 'adminpayroll': return <AdminPayroll />;
         case 'mootcourt': return <AdminMootCourt />;
         case 'placements': return <AdminPlacements />;
         case 'legalaid': return <AdminLegalAid />;
         case 'adminadmissions': return <AdminAdmissions />;
+        case 'attendance_issues': return <AdminAttendanceIssues />;
+
         case 'sql': return <SQLStudio />;
         case 'helpdesk': return <AdminHelpdesk />;
-        case 'siteeditor': return <AdminSiteEditor />;
+                case 'siteeditor': return <AdminSiteEditor />;
+        case 'parent-preview': return <ParentDashboard onLogout={logout} />;
         case 'events': return <EventsBoard />;
         case 'credentials': return <Credentials />;
         default: return <ModuleUnderConstruction tabName={activeTab} role="Admin" />;
@@ -370,7 +363,7 @@ export default function App() {
       <SessionTimeoutGuard>
         <DialogContainer />
         <ToastContainer />
-        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-themeApp text-themeText premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
+        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-gray-50 dark:bg-black text-gray-900 dark:text-white premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
           
           {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
           {navLayout === 'classic' && (
@@ -389,7 +382,7 @@ export default function App() {
           {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Active when using TopNav Layout */}
           {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
 
-            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
+            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50 dark:bg-black relative min-w-0">
               <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
                 {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
                 <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
@@ -399,10 +392,10 @@ export default function App() {
                 </div>
 
               {/* ERP Footer with Privacy & Terms */}
-              <div className="w-full shrink-0 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder bg-themePanel/30 text-xs font-medium text-themeTextSec mt-auto z-10 relative">
+              <div className="w-full shrink-0 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-white/5Border bg-white dark:bg-[#121212]/30 text-xs font-medium text-gray-500 dark:text-white/50 mt-auto z-10 relative">
                 <div className="flex gap-4 mb-2 sm:mb-0">
-                  <a href="/privacy" target="_blank" className="hover:text-themeText transition-colors">Privacy Policy</a>
-                  <a href="/terms" target="_blank" className="hover:text-themeText transition-colors">Terms of Service</a>
+                  <a href="/privacy" target="_blank" className="hover:text-gray-900 dark:text-white transition-colors">Privacy Policy</a>
+                  <a href="/terms" target="_blank" className="hover:text-gray-900 dark:text-white transition-colors">Terms of Service</a>
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -436,8 +429,8 @@ export default function App() {
         <Route path="*" element={<Navigate to={`/${userSession?.role || 'student'}/dashboard`} replace />} />
       </Routes>
 
-      {/* Mandatory Onboarding Lockout for Students */}
-      {userSession?.role === 'student' && userSession.questionnaire_completed === false && !hasSkippedQuestionnaire && (
+      {/* Mandatory Onboarding Lockout for Student & Faculty Portals */}
+      {userSession && userSession.role !== 'admin' && userSession.questionnaire_completed === false && !hasSkippedQuestionnaire && (
         <QuestionnaireModal onComplete={handleQuestionnaireComplete} onSkip={() => { setHasSkippedQuestionnaire(true); sessionStorage.setItem("skipped_questionnaire", "true"); }} />
       )}
       
@@ -448,14 +441,14 @@ export default function App() {
 
 function ModuleUnderConstruction({ tabName, role }) {
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
-      <div className={`${theme.layout.panel} rounded-themePanel p-8`}>
+    <div className="w-full w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
+      <div className={`${theme.layout.panel} rounded-2xl p-8`}>
       <div className="flex items-center gap-4 mb-6">
-        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorderStrong bg-themePanel`}>
+        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-gray-200 dark:border-white/5BorderStrong bg-white dark:bg-[#121212]`}>
           <i className="fa-solid fa-layer-group"></i>
         </div>
         <div>
-          <h3 className={`${theme.text.heading} text-xl text-themeText capitalize`}>
+          <h3 className={`${theme.text.heading} text-xl text-gray-900 dark:text-white capitalize`}>
             {tabName.replace('-', ' ')} Module
           </h3>
           <p className={theme.text.secondary}>
@@ -463,11 +456,11 @@ function ModuleUnderConstruction({ tabName, role }) {
           </p>
         </div>
       </div>
-      <div className={`p-6 border-theme border-dashed border-neutral-800 rounded-themePanel bg-themeApp flex flex-col items-center justify-center text-center py-24 `}>
+      <div className={`p-6 border-gray-200 dark:border-white/5 border-dashed border-neutral-800 rounded-2xl bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-center py-24 `}>
         <i className={`fa-solid fa-code text-5xl ${theme.text.muted} mb-4`}></i>
-        <h4 className={`${theme.text.heading} text-xl text-themeText mb-2`}>Module Under Construction</h4>
+        <h4 className={`${theme.text.heading} text-xl text-gray-900 dark:text-white mb-2`}>Module Under Construction</h4>
         <p className={`${theme.text.secondary} text-sm max-w-md leading-relaxed`}>
-          The <span className="font-black text-themeText">{tabName}</span> component is currently being developed for the {role} portal. Please select another module from the sidebar.
+          The <span className="font-black text-gray-900 dark:text-white">{tabName}</span> component is currently being developed for the {role} portal. Please select another module from the sidebar.
         </p>
       </div>
     </div>

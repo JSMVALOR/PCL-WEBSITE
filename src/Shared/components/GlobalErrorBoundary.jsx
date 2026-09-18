@@ -15,6 +15,18 @@ class GlobalErrorBoundary extends React.Component {
     console.error("System Crash Caught by Boundary:", error, errorInfo);
   }
 
+  
+  handleCopy = () => {
+    const { error, errorInfo } = this.state;
+    const log = `${error?.toString()}\n${errorInfo?.componentStack}`;
+    navigator.clipboard.writeText(log).then(() => {
+      // Small visual feedback could be nice, but a simple alert works for a crash boundary
+      alert("Technical details copied to clipboard!");
+    }).catch(err => {
+      console.error("Failed to copy", err);
+    });
+  }
+
   handleReport = () => {
     const { error, errorInfo } = this.state;
     const subject = encodeURIComponent("🚨 PCL System Crash Report");
@@ -56,7 +68,12 @@ class GlobalErrorBoundary extends React.Component {
             
             <div className="mt-8 text-left w-full">
                <details className="bg-black/5 dark:bg-black/40 rounded-xl p-4 border border-black/5 dark:border-white/5 cursor-pointer">
-                 <summary className="text-xs font-bold uppercase tracking-widest text-black/50 dark:text-white/50 outline-none">View Technical Details</summary>
+                 <summary className="text-xs font-bold uppercase tracking-widest text-black/50 dark:text-white/50 outline-none flex justify-between items-center">
+                   <span>View Technical Details</span>
+                   <button onClick={this.handleCopy} className="px-3 py-1 bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 rounded text-[9px] text-black dark:text-white transition-colors" title="Copy to Clipboard">
+                     <i className="fa-regular fa-copy"></i> COPY
+                   </button>
+                 </summary>
                  <pre className="mt-4 text-[10px] text-rose-500 font-mono whitespace-pre-wrap overflow-x-auto">
                     {this.state.error?.toString()}
                     {this.state.errorInfo?.componentStack}

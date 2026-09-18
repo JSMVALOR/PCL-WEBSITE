@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useERP } from '../../../context/ErpContext';
-import { theme } from '../../../../Shared/theme';
 import { Dialog } from '../../../utils/DialogManager';
 import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
 
@@ -134,7 +133,7 @@ export default function SidebarFramework({
                         text-xs font-bold tracking-wide transition duration-200 outline-none
                         ${isActive 
                             ? "bg-black/5 dark:bg-white/10 backdrop-blur-[30px] border border-black/10 dark:border-white/10 text-themeText shadow-md" 
-                            : "text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 border border-transparent hover:border-black/5 dark:hover:border-white/5 hover:text-themeText"
+                            : "text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 border border-transparent hover:border-black/5 dark:hover:border-gray-200 dark:border-white/5 hover:text-themeText"
                         }
                         ${isCompact ? "justify-center px-0" : "pr-3"}
                     `}
@@ -161,7 +160,7 @@ export default function SidebarFramework({
                     {!isCompact && (
                         <div className="flex items-center gap-2 shrink-0 pl-2">
                             {link.badge && (
-                                <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${link.badge.color || 'bg-themeAccent/20 text-themeAccent border border-themeAccent/30'}`}>
+                                <span className={`px-1.5 py-0.5 rounded text-[11px] font-medium ${link.badge.color || 'bg-themeAccent/20 text-themeAccent border border-themeAccent/30'}`}>
                                     {link.badge.text}
                                 </span>
                             )}
@@ -206,7 +205,7 @@ export default function SidebarFramework({
                         </div>
                         {!isCompact && (
                             <div className="flex flex-col min-w-0 animate-fade-in whitespace-nowrap">
-                                <span className="text-lg font-black tracking-tight text-themeText leading-none truncate">
+                                <span className="text-lg font-semibold tracking-tight tracking-tight text-themeText leading-none truncate">
                                     JSM<span className="text-themeAccent">ERP</span>
                                 </span>
                                 <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-[0.2em] mt-1 opacity-70 truncate">
@@ -232,7 +231,7 @@ export default function SidebarFramework({
                     {/* Favorites Section */}
                     {favorites.length > 0 && (
                         <div className="flex flex-col gap-1">
-                            {!isCompact && <p className="text-[9px] font-black text-themeTextSec opacity-60 uppercase tracking-widest px-3 mb-1 animate-fade-in">Favorites</p>}
+                            {!isCompact && <p className="text-[9px] font-black text-themeTextSec opacity-60 tracking-normal px-3 mb-1 animate-fade-in">Favorites</p>}
                             {config.flatMap(g => g.links).filter(l => favorites.includes(l.id)).map(link => renderLink(link))}
                         </div>
                     )}
@@ -247,7 +246,7 @@ export default function SidebarFramework({
                                         onClick={() => setExpandedGroups(p => ({ ...p, [groupIndex]: !p[groupIndex] }))}
                                         className="flex items-center justify-between w-full px-3 py-1 mb-1 group outline-none"
                                     >
-                                        <p className="text-[9px] font-black text-themeTextSec opacity-60 group-hover:text-themeText group-hover:opacity-100 uppercase tracking-widest transition">
+                                        <p className="text-[9px] font-black text-themeTextSec opacity-60 group-hover:text-themeText group-hover:opacity-100 tracking-normal transition">
                                             {group.category}
                                         </p>
                                         <i className={`fa-solid fa-chevron-down text-[8px] text-themeTextSec opacity-30 transition-transform duration-300 ${isExpanded ? 'rotate-180 opacity-60' : ''}`}></i>
@@ -279,7 +278,7 @@ export default function SidebarFramework({
                             </div>
                             <div className="flex flex-col min-w-0 flex-1">
                                 <span className="text-xs font-bold text-themeText truncate leading-tight">{userSession?.name || 'User'}</span>
-                                <span className="text-[9px] font-black text-themeTextSec uppercase tracking-widest truncate">{userSession?.role || 'Guest'}</span>
+                                <span className="text-[9px] font-black text-themeTextSec tracking-normal truncate">{userSession?.role || 'Guest'}</span>
                             </div>
                         </div>
                     )}
@@ -297,8 +296,8 @@ export default function SidebarFramework({
                     onClick={e => e.stopPropagation()}
                 >
                     <div className="px-3 py-2 border-b border-black/5 dark:border-white/5 mb-1">
-                        <p className="text-xs font-black text-themeText truncate">{contextMenu.item.label}</p>
-                        <p className="text-[9px] text-themeTextSec uppercase tracking-widest mt-0.5">Context Options</p>
+                        <p className="text-[14px] font-medium text-themeText truncate">{contextMenu.item.label}</p>
+                        <p className="text-[9px] text-themeTextSec tracking-normal mt-0.5">Context Options</p>
                     </div>
                     <button type="button" onClick={(e) => toggleFavorite(e, contextMenu.item.id)} className="w-full text-left px-4 py-2 hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-xs font-bold text-themeText flex items-center gap-3 transition-colors">
                         <i className={`fa-solid fa-star ${favorites.includes(contextMenu.item.id) ? 'text-amber-500' : 'text-themeTextSec'}`}></i>
@@ -322,13 +321,13 @@ export default function SidebarFramework({
                             whileTap={{ scale: 0.9 }}
                             key={link.id}
                             onClick={() => handleTabSwitch(link.id)}
-                            className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${isActive ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-white'}`}
+                            className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${isActive ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-gray-900 dark:text-white'}`}
                         >
                             <div className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative overflow-hidden ${isActive ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border border-black/20 dark:border-black/10 dark:border-white/20' : 'bg-transparent'}`}>
                                 
                                 <i className={`${link.icon} text-lg`}></i>
                             </div>
-                            <span className="text-[9px] font-black uppercase tracking-widest">{link.label}</span>
+                            <span className="text-[12px] font-medium">{link.label}</span>
                         </motion.button>
                     )
                 })}
@@ -336,13 +335,13 @@ export default function SidebarFramework({
                 <motion.button 
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${mobileMenuOpen ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-white'}`}
+                    className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${mobileMenuOpen ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-gray-900 dark:text-white'}`}
                 >
                     <div className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative overflow-hidden ${mobileMenuOpen ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border border-black/20 dark:border-black/10 dark:border-white/20' : 'bg-transparent'}`}>
                         
                         <i className={`fa-solid ${mobileMenuOpen ? 'fa-xmark' : 'fa-bars-staggered'} text-lg`}></i>
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-widest">Menu</span>
+                    <span className="text-[12px] font-medium">Menu</span>
                 </motion.button>
             </div>
 
@@ -366,15 +365,15 @@ export default function SidebarFramework({
                                 <div className="absolute top-1 right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-transparent z-20 shadow-[0_0_10px_#10b981]"></div>
                             </div>
                             <div className="relative z-10">
-                                <p className="text-xl font-black text-black dark:text-white tracking-tight drop-shadow-sm dark:drop-shadow-md">{userSession?.name || "User"}</p>
-                                <p className="text-[10px] font-black text-black/70 dark:text-white/70 uppercase tracking-widest mt-0.5">{userSession?.role}</p>
+                                <p className="text-xl font-semibold tracking-tight text-black dark:text-white tracking-tight drop-shadow-sm dark:drop-shadow-md">{userSession?.name || "User"}</p>
+                                <p className="text-[10px] font-black text-black/70 dark:text-white/70 tracking-normal mt-0.5">{userSession?.role}</p>
                             </div>
                         </div>
 
                         <div className="p-6 flex flex-col gap-8">
                             {config.map((group, idx) => (
                                 <div key={idx}>
-                                    <p className="text-[11px] font-black text-black/50 dark:text-white/50 uppercase tracking-widest mb-4 pl-2 drop-shadow-sm">
+                                    <p className="text-[11px] font-black text-black/50 dark:text-white/50 tracking-normal mb-4 pl-2 drop-shadow-sm">
                                         {group.category}
                                     </p>
                                     <div className="grid grid-cols-2 gap-3">
@@ -386,12 +385,12 @@ export default function SidebarFramework({
                                                     whileTap={{ scale: 0.95 }}
                                                     onClick={() => handleTabSwitch(link.id)}
                                                     className={`flex flex-col items-start gap-3 p-4 rounded-xl border transition-colors duration-300 relative overflow-hidden ${isActive 
-                                                        ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-black/20 dark:border-black/10 dark:border-white/20 text-white' 
-                                                        : 'bg-white/50 dark:bg-black/20 backdrop-blur-xl border-black/5 dark:border-white/5 text-black/80 dark:text-white/80 hover:bg-black/5 dark:bg-white/5 hover:border-black/10 dark:border-black/5 dark:border-white/10 hover:text-black dark:hover:text-white'}`}
+                                                        ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-black/20 dark:border-black/10 dark:border-white/20 text-gray-900 dark:text-white' 
+                                                        : 'bg-white/50 dark:bg-black/20 backdrop-blur-xl border-black/5 dark:border-white/5 text-black/80 dark:text-white/80 hover:bg-black/5 dark:bg-white/5 hover:border-black/10 dark:border-black/5 dark:border-white/10 hover:text-black dark:hover:text-gray-900 dark:text-white'}`}
                                                 >
                                                     
                                                     <i className={`${link.icon} text-2xl ${isActive ? '' : 'text-black/50 dark:text-white/50'}`}></i>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-left leading-snug drop-shadow-sm">{link.label}</span>
+                                                    <span className="text-[13px] font-medium text-left leading-snug drop-shadow-sm">{link.label}</span>
                                                 </motion.button>
                                             )
                                         })}

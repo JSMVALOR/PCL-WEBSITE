@@ -66,7 +66,7 @@ export default function StudentActivityRings() {
                 ]);
                 setLoading(false);
             }
-        } catch(e) {
+        } catch (e) {
             console.warn("Failed to fetch ring data", e);
             if(isMounted) setLoading(false);
         }
@@ -77,12 +77,12 @@ export default function StudentActivityRings() {
   }, [userSession]);
 
   return (
-    <div className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 sm:p-6 relative flex-[1] min-w-0 w-full flex flex-col justify-between">
+    <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-none rounded-[20px] p-4 sm:p-6 relative flex-[1] min-w-0 w-full flex flex-col justify-between">
       <div className="mb-2 shrink-0">
-        <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-1 flex items-center gap-2">
+        <h3 className="text-[14px] font-medium tracking-normal text-themeText mb-1 flex items-center gap-2">
             <i className="fa-solid fa-bullseye text-[#FF2D55]"></i> Activity Rings
         </h3>
-        <p className="text-[10px] text-themeTextSec uppercase tracking-widest">Your Academic Pulse</p>
+        <p className="text-[10px] text-themeTextSec tracking-normal">Your Academic Pulse</p>
       </div>
       
       <div className="flex-1 flex flex-col justify-center items-center relative py-4">
@@ -128,7 +128,7 @@ export default function StudentActivityRings() {
             {[...data].reverse().map((entry, index) => (
                 <div key={index} className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md border border-black/5 dark:border-white/5">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.fill }}></div>
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-themeTextSec">{entry.name} <span className="text-themeText ml-0.5">{entry.value}%</span></span>
+                    <span className="text-[12px] font-medium text-themeTextSec">{entry.name} <span className="text-themeText ml-0.5">{entry.value}%</span></span>
                 </div>
             ))}
         </div>

@@ -1,10 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 // --- CACHE HELPERS ---
 const CACHE_PENDING = 'asgn_v2_pending';
@@ -17,7 +17,7 @@ const writeCache = (key, data) => {
  try { sessionStorage.setItem(key, JSON.stringify(data)); } catch {}
 };
 
-export default function Assignments({ isEmbedded = false }) {
+export default function Assignments({}) {
  const { userSession } = useERP();
 
  // --- STATE (instant from cache) ---
@@ -27,7 +27,7 @@ export default function Assignments({ isEmbedded = false }) {
 
  // --- MODAL STATE ---
  const [selectedTask, setSelectedTask] = useState(null);
- const [submissionText, setSubmissionText] = useState("");
+ const [submissionUrl, setSubmissionUrl] = useState("");
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [submitSuccess, setSubmitSuccess] = useState(false);
  const [submitError, setSubmitError] = useState("");
@@ -79,13 +79,13 @@ export default function Assignments({ isEmbedded = false }) {
  // --- MODAL CONTROLS ---
  const openModal = (task) => {
  setSelectedTask(task);
- setSubmissionText("");
+ setSubmissionUrl("");
  setSubmitSuccess(false);
  setSubmitError("");
  };
- const closeModal = () => {
+ const closeModal = ({ isEmbedded = false }) => {
  setSelectedTask(null);
- setSubmissionText("");
+ setSubmissionUrl("");
  setSubmitSuccess(false);
  setSubmitError("");
  };
@@ -151,7 +151,7 @@ export default function Assignments({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
 
  {/* ═══════════════ HEADER ═══════════════ */}
  <PageHeader 
@@ -163,7 +163,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-[2rem] w-full lg:w-auto overflow-x-auto no-scrollbar">
  <button type="button"
  onClick={() => setView("pending")}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "pending"
+ className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "pending"
  ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent border border-black/5 dark:border-white/10"
  : "text-themeTextSec opacity-80 hover:text-themeText"
  }`}
@@ -173,7 +173,7 @@ export default function Assignments({ isEmbedded = false }) {
  </button>
  <button type="button"
  onClick={() => setView("completed")}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "completed"
+ className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "completed"
  ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent border border-black/5 dark:border-white/10"
  : "text-themeTextSec opacity-80 hover:text-themeText"
  }`}
@@ -189,7 +189,7 @@ export default function Assignments({ isEmbedded = false }) {
  {view === "pending" && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 animate-fade-in">
  {pendingAssignments.length === 0 ? (
- <div className="col-span-full py-20 flex flex-col items-center justify-center text-center border-2 border-dashed border-black/10 dark:border-white/20 rounded-[2rem] bg-transparent px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-mug-hot text-5xl text-neutral-700 mb-6"></i>
  <h3 className={`${theme.text.heading} text-2xl text-themeText tracking-tight`}>You're all caught up!</h3>
  <p className={`${theme.text.secondary} text-sm mt-2 max-w-sm`}>There are no pending assignments active for {userSession?.academic_batch || 'your batch'}.</p>
@@ -204,8 +204,8 @@ export default function Assignments({ isEmbedded = false }) {
 
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
- <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent uppercase tracking-widest truncate">{task.subject_name || 'Subject'}</span>
- <span className={`px-2.5 py-1 rounded-md text-[8px] font-black uppercase tracking-widest shrink-0 border-theme ${timeLeft.urgent
+ <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.subject_name || 'Subject'}</span>
+ <span className={`px-2.5 py-1 rounded-md text-[11px] font-medium shrink-0 border-theme ${timeLeft.urgent
  ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
  : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeTextSec border-black/10 dark:border-white/20'
  }`}>
@@ -213,7 +213,7 @@ export default function Assignments({ isEmbedded = false }) {
  </span>
  </div>
 
- <h3 className="text-lg font-black text-themeText tracking-tight leading-tight group-hover:text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent transition-colors mb-2 line-clamp-2">
+ <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight leading-tight group-hover:text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent transition-colors mb-2 line-clamp-2">
  {task.title}
  </h3>
 
@@ -221,7 +221,7 @@ export default function Assignments({ isEmbedded = false }) {
  <p className="text-xs text-themeTextSec opacity-80 leading-relaxed mb-4 line-clamp-2">{task.description}</p>
  )}
 
- <div className="mt-auto flex flex-wrap items-center gap-3 text-[9px] font-bold text-themeTextSec uppercase tracking-widest">
+ <div className="mt-auto flex flex-wrap items-center gap-3 text-[9px] font-bold text-themeTextSec tracking-normal">
  <span className="flex items-center gap-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-2 py-1 border border-black/10 dark:border-white/20 rounded">
  <i className="fa-solid fa-align-left text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent/50"></i> {task.word_limit ? `${task.word_limit} Words` : 'No Limit'}
  </span>
@@ -234,7 +234,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="p-4 border-t-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
  <button type="button"
  onClick={() => openModal(task)}
- className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
+ className="w-full bg-indigo-600 hover:bg-indigo-500 text-gray-900 dark:text-white font-black tracking-normal text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
  >
  <i className="fa-solid fa-pen-nib mr-2"></i> Start Writing
  </button>
@@ -250,7 +250,7 @@ export default function Assignments({ isEmbedded = false }) {
  {view === "completed" && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 animate-fade-in">
  {completedAssignments.length === 0 ? (
- <div className="col-span-full py-20 flex flex-col items-center justify-center text-center border-2 border-dashed border-black/10 dark:border-white/20 rounded-[2rem] bg-transparent px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-file-circle-check text-5xl text-neutral-700 mb-6"></i>
  <h3 className={`${theme.text.heading} text-2xl text-themeText tracking-tight`}>No submissions yet</h3>
  <p className={`${theme.text.secondary} text-sm mt-2`}>Your completed assignments will appear here.</p>
@@ -265,32 +265,32 @@ export default function Assignments({ isEmbedded = false }) {
  <div key={sub.id} className={`${theme.layout.panel} border border-black/10 dark:border-white/20 rounded-[2rem] flex flex-col relative`}>
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
- <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent uppercase tracking-widest truncate">{task.subject_name}</span>
- <span className={`px-2 py-1 rounded-md text-[8px] font-black uppercase tracking-widest shrink-0 border-theme ${badge.color}`}>
+ <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.subject_name}</span>
+ <span className={`px-2 py-1 rounded-md text-[11px] font-medium shrink-0 border-theme ${badge.color}`}>
  <i className={`fa-solid ${badge.icon} mr-1`}></i> {badge.label}
  </span>
  </div>
 
- <h3 className="text-lg font-black text-themeText tracking-tight leading-tight mb-4">
+ <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight leading-tight mb-4">
  {task.title}
  </h3>
 
  {sub.status === 'Graded' && (
  <div className="mt-2 mb-4 bg-emerald-500/5 border-theme border-emerald-500/20 rounded-xl p-4 flex justify-between items-center">
  <div>
- <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500/70 mb-1">Marks Awarded</p>
- <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent">{sub.marks_awarded} <span className="text-sm text-themeTextSec">/ {maxM}</span></p>
+ <p className="text-[12px] font-medium text-emerald-500/70 mb-1">Marks Awarded</p>
+ <p className="text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent">{sub.marks_awarded} <span className="text-sm text-themeTextSec">/ {maxM}</span></p>
  </div>
  {sub.remarks && (
  <div className="text-right max-w-[50%]">
- <p className="text-[9px] font-black uppercase tracking-widest text-themeTextSec mb-1">Faculty Remarks</p>
+ <p className="text-[12px] font-medium text-themeTextSec mb-1">Faculty Remarks</p>
  <p className="text-xs text-themeText font-serif italic line-clamp-2">"{sub.remarks}"</p>
  </div>
  )}
  </div>
  )}
 
- <div className="mt-auto flex flex-wrap items-center gap-3 text-[9px] font-bold text-themeTextSec uppercase tracking-widest">
+ <div className="mt-auto flex flex-wrap items-center gap-3 text-[9px] font-bold text-themeTextSec tracking-normal">
  <span className="flex items-center gap-1.5">
  <i className="fa-solid fa-clock-rotate-left"></i> Submitted {new Date(sub.submitted_at).toLocaleDateString('en-GB')}
  </span>
@@ -311,10 +311,10 @@ export default function Assignments({ isEmbedded = false }) {
  {/* Modal Header */}
  <div className="p-5 border-b-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 flex items-start justify-between gap-4 rounded-t-xl">
  <div>
- <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent uppercase tracking-widest mb-1 block">{selectedTask.subject_name}</span>
- <h3 className="text-xl font-black text-themeText tracking-tight">{selectedTask.title}</h3>
+ <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.subject_name}</span>
+ <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">{selectedTask.title}</h3>
  </div>
- <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-white transition-colors shrink-0">
+ <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-gray-900 dark:text-white transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -326,7 +326,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="w-20 h-20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent rounded-full flex items-center justify-center text-4xl mb-4 border border-emerald-500/20">
  <i className="fa-solid fa-check-double"></i>
  </div>
- <h2 className="text-2xl font-black text-themeText tracking-tight mb-2">Submission Successful</h2>
+ <h2 className="text-2xl font-semibold tracking-tight text-themeText tracking-tight mb-2">Submission Successful</h2>
  <p className="text-themeTextSec text-sm font-medium">Your work has been securely sent to the faculty.</p>
  </div>
  ) : (
@@ -343,8 +343,8 @@ export default function Assignments({ isEmbedded = false }) {
 
  <div className="flex flex-col">
  <div className="flex justify-between items-end mb-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeText">Write your submission</label>
- <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${isOverLimit ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent border border-black/10 dark:border-white/20'}`}>
+ <label className="text-[13px] font-medium text-themeText">Write your submission</label>
+ <span className={`text-[13px] font-medium px-2 py-1 rounded ${isOverLimit ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent border border-black/10 dark:border-white/20'}`}>
  {wordCount} / {selectedTask.word_limit || '∞'} Words
  </span>
  </div>
@@ -364,7 +364,7 @@ export default function Assignments({ isEmbedded = false }) {
  <button 
  type="submit" 
  disabled={isSubmitting || isOverLimit || !submissionText.trim()}
- className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-white font-black uppercase tracking-widest text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+ className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-gray-900 dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting...</> : <><i className="fa-solid fa-paper-plane"></i> Submit Final</>}
  </button>

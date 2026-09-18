@@ -77,22 +77,7 @@ export default function BlogDetail() {
           <ArrowLeft size={16} /> BACK TO BLOGS
         </Link>
 
-        {/* Cinematic Header Image */}
-        {blog.image_url && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="w-full aspect-[21/9] md:aspect-[3/1] rounded-[32px] overflow-hidden relative border border-[var(--card-border)] mb-12 shadow-[0_20px_60px_rgba(0,0,0,0.4)] z-10"
-          >
-            <img decoding="async" loading="lazy" 
-              src={blog.image_url} 
-              alt={blog.title} 
-              className="absolute inset-0 w-full h-full object-cover opacity-90"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-[var(--bg-color)]/20 to-transparent" />
-          </motion.div>
-        )}
+        
 
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 relative z-10">
           {/* Main Content Area */}

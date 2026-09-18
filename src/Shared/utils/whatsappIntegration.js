@@ -34,8 +34,7 @@ export const notifyBatchWhatsApp = async (whatsappGroupId, message) => {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
+                'Content-Type': 'application/json' },
             body: JSON.stringify({
                 messaging_product: "whatsapp",
                 recipient_type: "individual", // Even for groups, if using direct messaging via API, or switch to group ID format if using specific group endpoints. Note: Standard Cloud API currently has limitations sending directly to groups without user opt-in, so standard practice for colleges is to use a broadcast list or generic webhook integration.

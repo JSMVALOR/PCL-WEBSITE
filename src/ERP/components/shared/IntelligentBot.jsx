@@ -222,15 +222,15 @@ export default function IntelligentBot() {
                         <div className="flex items-center gap-3">
                             <div className="relative">
                                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-themeAccent to-indigo-500 flex items-center justify-center shadow-lg shadow-themeAccent/20">
-                                    <i className="fa-solid fa-robot text-white text-sm"></i>
+                                    <i className="fa-solid fa-robot text-gray-900 dark:text-white text-sm"></i>
                                 </div>
                                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-themePanel rounded-full"></span>
                             </div>
                             <div className="flex flex-col">
-                                <h3 className="font-black text-themeText text-sm uppercase tracking-widest leading-none mb-1">
+                                <h3 className="font-black text-themeText text-sm tracking-normal leading-none mb-1">
                                     {userSession?.role === 'admin' ? 'Admin Bot' : 'ERP Assistant'}
                                 </h3>
-                                <p className="text-[9px] text-green-400 font-bold uppercase tracking-widest leading-none">System Online</p>
+                                <p className="text-[9px] text-green-400 font-bold tracking-normal leading-none">System Online</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -250,7 +250,7 @@ export default function IntelligentBot() {
                                 key={msg.id}
                                 className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed flex flex-col shadow-sm ${
                                     msg.sender === 'user'
-                                        ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-white shadow-md self-end rounded-2xl rounded-tr-sm'
+                                        ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-gray-900 dark:text-white shadow-md self-end rounded-2xl rounded-tr-sm'
                                         : 'bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-themeText font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
                                 }`}
                             >
@@ -297,7 +297,7 @@ export default function IntelligentBot() {
                         <button
                             type="submit"
                             disabled={!inputText.trim() || isTyping}
-                            className="w-11 h-11 rounded-full bg-themeAccent flex items-center justify-center text-white cursor-pointer hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-themeAccent/20"
+                            className="w-11 h-11 rounded-full bg-themeAccent flex items-center justify-center text-gray-900 dark:text-white cursor-pointer hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-themeAccent/20"
                             aria-label="Send Message"
                         >
                             <i className="fa-solid fa-paper-plane text-sm translate-x-[-1px] translate-y-[1px]"></i>

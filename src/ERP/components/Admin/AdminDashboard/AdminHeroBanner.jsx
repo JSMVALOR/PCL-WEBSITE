@@ -1,11 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
-import { theme } from '../../../../Shared/theme';
 import { useERP } from '../../../context/ErpContext';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 
-export default function AdminHeroBanner({ isEmbedded = false }) {
+export default function AdminHeroBanner({}) {
  const { userSession } = useERP();
  const [snapshot, setSnapshot] = useState({
  loading: true,

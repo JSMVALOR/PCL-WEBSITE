@@ -21,15 +21,13 @@ const MENU_ITEMS = [
             { label: 'Leadership & Vision', link: '/about/leadership' },
             { label: 'Faculty Profiles', link: '/about/faculty' },
             { label: 'Affiliations', link: '/about/affiliations' },
-          ],
-        },
+          ] },
         {
           title: 'Connect & Grow',
           items: [
             { label: 'Careers with Us', link: '/careers' },
             { label: 'Placement Cell', link: '/careers/placement' },
-          ],
-        },
+          ] },
       ]
     }
   },
@@ -44,23 +42,20 @@ const MENU_ITEMS = [
             { label: '5-Year BA. LL.B (Honors)', link: '/programs/ba-llb' },
             { label: '5-Year BBA. LL.B (Honors)', link: '/programs/bba-llb' },
             { label: '3-Year LL.B (Standard)', link: '/programs/llb' },
-          ],
-        },
+          ] },
         {
           title: 'Admissions',
           items: [
             { label: 'Academic Courses', link: '/programs#courses' },
             { label: 'Admissions & Fees', link: '/programs#admissions' },
             { label: 'Documents Required', link: '/programs#documents' },
-          ],
-        },
+          ] },
         {
           title: 'Resources',
           items: [
             { label: 'Academic Calendar', link: '/programs#calendar' },
             { label: 'Educational Collaborations', link: '/programs#collaborations' },
-          ],
-        },
+          ] },
       ]
     }
   },
@@ -74,15 +69,13 @@ const MENU_ITEMS = [
           items: [
             { label: 'Campus Facilities', link: '/campus/facilities' },
             { label: 'Campus Gallery', link: '/campus/gallery' },
-          ],
-        },
+          ] },
         {
           title: 'Student Life',
           items: [
             { label: 'Moot Court Society', link: '/campus/moot-court' },
             { label: 'Legal Aid & Clinic', link: '/campus/legal-aid' },
-          ],
-        },
+          ] },
       ]
     }
   },
@@ -96,8 +89,7 @@ const MENU_ITEMS = [
           items: [
             { label: 'Campus Events', link: '/events' },
             { label: 'Blogs', link: '/blogs' },
-          ],
-        },
+          ] },
       ]
     }
   },
@@ -117,8 +109,7 @@ const SOCIAL_ITEMS = [
 
 const MOBILE_MENU_ITEMS = MENU_ITEMS.map(({ menu, ...item }) => ({
   ...item,
-  columns: menu.columns || [],
-}));
+  columns: menu.columns || [] }));
 
 export default function Navbar() {
   const { isAdmissionsOpen } = useSite();

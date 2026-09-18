@@ -64,8 +64,7 @@ function Clause({ id, index, title, summary, children }) {
           className="shrink-0 mt-1 font-mono text-xs tracking-wider px-2 py-1 rounded-sm border"
           style={{
             borderColor: 'var(--primary-color)',
-            color: 'var(--primary-color)',
-          }}
+            color: 'var(--primary-color)' }}
         >
           §{String(index).padStart(2, '0')}
         </span>
@@ -114,8 +113,7 @@ export default function PrivacyPolicy() {
         style={{
           backgroundImage:
             'linear-gradient(var(--primary-color) 1px, transparent 1px), linear-gradient(90deg, var(--primary-color) 1px, transparent 1px)',
-          backgroundSize: '48px 48px',
-        }}
+          backgroundSize: '48px 48px' }}
         aria-hidden="true"
       />
 

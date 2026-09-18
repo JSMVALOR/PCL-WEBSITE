@@ -1,6 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
@@ -10,7 +9,7 @@ import FacultyAttendance from "../FacultyAttendance/FacultyAttendance";
 import FacultyAssignments from "../FacultyAssignments/FacultyAssignments";
 import ClassRoster from "../ClassRoster/ClassRoster";
 
-export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
+export default function FacultyCourses({ setActiveTab }) {
  const { userSession } = useERP();
  
  const [courses, setCourses] = useState(() => {
@@ -147,8 +146,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  if (!selectedCourse || !formData.title || !formData.url) return;
  setIsSubmitting(true);
  try {
- const { data, error } = await supabase.from('course_resources').insert({
- faculty_id: userSession.db_id, subject_id: selectedCourse.id,
+ const { data, error } = await supabase.from('course_resources').insert({ faculty_id: userSession.db_id, subject_id: selectedCourse.id,
  title: formData.title, url: formData.url, type: formData.type
  }).select();
  if (error) throw error;
@@ -167,7 +165,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  try {
  await supabase.from('course_resources').delete().eq('id', id);
  setResources(resources.filter(r => r.id !== id));
- } catch(error) {}
+ } catch (error) {}
  };
 
  const getIconForType = (type) => {
@@ -179,7 +177,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-white/10 ${!isEmbedded ? "min-h-screen bg-themeApp text-[#1C1C1E] dark:text-[#F2F2F7]" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  
  {/* HEADER */}
  <PageHeader 
@@ -190,7 +188,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  />
 
  {courses.length === 0 ? (
- <div className="py-24 text-center border-2 border-dashed border-black/5 dark:border-white/5 rounded-2xl bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]/30 px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-[#1C1C1E] dark:text-[#F2F2F7] font-black">No Courses Assigned</h3>
  <p className="text-xs lg:text-sm text-[#8E8E93] opacity-70 mt-2 max-w-xs mx-auto">You do not have any active subjects mapped to you.</p>
@@ -219,7 +217,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  <div className="absolute top-0 right-0 w-24 h-24 bg-[#007AFF]/5 rounded-full blur-xl -translate-y-1/2 translate-x-1/3"></div>
  <div className="flex items-center gap-2">
  <span className="bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded text-[11px] font-bold tracking-tight text-[#8E8E93]">
- {course.code}
+ {course.master_subjects?.code}
  </span>
  {course.batches.length > 0 && (
  <span className="bg-[#007AFF]/10 text-[#007AFF] px-2 py-0.5 rounded text-[11px] font-bold tracking-tight">
@@ -227,24 +225,24 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  </span>
  )}
  </div>
- <h3 className="text-xl font-black text-[#1C1C1E] dark:text-[#F2F2F7] leading-tight">{course.name}</h3>
+ <h3 className="text-xl font-semibold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7] leading-tight">{course.master_subjects?.name}</h3>
  </div>
  
  {/* Course Analytics Engine */}
  <div className="grid grid-cols-3 divide-x divide-themeBorder/50 border-b border-black/5 dark:border-white/5/50 bg-black/5 dark:bg-white/10/30">
  <div className="p-3 text-center flex flex-col items-center justify-center">
- <span className="text-xl font-black text-[#1C1C1E] dark:text-[#F2F2F7]">{course.classesDone}</span>
- <span className="text-[8px] font-black text-[#8E8E93] uppercase tracking-widest">Done</span>
+ <span className="text-xl font-semibold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7]">{course.classesDone}</span>
+ <span className="text-[8px] font-black text-[#8E8E93] tracking-normal">Done</span>
  </div>
  <div className="p-3 text-center flex flex-col items-center justify-center">
- <span className="text-xl font-black text-amber-500">{course.examDate ? course.classesLeft : '?'}</span>
- <span className="text-[8px] font-black text-[#8E8E93] uppercase tracking-widest">{course.examDate ? 'Left (Est)' : 'No Exam'}</span>
+ <span className="text-xl font-semibold tracking-tight text-amber-500">{course.examDate ? course.classesLeft : '?'}</span>
+ <span className="text-[8px] font-black text-[#8E8E93] tracking-normal">{course.examDate ? 'Left (Est)' : 'No Exam'}</span>
  </div>
  <div className="p-3 text-center flex flex-col items-center justify-center">
- <span className={`text-xl font-black ${Number(course.avgAttendance) >= 75 ? 'text-emerald-500' : 'text-rose-500'}`}>
+ <span className={`text-xl font-semibold tracking-tight ${Number(course.avgAttendance) >= 75 ? 'text-emerald-500' : 'text-rose-500'}`}>
  {course.avgAttendance}%
  </span>
- <span className="text-[8px] font-black text-[#8E8E93] uppercase tracking-widest">Avg Attd</span>
+ <span className="text-[8px] font-black text-[#8E8E93] tracking-normal">Avg Attd</span>
  </div>
  </div>
  </div>
@@ -268,7 +266,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  {selectedCourse.code}
  </span>
  </div>
- <h2 className="text-2xl lg:text-3xl font-black text-[#1C1C1E] dark:text-[#F2F2F7]">{selectedCourse.name}</h2>
+ <h2 className="text-2xl lg:text-3xl font-semibold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7]">{selectedCourse.name}</h2>
  </div>
  <button type="button" onClick={() => setSelectedCourse(null)} className="w-10 h-10 rounded-full bg-themeApp border border-black/5 dark:border-white/5 text-[#8E8E93] hover:text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-rose-500/10 hover:border-rose-500/20 hover:text-rose-500 transition flex items-center justify-center">
  <i className="fa-solid fa-xmark"></i>
@@ -307,7 +305,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  {/* OVERVIEW TAB */}
  {activeSidebarTab === "overview" && (
  <div className="flex flex-col gap-6 animate-fade-in">
- <h3 className="text-sm font-black text-[#1C1C1E] dark:text-[#F2F2F7]">Course Synopsis</h3>
+ <h3 className="text-[15px] font-semibold text-[#1C1C1E] dark:text-[#F2F2F7]">Course Synopsis</h3>
  
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  <div className="bg-themeApp border border-black/5 dark:border-white/5 rounded-2xl p-6 flex flex-col justify-center">
@@ -317,7 +315,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  <i className="fa-solid fa-clock"></i>
  </div>
  <div>
- <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">Next Scheduled Class</p>
+ <p className="text-[10px] font-black text-[#8E8E93] tracking-normal">Next Scheduled Class</p>
  <p className="text-lg font-bold text-[#1C1C1E] dark:text-[#F2F2F7]">
  {selectedCourse.nextClass.daysUntil === 0 ? 'Today' : selectedCourse.nextClass.daysUntil === 1 ? 'Tomorrow' : selectedCourse.nextClass.day_of_week} at {selectedCourse.nextClass.start_time.substring(0,5)}
  </p>
@@ -334,8 +332,8 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  
  <div className="bg-themeApp border border-black/5 dark:border-white/5 rounded-2xl p-6 flex items-center justify-between">
  <div>
- <p className="text-[10px] font-black text-[#8E8E93] uppercase tracking-widest">Total Credits</p>
- <p className="text-2xl font-black text-[#1C1C1E] dark:text-[#F2F2F7]">{selectedCourse.credits}</p>
+ <p className="text-[10px] font-black text-[#8E8E93] tracking-normal">Total Credits</p>
+ <p className="text-2xl font-semibold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7]">{selectedCourse.credits}</p>
  </div>
  <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl">
  <i className="fa-solid fa-award"></i>
@@ -349,10 +347,10 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  {activeSidebarTab === "resources" && (
  <div className="flex flex-col gap-6 animate-fade-in">
  <div className="flex items-center justify-between">
- <h3 className="text-sm font-black text-[#1C1C1E] dark:text-[#F2F2F7]">Course Resources</h3>
+ <h3 className="text-[15px] font-semibold text-[#1C1C1E] dark:text-[#F2F2F7]">Course Resources</h3>
  <button type="button" 
  onClick={() => setShowResourceForm(!showResourceForm)}
- className="px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-themeBorder border border-black/5 dark:border-white/5 text-[#1C1C1E] dark:text-[#F2F2F7] font-black text-[10px] uppercase tracking-widest transition"
+ className="px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-themeBorder border border-black/5 dark:border-white/5 text-[#1C1C1E] dark:text-[#F2F2F7] font-black text-[10px] tracking-normal transition"
  >
  <i className={`fa-solid ${showResourceForm ? 'fa-xmark' : 'fa-plus'} mr-1`}></i> 
  {showResourceForm ? 'Cancel' : 'Add Link'}
@@ -364,11 +362,11 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div className="flex flex-col gap-2">
  <label className="text-[11px] font-bold tracking-tight text-[#8E8E93]">Title</label>
- <input required type="text" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none focus:border-[#007AFF]" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} />
+ <input required type="text" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none focus:border-[#007AFF]" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value})} />
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[11px] font-bold tracking-tight text-[#8E8E93]">Type</label>
- <select className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none focus:border-[#007AFF] appearance-none" value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})}>
+ <select className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none focus:border-[#007AFF] appearance-none" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value})}>
  <option value="Drive Link">Google Drive</option>
  <option value="PDF Document">PDF Document</option>
  <option value="Video Lecture">Video Link</option>
@@ -378,7 +376,7 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[11px] font-bold tracking-tight text-[#8E8E93]">URL</label>
- <input required type="url" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none focus:border-[#007AFF]" value={formData.url} onChange={(e) => setFormData({...formData, url: e.target.value})} />
+ <input required type="url" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none focus:border-[#007AFF]" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value})} />
  </div>
  <button type="submit" disabled={isSubmitting} className="btn-erp">
  {isSubmitting ? 'Saving...' : 'Save Resource'}
@@ -399,11 +397,11 @@ export default function FacultyCourses({ setActiveTab, isEmbedded = false }) {
  <i className={`${getIconForType(res.type)} text-lg`}></i>
  </div>
  <div>
- <h4 className="text-sm font-black text-[#1C1C1E] dark:text-[#F2F2F7]">{res.title}</h4>
- <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest">{res.type}</p>
+ <h4 className="text-[15px] font-semibold text-[#1C1C1E] dark:text-[#F2F2F7]">{res.title}</h4>
+ <p className="text-[10px] font-bold text-[#8E8E93] tracking-normal">{res.type}</p>
  </div>
  </a>
- <button type="button" onClick={() => handleDeleteResource(res.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition flex items-center justify-center shrink-0">
+ <button type="button" onClick={() => handleDeleteResource(res.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-gray-900 dark:text-white transition flex items-center justify-center shrink-0">
  <i className="fa-solid fa-trash text-xs"></i>
  </button>
  </div>

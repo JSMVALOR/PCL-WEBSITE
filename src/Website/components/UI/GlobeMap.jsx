@@ -1,5 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState } from "react";
+import React from 'react';
 import { MapContainer, TileLayer, Marker as LeafletMarker, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -72,8 +72,7 @@ export default function GlobeMap() {
             position={position} 
             icon={customIcon}
             eventHandlers={{
-              click: openGoogleMaps,
-            }}
+              click: openGoogleMaps }}
           />
         </MapContainer>
       </div>

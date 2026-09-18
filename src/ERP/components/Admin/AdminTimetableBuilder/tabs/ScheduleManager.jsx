@@ -6,7 +6,7 @@ const DAYS_OF_WEEK = [
  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
 ];
 
-export default function ScheduleManager({ isEmbedded = false }) {
+export default function ScheduleManager({}) {
  const [settings, setSettings] = useState(null);
  const [classrooms, setClassrooms] = useState([]);
  const [loading, setLoading] = useState(true);
@@ -166,7 +166,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  return (
  <div className="flex flex-col gap-8 animate-fade-in relative pb-10">
  <div>
- <h2 className="text-xl font-black text-themeText">Institution Schedule Manager</h2>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText">Institution Schedule Manager</h2>
  <p className="text-xs font-bold text-themeTextSec">Configure global timings, off days, and academic classrooms.</p>
  </div>
 
@@ -174,15 +174,15 @@ export default function ScheduleManager({ isEmbedded = false }) {
  <form onSubmit={handleSaveSchedule} className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-6">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
  {/* Operating Hours */}
- <div className="flex flex-col gap-4 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-white/5">
- <div className="flex items-center gap-3 border-b border-white/5 pb-3">
+ <div className="flex flex-col gap-4 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-gray-200 dark:border-white/5">
+ <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/5 pb-3">
  <i className="fa-regular fa-clock text-blue-500 text-lg"></i>
- <h3 className="text-sm font-black text-themeText">Operating Hours</h3>
+ <h3 className="text-[15px] font-semibold text-themeText">Operating Hours</h3>
  </div>
  
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">College Start Time</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">College Start Time</label>
  <input 
  type="time" 
  value={startTime} 
@@ -192,7 +192,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">College End Time</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">College End Time</label>
  <input 
  type="time" 
  value={endTime} 
@@ -205,10 +205,10 @@ export default function ScheduleManager({ isEmbedded = false }) {
  </div>
 
  {/* Weekly Off Days */}
- <div className="flex flex-col gap-4 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-white/5">
- <div className="flex items-center gap-3 border-b border-white/5 pb-3">
+ <div className="flex flex-col gap-4 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-gray-200 dark:border-white/5">
+ <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/5 pb-3">
  <i className="fa-regular fa-calendar-xmark text-rose-500 text-lg"></i>
- <h3 className="text-sm font-black text-themeText">Weekly Off Days</h3>
+ <h3 className="text-[15px] font-semibold text-themeText">Weekly Off Days</h3>
  </div>
  
  <div className="flex flex-wrap gap-2">
@@ -219,7 +219,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  key={day}
  type="button"
  onClick={() => toggleOffDay(day)}
- className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition ${
+ className={`px-4 py-2 rounded-xl text-[14px] font-medium tracking-normal transition ${
  isOff 
  ? 'bg-rose-500/20 text-rose-500 border border-rose-500/50' 
  : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border border-black/5 dark:border-white/10 hover:border-themeText hover:text-themeText'
@@ -237,11 +237,11 @@ export default function ScheduleManager({ isEmbedded = false }) {
  </div>
  </div>
 
- <div className="flex justify-end pt-4 border-t border-white/5">
+ <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-white/5">
  <button 
  type="submit" 
  disabled={saving}
- className="bg-themeAccent text-themeApp px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+ className="bg-themeAccent text-themeApp px-8 py-3 rounded-xl text-[14px] font-medium tracking-normal hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
  >
  {saving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-floppy-disk"></i>}
  Save Global Schedule
@@ -251,22 +251,22 @@ export default function ScheduleManager({ isEmbedded = false }) {
 
  {/* CLASSROOM MANAGEMENT SECTION */}
  <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-6">
- <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+ <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/5 pb-4">
  <i className="fa-solid fa-school text-emerald-500 text-lg"></i>
  <div>
  <h3 className="text-base font-black text-themeText">Academic Classrooms</h3>
- <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Manage rooms available for timetable scheduling</p>
+ <p className="text-[13px] font-medium text-themeTextSec">Manage rooms available for timetable scheduling</p>
  </div>
  </div>
 
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
  {/* Add Room Form */}
- <div className="lg:col-span-1 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-white/5 flex flex-col gap-4">
- <h4 className="text-xs font-black uppercase tracking-widest text-themeText">Add New Room</h4>
+ <div className="lg:col-span-1 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-gray-200 dark:border-white/5 flex flex-col gap-4">
+ <h4 className="text-[14px] font-medium tracking-normal text-themeText">Add New Room</h4>
  
  <form onSubmit={handleAddClassroom} className="flex flex-col gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Room Name / Number</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Room Name / Number</label>
  <input 
  type="text" 
  placeholder="e.g. LH 101"
@@ -277,7 +277,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Capacity (Seats)</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Capacity (Seats)</label>
  <input 
  type="number" 
  min="1"
@@ -288,7 +288,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-1.5 block">Room Type</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Room Type</label>
  <select 
  value={newRoomType}
  onChange={e => setNewRoomType(e.target.value)}
@@ -303,7 +303,7 @@ export default function ScheduleManager({ isEmbedded = false }) {
  </div>
  <button 
  type="submit"
- className="w-full bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:text-themeApp hover:bg-emerald-500 border border-emerald-500/30 hover:border-emerald-500 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition mt-2"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:text-themeApp hover:bg-emerald-500 border border-emerald-500/30 hover:border-emerald-500 px-4 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition mt-2"
  >
  <i className="fa-solid fa-plus mr-2"></i> Add Room
  </button>
@@ -314,38 +314,38 @@ export default function ScheduleManager({ isEmbedded = false }) {
  <div className="lg:col-span-2">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  {classrooms.length === 0 ? (
- <div className="col-span-full py-12 text-center text-themeTextSec text-sm font-bold border border-white/5 border-dashed rounded-2xl">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  No classrooms defined yet.
  </div>
  ) : (
  classrooms.map(room => (
- <div key={room.id} className="bg-themePanel/85 backdrop-blur-2xl p-4 rounded-2xl border border-white/5 flex flex-col gap-3 group relative overflow-hidden">
+ <div key={room.id} className="bg-themePanel/85 backdrop-blur-2xl p-4 rounded-2xl border border-gray-200 dark:border-white/5 flex flex-col gap-3 group relative overflow-hidden">
  <div className="flex justify-between items-start z-10">
  <div>
- <h4 className="text-sm font-black text-themeText">{room.name}</h4>
+ <h4 className="text-[15px] font-semibold text-themeText">{room.name}</h4>
  <div className="flex items-center gap-2 mt-1">
- <span className="text-[9px] font-black uppercase tracking-widest text-themeTextSec bg-themeElevated/90 backdrop-blur-2xl px-2 py-0.5 rounded border border-black/5 dark:border-white/10">{room.type}</span>
- <span className="text-[9px] font-black uppercase tracking-widest text-themeTextSec bg-themeElevated/90 backdrop-blur-2xl px-2 py-0.5 rounded border border-black/5 dark:border-white/10">{room.capacity} Seats</span>
+ <span className="text-[12px] font-medium text-themeTextSec bg-themeElevated/90 backdrop-blur-2xl px-2 py-0.5 rounded border border-black/5 dark:border-white/10">{room.type}</span>
+ <span className="text-[12px] font-medium text-themeTextSec bg-themeElevated/90 backdrop-blur-2xl px-2 py-0.5 rounded border border-black/5 dark:border-white/10">{room.capacity} Seats</span>
  </div>
  </div>
  
  <button type="button" 
  onClick={() => deleteClassroom(room.id)}
- className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shrink-0 opacity-0 group-hover:opacity-100"
+ className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white flex items-center justify-center transition-colors shrink-0 opacity-0 group-hover:opacity-100"
  title="Delete Classroom"
  >
  <i className="fa-solid fa-trash text-[10px]"></i>
  </button>
  </div>
 
- <div className="border-t border-white/5 pt-3 flex justify-between items-center z-10 mt-1">
+ <div className="border-t border-gray-200 dark:border-white/5 pt-3 flex justify-between items-center z-10 mt-1">
  <div className="flex items-center gap-2">
  <div className={`w-2 h-2 rounded-full ${room.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
- <span className="text-[10px] font-black uppercase tracking-widest text-themeText">{room.status}</span>
+ <span className="text-[13px] font-medium text-themeText">{room.status}</span>
  </div>
  <button type="button" 
  onClick={() => toggleClassroomStatus(room.id, room.status)}
- className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded transition-colors ${room.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl text-amber-500 hover:bg-amber-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:bg-emerald-500/20'}`}
+ className={`text-[12px] font-medium px-3 py-1 rounded transition-colors ${room.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl text-amber-500 hover:bg-amber-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:bg-emerald-500/20'}`}
  >
  {room.status === 'Active' ? 'Set Maintenance' : 'Set Active'}
  </button>

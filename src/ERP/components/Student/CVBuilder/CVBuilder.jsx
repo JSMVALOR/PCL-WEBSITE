@@ -28,8 +28,7 @@ const readCache = () => {
  publications: [],
  certifications: [],
  extracurriculars: [],
- docId: "",
- };
+ docId: "" };
 };
 
 const writeCache = (data) => {
@@ -48,8 +47,7 @@ const writeCache = (data) => {
 const S = {
  row: { display: "flex", justifyContent: "space-between", alignItems: "baseline" },
  ul: { margin: "4px 0 0 20px", padding: 0, listStyleType: "disc" },
- li: { marginBottom: "2px" },
-};
+ li: { marginBottom: "2px" } };
 
 const SectionHeading = ({ text, style }) => (
  <h2 style={{ fontSize: "10pt", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "10px", pageBreakAfter: "avoid", ...style }}>
@@ -271,8 +269,7 @@ const ExecutiveSplitTemplate = (data, config) => {
  borderBottom: "1.5px solid #1e3a5f",
  paddingBottom: "4px",
  marginBottom: "10px",
- pageBreakAfter: "avoid",
- };
+ pageBreakAfter: "avoid" };
 
  return (
  <div>
@@ -432,8 +429,7 @@ const ProfessionalTemplate = (data, config) => {
  color: "#1e3a5f",
  borderBottom: "2px solid #1e3a5f",
  paddingBottom: "4px",
- marginBottom: "10px",
- };
+ marginBottom: "10px" };
  return (
  <div>
  <div style={{ background: "#1e3a5f", color: "#ffffff", margin: "-20mm -20mm 0", padding: "18mm 20mm 14mm", marginBottom: "18px" }}>
@@ -497,8 +493,7 @@ const TEMPLATES = {
  modern: { name: "Modern (PCL)", icon: "fa-pen-nib", accent: "amber", description: "Contemporary sans-serif with amber accent headings. Best for corporate firms.", render: ModernTemplate },
  classic: { name: "Harvard Classic", icon: "fa-landmark", accent: "slate", description: "Traditional serif layout with rule lines. Favored by top-tier law firms.", render: ClassicTemplate },
  executive: { name: "Executive Split", icon: "fa-columns", accent: "navy", description: "Two-column layout with dark sidebar, profile photo & contact. Premium look.", render: ExecutiveSplitTemplate },
- professional: { name: "Professional Navy", icon: "fa-user-tie", accent: "blue", description: "Navy header block with serif body. Ideal for judicial clerkship applications.", render: ProfessionalTemplate },
-};
+ professional: { name: "Professional Navy", icon: "fa-user-tie", accent: "blue", description: "Navy header block with serif body. Ideal for judicial clerkship applications.", render: ProfessionalTemplate } };
 
 // ═══════════════════════════════════════════════════════════════
 // MAIN BUILDER COMPONENT
@@ -518,8 +513,7 @@ export default function CVBuilder() {
  includePublications: true,
  includeCertifications: true,
  includeExtracurriculars: false,
- template: "modern",
- });
+ template: "modern" });
 
  const [erpData, setErpData] = useState(() => readCache());
 
@@ -551,23 +545,20 @@ export default function CVBuilder() {
  name: profile.full_name || userSession?.name || "Student",
  email: userSession?.email || "",
  phone: profile.phone || "Update in Profile",
- linkedin: profile.linkedin_url || "Update in Profile",
- },
+ linkedin: profile.linkedin_url || "Update in Profile" },
  academic: {
  degree: profile.department || (isLLM ? "LL.M. (Master of Laws)" : "B.B.A. LL.B. (Hons.)"),
  university: "Prudentia College of Law, School of Law",
  duration: `${admYear} – ${gradYear}`,
  cgpa: analytics.cgpa ? `${analytics.cgpa.toFixed(2)} / 10.0` : "Awaiting Data",
- rank: analytics.batch_rank ? `${analytics.batch_rank} / ${analytics.batch_total}` : "N/A",
- },
+ rank: analytics.batch_rank ? `${analytics.batch_rank} / ${analytics.batch_total}` : "N/A" },
  experience: experiences,
  mootCourt: allAch.filter((a) => a.category === "Moot Courts"),
  awards: allAch.filter((a) => a.category === "Awards"),
  publications: allAch.filter((a) => a.category === "Publications"),
  certifications: allAch.filter((a) => a.category === "Certificates"),
  extracurriculars: allAch.filter((a) => a.category === "Leadership"),
- docId: `${userSession.id}-${new Date().getFullYear()}`,
- };
+ docId: `${userSession.id}-${new Date().getFullYear()}` };
 
  setErpData(newData);
  writeCache(newData);
@@ -646,7 +637,7 @@ export default function CVBuilder() {
 
  return (
  <>
- <div className="w-full max-w-7xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated" id="cv-builder-shell">
+ <div className="w-full w-full mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated" id="cv-builder-shell">
  <PageHeader 
  icon="fa-solid fa-file-invoice" 
  title="CV Builder" 
@@ -655,7 +646,7 @@ export default function CVBuilder() {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-themePanel border-theme border-themeBorderStrong hover:bg-neutral-200 text-[#050505] rounded-[2rem] text-[10px] lg:text-xs font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 shrink-0"
+ className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-themePanel border-theme border-themeBorderStrong hover:bg-neutral-200 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 shrink-0"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export PDF"}
@@ -668,7 +659,7 @@ export default function CVBuilder() {
  <div className="lg:col-span-4 flex flex-col gap-5 lg:gap-6">
  {/* Template Selector */}
  <div className={`${theme.layout.panel} rounded-[2rem] p-5 lg:p-6 border border-black/10 dark:border-white/20`}>
- <h2 className="text-[10px] lg:text-xs font-black text-themeText uppercase tracking-widest mb-4 flex items-center gap-2">
+ <h2 className="text-[10px] lg:text-[14px] font-medium text-themeText tracking-normal mb-4 flex items-center gap-2">
  <i className="fa-solid fa-wand-magic-sparkles text-themeAccent"></i> Template Selection
  </h2>
  <div className="flex flex-col gap-3">
@@ -702,7 +693,7 @@ export default function CVBuilder() {
  <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel/30 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none blur-2xl"></div>
  <div className="flex items-center gap-2 mb-1.5 relative z-10">
  <i className="fa-solid fa-database text-themeAccent"></i>
- <h2 className="text-xs font-black tracking-tight text-themeText uppercase tracking-widest">Data Integration</h2>
+ <h2 className="text-[14px] font-medium tracking-tight text-themeText tracking-normal">Data Integration</h2>
  </div>
  <p className={`text-[10px] ${theme.text.secondary} font-medium mb-5 relative z-10`}>Toggle verified ERP records for this resume.</p>
  <div className="flex flex-col gap-2.5 relative z-10">
@@ -740,16 +731,16 @@ export default function CVBuilder() {
  {/* ═══════════════ RIGHT: A4 LIVE PREVIEW ═══════════════ */}
  <div className="lg:col-span-8 flex flex-col items-center gap-4">
  <div className="flex items-center justify-between w-full px-2">
- <span className={`text-[10px] font-black uppercase tracking-widest ${theme.text.secondary} flex items-center gap-2`}>
+ <span className={`text-[13px] font-medium ${theme.text.secondary} flex items-center gap-2`}>
  <i className="fa-solid fa-eye text-themeAccent"></i> Live Preview — {activeTemplate.name}
  </span>
- <span className={`text-[9px] font-bold ${theme.text.muted} uppercase tracking-widest px-2 py-1 bg-themePanel border-theme border-themeBorderStrong rounded border border-black/10 dark:border-white/20`}>
+ <span className={`text-[9px] font-bold ${theme.text.muted} tracking-normal px-2 py-1 bg-themePanel border-theme border-themeBorderStrong rounded border border-black/10 dark:border-white/20`}>
  A4 · 210 × 297 mm
  </span>
  </div>
 
  {/* Interactive Scale Container */}
- <div id="cv-preview-container" className="w-full bg-[#121212] rounded-[2rem] p-4 lg:p-8 flex justify-center items-start overflow-hidden min-h-[500px] relative">
+ <div id="cv-preview-container" className="w-full bg-white dark:bg-[#121212] rounded-[2rem] p-4 lg:p-8 flex justify-center items-start overflow-hidden min-h-[500px] relative">
  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 to-transparent opacity-50 pointer-events-none"></div>
  
  {/* The paper document */}
@@ -763,8 +754,7 @@ export default function CVBuilder() {
  flexShrink: 0,
  position: "relative",
  zIndex: 10,
- transition: "width 0.2s ease-out, height 0.2s ease-out",
- }}
+ transition: "width 0.2s ease-out, height 0.2s ease-out" }}
  >
  <div
  style={{
@@ -777,8 +767,7 @@ export default function CVBuilder() {
  boxSizing: "border-box",
  display: "flex",
  flexDirection: "column",
- overflow: "hidden",
- }}
+ overflow: "hidden" }}
  >
  {activeTemplate.render(erpData, cvConfig)}
  </div>
@@ -799,8 +788,7 @@ export default function CVBuilder() {
  color: "#000000",
  display: "flex",
  flexDirection: "column",
- overflow: "hidden",
- }}>
+ overflow: "hidden" }}>
  {activeTemplate.render(erpData, cvConfig)}
  </div>
  </div>
@@ -818,8 +806,7 @@ export default function CVBuilder() {
  color: "#000000",
  display: "flex",
  flexDirection: "column",
- overflow: "hidden",
- }}
+ overflow: "hidden" }}
  >
  {activeTemplate.render(erpData, cvConfig)}
  </div>

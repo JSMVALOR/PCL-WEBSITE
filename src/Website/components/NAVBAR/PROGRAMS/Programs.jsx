@@ -1,6 +1,7 @@
 import Preloader from '../../UI/Preloader/Preloader';
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useRef } from 'react';
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
@@ -12,7 +13,6 @@ import classroom1 from '../../../../Shared/Assets/CAMPUS/pcl_classroom_1.webp';
 import styles from './Programs.module.css';
 
 import { useSiteContent } from '../../../../Shared/lib/hooks/useSiteContent';
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 gsap.registerPlugin(ScrollTrigger);
 

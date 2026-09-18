@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-serif: 'Playfair Display', serif;
   --color-brand-bg: var(--bg-color);
   --color-brand-text: var(--text-color);
@@ -1626,6 +1626,24 @@ html.home-snap {
     }
   }
 
+  
+  [data-theme="apple-hig-light"] {
+    --bg-app: #F2F2F7;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #FFFFFF;
+    --text-primary: #000000;
+    --text-secondary: #8E8E93;
+    --accent: #007AFF;
+    --accent-muted: #0056b3;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.15);
+    --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --panel-blur: 24px;
+    --panel-opacity: 0.75;
+    --radius-panel: 16px;
+    --radius-btn: 12px;
+  }
+
   [data-theme="marble-executive"] {
     --bg-app: #F5F7FA;
     --bg-panel: #FFFFFF;
@@ -2001,6 +2019,7 @@ html.home-snap {
   }
 }
 
+html[data-theme="apple-hig-light"] .theme-logo,
 html[data-theme="marble-executive"] .theme-logo,
 html[data-theme="structural-neo-brutalism"] .theme-logo {
   filter: none !important; /* ERP light themes */

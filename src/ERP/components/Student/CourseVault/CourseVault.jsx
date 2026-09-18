@@ -1,11 +1,11 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { useERP } from "../../../context/ErpContext";
 import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function CourseVault({ isEmbedded = false }) {
+export default function CourseVault({}) {
  const [materials, setMaterials] = useState([]);
  const [subjects, setSubjects] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
@@ -63,8 +63,8 @@ export default function CourseVault({ isEmbedded = false }) {
  const sub = subjectData.find(s => s.id === res.subject_id);
  return {
  ...res,
- course_name: sub ? sub.name : 'Unknown Course',
- course_code: sub ? sub.code : '',
+ course_name: sub ? sub.master_subjects?.name : 'Unknown Course',
+ course_code: sub ? sub.master_subjects?.code : '',
  faculty_name: res.profiles?.full_name || 'Faculty'
  };
  });
@@ -91,7 +91,7 @@ export default function CourseVault({ isEmbedded = false }) {
  }
  };
 
- const getTypesList = () => {
+ const getTypesList = ({ isEmbedded = false }) => {
  const types = new Set(materials.map(m => m.type));
  return ['All', ...Array.from(types)];
  };
@@ -107,7 +107,7 @@ export default function CourseVault({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
 {/* SINGLE MASTER HEADER */}
  <PageHeader 
  icon="fa-brands fa-google-drive" 
@@ -147,7 +147,7 @@ export default function CourseVault({ isEmbedded = false }) {
  <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 mt-4"></div>
 </div>
  ) : filteredMaterials.length === 0 ? (
- <div className="w-full py-16 lg:py-24 border-2 border-dashed border-black/5 dark:border-white/10 rounded-[2rem] flex flex-col items-center justify-center bg-white/40 dark:bg-white/5 backdrop-blur-3xl text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className={`fa-brands fa-google-drive text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4`}></i>
  <h3 className={`font-bold text-xl lg:text-2xl text-[#1C1C1E] dark:text-[#F2F2F7] tracking-tight`}>Vault is Empty</h3>
  <p className={`${theme.text.secondary} text-xs lg:text-sm mt-2 max-w-sm`}>No materials have been published to this section yet.</p>

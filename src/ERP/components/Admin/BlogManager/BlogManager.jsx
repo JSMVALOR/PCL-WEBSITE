@@ -1,10 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-export default function BlogManager({ isHubView = false , isEmbedded = false}) {
+export default function BlogManager({ isHubView = false }) {
  const [blogs, setBlogs] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
  const [isEditing, setIsEditing] = useState(false);
@@ -14,8 +13,7 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  slug: "",
  author_name: "",
  author_erp_id: "",
- image_url: "",
- content: "",
+  content: "",
  is_public: false
  });
  const [authorContact, setAuthorContact] = useState(null);
@@ -45,10 +43,10 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  }
  };
 
- const handleCreateNew = () => {
+ const handleCreateNew = ({ isEmbedded = false }) => {
  setCurrentBlog(null);
  setAuthorContact(null);
- setFormData({ title: "", slug: "", author_name: "", author_erp_id: "", image_url: "", content: "", is_public: false });
+ setFormData({ title: "", slug: "", author_name: "", author_erp_id: "",  content: "", is_public: false });
  setIsEditing(true);
  };
 
@@ -98,8 +96,7 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  slug: formData.slug || formData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
  author_name: formData.author_name,
  author_erp_id: formData.author_erp_id || null,
- image_url: formData.image_url,
- content: formData.content,
+  content: formData.content,
  is_public: formData.is_public,
  category: 'Blog'
  };
@@ -228,17 +225,23 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  return `mailto:${authorContact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
  };
 
- if (isEditing) {
+ 
+
  return (
- <div className={`w-full ${!isHubView ? 'max-w-5xl mx-auto p-6 lg:p-8' : ''} animate-fade-in`}>
- <div className="flex justify-between items-center mb-6">
+ <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
+
+    {isEditing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-fade-in">
+            <div className="bg-themePanel/95 backdrop-blur-2xl w-full max-w-4xl rounded-2xl shadow-2xl border border-black/5 dark:border-white/10 flex flex-col max-h-[90vh] overflow-hidden">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8">
+                     <div className="flex justify-between items-center mb-6">
  <h2 className="text-xl font-black text-themeText tracking-tight">{currentBlog ? 'Edit Blog Post' : 'New Blog Post'}</h2>
  <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText text-xs font-black uppercase tracking-widest rounded-lg transition-colors border border-black/5 dark:border-white/10">
  <i className="fa-solid fa-arrow-left mr-2"></i> Back
  </button>
  </div>
  
- <form onSubmit={handleSave} className="flex flex-col gap-6 bg-themePanel/85 backdrop-blur-2xl p-6 rounded-2xl border border-white/5">
+ <form onSubmit={handleSave} className="flex flex-col gap-6 bg-themePanel/85 backdrop-blur-2xl p-6 rounded-2xl border border-black/5 dark:border-white/5">
  {/* Intimation Banner */}
  {currentBlog && (authorContact || currentBlog.author_erp_id) && (
  <div className="bg-themeAccent/10 border border-themeAccent/20 rounded-xl p-4 flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -249,27 +252,27 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  <div className="flex gap-2 flex-wrap justify-end">
  {currentBlog.author_erp_id && (
  <>
- <button type="button" onClick={handleApproveERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <button type="button" onClick={handleApproveERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-gray-900 dark:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-bell text-sm"></i> ERP Approve
  </button>
- <button type="button" onClick={handleRejectERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <button type="button" onClick={handleRejectERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-gray-900 dark:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-bell text-sm"></i> {currentBlog?.is_public ? 'ERP Notify Delete' : 'ERP Reject'}
  </button>
  <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
  </>
  )}
  
- <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-gray-900 dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-brands fa-whatsapp text-sm"></i> Approve
  </a>
- <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-gray-900 dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-brands fa-whatsapp text-sm"></i> Reject
  </a>
  <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
- <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-gray-900 dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Approve
  </a>
- <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-gray-900 dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Reject
  </a>
  </div>
@@ -279,24 +282,24 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</label>
- <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="e.g. The Future of AI in Law" />
+ <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="e.g. The Future of AI in Law" />
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">URL Slug (Auto-generated if empty)</label>
- <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} placeholder="e.g. ai-in-law" />
+ <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} placeholder="e.g. ai-in-law" />
  </div>
  </div>
  
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author Name</label>
- <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_name} onChange={e => setFormData({...formData, author_name: e.target.value})} placeholder="e.g. John Doe" />
+ <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_name} onChange={e => setFormData({...formData, author_name: e.target.value})} placeholder="e.g. John Doe" />
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author ERP ID</label>
  <div className="flex items-center gap-2">
- <input type="text" className="flex-1 bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_erp_id || ''} onChange={e => { setFormData({...formData, author_erp_id: e.target.value}); setVerifiedProfile(null); }} placeholder="e.g. 26BAL0001" />
- <button type="button" onClick={verifyErpId} className="px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-white/5 rounded-lg text-themeText text-[10px] font-black uppercase tracking-widest transition-colors shrink-0">
+ <input type="text" className="flex-1 bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.author_erp_id || ''} onChange={e => { setFormData({...formData, author_erp_id: e.target.value}); setVerifiedProfile(null); }} placeholder="e.g. 26BAL0001" />
+ <button type="button" onClick={verifyErpId} className="px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-black/5 dark:border-white/5 rounded-lg text-themeText text-[10px] font-black uppercase tracking-widest transition-colors shrink-0">
  Verify
  </button>
  </div>
@@ -305,25 +308,25 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Status</label>
- <select className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_public ? "published" : "pending"} onChange={e => setFormData({...formData, is_public: e.target.value === "published"})}>
+ <select className="bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_public ? "published" : "pending"} onChange={e => setFormData({...formData, is_public: e.target.value === "published"})}>
  <option value="pending">Pending Review (Hidden)</option>
  <option value="published">Published (Public)</option>
  </select>
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Cover Image URL</label>
- <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
+ <input type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." />
  </div>
  </div>
 
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Content (Markdown/HTML)</label>
- <textarea required className="bg-themeElevated/90 backdrop-blur-2xl border border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[400px] font-mono" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} placeholder="Write your blog post content here..."></textarea>
+ <textarea required className="bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[400px] font-mono" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} placeholder="Write your blog post content here..."></textarea>
  </div>
 
  <div className="flex justify-between mt-4">
  {currentBlog ? (
- <button type="button" onClick={handleReject} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 text-xs font-black uppercase tracking-widest rounded-lg transition-colors">
+ <button type="button" onClick={handleReject} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 text-xs font-black uppercase tracking-widest rounded-lg transition-colors">
  {currentBlog?.is_public ? 'Delete Post' : 'Reject & Delete'}
  </button>
  ) : <div></div>}
@@ -332,30 +335,30 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  </button>
  </div>
  </form>
- </div>
- );
- }
-
- return (
- <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ 
+                </div>
+            </div>
+        </div>
+    )}
+    
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
  <PageHeader icon="fa-solid fa-newspaper" title="Blog Manager" subtitle="Review submissions, publish, and notify authors." />
 
  <div className="flex justify-between items-center mb-6">
  <div className="relative w-full max-w-xs">
  <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec"></i>
- <input type="text" placeholder="Search posts..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
+ <input type="text" placeholder="Search posts..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
  </div>
  <button type="button" onClick={handleCreateNew} className="px-5 py-2.5 bg-themeAccent text-themeApp hover:opacity-90 text-xs font-black uppercase tracking-widest rounded-xl transition flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> New Post
  </button>
  </div>
 
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-white/5 rounded-2xl overflow-hidden">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-2xl overflow-hidden">
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
- <tr className="bg-themeElevated/90 backdrop-blur-2xl border-b border-white/5">
+ <tr className="bg-themeElevated/90 backdrop-blur-2xl border-b border-black/5 dark:border-white/5">
  <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</th>
  <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author</th>
  <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Date</th>
@@ -378,7 +381,7 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  </tr>
  ) : (
  blogs.map((blog) => (
- <tr key={blog.id} className="border-b border-white/5 hover:bg-themeElevated/50 transition-colors">
+ <tr key={blog.id} className="border-b border-black/5 dark:border-white/5 hover:bg-themeElevated/50 transition-colors">
  <td className="p-4 max-w-xs">
  <p className="text-sm font-bold text-themeText truncate">{blog.title}</p>
  <p className="text-[10px] font-medium text-themeTextSec mt-0.5 truncate">/{blog.slug}</p>
@@ -401,7 +404,7 @@ export default function BlogManager({ isHubView = false , isEmbedded = false}) {
  </td>
  <td className="p-4 text-right">
  <div className="flex items-center justify-end gap-2">
- <button type="button" onClick={() => handleEdit(blog)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors" title="Review & Edit">
+ <button type="button" onClick={() => handleEdit(blog)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-gray-900 dark:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors" title="Review & Edit">
  <i className="fa-solid fa-pen-to-square"></i>
  </button>
  </div>

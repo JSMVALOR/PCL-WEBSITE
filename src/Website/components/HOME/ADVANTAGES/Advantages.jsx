@@ -102,8 +102,7 @@ const Advantages = forwardRef(({ windowWidth, ...props }, ref) => {
     display: '-webkit-box',
     WebkitLineClamp: 3,
     WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-  };
+    overflow: 'hidden' };
 
   const AdvantageCard = ({ item }) => (
     <Link to={item.link} className="block group h-full">

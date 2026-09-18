@@ -1,9 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import FacultyCard from './FacultyCard';
 
 export default function Faculty() {

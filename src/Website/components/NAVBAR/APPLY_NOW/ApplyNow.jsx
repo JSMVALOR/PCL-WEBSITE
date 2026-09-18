@@ -1,5 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -65,7 +65,7 @@ Program: ${formData.program}
         await sendSystemEmail('APPLICATION_RECEIVED', {
           to_email: formData.email, name: formData.name, ticket_id: ticketId, type: `Admissions - ${formData.program}`
         });
-      } catch(e) { console.warn(e); }
+      } catch (e) { console.warn(e); }
 
       if (error) throw error;
       setGeneratedTicket(ticketId);

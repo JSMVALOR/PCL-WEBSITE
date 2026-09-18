@@ -56,7 +56,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  <div className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] rounded-2xl overflow-hidden animate-fade-in relative flex flex-col h-full">
  <div className="p-4 md:p-6 lg:p-8 border-b border-black/10 dark:border-white/20 flex justify-between items-center bg-transparent/20">
  <div>
- <h2 className="text-2xl font-black text-themeText tracking-tight">{userSession?.role === "admin" ? "Administrative Broadcast" : "Faculty Broadcast"}</h2>
+ <h2 className="text-2xl font-semibold tracking-tight text-themeText tracking-tight">{userSession?.role === "admin" ? "Administrative Broadcast" : "Faculty Broadcast"}</h2>
  <p className="text-xs font-bold text-themeTextSec mt-1">Send official notices directly to your assigned batches or specific students.</p>
  </div>
  <button type="button" onClick={onCancel} className="w-10 h-10 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-rose-500 hover:border-rose-500/30 transition">
@@ -72,13 +72,13 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  </div>
 
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Notice Title</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Notice Title</label>
  <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Rescheduling Tomorrow's Lecture" />
  </div>
  
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Category</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Category</label>
  <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="Academic">Academic</option>
  <option value="Assignment">Assignment</option>
@@ -87,7 +87,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  </select>
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Priority</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Priority</label>
  <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="normal">Normal</option>
  <option value="high">High</option>
@@ -97,7 +97,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  </div>
  
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Content</label>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Content</label>
  <textarea value={content} onChange={e => setContent(e.target.value)} required rows="6" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Draft your message here..."></textarea>
  </div>
  
@@ -113,10 +113,10 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  </div>
 
  <div className="p-6 border-t border-black/10 dark:border-white/20 bg-transparent/50 flex justify-end gap-4 shrink-0">
- <button type="button" onClick={onCancel} className="px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-themeText transition hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
+ <button type="button" onClick={onCancel} className="px-6 py-3 rounded-xl text-[14px] font-medium tracking-normal text-themeText transition hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
  Cancel
  </button>
- <button type="submit" form="faculty-broadcast-form" disabled={isPublishing} className="px-8 py-3 bg-themeAccent hover:opacity-90 text-themeApp rounded-xl text-xs font-black uppercase tracking-widest transition-opacity flex items-center gap-2">
+ <button type="submit" form="faculty-broadcast-form" disabled={isPublishing} className="px-8 py-3 bg-themeAccent hover:opacity-90 text-themeApp rounded-xl text-[14px] font-medium tracking-normal transition-opacity flex items-center gap-2">
  {isPublishing ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
  {isPublishing ? 'Broadcasting...' : 'Broadcast Notice'}
  </button>

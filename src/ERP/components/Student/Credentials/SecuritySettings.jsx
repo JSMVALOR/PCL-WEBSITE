@@ -82,7 +82,7 @@ export default function SecuritySettings() {
                 </div>
                 <div>
                     <h2 className={`${theme.text.heading} text-lg lg:text-2xl`}>Security & Access</h2>
-                    <p className={`${theme.text.secondary} text-xs uppercase tracking-widest mt-1`}>Manage your authentication and active sessions</p>
+                    <p className={`${theme.text.secondary} text-xs tracking-normal mt-1`}>Manage your authentication and active sessions</p>
                 </div>
             </div>
 
@@ -90,7 +90,7 @@ export default function SecuritySettings() {
                 
                 {/* Identity Management */}
                 <div className="flex flex-col gap-5">
-                    <h3 className={`text-xs font-black text-themeText uppercase tracking-widest flex items-center gap-2 px-1`}>
+                    <h3 className={`text-[14px] font-medium text-themeText tracking-normal flex items-center gap-2 px-1`}>
                         <i className="fa-solid fa-key text-themeAccent"></i> Identity Management
                     </h3>
 
@@ -107,7 +107,7 @@ export default function SecuritySettings() {
                         )}
 
                         <div className="space-y-2">
-                            <label className={`${theme.text.label} uppercase tracking-widest ml-1`}>New Password</label>
+                            <label className={`${theme.text.label} tracking-normal ml-1`}>New Password</label>
                             <input
                                 type="password"
                                 value={passwords.new}
@@ -119,7 +119,7 @@ export default function SecuritySettings() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className={`${theme.text.label} uppercase tracking-widest ml-1`}>Confirm New Password</label>
+                            <label className={`${theme.text.label} tracking-normal ml-1`}>Confirm New Password</label>
                             <input
                                 type="password"
                                 value={passwords.confirm}
@@ -133,7 +133,7 @@ export default function SecuritySettings() {
                         <button
                             type="submit"
                             disabled={isUpdating || !passwords.new}
-                            className={`${theme.action.btnPrimary} w-full py-3.5 mt-2 rounded-[2rem] text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
+                            className={`${theme.action.btnPrimary} w-full py-3.5 mt-2 rounded-[2rem] text-[14px] font-medium tracking-normal flex items-center justify-center gap-2 disabled:opacity-50 transition-all`}
                         >
                             {isUpdating ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Propagating...</> : "Update Identity Key"}
                         </button>
@@ -142,7 +142,7 @@ export default function SecuritySettings() {
 
                 {/* Session Telemetry */}
                 <div className="flex flex-col gap-5">
-                    <h3 className={`text-xs font-black text-themeText uppercase tracking-widest flex items-center gap-2 px-1`}>
+                    <h3 className={`text-[14px] font-medium text-themeText tracking-normal flex items-center gap-2 px-1`}>
                         <i className="fa-solid fa-satellite-dish text-themeAccent"></i> Active Telemetry
                     </h3>
 
@@ -159,14 +159,14 @@ export default function SecuritySettings() {
                                             <i className="fa-solid fa-laptop"></i>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-black text-themeText">{session.device}</p>
+                                            <p className="text-[15px] font-semibold text-themeText">{session.device}</p>
                                             <div className="flex flex-wrap items-center gap-2 mt-1">
-                                                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest flex items-center gap-1.5">
+                                                <span className="text-[9px] font-black text-emerald-500 tracking-normal flex items-center gap-1.5">
                                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                     Live Session
                                                 </span>
                                                 <span className="w-1 h-1 bg-themeBorderStrong rounded-full shrink-0"></span>
-                                                <span className={`${theme.text.muted} text-[9px] font-bold uppercase tracking-widest`}>{session.location}</span>
+                                                <span className={`${theme.text.muted} text-[12px] font-medium`}>{session.location}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -177,16 +177,16 @@ export default function SecuritySettings() {
                             <button type="button"
                                 onClick={handleGlobalLogout}
                                 disabled={isLoggingOut}
-                                className={`${theme.layout.panel} border border-themeBorder p-5 w-full flex items-center justify-center gap-3 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors duration-300 rounded-themePanel`}
+                                className={`${theme.layout.panel} border border-themeBorder p-5 w-full flex items-center justify-center gap-3 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white transition-colors duration-300 rounded-themePanel`}
                             >
                                 {isLoggingOut ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-power-off text-lg"></i>}
-                                <span className="font-black uppercase tracking-widest text-xs">Log out from all devices</span>
+                                <span className="font-black tracking-normal text-xs">Log out from all devices</span>
                             </button>
 
                             <div className={`${theme.layout.panel} border border-themeBorder p-5 rounded-themePanel flex items-start gap-4`}>
                                 <i className="fa-solid fa-circle-info text-themeAccent mt-0.5 text-lg"></i>
                                 <p className={`text-[10px] font-medium ${theme.text.secondary} leading-relaxed`}>
-                                    <strong className="text-themeText block mb-1 font-bold uppercase tracking-widest text-[9px]">Security Protocol:</strong>
+                                    <strong className="text-themeText block mb-1 font-bold tracking-normal text-[9px]">Security Protocol:</strong>
                                     Avoid sharing your ERP credentials. We recommend changing your password every 90 days to maintain institutional compliance.
                                 </p>
                             </div>

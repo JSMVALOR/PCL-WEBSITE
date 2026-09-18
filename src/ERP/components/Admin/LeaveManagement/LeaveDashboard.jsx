@@ -1,8 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function LeaveDashboard({ setActiveTab }) {
  const [stats, setStats] = useState({
@@ -22,7 +20,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  setIsLoading(true);
  try {
  // For now, using mock counts if table is empty, but hitting the real table
- const { data: leaves } = await supabase.from('faculty_leaves').select('id, status, replacement_status, start_date, end_date');
+ const { data: leaves } = await supabase.from('faculty_leaves').select('id, status, start_date, end_date');
  
  if (!leaves || leaves.length === 0) {
  // Return dummy data only if table is entirely empty to show the UI works
@@ -93,15 +91,15 @@ export default function LeaveDashboard({ setActiveTab }) {
  ];
 
  const StatCard = ({ label, value, icon, color }) => (
- <div className={`bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-6 flex items-center justify-between transition hover:border-${color}-500 group relative overflow-hidden`}>
+ <div className={`bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 flex items-center justify-between transition hover:border-${color}-500 group relative overflow-hidden`}>
  {/* Background Glow on Hover */}
  <div className={`absolute inset-0 bg-gradient-to-br from-${color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}></div>
  
  <div className="relative z-10">
- <p className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeTextSec group-hover:text-themeText transition-colors mb-1">{label}</p>
- <h3 className="text-2xl lg:text-3xl font-black text-themeText">{isLoading ? "-" : value}</h3>
+ <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec group-hover:text-themeText transition-colors mb-1">{label}</p>
+ <h3 className="text-2xl lg:text-3xl font-semibold tracking-tight text-themeText">{isLoading ? "-" : value}</h3>
  </div>
- <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-${color}-500/10 flex items-center justify-center text-${color}-500 text-lg lg:text-xl border-[length:var(--border-width)] border-${color}-500/20 group-hover:bg-${color}-500 group-hover:text-white transition duration-300`}>
+ <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-${color}-500/10 flex items-center justify-center text-${color}-500 text-lg lg:text-xl border-[length:var(--border-width)] border-${color}-500/20 group-hover:bg-${color}-500 group-hover:text-gray-900 dark:text-white transition duration-300`}>
  <i className={`fa-solid ${icon}`}></i>
  </div>
  </div>
@@ -131,7 +129,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-${action.color}-500/10 flex items-center justify-center text-${action.color}-500 group-hover:scale-110 transition-transform`}>
  <i className={`fa-solid ${action.icon} text-lg lg:text-xl`}></i>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-themeText text-center">{action.label}</span>
+ <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center">{action.label}</span>
  </button>
  ))}
  </div>

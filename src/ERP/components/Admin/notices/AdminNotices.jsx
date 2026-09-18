@@ -33,6 +33,9 @@ export default function AdminNotices({ isHubView = false }) {
  const [eventEndDate, setEventEndDate] = useState("");
  const [eventType, setEventType] = useState("academic");
  const [eventDesc, setEventDesc] = useState("");
+ const [isPublic, setIsPublic] = useState(false);
+ const [eventLocation, setEventLocation] = useState("");
+ const [eventImageUrl, setEventImageUrl] = useState("");
 
  // --- DATA FETCHING ---
  useEffect(() => {
@@ -140,27 +143,27 @@ export default function AdminNotices({ isHubView = false }) {
  const renderBroadcastTab = () => (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
  {/* Form */}
- <div className="lg:col-span-5 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-6 h-max">
- <h2 className="text-xl font-black text-themeText mb-6 flex items-center gap-2">
+ <div className="lg:col-span-5 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 h-max">
+ <h2 className="text-xl font-semibold tracking-tight text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-satellite-dish text-themeAccent"></i> New Broadcast
  </h2>
  <form onSubmit={handlePublishNotice} className="flex flex-col gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Title</label>
- <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. End Semester Exam Schedule" />
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Title</label>
+ <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. End Semester Exam Schedule" />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Category</label>
- <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Category</label>
+ <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="Academic">Academic</option>
  <option value="Administrative">Administrative</option>
  <option value="General">General</option>
  </select>
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Priority</label>
- <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Priority</label>
+ <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="normal">Normal</option>
  <option value="high">High</option>
  <option value="urgent">Urgent</option>
@@ -171,10 +174,10 @@ export default function AdminNotices({ isHubView = false }) {
  <TargetAudienceSelector value={targetAudience} onChange={setTargetAudience} role="admin" />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Content</label>
- <textarea value={content} onChange={e => setContent(e.target.value)} required rows="5" className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Draft the official notification here..."></textarea>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Content</label>
+ <textarea value={content} onChange={e => setContent(e.target.value)} required rows="5" className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Draft the official notification here..."></textarea>
  </div>
- <label className="flex items-center gap-3 p-4 bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl cursor-pointer">
+ <label className="flex items-center gap-3 p-4 bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl cursor-pointer">
  <input type="checkbox" checked={requiresAck} onChange={e => setRequiresAck(e.target.checked)} className="accent-themeAccent w-4 h-4" />
  <div>
  <span className="text-sm font-bold text-themeText block">Require Acknowledgement</span>
@@ -189,22 +192,22 @@ export default function AdminNotices({ isHubView = false }) {
 
  {/* List */}
  <div className="lg:col-span-7 flex flex-col gap-4">
- <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2">Active Broadcasts</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Active Broadcasts</h3>
  {notices.map(n => (
- <div key={n.id} className="p-6 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl flex flex-col gap-3 relative overflow-hidden group">
+ <div key={n.id} className="p-6 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex flex-col gap-3 relative overflow-hidden group">
  {n.priority === 'urgent' && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
  <div className="flex justify-between items-start">
  <div className="flex gap-2">
- <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md border ${
- n.priority === 'urgent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10'
+ <span className={`text-[12px] font-medium px-2 py-1 rounded-md border ${
+ n.priority === 'urgent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] text-themeTextSec border-black/5 dark:border-white/10'
  }`}>{n.priority}</span>
- <span className="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border border-black/5 dark:border-white/10">{n.category}</span>
+ <span className="text-[12px] font-medium px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] text-themeTextSec border border-black/5 dark:border-white/10">{n.category}</span>
  </div>
  <button type="button" onClick={() => handleDeleteNotice(n.id)} className="text-themeTextSec hover:text-rose-500 transition-colors"><i className="fa-solid fa-trash-can"></i></button>
  </div>
- <h4 className="text-lg font-black text-themeText">{n.title}</h4>
+ <h4 className="text-lg font-semibold tracking-tight text-themeText">{n.title}</h4>
  <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
- <div className="flex gap-4 mt-2 pt-3 border-t border-white/5">
+ <div className="flex gap-4 mt-2 pt-3 border-t border-gray-200 dark:border-white/5">
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-regular fa-clock mr-1"></i> {new Date(n.created_at).toLocaleString()}</span>
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {n.target_audience.join(', ')}</span>
  {n.requires_acknowledgement && <span className="text-[10px] font-bold text-emerald-500"><i className="fa-solid fa-signature mr-1"></i> Requires Signature</span>}
@@ -218,36 +221,62 @@ export default function AdminNotices({ isHubView = false }) {
  const renderEventsTab = () => (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
  {/* Form */}
- <div className="lg:col-span-5 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-6 h-max">
- <h2 className="text-xl font-black text-themeText mb-6 flex items-center gap-2">
+ <div className="lg:col-span-5 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 h-max">
+ <h2 className="text-xl font-semibold tracking-tight text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-calendar-plus text-themeAccent"></i> Schedule Event
  </h2>
  <form onSubmit={handleScheduleEvent} className="flex flex-col gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Event Title</label>
- <input type="text" value={eventTitle} onChange={e => setEventTitle(e.target.value)} required className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Guest Lecture" />
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Event Title</label>
+ <input type="text" value={eventTitle} onChange={e => setEventTitle(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Guest Lecture" />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Start Date</label>
- <input min="2026-09-14" type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} required className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Start Date</label>
+ <input min="2026-09-14" type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">End Date (Optional)</label>
- <input min="2026-09-14" type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">End Date (Optional)</label>
+ <input min="2026-09-14" type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
  </div>
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Type</label>
- <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Type</label>
+ <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="academic">Academic</option>
  <option value="holiday">Holiday</option>
  <option value="extracurricular">Extracurricular</option>
  </select>
  </div>
  <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2 block">Description</label>
- <textarea value={eventDesc} onChange={e => setEventDesc(e.target.value)} required rows="3" className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Short event description..."></textarea>
+ <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Description</label>
+ <textarea value={eventDesc} onChange={e => setEventDesc(e.target.value)} required rows="3" className="w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Short event description..."></textarea>
+ </div>
+ 
+ {/* Public Event Toggle */}
+ <div className="flex flex-col gap-3 p-4 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-xl">
+    <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsPublic(!isPublic)}>
+        <div>
+            <h4 className="text-sm font-black text-themeText tracking-tight">Publish to Website</h4>
+            <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Make event visible publicly</p>
+        </div>
+        <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-black/10 dark:bg-white/10'}`}>
+            <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0'}`}></div>
+        </div>
+    </div>
+    
+    {isPublic && (
+        <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-black/5 dark:border-white/10">
+            <div>
+                <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Location</label>
+                <input type="text" value={eventLocation} onChange={e => setEventLocation(e.target.value)} className="w-full bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Main Auditorium" />
+            </div>
+            <div>
+                <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Banner Image URL</label>
+                <input type="url" value={eventImageUrl} onChange={e => setEventImageUrl(e.target.value)} className="w-full bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
+            </div>
+        </div>
+    )}
  </div>
  <button type="submit" disabled={isScheduling} className="btn-erp">
  {isScheduling ? 'Scheduling...' : 'Add to Calendar'}
@@ -257,13 +286,13 @@ export default function AdminNotices({ isHubView = false }) {
 
  {/* List */}
  <div className="lg:col-span-7 flex flex-col gap-4">
- <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec mb-2">Upcoming Calendar</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Upcoming Calendar</h3>
  {events.map(e => (
- <div key={e.id} className="p-6 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl flex justify-between items-center group">
+ <div key={e.id} className="p-6 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex justify-between items-center group">
  <div className="flex gap-4 items-center">
- <div className="w-16 h-16 rounded-xl bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 flex flex-col items-center justify-center shrink-0">
- <span className="text-[10px] font-black uppercase tracking-widest text-themeAccent">{new Date(e.start_date).toLocaleString('default', { month: 'short' })}</span>
- <span className="text-xl font-black text-themeText">{new Date(e.start_date).getDate()}</span>
+ <div className="w-16 h-16 rounded-xl bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 flex flex-col items-center justify-center shrink-0">
+ <span className="text-[13px] font-medium text-themeAccent">{new Date(e.start_date).toLocaleString('default', { month: 'short' })}</span>
+ <span className="text-xl font-semibold tracking-tight text-themeText">{new Date(e.start_date).getDate()}</span>
  </div>
  <div>
  <h4 className="text-base font-black text-themeText">{e.title}</h4>
@@ -282,7 +311,7 @@ export default function AdminNotices({ isHubView = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${isHubView ? 'bg-transparent text-themeText font-sans' : ''}`}>
- <div className={`max-w-[1400px] mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 ${!isHubView && 'px-4 lg:px-8'}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 ${!isHubView && 'px-4 lg:px-8'}`}>
  
  {/* Header and Tabs */}
  {!isHubView && (
@@ -290,10 +319,10 @@ export default function AdminNotices({ isHubView = false }) {
  )}
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/85 backdrop-blur-md rounded-2xl border border-themeBorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
- <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-gray-900 dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-satellite-dish"></i> Notices
  </button>
- <button type="button" onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-gray-900 dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-calendar-day"></i> Events
  </button>
  </div>
