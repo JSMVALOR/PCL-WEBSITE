@@ -6,6 +6,7 @@ import CourseVault from "../CourseVault/CourseVault";
 import Attendance from "../Attendance/Attendance";
 import Timetable from "../Timetable/Timetable";
 import Assignments from "../Assignments/Assignments";
+import StudentProgressCard from "../StudentProgressCard/StudentProgressCard";
 
 export default function StudentAcademicHub({ isEmbedded = false, }) {
  const [activeCategory, setActiveCategory] = useState("core");
@@ -24,7 +25,7 @@ export default function StudentAcademicHub({ isEmbedded = false, }) {
  ],
  assessments: [
  { id: "assignments", label: "Assignments", icon: "fa-file-lines" },
- { id: "examinations", label: "Examinations", icon: "fa-file-contract" }
+ { id: "examinations", label: "Progress Card", icon: "fa-award" }
  ]
  };
 
@@ -95,6 +96,7 @@ export default function StudentAcademicHub({ isEmbedded = false, }) {
  {activeTab === "attendance" && <Attendance isEmbedded={true} />}
  {activeTab === "timetable" && <Timetable isEmbedded={true} />}
  {activeTab === "assignments" && <Assignments isEmbedded={true} />}
+ {activeTab === "examinations" && <StudentProgressCard isEmbedded={true} />}
  </div>
  </div>
  </div>

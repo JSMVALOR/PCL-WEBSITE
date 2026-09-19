@@ -1,5 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useRef } from 'react';
+import * as Sentry from '@sentry/react';
 import { STUDENT_NAV_MEGA as STUDENT_SIDEBAR_CONFIG } from '../Student/sidebar/Sidebar';
 import { FACULTY_NAV_MEGA as FACULTY_SIDEBAR_CONFIG } from '../Faculty/FacultySidebar/FacultySidebar';
 import { ADMIN_NAV_GROUPS as ADMIN_SIDEBAR_CONFIG } from '../Admin/AdminSidebar/AdminSidebar';
@@ -154,6 +155,17 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                     
                     {/* Layout Switcher */}
 
+                    
+                    <button
+                        type="button"
+                        onClick={() => {
+                            Sentry.logger.info('User triggered test error', { action: 'test_error_button_click' });
+                            throw new Error('This is your first error!');
+                        }}
+                        className="px-3 h-9 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all"
+                    >
+                        <i className="fa-solid fa-bomb"></i> Break
+                    </button>
                     
                     <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] transition-all relative group outline-none shadow-sm">
                         <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>

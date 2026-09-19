@@ -1,362 +1,235 @@
-/* © 2026 JSM VALOR. All Rights Reserved. */
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 
-const DAYS_OF_WEEK = [
- "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-];
+export default function ScheduleManager() {
+  const [classrooms, setClassrooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newRoomName, setNewRoomName] = useState('');
+  const [newRoomCapacity, setNewRoomCapacity] = useState('60');
+  const [editingRoom, setEditingRoom] = useState(null);
+  const [editRoomName, setEditRoomName] = useState('');
+  const [editRoomCapacity, setEditRoomCapacity] = useState('');
 
-export default function ScheduleManager({}) {
- const [settings, setSettings] = useState(null);
- const [classrooms, setClassrooms] = useState([]);
- const [loading, setLoading] = useState(true);
- const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    fetchData();
+  }, []);
 
- // Form state - Timings
- const [startTime, setStartTime] = useState('09:00');
- const [endTime, setEndTime] = useState('16:00');
- const [offDays, setOffDays] = useState(['Saturday', 'Sunday']);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const { data: roomsData, error: roomsError } = await supabase
+        .from('academic_classrooms')
+        .select('*')
+        .order('name');
+      
+      if (roomsError) {
+        console.warn("Classrooms table might not exist yet:", roomsError.message);
+        setClassrooms([]);
+      } else {
+        setClassrooms(roomsData || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- // Form state - New Classroom
- const [newRoomName, setNewRoomName] = useState('');
- const [newRoomCapacity, setNewRoomCapacity] = useState(30);
- const [newRoomType, setNewRoomType] = useState('Lecture Hall');
+  
+  const openEditModal = (room) => {
+    setEditingRoom(room);
+    setEditRoomName(room.name);
+    setEditRoomCapacity(room.capacity);
+  };
 
- const fetchAllData = async () => {
- setLoading(true);
- try {
- // Fetch Timings
- const { data: scheduleData, error: scheduleError } = await supabase
- .from('institution_schedule')
- .select('*')
- .eq('programme', 'GLOBAL')
- .single();
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editRoomName.trim()) return;
+    try {
+      const { error } = await supabase.from('academic_classrooms')
+        .update({ name: editRoomName.trim(), capacity: editRoomCapacity })
+        .eq('id', editingRoom.id);
+      if (error) throw error;
+      setEditingRoom(null);
+      fetchData();
+    } catch (err) {
+      console.error(err);
+      window.erpDialog?.alert("Failed to update classroom.");
+    }
+  };
 
- if (scheduleError && scheduleError.code !== 'PGRST116') throw scheduleError;
+  const handleAddClassroom = async (e) => {
+    e.preventDefault();
+    if (!newRoomName.trim()) return;
+    
+    try {
+      const { error } = await supabase.from('academic_classrooms').insert([{
+        name: newRoomName.trim(),
+        capacity: newRoomCapacity,
+        status: 'Active'
+      }]);
+      
+      if (error) throw error;
+      window.erpDialog?.alert("Classroom added successfully.");
+      setNewRoomName('');
+      fetchData();
+    } catch (err) {
+      console.error("Error adding classroom:", err);
+      window.erpDialog?.alert("Failed to add classroom. Did you run the SQL artifact?");
+    }
+  };
 
- if (scheduleData) {
- setSettings(scheduleData);
- setStartTime(scheduleData.start_time.substring(0, 5));
- setEndTime(scheduleData.end_time.substring(0, 5));
- setOffDays(scheduleData.off_days || []);
- }
+  const toggleClassroomStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'Active' ? 'Maintenance' : 'Active';
+    try {
+      const { error } = await supabase
+        .from('academic_classrooms')
+        .update({ status: newStatus })
+        .eq('id', id);
+      if (error) throw error;
+      fetchData();
+    } catch (err) {
+      console.error("Error toggling status:", err);
+    }
+  };
 
- // Fetch Classrooms
- const { data: roomsData, error: roomsError } = await supabase
- .from('academic_classrooms')
- .select('*')
- .order('name');
- 
- if (roomsError) {
- // If table doesn't exist yet, just ignore (might not have run SQL artifact)
- console.warn("Classrooms table might not exist yet:", roomsError.message);
- setClassrooms([]);
- } else {
- setClassrooms(roomsData || []);
- }
+  const deleteClassroom = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this classroom?")) return;
+    try {
+      const { error } = await supabase
+        .from('academic_classrooms')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      fetchData();
+    } catch (err) {
+      console.error("Error deleting classroom:", err);
+      window.erpDialog?.alert("Failed to delete classroom. It might be in use.");
+    }
+  };
 
- } catch (err) {
- console.error("Failed to fetch schedule settings:", err);
- } finally {
- setLoading(false);
- }
- };
+  if (loading) return <div className="p-8 text-center text-themeTextSec animate-pulse">Loading...</div>;
 
- useEffect(() => {
- fetchAllData();
- }, []);
+  return (
+    <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 animate-fade-in pb-20">
+      
+      <div className="bg-themePanel/60 backdrop-blur-3xl border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 md:p-10 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-blue-500 to-blue-500/20"></div>
+        <div className="mb-8">
+          <h2 className="text-2xl font-black tracking-tight text-themeText flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+              <i className="fa-solid fa-door-open"></i>
+            </div>
+            Classroom Management
+          </h2>
+          <p className="text-sm font-medium text-themeTextSec mt-2">Add, remove, and manage physical teaching spaces on campus.</p>
+        </div>
 
- const toggleOffDay = (day) => {
- setOffDays(prev => 
- prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
- );
- };
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <div className="lg:col-span-1 flex flex-col gap-4">
+            <div className="bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/5 p-5 rounded-2xl">
+              <h3 className="text-sm font-black uppercase tracking-wider text-themeText mb-4">Add Classroom</h3>
+              <form onSubmit={handleAddClassroom} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Room Name / Number</label>
+                  <input type="text" value={newRoomName} onChange={e => setNewRoomName(e.target.value)} required placeholder="e.g. Room 101, Moot Court" className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Capacity</label>
+                  <input type="number" value={newRoomCapacity} onChange={e => setNewRoomCapacity(e.target.value)} required placeholder="60" className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+                </div>
+                <button type="submit" className="w-full py-3 bg-blue-500 text-white rounded-xl text-xs font-black uppercase tracking-wider hover:bg-blue-600 transition-colors mt-2">
+                  Create Room
+                </button>
+              </form>
+            </div>
+          </div>
 
- const handleSaveSchedule = async (e) => {
- e.preventDefault();
- setSaving(true);
- try {
- const { error } = await supabase
- .from('institution_schedule')
- .upsert({
- programme: 'GLOBAL',
- start_time: startTime + ':00',
- end_time: endTime + ':00',
- off_days: offDays,
- updated_at: new Date().toISOString()
- }, { onConflict: 'programme' });
+          <div className="lg:col-span-2 flex flex-col gap-4">
+            <h3 className="text-sm font-black uppercase tracking-wider text-themeText">Active Facilities ({classrooms.length})</h3>
+            <div className="flex flex-col gap-3">
+              {classrooms.length === 0 ? (
+                <div className="text-center py-10 bg-white/30 dark:bg-black/10 rounded-2xl border border-dashed border-gray-300 dark:border-white/10 text-themeTextSec text-sm">
+                  No classrooms defined yet.
+                </div>
+              ) : (
+                classrooms.map(room => (
+                  <div key={room.id} className="flex items-center justify-between p-4 bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-md rounded-2xl border border-gray-200 dark:border-white/5 hover:border-black/10 dark:hover:border-white/20 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${room.status === 'Active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                        <i className="fa-solid fa-door-open text-xl"></i>
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-themeText tracking-tight">{room.name}</h4>
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-[11px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {room.capacity} Seats</span>
+                          <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${room.status === 'Active' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/20 text-rose-600 dark:text-rose-400'}`}>
+                            {room.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <button 
+                        type="button"
+                        onClick={() => openEditModal(room)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 transition-colors"
+                        title="Edit Classroom"
+                      >
+                        <i className="fa-solid fa-pen text-[10px]"></i>
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => toggleClassroomStatus(room.id, room.status)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-themeText transition-colors"
+                        title={room.status === 'Active' ? "Mark for Maintenance" : "Mark Active"}
+                      >
+                        <i className="fa-solid fa-power-off text-[10px]"></i>
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => deleteClassroom(room.id)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors"
+                        title="Delete Classroom"
+                      >
+                        <i className="fa-solid fa-trash text-[10px]"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
 
- if (error) throw error;
- 
- window.erpDialog?.alert("Schedule settings saved successfully.");
- fetchAllData();
- } catch (err) {
- console.error("Failed to save schedule settings:", err);
- window.erpDialog?.alert("Error saving settings.");
- } finally {
- setSaving(false);
- }
- };
+        </div>
+      </div>
 
- const handleAddClassroom = async (e) => {
- e.preventDefault();
- if (!newRoomName.trim()) return;
-
- try {
- const { error } = await supabase.from('academic_classrooms').insert([{
- name: newRoomName.trim(),
- capacity: newRoomCapacity,
- type: newRoomType,
- status: 'Active'
- }]);
-
- if (error) throw error;
-
- setNewRoomName('');
- setNewRoomCapacity(30);
- setNewRoomType('Lecture Hall');
- fetchAllData();
- window.erpDialog?.alert("Classroom added successfully.");
- } catch (err) {
- console.error("Error adding classroom:", err);
- window.erpDialog?.alert("Failed to add classroom. Did you run the SQL artifact?");
- }
- };
-
- const toggleClassroomStatus = async (id, currentStatus) => {
- const newStatus = currentStatus === 'Active' ? 'Maintenance' : 'Active';
- try {
- const { error } = await supabase
- .from('academic_classrooms')
- .update({ status: newStatus })
- .eq('id', id);
- 
- if (error) throw error;
- fetchAllData();
- } catch (err) {
- console.error("Error updating status:", err);
- window.erpDialog?.alert("Failed to update status.");
- }
- };
-
- const deleteClassroom = async (id) => {
- if (!window.confirm("Are you sure you want to delete this classroom?")) return;
- try {
- const { error } = await supabase
- .from('academic_classrooms')
- .delete()
- .eq('id', id);
- 
- if (error) throw error;
- fetchAllData();
- } catch (err) {
- console.error("Error deleting classroom:", err);
- window.erpDialog?.alert("Failed to delete classroom. It might be in use.");
- }
- };
-
- if (loading) {
- return (
- <div className="h-64 flex items-center justify-center">
- <i className="fa-solid fa-spinner fa-spin text-themeAccent text-3xl"></i>
- </div>
- );
- }
-
- return (
- <div className="flex flex-col gap-8 animate-fade-in relative pb-10">
- <div>
- <h2 className="text-xl font-semibold tracking-tight text-themeText">Institution Schedule Manager</h2>
- <p className="text-xs font-bold text-themeTextSec">Configure global timings, off days, and academic classrooms.</p>
- </div>
-
- {/* TIMINGS & OFF DAYS SECTION */}
- <form onSubmit={handleSaveSchedule} className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-6">
- <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
- {/* Operating Hours */}
- <div className="flex flex-col gap-4 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-gray-200 dark:border-white/5">
- <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/5 pb-3">
- <i className="fa-regular fa-clock text-blue-500 text-lg"></i>
- <h3 className="text-[15px] font-semibold text-themeText">Operating Hours</h3>
- </div>
- 
- <div className="grid grid-cols-2 gap-4">
- <div>
- <label className="text-[13px] font-medium text-themeTextSec mb-2 block">College Start Time</label>
- <input 
- type="time" 
- value={startTime} 
- onChange={e => setStartTime(e.target.value)} 
- required 
- className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" 
- />
- </div>
- <div>
- <label className="text-[13px] font-medium text-themeTextSec mb-2 block">College End Time</label>
- <input 
- type="time" 
- value={endTime} 
- onChange={e => setEndTime(e.target.value)} 
- required 
- className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" 
- />
- </div>
- </div>
- </div>
-
- {/* Weekly Off Days */}
- <div className="flex flex-col gap-4 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-gray-200 dark:border-white/5">
- <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/5 pb-3">
- <i className="fa-regular fa-calendar-xmark text-rose-500 text-lg"></i>
- <h3 className="text-[15px] font-semibold text-themeText">Weekly Off Days</h3>
- </div>
- 
- <div className="flex flex-wrap gap-2">
- {DAYS_OF_WEEK.map(day => {
- const isOff = offDays.includes(day);
- return (
- <button
- key={day}
- type="button"
- onClick={() => toggleOffDay(day)}
- className={`px-4 py-2 rounded-xl text-[14px] font-medium tracking-normal transition ${
- isOff 
- ? 'bg-rose-500/20 text-rose-500 border border-rose-500/50' 
- : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border border-black/5 dark:border-white/10 hover:border-themeText hover:text-themeText'
- }`}
- >
- {isOff ? <i className="fa-solid fa-xmark mr-1"></i> : <i className="fa-solid fa-check mr-1 text-emerald-500"></i>}
- {day.substring(0, 3)}
- </button>
- );
- })}
- </div>
- <p className="text-[10px] font-bold text-themeTextSec mt-2">
- Click a day to toggle it as a working day or an off day.
- </p>
- </div>
- </div>
-
- <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-white/5">
- <button 
- type="submit" 
- disabled={saving}
- className="bg-themeAccent text-themeApp px-8 py-3 rounded-xl text-[14px] font-medium tracking-normal hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
- >
- {saving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-floppy-disk"></i>}
- Save Global Schedule
- </button>
- </div>
- </form>
-
- {/* CLASSROOM MANAGEMENT SECTION */}
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-6">
- <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/5 pb-4">
- <i className="fa-solid fa-school text-emerald-500 text-lg"></i>
- <div>
- <h3 className="text-base font-black text-themeText">Academic Classrooms</h3>
- <p className="text-[13px] font-medium text-themeTextSec">Manage rooms available for timetable scheduling</p>
- </div>
- </div>
-
- <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
- {/* Add Room Form */}
- <div className="lg:col-span-1 bg-themePanel/85 backdrop-blur-2xl p-5 rounded-2xl border border-gray-200 dark:border-white/5 flex flex-col gap-4">
- <h4 className="text-[14px] font-medium tracking-normal text-themeText">Add New Room</h4>
- 
- <form onSubmit={handleAddClassroom} className="flex flex-col gap-4">
- <div>
- <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Room Name / Number</label>
- <input 
- type="text" 
- placeholder="e.g. LH 101"
- value={newRoomName}
- onChange={e => setNewRoomName(e.target.value)}
- required
- className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-2.5 text-sm font-bold text-themeText outline-none transition"
- />
- </div>
- <div>
- <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Capacity (Seats)</label>
- <input 
- type="number" 
- min="1"
- value={newRoomCapacity}
- onChange={e => setNewRoomCapacity(parseInt(e.target.value) || 0)}
- required
- className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-2.5 text-sm font-bold text-themeText outline-none transition"
- />
- </div>
- <div>
- <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Room Type</label>
- <select 
- value={newRoomType}
- onChange={e => setNewRoomType(e.target.value)}
- className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-2.5 text-sm font-bold text-themeText outline-none transition appearance-none"
- >
- <option value="Lecture Hall">Lecture Hall</option>
- <option value="Moot Court">Moot Court</option>
- <option value="Computer Lab">Computer Lab</option>
- <option value="Seminar Hall">Seminar Hall</option>
- <option value="Auditorium">Auditorium</option>
- </select>
- </div>
- <button 
- type="submit"
- className="w-full bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:text-themeApp hover:bg-emerald-500 border border-emerald-500/30 hover:border-emerald-500 px-4 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition mt-2"
- >
- <i className="fa-solid fa-plus mr-2"></i> Add Room
- </button>
- </form>
- </div>
-
- {/* Rooms List */}
- <div className="lg:col-span-2">
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
- {classrooms.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
- No classrooms defined yet.
- </div>
- ) : (
- classrooms.map(room => (
- <div key={room.id} className="bg-themePanel/85 backdrop-blur-2xl p-4 rounded-2xl border border-gray-200 dark:border-white/5 flex flex-col gap-3 group relative overflow-hidden">
- <div className="flex justify-between items-start z-10">
- <div>
- <h4 className="text-[15px] font-semibold text-themeText">{room.name}</h4>
- <div className="flex items-center gap-2 mt-1">
- <span className="text-[12px] font-medium text-themeTextSec bg-themeElevated/90 backdrop-blur-2xl px-2 py-0.5 rounded border border-black/5 dark:border-white/10">{room.type}</span>
- <span className="text-[12px] font-medium text-themeTextSec bg-themeElevated/90 backdrop-blur-2xl px-2 py-0.5 rounded border border-black/5 dark:border-white/10">{room.capacity} Seats</span>
- </div>
- </div>
- 
- <button type="button" 
- onClick={() => deleteClassroom(room.id)}
- className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white flex items-center justify-center transition-colors shrink-0 opacity-0 group-hover:opacity-100"
- title="Delete Classroom"
- >
- <i className="fa-solid fa-trash text-[10px]"></i>
- </button>
- </div>
-
- <div className="border-t border-gray-200 dark:border-white/5 pt-3 flex justify-between items-center z-10 mt-1">
- <div className="flex items-center gap-2">
- <div className={`w-2 h-2 rounded-full ${room.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
- <span className="text-[13px] font-medium text-themeText">{room.status}</span>
- </div>
- <button type="button" 
- onClick={() => toggleClassroomStatus(room.id, room.status)}
- className={`text-[12px] font-medium px-3 py-1 rounded transition-colors ${room.status === 'Active' ? 'bg-themeElevated/90 backdrop-blur-2xl text-amber-500 hover:bg-amber-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-emerald-500 hover:bg-emerald-500/20'}`}
- >
- {room.status === 'Active' ? 'Set Maintenance' : 'Set Active'}
- </button>
- </div>
- </div>
- ))
- )}
- </div>
- </div>
- </div>
- </div>
- </div>
- );
+      {editingRoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setEditingRoom(null)}>
+          <div className="bg-themePanel border border-themeBorderStrong rounded-[2rem] p-6 md:p-8 w-full max-w-md shadow-2xl relative" onClick={e => e.stopPropagation()}>
+            <button type="button" onClick={() => setEditingRoom(null)} className="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors">
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+            <h3 className="text-xl font-black text-themeText mb-6">Edit Classroom</h3>
+            <form onSubmit={handleEditSubmit} className="flex flex-col gap-5">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Room Name / Number</label>
+                <input type="text" value={editRoomName} onChange={e => setEditRoomName(e.target.value)} required className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Capacity</label>
+                <input type="number" value={editRoomCapacity} onChange={e => setEditRoomCapacity(e.target.value)} required className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+              </div>
+              <button type="submit" className="w-full py-4 bg-blue-500 text-white rounded-xl text-sm font-black uppercase tracking-wider hover:bg-blue-600 transition-colors mt-2">
+                Save Changes
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

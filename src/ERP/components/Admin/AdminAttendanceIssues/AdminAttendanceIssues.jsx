@@ -18,6 +18,7 @@ export default function AdminAttendanceIssues() {
                     profiles!helpdesk_tickets_user_id_fkey(full_name, erp_id)
                 `)
                 .eq('category', 'Attendance')
+                .neq('status', 'pending_mentor')
                 .order('created_at', { ascending: false });
             
             if (error) throw error;
@@ -55,14 +56,15 @@ export default function AdminAttendanceIssues() {
         try {
             if (action === 'grant') {
                 // Update attendance record directly
-                const { error: attError } = await supabase
-                    .from('attendance_records')
-                    .upsert({
-                        session_id: appeal.session_id,
-                        student_id: appeal.student_id,
-                        status: 'present',
-                        marked_by: 'admin_override'
-                    }, { onConflict: 'session_id,student_id' });
+                const { data: existing } = await supabase.from('attendance_records').select('id').eq('session_id', appeal.session_id).eq('student_id', appeal.student_id);
+                let attError;
+                if (existing && existing.length > 0) {
+                    const { error } = await supabase.from('attendance_records').update({ entry_status: 'present', marked_by: 'admin_override' }).eq('id', existing[0].id);
+                    attError = error;
+                } else {
+                    const { error } = await supabase.from('attendance_records').insert({ session_id: appeal.session_id, student_id: appeal.student_id, entry_status: 'present', marked_by: 'admin_override' });
+                    attError = error;
+                }
                 
                 if (attError) throw attError;
 

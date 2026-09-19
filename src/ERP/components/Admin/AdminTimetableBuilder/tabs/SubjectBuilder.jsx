@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
+import SyllabusEditorModal from './components/SyllabusEditorModal';
 
 const AVAILABLE_COLORS = [
     { name: 'Blue', value: 'blue', bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-500', solid: 'bg-blue-500' },
@@ -18,6 +19,11 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
     const [loading, setLoading] = useState(true);
     const [isCreating, setIsCreating] = useState(false);
     
+    // Detailed Syllabus Viewer State
+    const [activeSyllabusSubject, setActiveSyllabusSubject] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [programFilter, setProgramFilter] = useState('All');
+
     // Form State
     const [editingId, setEditingId] = useState(null);
     const [code, setCode] = useState('');
@@ -35,7 +41,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             
             const { data: subData, error: subError } = await supabase
                 .from('master_subjects')
-                .select(`id, code, name, credits, theme_color, target_semester, program_id, academic_programs(code, theme_color)`)
+                .select(`id, code, name, credits, theme_color, target_semester, program_id, syllabus, academic_programs(id, name, code, theme_color)`)
                 .order('target_semester', { ascending: true });
 
             if (subError && subError.code !== '42P01') {
@@ -156,54 +162,138 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
                 </form>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {loading ? (
-                    <div className="col-span-full text-center py-10 opacity-50"><i className="fa-solid fa-circle-notch fa-spin text-2xl"></i></div>
-                ) : subjects.length === 0 ? (
-                    <div className="col-span-full w-full py-16 flex flex-col items-center justify-center bg-gray-50 dark:bg-[#121212] border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl text-center px-4">
-                        <i className="fa-solid fa-vault text-4xl text-gray-400 dark:text-white/20 mb-4"></i>
-                        <h3 className="font-black text-xl text-gray-900 dark:text-white tracking-tight">Vault is Empty</h3>
-                        <p className="text-sm font-bold text-gray-500 dark:text-white/50 mt-1 max-w-sm">Design your first master syllabus template for a degree program.</p>
-                    </div>
-                ) : (
-                    subjects.map(sub => {
-                        const theme = AVAILABLE_COLORS.find(c => c.value === sub.academic_programs?.theme_color) || AVAILABLE_COLORS[0];
-                        return (
-                            <div key={sub.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/50 transition">
-                                <div className={`absolute top-0 right-0 w-24 h-24 blur-3xl opacity-20 -z-10 ${theme.solid}`}></div>
-                                
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className={`px-2 py-1 rounded border text-[10px] font-black tracking-widest ${theme.bg} ${theme.border} ${theme.text}`}>
-                                        {sub.code}
-                                    </div>
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                                        <button onClick={() => handleEdit(sub)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white/70 hover:bg-amber-500 hover:text-black flex items-center justify-center transition">
-                                            <i className="fa-solid fa-pen text-xs"></i>
-                                        </button>
-                                        <button onClick={() => handleDelete(sub.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition">
-                                            <i className="fa-solid fa-trash text-xs"></i>
-                                        </button>
+            
+            {/* Search and Filters */}
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex-1 relative">
+                    <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/30 text-sm"></i>
+                    <input 
+                        type="text" 
+                        placeholder="Search subjects by code or name..." 
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                        className="w-full bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500 transition"
+                    />
+                </div>
+                <select 
+                    value={programFilter} 
+                    onChange={e => setProgramFilter(e.target.value)}
+                    className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500 appearance-none min-w-[200px]"
+                >
+                    <option value="All">All Programs</option>
+                    {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+                </select>
+            </div>
+
+            {loading ? (
+                <div className="w-full text-center py-10 opacity-50"><i className="fa-solid fa-circle-notch fa-spin text-2xl"></i></div>
+            ) : subjects.length === 0 ? (
+                <div className="w-full py-16 flex flex-col items-center justify-center bg-gray-50 dark:bg-[#121212] border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl text-center px-4">
+                    <i className="fa-solid fa-vault text-4xl text-gray-400 dark:text-white/20 mb-4"></i>
+                    <h3 className="font-black text-xl text-gray-900 dark:text-white tracking-tight">Vault is Empty</h3>
+                    <p className="text-sm font-bold text-gray-500 dark:text-white/50 mt-1 max-w-sm">Design your first master syllabus template for a degree program.</p>
+                </div>
+            ) : (() => {
+                const filtered = subjects.filter(sub => {
+                    if (programFilter !== 'All' && sub.program_id !== programFilter) return false;
+                    if (searchQuery) {
+                        const q = searchQuery.toLowerCase();
+                        if (!sub.name.toLowerCase().includes(q) && !sub.code.toLowerCase().includes(q)) return false;
+                    }
+                    return true;
+                });
+
+                if (filtered.length === 0) {
+                    return (
+                        <div className="text-center py-10 text-gray-500 font-bold text-sm">
+                            No subjects match your search.
+                        </div>
+                    );
+                }
+
+                // Group by Program -> Semester
+                const grouped = {};
+                filtered.forEach(sub => {
+                    const prog = sub.academic_programs?.name || 'Unassigned Program';
+                    const sem = sub.target_semester || 'Unassigned';
+                    if (!grouped[prog]) grouped[prog] = {};
+                    if (!grouped[prog][sem]) grouped[prog][sem] = [];
+                    grouped[prog][sem].push(sub);
+                });
+
+                // Sort Programs and Semesters
+                const sortedPrograms = Object.keys(grouped).sort();
+                
+                return sortedPrograms.map(prog => (
+                    <div key={prog} className="mb-10">
+                        <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-3 border-b border-gray-200 dark:border-white/10 pb-3">
+                            <i className="fa-solid fa-graduation-cap text-amber-500"></i> {prog}
+                        </h2>
+                        
+                        {Object.keys(grouped[prog]).sort((a,b) => Number(a) - Number(b)).map(sem => {
+                            const semSubjects = grouped[prog][sem];
+                            const semCredits = semSubjects.reduce((sum, sub) => sum + sub.credits, 0);
+                            return (
+                            <div key={sem} className="mb-8 ml-4">
+                                <div className="flex items-center justify-between mb-4 pr-2">
+                                    <h3 className="text-sm font-black text-gray-500 dark:text-white/50 tracking-widest uppercase flex items-center gap-2">
+                                        <span className="w-6 h-px bg-gray-300 dark:bg-white/20"></span> 
+                                        Semester {sem}
+                                    </h3>
+                                    <div className="flex gap-2">
+                                        <span className="px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-gray-500 dark:text-white/40 tracking-wider uppercase">{semSubjects.length} Subjects</span>
+                                        <span className="px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-gray-500 dark:text-white/40 tracking-wider uppercase">{semCredits} Credits</span>
                                     </div>
                                 </div>
-                                
-                                <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white leading-tight mb-2">{sub.name}</h3>
-                                
-                                <div className="space-y-1.5 mb-2">
-                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
-                                        <i className="fa-solid fa-graduation-cap w-4"></i> {sub.academic_programs?.code || 'No Program'}
-                                    </div>
-                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
-                                        <i className="fa-solid fa-layer-group w-4"></i> Target: Semester {sub.target_semester}
-                                    </div>
-                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
-                                        <i className="fa-solid fa-award w-4"></i> {sub.credits} Credits
-                                    </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                    {grouped[prog][sem].map(sub => {
+                                        const theme = AVAILABLE_COLORS.find(c => c.value === sub.theme_color) || AVAILABLE_COLORS.find(c => c.value === sub.academic_programs?.theme_color) || AVAILABLE_COLORS[0];
+                                        return (
+                                            <div key={sub.id} onClick={() => setActiveSyllabusSubject(sub)} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/50 transition cursor-pointer">
+                                                <div className={`absolute top-0 right-0 w-24 h-24 blur-3xl opacity-20 -z-10 ${theme.solid}`}></div>
+                                                
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className={`px-2 py-1 rounded border text-[10px] font-black tracking-widest ${theme.bg} ${theme.border} ${theme.text}`}>
+                                                        {sub.code}
+                                                    </div>
+                                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition" onClick={e => e.stopPropagation()}>
+                                                        <button onClick={() => handleEdit(sub)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white/70 hover:bg-amber-500 hover:text-black flex items-center justify-center transition">
+                                                            <i className="fa-solid fa-pen text-xs"></i>
+                                                        </button>
+                                                        <button onClick={() => handleDelete(sub.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition">
+                                                            <i className="fa-solid fa-trash text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
+                                                <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white leading-tight mb-2">{sub.name}</h3>
+                                                
+                                                <div className="space-y-1.5 mb-2">
+                                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
+                                                        <i className="fa-solid fa-award w-4"></i> {sub.credits} Credits
+                                                    </div>
+                                                    {sub.syllabus && Object.keys(sub.syllabus).length > 0 && (
+                                                        <div className="text-[11px] font-black text-amber-500 flex items-center gap-2 mt-2">
+                                                            <i className="fa-solid fa-book-open w-4"></i> Detailed Syllabus Available
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                        );
-                    })
-                )}
-            </div>
+                        )})}
+                    </div>
+                ));
+            })()}
+{activeSyllabusSubject && (
+                <SyllabusEditorModal
+                    subject={activeSyllabusSubject}
+                    onClose={() => setActiveSyllabusSubject(null)}
+                    onRefresh={fetchData}
+                />
+            )}
         </div>
     );
 }

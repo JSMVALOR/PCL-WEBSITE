@@ -28,6 +28,7 @@ export default function Assignments({ isEmbedded = false }) {
  // --- MODAL STATE ---
  const [selectedTask, setSelectedTask] = useState(null);
  const [submissionUrl, setSubmissionUrl] = useState("");
+ const [submissionText, setSubmissionText] = useState("");
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [submitSuccess, setSubmitSuccess] = useState(false);
  const [submitError, setSubmitError] = useState("");
@@ -80,12 +81,14 @@ export default function Assignments({ isEmbedded = false }) {
  const openModal = (task) => {
  setSelectedTask(task);
  setSubmissionUrl("");
+ setSubmissionText("");
  setSubmitSuccess(false);
  setSubmitError("");
  };
  const closeModal = () => {
  setSelectedTask(null);
  setSubmissionUrl("");
+ setSubmissionText("");
  setSubmitSuccess(false);
  setSubmitError("");
  };
@@ -151,7 +154,7 @@ export default function Assignments({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-16" : "pb-10"}`}>
 
  {/* ═══════════════ HEADER ═══════════════ */}
  <PageHeader 

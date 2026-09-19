@@ -5,6 +5,28 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../../lib/EmailService';
 import { useERP } from "../../../context/ErpContext";
 
+
+
+const getBatchColorKey = (batchName) => {
+    if (!batchName) return 'default';
+    const b = batchName.toUpperCase();
+    if (b.includes('BA LLB')) return 'rose';
+    if (b.includes('BBA LLB')) return 'emerald';
+    if (b.includes('LLM')) return 'purple';
+    if (b.includes('LLB')) return 'indigo';
+    return 'default';
+};
+
+const THEME_COLORS = {
+    blue: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' },
+    emerald: { primary: '#34C759', bg: 'rgba(52,199,89,0.1)' },
+    amber: { primary: '#FF9500', bg: 'rgba(255,149,0,0.1)' },
+    rose: { primary: '#FF3B30', bg: 'rgba(255,59,48,0.1)' },
+    indigo: { primary: '#5856D6', bg: 'rgba(88,86,214,0.1)' },
+    purple: { primary: '#AF52DE', bg: 'rgba(175,82,222,0.1)' },
+    default: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' }
+};
+
 export default function FacultyAssignments({ subjectContext }) {
  const { userSession } = useERP();
  const [assignments, setAssignments] = useState(() => {
@@ -18,6 +40,7 @@ export default function FacultyAssignments({ subjectContext }) {
 
  // Form State
  const [showForm, setShowForm] = useState(false);
+ const tColor = subjectContext ? (THEME_COLORS[getBatchColorKey(subjectContext.batches?.[0])] || THEME_COLORS.default) : THEME_COLORS.default;
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [formData, setFormData] = useState({
  subject_id: "",
@@ -179,9 +202,7 @@ export default function FacultyAssignments({ subjectContext }) {
  {subjectContext && (
  <button type="button" 
  onClick={() => setShowForm(!showForm)}
- className={`px-6 py-3 rounded-xl text-gray-900 dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${
- showForm ? 'bg-neutral-600' : 'bg-themeAccent'
- }`}
+ className={`px-6 py-3 w-fit rounded-xl text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${showForm ? "bg-neutral-600" : ""}`} style={{ backgroundColor: !showForm ? tColor.primary : undefined }}
  >
  <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-plus'} text-sm`}></i> 
  {showForm ? 'Cancel' : 'New Assignment'}
@@ -190,9 +211,9 @@ export default function FacultyAssignments({ subjectContext }) {
 
  {/* CREATE FORM */}
  {showForm && (
- <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5Border rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
+ <div className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
  <div className="flex items-center gap-3 mb-2">
- <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg">
+ <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: tColor.bg, color: tColor.primary }}>
  <i className="fa-solid fa-file-signature"></i>
  </div>
  <div>
@@ -206,7 +227,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Subject *</label>
  <select 
- className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
+ className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
  value={formData.subject_id}
  onChange={(e) => setFormData({...formData, subject_id: e.target.value})}
  required
@@ -223,7 +244,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Target Batch *</label>
  <select 
- className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
+ className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
  value={formData.batch}
  onChange={(e) => setFormData({...formData, batch: e.target.value})}
  required
@@ -240,7 +261,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Assignment Title *</label>
  <input 
  type="text"
- className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
+ className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
  placeholder="e.g., Constitutional Law Research Paper"
  value={formData.title}
  onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -252,7 +273,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <div className="flex flex-col gap-2 md:col-span-2">
  <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Instructions / Description</label>
  <textarea 
- className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors resize-none h-24"
+ className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors resize-none h-24"
  placeholder="Optional instructions for the batch..."
  value={formData.description}
  onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -265,7 +286,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <input 
  type="number"
  min="1"
- className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
+ className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
  value={formData.total_marks}
  onChange={(e) => setFormData({...formData, total_marks: e.target.value})}
  required
@@ -277,7 +298,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Offline Due Date *</label>
  <input 
  type="datetime-local"
- className="bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors [color-scheme:dark]"
+ className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors [color-scheme:dark]"
  value={formData.due_date}
  onChange={(e) => setFormData({...formData, due_date: e.target.value})}
  required
@@ -302,7 +323,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white tracking-tight">Active Assignments</h2>
  
  {assignments.filter(a => subjectContext ? a.subject_id === subjectContext.id : true).length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-gray-900 dark:text-white font-black">No Assignments Issued</h3>
  <p className="text-xs lg:text-sm text-gray-500 dark:text-white/50 opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
@@ -314,7 +335,7 @@ export default function FacultyAssignments({ subjectContext }) {
  const isPastDue = dueDate < new Date();
  
  return (
- <div key={assign.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5Border rounded-2xl p-5 hover:border-gray-200 dark:border-white/5Accent/50 transition flex flex-col gap-4 group">
+ <div key={assign.id} className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-5 hover:border-black/10 dark:hover:border-white/10 transition flex flex-col gap-4 group">
  
  <div className="flex justify-between items-start">
  <div>
@@ -322,7 +343,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <span className={`px-2 py-0.5 rounded text-[12px] font-medium ${isPastDue ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
  {isPastDue ? 'Past Due' : 'Active'}
  </span>
- <span className="bg-gray-100 dark:bg-[#1A1A1A] px-2 py-0.5 rounded text-[12px] font-medium text-gray-500 dark:text-white/50">
+ <span className="bg-black/5 dark:bg-white/5 backdrop-blur-xl px-2 py-0.5 rounded text-[12px] font-medium text-gray-500 dark:text-white/50">
  {assign.batch}
  </span>
  </div>
@@ -332,7 +353,7 @@ export default function FacultyAssignments({ subjectContext }) {
  
  <button type="button" 
  onClick={() => handleDelete(assign.id)}
- className="w-8 h-8 rounded-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5Border flex items-center justify-center text-gray-500 dark:text-white/50 hover:text-rose-500 hover:border-rose-500/50 transition opacity-0 group-hover:opacity-100"
+ className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 flex items-center justify-center text-gray-500 dark:text-white/50 hover:text-rose-500 hover:border-rose-500/50 transition opacity-0 group-hover:opacity-100"
  title="Delete Assignment"
  >
  <i className="fa-solid fa-trash text-xs"></i>
@@ -340,12 +361,12 @@ export default function FacultyAssignments({ subjectContext }) {
  </div>
  
  {assign.description && (
- <p className="text-xs text-gray-500 dark:text-white/50 line-clamp-2 leading-relaxed bg-gray-100 dark:bg-[#1A1A1A]/50 p-3 rounded-xl border border-gray-200 dark:border-white/5Border/50">
+ <p className="text-xs text-gray-500 dark:text-white/50 line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 backdrop-blur-xl/50 p-3 rounded-xl border border-black/5 dark:border-white/5/50">
  {assign.description}
  </p>
  )}
  
- <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-200 dark:border-white/5Border/50">
+ <div className="flex items-center justify-between mt-auto pt-2 border-t border-black/5 dark:border-white/5/50">
  <div className="flex items-center gap-2 text-gray-500 dark:text-white/50">
  <i className="fa-regular fa-calendar text-sm"></i>
  <span className="text-[13px] font-medium">

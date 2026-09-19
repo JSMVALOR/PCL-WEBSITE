@@ -5,8 +5,9 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 import ScheduleBuilder from "./tabs/ScheduleBuilder";
-import AutoGenerator from "./AutoGenerator";
 import ScheduleManager from "./tabs/ScheduleManager";
+import AutoGenerator from "./AutoGenerator";
+
 
 export default function AdminTimetableHQ({ isHubView = false }) {
  const { userSession } = useERP();
@@ -56,6 +57,13 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  </div>
 
  <div className="grid grid-cols-1 gap-8">
+
+ <div onClick={() => setActiveTab('classrooms')} className="p-6 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:border-black/10 dark:hover:border-white/20 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
+ <i className="fa-solid fa-door-open text-2xl text-blue-500"></i>
+ <span className="block text-[15px] font-semibold text-themeText mt-2">Classroom Manager</span>
+ <span className="text-[10px] font-bold text-themeTextSec">Add and configure academic classrooms.</span>
+ </div>
+
  <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-6">Welcome to the Command Center</h3>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -102,7 +110,8 @@ export default function AdminTimetableHQ({ isHubView = false }) {
     <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/20 relative z-10 gap-1.5 w-max">
  {[
  { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-simple' },
- { id: 'schedule-manager', label: 'Schedule Manager', icon: 'fa-clock' },
+ 
+ { id: 'classrooms', label: 'Classrooms', icon: 'fa-door-open' },
  { id: 'schedule-builder', label: 'Timetable Builder', icon: 'fa-layer-group' },
  { id: 'auto-gen', label: 'Auto Generator', icon: 'fa-wand-magic-sparkles' },
  ].map(tab => (
@@ -124,8 +133,9 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  <div className={`${isHubView ? 'w-full mt-2' : 'w-full mx-auto p-6 mt-4'}`}>
  {activeTab === 'dashboard' && renderDashboard()}
  
- {activeTab === 'schedule-manager' && <ScheduleManager />}
  
+ 
+ {activeTab === 'classrooms' && <ScheduleManager />}
  {activeTab === 'schedule-builder' && <ScheduleBuilder />}
   
  {activeTab === 'auto-gen' && <AutoGenerator />}

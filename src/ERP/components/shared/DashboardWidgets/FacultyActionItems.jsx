@@ -20,7 +20,7 @@ export default function FacultyActionItems() {
                 // We'll just fetch any pending leaves where faculty might be involved
                 const { data: leaves } = await supabase
                     .from('leave_requests')
-                    .select('id, student_id, start_date, end_date')
+                    .select('id, student_id, from_date, to_date')
                     .eq('status', 'pending')
                     .limit(2);
                     

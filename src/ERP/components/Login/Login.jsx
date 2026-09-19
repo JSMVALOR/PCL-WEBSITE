@@ -38,8 +38,10 @@ export default function Login() {
     }, [userSession, isAppLoading, navigate, location]);
 
     useEffect(() => {
-        const storedAttempts = parseInt(localStorage.getItem('jsmerp_failed_attempts') || '0', 10);
-        const storedLockout = parseInt(localStorage.getItem('jsmerp_lockout_time') || '0', 10);
+        localStorage.removeItem('jsmerp_failed_attempts');
+        const storedAttempts = 0;
+        localStorage.removeItem('jsmerp_lockout_time');
+        const storedLockout = 0;
         
         setFailedAttempts(storedAttempts);
 

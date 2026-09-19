@@ -115,21 +115,27 @@ export default function FacultyProfile() {
   const firstNames = nameParts.join(' ');
 
   // Parse list items from raw text (assuming newline separation)
-  const renderList = (text) => {
-      if (!text) return null;
-      const items = text.split('\n').filter(i => i.trim().length > 0);
+  
+  const renderList = (content) => {
+      let items = [];
+      if (typeof content === 'string') {
+          items = content.split('\n').filter(Boolean);
+      } else if (Array.isArray(content)) {
+          items = content;
+      }
+
+      if (items.length === 0) return null;
+
       return (
-          <ul className="space-y-6 relative border-l border-[var(--card-border)] ml-2 pl-6 py-2">
-              {items.map((item, idx) => (
+          <ul className="flex flex-col gap-6">
+              {items.map((item, index) => (
                   <motion.li 
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      key={idx} 
-                      className="relative text-sm md:text-base text-[var(--text-color)]/90 leading-relaxed group text-justify"
+                      key={index}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="text-[var(--text-color)]/85 text-base leading-relaxed font-light pl-6 border-l border-[var(--primary-color)]/30"
                   >
-                      {/* Timeline dot */}
-                      <div className="absolute w-2 h-2 bg-[var(--primary-color)] rounded-full -left-[29px] top-2 shadow-[0_0_10px_var(--primary-glow)] transition-transform group-hover:scale-150"></div>
                       <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item) }} />
                   </motion.li>
               ))}
@@ -138,70 +144,74 @@ export default function FacultyProfile() {
   };
 
   return (
-    
-<div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] font-sans">
+    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] font-sans selection:bg-[var(--primary-color)] selection:text-black">
       
-      {/* Decorative Background Element */}
-      <div className="fixed top-0 right-0 w-[40vw] h-[40vw] bg-[var(--primary-color)] rounded-full blur-[200px] opacity-[0.03] pointer-events-none z-0" />
+      {/* Refined Ambient Glow */}
+      <div className="fixed top-0 right-0 w-[50vw] h-[50vw] bg-[var(--primary-color)]/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
-      <div className="relative z-20 pt-28 pb-32 px-6 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+      <div className="relative z-20 pt-32 pb-32 px-6 md:px-12 max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
-        {/* LEFT COLUMN: Image & Details */}
-        <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 h-fit pb-10">
+        {/* LEFT COLUMN: Luxury Portrait & Contact */}
+        <div className="w-full max-w-sm mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 h-fit pb-10">
+          
           <Link
             to="/about/faculty"
-            className="inline-flex items-center text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors mb-8 uppercase tracking-widest text-xs font-bold focus:outline-none w-max self-start"
+            className="group inline-flex items-center text-[var(--text-muted)] hover:text-[var(--text-color)] transition-all mb-10 uppercase tracking-[0.2em] text-[10px] font-bold"
           >
-            <i className="fa-solid fa-arrow-left mr-3 text-sm"></i> Back to Directory
+            <i className="fa-solid fa-arrow-left mr-3 transform group-hover:-translate-x-1 transition-transform"></i> Directory
           </Link>
 
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-4/5 md:w-3/4 lg:w-full max-w-[320px] aspect-[4/5] relative rounded-3xl overflow-hidden mb-8 bg-black/5 shadow-2xl border border-[var(--card-border)]"
+            className="w-full aspect-[3/4] relative rounded-t-full rounded-b-3xl overflow-hidden mb-10 bg-black/5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border-[8px] border-[var(--bg-color)] ring-1 ring-[var(--card-border)]"
           >
             <img decoding="async" loading="lazy" 
               src={faculty.image} 
               alt={faculty.name} 
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105" 
+              className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-1000 hover:scale-[1.03]" 
             />
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-4 items-center lg:items-start w-full"
+            className="flex flex-col gap-6 items-center lg:items-start w-full"
           >
-            <h1 className="text-4xl md:text-5xl font-bold font-serif text-[var(--text-color)]">
-              {faculty.name}
-            </h1>
-            <h2 className="text-lg md:text-xl font-medium text-[var(--primary-color)] uppercase tracking-wide">
-              {faculty.designation}
-            </h2>
+            <div className="space-y-3">
+                <h1 className="text-4xl md:text-5xl font-serif text-[var(--text-color)] tracking-tight">
+                {faculty.name}
+                </h1>
+                <h2 className="text-xs md:text-sm font-semibold text-[var(--primary-color)] uppercase tracking-[0.2em]">
+                {faculty.designation}
+                </h2>
+            </div>
 
-            <div className="flex flex-col gap-2 mt-2">
+            <div className="w-12 h-px bg-[var(--primary-color)]/50"></div>
+
+            <div className="flex flex-col gap-4 w-full">
               {faculty.phone && (
-                <a href={`tel:${faculty.phone}`} className="text-[var(--text-color)]/80 hover:text-[var(--primary-color)] transition-colors w-max text-base font-medium">
-                  {faculty.phone}
+                <a href={`tel:${faculty.phone}`} className="flex items-center justify-center lg:justify-start gap-4 text-[var(--text-color)]/70 hover:text-[var(--primary-color)] transition-colors w-full text-sm font-medium tracking-wider">
+                  <i className="fa-solid fa-phone text-[10px] opacity-50"></i> {faculty.phone}
                 </a>
               )}
               {faculty.email && (
-                <a href={`mailto:${faculty.email}`} className="text-[var(--text-color)]/80 hover:text-[var(--primary-color)] transition-colors w-max text-base font-medium">
-                  {faculty.email}
+                <a href={`mailto:${faculty.email}`} className="flex items-center justify-center lg:justify-start gap-4 text-[var(--text-color)]/70 hover:text-[var(--primary-color)] transition-colors w-full text-sm font-medium tracking-wider">
+                  <i className="fa-regular fa-envelope text-[10px] opacity-50"></i> {faculty.email}
                 </a>
               )}
             </div>
 
-            <div className="flex justify-center lg:justify-start gap-4 mt-4">
+            <div className="flex justify-center lg:justify-start gap-6 mt-4 w-full">
               {faculty.linkedin_url && (
-                <a href={faculty.linkedin_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-[var(--text-muted)] flex items-center justify-center text-[var(--text-muted)] hover:text-black hover:bg-[var(--primary-color)] hover:border-[var(--primary-color)] transition-all">
-                  <i className="fa-brands fa-linkedin-in"></i>
+                <a href={faculty.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors text-lg">
+                  <i className="fa-brands fa-linkedin"></i>
                 </a>
               )}
               {faculty.scholar_url && (
-                <a href={faculty.scholar_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-[var(--text-muted)] flex items-center justify-center text-[var(--text-muted)] hover:text-black hover:bg-[var(--primary-color)] hover:border-[var(--primary-color)] transition-all">
+                <a href={faculty.scholar_url} target="_blank" rel="noopener noreferrer" className="text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors text-lg">
                   <i className="fa-solid fa-graduation-cap"></i>
                 </a>
               )}
@@ -209,8 +219,8 @@ export default function FacultyProfile() {
           </motion.div>
         </div>
 
-        {/* RIGHT COLUMN: Stacked Info */}
-        <div className="w-full lg:w-7/12 flex flex-col pt-12 lg:pt-20">
+        {/* RIGHT COLUMN: Luxury Editorial Content */}
+        <div className="w-full lg:w-7/12 flex flex-col pt-4 lg:pt-16">
           
           {/* Bio Section */}
           {faculty.bio && (
@@ -218,70 +228,66 @@ export default function FacultyProfile() {
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3 }}
-              className="mb-16"
+              className="mb-20"
             >
-              <div className="text-base md:text-lg text-[var(--text-color)]/80 leading-relaxed font-light space-y-4 text-justify">
+              <div className="text-lg text-[var(--text-color)]/80 leading-[2] font-light space-y-6 text-justify">
                 {faculty.bio.split('\n').filter(p => p.trim()).map((paragraph, i) => (
-                  <p key={i}>{paragraph}</p>
+                  <p key={i} className={i === 0 ? "" : ""}>
+                    {paragraph}
+                  </p>
                 ))}
               </div>
             </motion.div>
           )}
 
-          {/* Quick Info Grid */}
+          {/* Elegant Quick Info Ribbon */}
           {(faculty.specialisation || faculty.department || faculty.office_address) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mb-12"
+              className="mb-20 py-10 border-y border-[var(--card-border)]/60"
             >
-              <h3 className="text-2xl font-bold font-serif mb-6 text-[var(--text-color)]">Expertise & Details</h3>
-              <div className="flex flex-wrap gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
                 {faculty.specialisation && (
-                  <div className="bg-[var(--card-bg)] border border-[var(--card-border)] px-5 py-3 rounded-sm flex flex-col gap-1">
-                    <span className="text-[10px] text-[var(--primary-color)] uppercase tracking-widest font-bold">Specialisation</span>
-                    <span className="text-sm font-medium">{faculty.specialisation}</span>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em] font-semibold">Specialisation</span>
+                    <span className="text-base font-medium text-[var(--text-color)] leading-snug">{faculty.specialisation}</span>
                   </div>
                 )}
                 {faculty.department && (
-                  <div className="bg-[var(--card-bg)] border border-[var(--card-border)] px-5 py-3 rounded-sm flex flex-col gap-1">
-                    <span className="text-[10px] text-[var(--primary-color)] uppercase tracking-widest font-bold">Department</span>
-                    <span className="text-sm font-medium">{faculty.department}</span>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em] font-semibold">Department</span>
+                    <span className="text-base font-medium text-[var(--text-color)] leading-snug">{faculty.department}</span>
                   </div>
                 )}
                 {faculty.office_address && (
-                  <div className="bg-[var(--card-bg)] border border-[var(--card-border)] px-5 py-3 rounded-sm flex flex-col gap-1">
-                    <span className="text-[10px] text-[var(--primary-color)] uppercase tracking-widest font-bold">Office</span>
-                    <span className="text-sm font-medium">{faculty.office_address}</span>
+                  <div className="flex flex-col gap-3">
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em] font-semibold">Office</span>
+                    <span className="text-base font-medium text-[var(--text-color)] leading-snug">{faculty.office_address}</span>
                   </div>
                 )}
               </div>
-              <div className="w-full h-px bg-[var(--card-border)] mt-12"></div>
             </motion.div>
           )}
 
-          {/* Stacked Details Sections */}
+          {/* Editorial Details Sections */}
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             transition={{ delay: 0.5 }}
-            className="flex flex-col space-y-12"
+            className="flex flex-col space-y-20"
           >
             {availableTabs.map((section, index) => {
               const content = faculty[section.id];
-              if (!content || (typeof content === 'string' && content.trim().length === 0)) return null;
+              if (!content || (typeof content === 'string' && content.trim().length === 0) || (Array.isArray(content) && content.length === 0)) return null;
 
               return (
                 <div key={section.id} className="w-full">
-                  <h3 className="text-2xl font-bold font-serif mb-6 text-[var(--text-color)]">{section.label}</h3>
-                  <div className="text-[var(--text-color)]/80 text-sm md:text-base mb-12">
+                  <h3 className="text-3xl font-serif mb-8 text-[var(--text-color)] tracking-tight">{section.label}</h3>
+                  <div className="w-full">
                     {renderList(content)}
                   </div>
-                  {/* Divider, unless it's the last item */}
-                  {index < availableTabs.length - 1 && (
-                    <div className="w-full h-px bg-[var(--card-border)]"></div>
-                  )}
                 </div>
               );
             })}
@@ -290,5 +296,5 @@ export default function FacultyProfile() {
         </div>
       </div>
     </div>
-      );
+  );
 }

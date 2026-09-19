@@ -98,7 +98,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  const { data: slots } = await supabase
  .from('class_schedule')
  .select('id')
- .eq('batch_id', profile.academic_batch)
+ .eq('batch', profile.batch || profile.academic_batch)
  .in('day_of_week', [...new Set(daysOfWeek)]);
 
  if (slots && slots.length > 0) {

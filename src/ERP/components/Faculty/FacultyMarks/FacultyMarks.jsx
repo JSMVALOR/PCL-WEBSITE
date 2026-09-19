@@ -4,6 +4,28 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 
+
+
+const getBatchColorKey = (batchName) => {
+    if (!batchName) return 'default';
+    const b = batchName.toUpperCase();
+    if (b.includes('BA LLB')) return 'rose';
+    if (b.includes('BBA LLB')) return 'emerald';
+    if (b.includes('LLM')) return 'purple';
+    if (b.includes('LLB')) return 'indigo';
+    return 'default';
+};
+
+const THEME_COLORS = {
+    blue: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' },
+    emerald: { primary: '#34C759', bg: 'rgba(52,199,89,0.1)' },
+    amber: { primary: '#FF9500', bg: 'rgba(255,149,0,0.1)' },
+    rose: { primary: '#FF3B30', bg: 'rgba(255,59,48,0.1)' },
+    indigo: { primary: '#5856D6', bg: 'rgba(88,86,214,0.1)' },
+    purple: { primary: '#AF52DE', bg: 'rgba(175,82,222,0.1)' },
+    default: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' }
+};
+
 export default function FacultyMarks({ subjectContext }) {
  const { userSession } = useERP();
  
@@ -201,7 +223,18 @@ export default function FacultyMarks({ subjectContext }) {
  return;
  }
 
- const { error } = await supabase.from('marks_ledger').upsert(upsertArray, { onConflict: 'student_id,subject_id,assessment_type' });
+ 
+        let error = null;
+        for (const row of upsertArray) {
+            const { data: existing } = await supabase.from('marks_ledger').select('id').eq('student_id', row.student_id).eq('subject_id', row.subject_id).eq('assessment_type', row.assessment_type);
+            if (existing && existing.length > 0) {
+                const { error: updErr } = await supabase.from('marks_ledger').update(row).eq('id', existing[0].id);
+                if (updErr) error = updErr;
+            } else {
+                const { error: insErr } = await supabase.from('marks_ledger').insert(row);
+                if (insErr) error = insErr;
+            }
+        }
         
         // SYNC TO LEGACY student_marks TABLE FOR ADMIN EXAM LOCKING
         try {
@@ -215,7 +248,15 @@ export default function FacultyMarks({ subjectContext }) {
                     max_marks: row.total_marks,
                     status: 'draft'
                 }));
-                await supabase.from('student_marks').upsert(legacyPayload, { onConflict: 'student_id, subject_name, exam_type' });
+                
+                for (const legRow of legacyPayload) {
+                    const { data: exLeg } = await supabase.from('student_marks').select('id').eq('student_id', legRow.student_id).eq('subject_name', legRow.subject_name).eq('exam_type', legRow.exam_type);
+                    if (exLeg && exLeg.length > 0) {
+                        await supabase.from('student_marks').update(legRow).eq('id', exLeg[0].id);
+                    } else {
+                        await supabase.from('student_marks').insert(legRow);
+                    }
+                }
             }
         } catch (e) {
             console.error("Failed to sync to legacy student_marks", e);
@@ -371,7 +412,7 @@ export default function FacultyMarks({ subjectContext }) {
 
  {/* SPREADSHEET GRID */}
  {(!selectedSubject || !selectedBatch || !selectedAssessmentType || (isGenericAssessment && !maxMarksOverride)) && (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
  <i className="fa-solid fa-list-check text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-themeText font-black">Ready to Grade</h3>
  <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">Select a Subject, Batch, and Assessment Type above to load the grading roster.</p>

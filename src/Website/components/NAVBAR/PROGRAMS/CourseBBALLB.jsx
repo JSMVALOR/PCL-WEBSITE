@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSiteContent } from '../../../../Shared/lib/hooks/useSiteContent';
 import classroom2 from '../../../../Shared/Assets/CAMPUS/pcl_classroom_2.webp';
 import styles from './Programs.module.css';
+import FeaturedSubjects from './components/FeaturedSubjects';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -154,6 +155,10 @@ export default function CourseBBALLB() {
                   <div className={`${styles.gridCellMuted} md:col-span-2 text-justify`}>{cms.curriculum_m3_desc}</div>
                 </div>
               </div>
+            </section>
+
+            <section className="mt-16 gsap-fade-up">
+              <FeaturedSubjects programId="bba11b00-0000-4000-a000-000000000000" limit={6} />
             </section>
           </div>
 

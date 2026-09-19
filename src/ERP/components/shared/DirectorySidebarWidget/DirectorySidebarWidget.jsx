@@ -25,15 +25,26 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
             const users = data || [];
             setAllUsers(users);
 
+            // Fetch exact mentorship assignments to avoid dummy random matches
+            const { data: mentData } = await supabase.from('mentorship').select('faculty_id, student_id');
+            const mentorships = mentData || [];
+
             if (role === 'student') {
-                const faculty = users.filter(u => u.role === 'faculty');
-                setReportingTo(faculty[0] || { full_name: 'Dr. Faculty Mentor', role: 'Faculty' });
-                setMembers(faculty.slice(0, 3));
+                const myMentorAssignment = mentorships.find(m => m.student_id === userSession?.id || m.student_id === userSession?.db_id);
+                const mentorProfile = myMentorAssignment ? users.find(u => u.id === myMentorAssignment.faculty_id) : null;
+                setReportingTo(mentorProfile || { full_name: 'Unassigned Mentor', role: 'Faculty' });
+                
+                // Show Faculty members in the Faculty Directory snippet
+                const facultyMembers = users.filter(u => u.role === 'faculty' && u.id !== mentorProfile?.id);
+                setMembers(facultyMembers.slice(0, 3));
             } else if (role === 'faculty') {
                 const admins = users.filter(u => u.role === 'admin');
-                const students = users.filter(u => u.role === 'student');
                 setReportingTo(admins[0] || { full_name: 'Prof. Department Head', role: 'Admin' });
-                setMembers(students.slice(0, 3));
+
+                // Exact mentees for this faculty
+                const myMenteeIds = mentorships.filter(m => m.faculty_id === userSession?.id).map(m => m.student_id);
+                const myMentees = users.filter(u => myMenteeIds.includes(u.id));
+                setMembers(myMentees.slice(0, 3));
             } else {
                 const admins = users.filter(u => u.role === 'admin' && u.id !== userSession?.id);
                 setReportingTo({ full_name: 'Hon. Vice Chancellor', role: 'Leadership' });
@@ -173,6 +184,10 @@ function FullDirectoryModal({ onClose, allUsers, role, getPresenceStatus }) {
         const groups = {};
 
         if (role === 'student') {
+            // Group 1: Faculty (so students can find their professors)
+            groups['Faculty'] = filtered.filter(u => u.role === 'faculty');
+
+            // Group 2: Students (grouped by batch)
             const students = filtered.filter(u => u.role === 'student');
             students.forEach(s => {
                 const batch = s.batch_name || 'General Students';

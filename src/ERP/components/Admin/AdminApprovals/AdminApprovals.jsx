@@ -28,7 +28,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  { data: documentsData },
  { data: profileUpdatesData }
  ] = await Promise.all([
- supabase.from('timetable_requests').select('*, faculty:profiles(full_name), subject:subjects(name)').order('created_at', { ascending: false }),
+ supabase.from('timetable_requests').select('*, faculty:profiles(full_name), subject:master_subjects(name)').order('created_at', { ascending: false }),
  supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role), accused:profiles!grievances_accused_id_fkey(full_name, role)').is('assigned_to', null).order('created_at', { ascending: false }),
  supabase.from('student_documents').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false }),
  supabase.from('profile_update_requests').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false })

@@ -66,6 +66,8 @@ export default function ParentDashboard({ onLogout }) {
 
 
     const totalCount = attendance.length;
+    const presentCount = attendance.filter(a => a.entry_status === 'present' || a.entry_status === 'late' || (!a.entry_status && a.status === 'present')).length;
+    const lateCount = attendance.filter(a => a.entry_status === 'late').length;
     const attPercentage = totalCount === 0 ? 100 : Math.round((presentCount / totalCount) * 100);
 
     return (

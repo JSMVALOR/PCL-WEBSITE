@@ -63,7 +63,7 @@ export default function FacultyAllocator() {
             // If picking a brand new assignment or overwriting an existing one to a new faculty
             if (facultyId && (!existing || existing.faculty_id !== facultyId)) {
                 const confirmed = await window.erpDialog?.confirm(
-                    `Are you sure you want to officially assign ${newName} to ${master?.name}? This will instantly notify the faculty via email.`, 
+                    `You are about to formally bind ${newName} to ${master?.name}. This action will automatically update their academic dashboard and dispatch an official allocation notice. Proceed?`, 
                     "Confirm Official Assignment"
                 );
                 
@@ -117,7 +117,7 @@ export default function FacultyAllocator() {
             else if (facultyId && (!existing || !existing.faculty_id)) {
                 // CASE 3: Brand New Assignment
                 console.log(`[EMAIL DISPATCH] To: ${newName} | Subject: New Class Allocation - ${master?.name} | Body: You have been officially allocated to teach ${master?.name} for ${batch?.name}.`);
-                window.erpDialog?.alert(`✅ Assignment Confirmed. An automated notification email has been dispatched to ${newName}.`);
+                window.erpDialog?.alert(`Faculty allocation securely recorded. The academic feeds have been seamlessly synchronized.`);
             }
             
             // Force completely fresh fetch to guarantee state sync

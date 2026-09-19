@@ -23,41 +23,30 @@ export default function AutoGenerator({}) {
  console.warn("Could not fetch global schedule, falling back to defaults.", globalErr);
  }
  
- // Extract boundaries
- const startTimeStr = globalSchedule?.start_time || '09:00:00';
- const endTimeStr = globalSchedule?.end_time || '16:00:00';
- const offDays = globalSchedule?.off_days || ['Saturday', 'Sunday'];
+ // Official PCL Timings
+ const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+ const workingDaysIndex = [1, 2, 3, 4, 5, 6]; // 1-Mon, 6-Sat. (Sunday is off)
  
- // Map days
- const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
- const workingDaysIndex = []; // 1 for Monday, etc.
- dayNames.forEach((name, index) => {
- if (!offDays.includes(name)) {
- workingDaysIndex.push(index + 1);
- }
- });
+ // Generate time slots based on official timings
+ // Mon-Fri: 8:45 AM - 4:45 PM
+ const monFriSlots = [
+    { s: '08:45:00', e: '09:45:00' },
+    { s: '09:45:00', e: '10:45:00' },
+    { s: '10:45:00', e: '11:45:00' },
+    { s: '11:45:00', e: '12:45:00' },
+    // 12:45 to 13:45 is Lunch Break
+    { s: '13:45:00', e: '14:45:00' },
+    { s: '14:45:00', e: '15:45:00' },
+    { s: '15:45:00', e: '16:45:00' }
+ ];
 
- if (workingDaysIndex.length === 0) {
- throw new Error("All days are marked as off days! Cannot generate schedule.");
- }
-
- // Generate time slots based on start and end time (1-hour blocks)
- const startHour = parseInt(startTimeStr.split(':')[0], 10);
- const endHour = parseInt(endTimeStr.split(':')[0], 10);
- 
- if (endHour <= startHour) {
- throw new Error("End time must be after start time in Global Settings.");
- }
- 
- const timeSlots = [];
- for (let h = startHour; h < endHour; h++) {
- // E.g., 13:00 to 14:00. Note: Skip 12:00 to 13:00 as Lunch break (optional smart logic)
- if (h === 12) continue; // Optional Lunch Break
- 
- const s = `${h.toString().padStart(2, '0')}:00:00`;
- const e = `${(h + 1).toString().padStart(2, '0')}:00:00`;
- timeSlots.push({ s, e });
- }
+ // Saturday: 9:30 AM - 1:00 PM
+ const saturdaySlots = [
+    { s: '09:30:00', e: '10:30:00' },
+    { s: '10:30:00', e: '11:30:00' },
+    { s: '11:30:00', e: '12:30:00' }
+    // Ends at 1:00 PM, but blocks are 1h, so we schedule 3 classes.
+ ];
  
  if (timeSlots.length === 0) {
  throw new Error("Operating hours are too short to generate any 1-hour slots.");

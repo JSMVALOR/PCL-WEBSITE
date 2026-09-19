@@ -90,9 +90,9 @@ export default function StudentDashboard({ setActiveTab }) {
  if (nData) setDashboardNotices(nData);
 
  // Fetch Attendance
- const { data: attData } = await supabase.from('attendance_records').select('status').eq('profile_id', sid);
+ const { data: attData } = await supabase.from('attendance_records').select('entry_status, exit_status').eq('student_id', sid);
  if (attData && attData.length > 0) {
- const present = attData.filter(a => a.status === 'present' || a.status === 'Present').length;
+ const present = attData.filter(a => ['present', 'late'].includes(a.entry_status)).length;
  const total = attData.length;
  setStats(prev => ({ ...prev, attendance: Math.round((present / total) * 100) }));
  }
@@ -135,7 +135,7 @@ export default function StudentDashboard({ setActiveTab }) {
                             { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsPending + stats.assignmentsSubmitted}`, icon: 'fa-file-lines' },
                             { label: 'CGPA', val: stats.cgpa.toFixed(2), icon: 'fa-graduation-cap' }
                         ].map((m, i) => (
-                            <div key={i} className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group">
+                            <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group cursor-pointer hover:border-themeAccent/30 hover:bg-white/80 transition-all">
                                 <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec mb-3">
                                     <i className={`fa-solid ${m.icon}`}></i>
                                 </div>

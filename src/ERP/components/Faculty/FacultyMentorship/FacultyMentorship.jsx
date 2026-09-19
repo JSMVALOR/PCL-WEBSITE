@@ -11,6 +11,7 @@ export default function FacultyMentorship() {
     const [isLoading, setIsLoading] = useState(true);
     const [mentees, setMentees] = useState([]);
     const [meetings, setMeetings] = useState([]);
+    const [appeals, setAppeals] = useState([]);
     const [actionLoading, setActionLoading] = useState(null);
 
     const fetchData = async () => {
@@ -29,9 +30,24 @@ export default function FacultyMentorship() {
             if (studentIds.length > 0) {
                 const { data: profiles } = await supabase
                     .from('profiles')
-                    .select('id, full_name, erp_id, programme, semester')
+                    .select('id, full_name, erp_id, programme, avatar_url')
                     .in('id', studentIds);
-                menteesData = profiles || [];
+                
+                // Fetch attendance for these mentees
+                const { data: att } = await supabase
+                    .from('attendance_records')
+                    .select('student_id, entry_status, status')
+                    .in('student_id', studentIds);
+                
+                menteesData = (profiles || []).map(p => {
+                    const studentAtt = (att || []).filter(a => a.student_id === p.id);
+                    const total = studentAtt.length;
+                    const present = studentAtt.filter(a => a.entry_status === 'present' || a.entry_status === 'late' || (!a.entry_status && a.status === 'present')).length;
+                    return {
+                        ...p,
+                        attendance_percentage: total === 0 ? 100 : Math.round((present / total) * 100)
+                    };
+                });
             }
             setMentees(menteesData);
 
@@ -51,6 +67,25 @@ export default function FacultyMentorship() {
                 setMeetings(mappedMtgs);
             }
 
+            // 4. Fetch Attendance Appeals (pending_mentor)
+            if (studentIds.length > 0) {
+                const { data: tkts } = await supabase
+                    .from('helpdesk_tickets')
+                    .select('*')
+                    .eq('category', 'Attendance')
+                    .eq('status', 'pending_mentor')
+                    .in('user_id', studentIds)
+                    .order('created_at', { ascending: false });
+                
+                if (tkts) {
+                    const mappedTkts = tkts.map(t => {
+                        const student = menteesData.find(stu => stu.id === t.user_id);
+                        return { ...t, student: student || { full_name: 'Unknown Student' } };
+                    });
+                    setAppeals(mappedTkts);
+                }
+            }
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -66,6 +101,22 @@ export default function FacultyMentorship() {
         setActionLoading(meetingId);
         try {
             await supabase.from('mentorship_meetings').update({ status: newStatus }).eq('id', meetingId);
+            fetchData();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleAppealAction = async (ticketId, isApproved) => {
+        setActionLoading(ticketId);
+        try {
+            if (isApproved) {
+                await supabase.from('helpdesk_tickets').update({ status: 'open', admin_reply: 'Mentor Approved. Pending Admin Review.' }).eq('id', ticketId);
+            } else {
+                await supabase.from('helpdesk_tickets').update({ status: 'resolved', admin_reply: 'Rejected by Mentor.' }).eq('id', ticketId);
+            }
             fetchData();
         } catch (error) {
             console.error(error);
@@ -108,7 +159,12 @@ export default function FacultyMentorship() {
                                                 {m.full_name.charAt(0)}
                                             </div>
                                             <div>
-                                                <h4 className="text-sm font-black text-gray-900 dark:text-white">{m.full_name}</h4>
+                                                <div className="flex items-center gap-3">
+    <h4 className="text-sm font-black text-gray-900 dark:text-white">{m.full_name}</h4>
+    <div className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+        {m.attendance_percentage}% Att.
+    </div>
+</div>
                                                 <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mt-1">{m.programme} • {m.erp_id}</p>
                                             </div>
                                         </div>

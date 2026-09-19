@@ -38,20 +38,47 @@ export default function ScheduleBuilder({}) {
  setRooms(roomData || []);
  if (roomData?.length > 0 && !roomId) setRoomId(roomData[0].id);
 
- // 2. Fetch Subjects (for the dropdown)
- const { data: subData } = await supabase.from('subjects').select('id, name, theme_color, faculty_id, faculty:profiles(full_name)');
- setSubjects(subData || []);
- if (subData?.length > 0 && !subjectId) setSubjectId(subData[0].id);
-
- // 2.5 Fetch Faculties
+ // 1.5 Fetch Faculties
  const { data: facData } = await supabase.from('profiles').select('id, full_name').eq('role', 'faculty');
  setFaculties(facData || []);
 
- // 3. Fetch Active Semesters (to construct batch names)
- const { data: semData } = await supabase.from('academic_semesters').select('id, name, programme').eq('is_active_globally', true);
+ // 2. Fetch Active Batches FIRST
+ const { data: semData } = await supabase.from('academic_batches').select('id, name').eq('status', 'active');
  setBatches(semData || []);
- if (semData?.length > 0 && !semData.find(s => `${s.academic_programs?.code} - ${s.name}` === selectedBatch)) {
- setSelectedBatch(`${semData[0].programme} - ${semData[0].name}`);
+ 
+ let currentBatchString = selectedBatch;
+ if (semData?.length > 0 && !semData.find(s => s.name === selectedBatch)) {
+    currentBatchString = semData[0].name;
+    setSelectedBatch(currentBatchString);
+ }
+
+ const activeBatchObj = (semData || []).find(s => s.name === currentBatchString);
+ const activeBatchId = activeBatchObj ? activeBatchObj.id : null;
+
+ // 3. Fetch Subjects ONLY for this specific batch
+ if (activeBatchId) {
+    const { data: cohortData } = await supabase.from('cohort_subjects')
+        .select('faculty_id, master_subjects(id, name, theme_color)')
+        .eq('batch_id', activeBatchId);
+    
+    if (cohortData) {
+        const filteredSubjects = cohortData.filter(c => c.master_subjects).map(c => ({
+            id: c.master_subjects.id,
+            name: c.master_subjects.name,
+            theme_color: c.master_subjects.theme_color,
+            faculty_id: c.faculty_id
+        }));
+        setSubjects(filteredSubjects);
+        // Force update the selected subject if it's invalid for this batch
+        if (filteredSubjects.length > 0 && (!subjectId || !filteredSubjects.find(s => s.id === subjectId))) {
+            setSubjectId(filteredSubjects[0].id);
+        } else if (filteredSubjects.length === 0) {
+            setSubjectId('');
+        }
+    }
+ } else {
+    setSubjects([]);
+    setSubjectId('');
  }
 
  // 4. Fetch actual schedule for the selected batch
@@ -60,7 +87,7 @@ export default function ScheduleBuilder({}) {
  .from('class_schedule')
  .select(`
  id, batch, day_of_week, start_time, end_time,
- subject:subjects(name, theme_color, faculty:profiles(full_name)),
+ subject:master_subjects(name, theme_color),
  room:academic_classrooms(name),
  faculty:profiles(full_name)
  `)
@@ -72,7 +99,7 @@ export default function ScheduleBuilder({}) {
  
  const formatted = (schedData || []).map(s => ({
  id: s.id,
- day: daysMap[s.day_of_week] || 'Monday',
+ day: (/^\d+$/.test(String(s.day_of_week))) ? {1:'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday', 5:'Friday', 6:'Saturday', 7:'Sunday'}[String(s.day_of_week)] || 'Monday' : s.day_of_week,
  time: s.start_time.slice(0, 5),
  endTime: s.end_time.slice(0, 5),
  subject: s.subject?.name,
@@ -156,20 +183,23 @@ export default function ScheduleBuilder({}) {
  }
  };
 
- const handleSlotClick = async (dayString, timeStr) => {
+ const handleSlotClick = async (dayString, timeStr, explicitEndTime) => {
  if (!isDrawMode) return;
  if (!subjectId || !roomId) {
- alert("Please select a Subject and Room in the Draw Toolbar first.");
+ window.erpDialog?.alert("Please select a Subject and Room in the Draw Toolbar first.");
  return;
  }
 
  const daysMap = { 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7 };
  const d = daysMap[dayString];
  
- // Calculate end time (default + 1 hour)
- const [h, m] = timeStr.split(':');
- const endHour = parseInt(h, 10) + 1;
- const endTimeStr = `${String(endHour).padStart(2, '0')}:${m}`;
+ // Support passing explicit end time from the strict slot grid
+ let endTimeStr = explicitEndTime;
+ if (!endTimeStr) {
+   const [h, m] = timeStr.split(':');
+   const endHour = parseInt(h, 10) + 1;
+   endTimeStr = `${String(endHour).padStart(2, '0')}:${m}`;
+ }
 
  const conflictMsg = await checkConflicts(facultyId, roomId, d, timeStr + ':00', endTimeStr + ':00');
  if (conflictMsg) {
@@ -231,6 +261,12 @@ export default function ScheduleBuilder({}) {
  if (!selectedClass) return;
  if (!window.confirm(`Delete ${selectedClass.subject} class from the schedule?`)) return;
  
+ if (selectedClass.isDraft) {
+    setPendingDraws(prev => prev.filter(d => d.id !== selectedClass.id));
+    setSelectedClass(null);
+    return;
+ }
+ 
  try {
  const { error } = await supabase.from('class_schedule').delete().eq('id', selectedClass.id);
  if (error) throw error;
@@ -260,7 +296,7 @@ export default function ScheduleBuilder({}) {
  className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold text-themeText outline-none appearance-none cursor-pointer hover:border-themeAccent transition-colors"
  >
  {batches.map(s => (
- <option key={s.id} value={`${s.academic_programs?.code} - ${s.name}`}>{s.academic_programs?.code} - {s.name}</option>
+ <option key={s.id} value={s.name}>{s.name}</option>
  ))}
  </select>
  </div>
@@ -284,22 +320,26 @@ export default function ScheduleBuilder({}) {
  <div>
  <p className="text-[14px] font-medium text-amber-500 uppercase tracking-wider leading-tight">Active Brush</p>
  <p className="text-[10px] font-bold text-themeTextSec">Click grid to paint a 1-hour slot.</p>
+              <p className="text-[10px] font-black text-amber-500/70 mt-1 uppercase tracking-wider bg-amber-500/10 w-fit px-2 py-0.5 rounded border border-amber-500/20">{selectedBatch}</p>
  </div>
  </div>
- <div className="flex flex-wrap md:flex-nowrap gap-3 flex-1">
- <select className="flex-1 bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={subjectId} onChange={e => setSubjectId(e.target.value)}>
+ <div className="flex flex-wrap md:flex-nowrap gap-3 flex-1 min-w-0">
+              <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}>
+                {batches.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+              </select>
+ <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={subjectId} onChange={e => setSubjectId(e.target.value)}>
  {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
  </select>
- <select className="flex-1 bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={roomId} onChange={e => setRoomId(e.target.value)}>
+ <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={roomId} onChange={e => setRoomId(e.target.value)}>
  {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
  </select>
- <select className="flex-1 bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={facultyId} onChange={e => setFacultyId(e.target.value)}>
+ <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={facultyId} onChange={e => setFacultyId(e.target.value)}>
  <option value="">No Faculty</option>
  {faculties.map(f => <option key={f.id} value={f.id}>{f.full_name}</option>)}
  </select>
  </div>
  {pendingDraws.length > 0 && (
- <div className="flex items-center gap-2 ml-auto shrink-0 border-l border-amber-500/30 pl-4">
+ <div className="flex items-center gap-2 ml-auto shrink-0 xl:border-l border-amber-500/30 xl:pl-4 mt-4 xl:mt-0 w-full xl:w-auto justify-end">
  <button type="button" onClick={() => setPendingDraws([])} className="px-3 py-2 rounded-lg text-[10px] font-black uppercase text-amber-500 hover:bg-amber-500/10 transition-colors">
  Clear
  </button>
@@ -316,7 +356,7 @@ export default function ScheduleBuilder({}) {
  <div className="w-8 h-8 border-4 border-themeAccent border-t-transparent rounded-full animate-spin"></div>
  </div>
  ) : (
- <WeeklyChart schedule={[...schedule, ...pendingDraws]} role="admin" onLectureClick={(cls) => setSelectedClass(cls)} isDrawMode={isDrawMode} onSlotClick={handleSlotClick} />
+ <WeeklyChart schedule={[...schedule, ...pendingDraws]} role="admin" onLectureClick={(cls) => setSelectedClass(cls)} isDrawMode={isDrawMode} onSlotClick={handleSlotClick} batchName={selectedBatch} />
  )}
 
  {/* CREATE MODAL */}

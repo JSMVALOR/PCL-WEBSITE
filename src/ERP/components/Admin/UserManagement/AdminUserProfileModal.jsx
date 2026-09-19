@@ -23,7 +23,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  // Fetch Student Leaves
  const { data: leaves } = await supabase
  .from("leave_requests")
- .select("status")
+ .select("status, entry_status")
  .eq("student_id", user.db_id);
 
  const total = leaves?.length || 0;
@@ -37,7 +37,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  .eq("student_id", user.db_id);
 
  const totalAtt = att?.length || 0;
- const present = att?.filter(a => a.status === "present").length || 0;
+ const present = att?.filter(a => a.entry_status === "present" || a.entry_status === "late" || (!a.entry_status && a.status === "present")).length || 0;
  const attPerc = totalAtt > 0 ? Math.round((present / totalAtt) * 100) : 0;
 
  setStats(s => ({
@@ -86,7 +86,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  .in("session_id", sessionIds);
  
  const totalRecs = attRecords?.length || 0;
- const presRecs = attRecords?.filter(a => a.status === "present").length || 0;
+ const presRecs = attRecords?.filter(a => a.entry_status === "present" || a.entry_status === "late" || (!a.entry_status && a.status === "present")).length || 0;
  avgAtt = totalRecs > 0 ? Math.round((presRecs / totalRecs) * 100) : 0;
  }
  }
@@ -126,10 +126,14 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  </button>
 
  <div className="flex items-center gap-5 relative z-10">
- <div className="w-20 h-20 rounded-2xl bg-themePanel/85 backdrop-blur-2xl flex items-center justify-center shrink-0 overflow-hidden">
- <span className={`text-3xl font-semibold tracking-tight ${user.role === 'student' ? 'text-themeAccent' : 'text-blue-600'}`}>
- {user.name.charAt(0)}
- </span>
+ <div className="w-20 h-20 rounded-2xl bg-themePanel/85 backdrop-blur-2xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+ {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+     <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
+ ) : (
+     <span className={`text-3xl font-semibold tracking-tight ${user.role === 'student' ? 'text-themeAccent' : 'text-blue-600'}`}>
+        {user.name.charAt(0)}
+     </span>
+ )}
  </div>
  <div className="text-gray-900 dark:text-white min-w-0">
  <div className="flex items-center gap-2 mb-1">

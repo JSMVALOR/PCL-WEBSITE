@@ -270,7 +270,7 @@ export const ErpProvider = ({ children }) => {
 
             const emailToLogin = cleanCredential.includes('@')
                 ? cleanCredential
-                : `${cleanCredential}_v2@jsm.edu`;
+                : (cleanCredential === 'fac0000' ? 'fac0000@pcl.edu' : `${cleanCredential}_v2@jsm.edu`);
 
             // Step 1: Check Auth Vault
             const { data, error } = await supabase.auth.signInWithPassword({
@@ -436,7 +436,7 @@ export const ErpProvider = ({ children }) => {
             try {
                 const { data, error } = await supabase
                     .from('class_schedule')
-                    .select('*, subjects(name, code)')
+                    .select('*, master_subjects(name, code)')
                     .eq('faculty_id', userSession.db_id)
                     .order('start_time', { ascending: true });
                 if (error) throw error;

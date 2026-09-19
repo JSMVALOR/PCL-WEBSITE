@@ -13,7 +13,7 @@ export default function PageHeader({ isEmbedded = false,  icon, title, subtitle,
                         </div>
                     )}
                     <div>
-                        <h1 className="text-[22px] lg:text-[28px] font-bold text-themeText font-serif mb-0.5 tracking-tight leading-tight">
+                        <h1 className="text-[22px] lg:text-[28px] font-bold text-themeText  mb-0.5 tracking-tight leading-tight">
                             {title}
                         </h1>
                         <p className="text-themeTextSec text-[13px] lg:text-[14px] font-medium tracking-tight">

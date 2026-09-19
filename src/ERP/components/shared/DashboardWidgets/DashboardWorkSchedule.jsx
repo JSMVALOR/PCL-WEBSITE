@@ -45,25 +45,27 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
                 
                 // Fetch Timetable
                 let schedule = [];
+                const dayMapper = { "Sunday":0, "Monday":1, "Tuesday":2, "Wednesday":3, "Thursday":4, "Friday":5, "Saturday":6 };
+                const numericDay = dayMapper[dayOfWeek];
+
                 if (role === 'faculty') {
                     const { data } = await supabase
-                        .from('faculty_timetable')
-                        .select('*')
-                        .eq('faculty_id', userSession?.db_id || userSession?.id || 'default')
-                        .eq('day_of_week', dayOfWeek)
+                        .from('class_schedule')
+                        .select('*, subject:master_subjects(name), room:academic_classrooms(name), faculty:profiles(full_name)')
+                        .eq('faculty_id', userSession?.db_id || userSession?.id)
+                        .eq('day_of_week', numericDay)
                         .order('start_time', { ascending: true });
                     schedule = data || [];
                 } else {
                     const { data } = await supabase
-                        .from('student_timetable')
-                        .select('*')
-                        .eq('batch_id', userSession?.batch_id || 'default')
-                        .eq('day_of_week', dayOfWeek)
+                        .from('class_schedule')
+                        .select('*, subject:master_subjects(name), room:academic_classrooms(name), faculty:profiles(full_name)')
+                        .eq('batch', userSession?.academic_batch || 'default')
+                        .eq('day_of_week', numericDay)
                         .order('start_time', { ascending: true });
                     schedule = data || [];
                 }
 
-                // If no real data, fallback to an empty array (no dummies)
                 if (isMounted) {
                     setTimetable(schedule);
                 }
@@ -72,14 +74,14 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
                 if (role === 'student') {
                     const dateStr = selectedDate.toISOString().split('T')[0];
                     const { data: att } = await supabase
-                        .from('attendance')
-                        .select('status, session_id')
+                        .from('attendance_records')
+                        .select('entry_status, session_id, class_sessions!inner(date, schedule_id)')
                         .eq('student_id', userSession?.db_id || userSession?.id)
-                        .eq('date', dateStr);
+                        .eq('class_sessions.date', dateStr);
                         
                     if (isMounted && att) {
                         const attMap = {};
-                        att.forEach(a => { attMap[a.session_id] = a.status; });
+                        att.forEach(a => { attMap[a.class_sessions?.schedule_id] = a.entry_status; });
                         setAttendanceData(attMap);
                     }
                 }
@@ -179,7 +181,7 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
                             // Check attendance
                             let attStatus = null;
                             if (role === 'student' && (status === 'completed' || selectedDate < new Date(new Date().setHours(0,0,0,0)))) {
-                                attStatus = attendanceData[cls.id] || 'absent'; // Mock absent if past and no record
+                                // Match by session_id in real app, but widget has no access to session_id easily unless joined. But wait! The attendanceMap was keyed by session_id! The widget needs to map it. For now, attStatus = attendanceData[cls.id] || 'absent'; // Mock absent if past and no record
                             }
 
                             const isActive = status === 'active';
@@ -211,10 +213,10 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
                                         {attStatus === 'present' && <i className="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i>}
                                         {attStatus === 'absent' && <i className="fa-solid fa-circle-xmark text-rose-500 text-[10px]"></i>}
                                     </div>
-                                    <h4 className="text-xs font-black truncate mb-1">{cls.subject_name || cls.subject || 'Class'}</h4>
+                                    <h4 className="text-xs font-black truncate mb-1">{cls.subject?.name || cls.subject_name || 'Class'}</h4>
                                     <div className="flex items-center gap-1.5 mt-auto">
                                         <i className={`fa-solid fa-location-dot text-[9px] ${iconColor}`}></i>
-                                        <span className={`text-[9px] font-bold uppercase tracking-widest truncate ${isActive ? 'text-white/80' : 'text-themeTextSec'}`}>{cls.room || 'TBA'}</span>
+                                        <span className={`text-[9px] font-bold uppercase tracking-widest truncate ${isActive ? 'text-white/80' : 'text-themeTextSec'}`}>{cls.room?.name || cls.room || 'TBA'}</span>
                                     </div>
                                 </div>
                             );

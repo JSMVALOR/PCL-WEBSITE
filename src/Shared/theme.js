@@ -14,7 +14,7 @@ export const theme = {
         secondary: "text-themeTextSec", 
         muted: "text-themeTextSec opacity-70 tracking-normal", 
         accent: "text-themeAccent",
-        heading: "font-serif font-semibold tracking-tight text-themeAccent",
+        heading: " font-semibold tracking-tight text-themeAccent",
         overline: "text-[10px] font-bold uppercase tracking-widest text-themeTextSec" },
 
     action: {
@@ -33,7 +33,7 @@ export const theme = {
         elevated: "shadow-sm hover:shadow-md"
     },
     ui: {
-        avatar: "rounded-themeBtn bg-themePanel/80 backdrop-blur-md border-theme border-themeBorder flex items-center justify-center font-bold text-themeAccent font-serif shadow-sm",
+        avatar: "rounded-themeBtn bg-themePanel/80 backdrop-blur-md border-theme border-themeBorder flex items-center justify-center font-bold text-themeAccent  shadow-sm",
         card: "bg-themePanel/85 backdrop-blur-2xl border-theme border-white/5 rounded-themePanel px-6 py-8 md:px-8 md:py-10 shadow-premium transition duration-500 hover:shadow-premiumElevated",
         logoBox: "w-10 h-10 bg-themeApp/80 backdrop-blur-md border-theme border-themeBorderStrong rounded-themeBtn flex items-center justify-center text-themeAccent shadow-premiumElevated" }
 };

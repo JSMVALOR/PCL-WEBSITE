@@ -12,6 +12,7 @@ export default function Attendance({ isEmbedded = false }) {
  const [totalAttended, setTotalAttended] = useState(0);
  const [totalMissed, setTotalMissed] = useState(0);
  const [totalMedical, setTotalMedical] = useState(0);
+ const [totalLate, setTotalLate] = useState(0);
  const [totalApproved, setTotalApproved] = useState(0);
 
  const [isLoading, setIsLoading] = useState(true);
@@ -41,8 +42,8 @@ export default function Attendance({ isEmbedded = false }) {
                 student_id: userSession.db_id,
                 record_id: appealRecord.id
             }),
-            status: 'open',
-            admin_reply: 'Pending Review'
+            status: 'pending_mentor',
+            admin_reply: 'Pending Mentor Review'
         });
         if(error) throw error;
         window.erpDialog?.alert("Appeal filed successfully. The Admin will review it.");
@@ -61,31 +62,34 @@ export default function Attendance({ isEmbedded = false }) {
  setIsLoading(true);
  try {
  // 1. Fetch RAW verifiable attendance from new schema
- const { data, error } = await supabase
+ const { data: attData, error } = await supabase
  .from('attendance_records')
- .select(`
- id, status, marked_at,
- session:session_id(
- id, date, status,
- schedule:schedule_id(
- id, start_time, end_time, room, batch,
- subject:subject_id(id, name, code, faculty_id)
- )
- )
- `)
+ .select('id, entry_status, exit_status, entry_marked_at, session:class_sessions(id, date, status, schedule_id)')
  .eq('student_id', studentId)
- .order('marked_at', { ascending: false });
+ .order('entry_marked_at', { ascending: false });
 
  if (error) throw error;
 
- if (data && data.length > 0) {
+ if (attData && attData.length > 0) {
+ // Fetch Schedule & Subjects manually since foreign key is missing
+ const scheduleIds = [...new Set(attData.map(a => a.session?.schedule_id).filter(Boolean))];
+ let schedMap = {};
+ if (scheduleIds.length > 0) {
+    const { data: schedData } = await supabase.from('class_schedule').select('id, start_time, end_time, room, batch, subject:master_subjects(id, name, code, faculty_id)').in('id', scheduleIds);
+    if (schedData) {
+        schedData.forEach(s => { schedMap[s.id] = s; });
+    }
+ }
+
  // 2. Client-Side Aggregation
  const subjectMap = {};
- let attCount = 0, missCount = 0, medCount = 0, appCount = 0, totCount = 0;
+ let attCount = 0, missCount = 0, medCount = 0, appCount = 0, totCount = 0, lateCount = 0;
 
- data.forEach(record => {
+ attData.forEach(record => {
  const session = record.session;
- if (!session || !session.schedule?.subject) return;
+ if (!session) return;
+ session.schedule = schedMap[session.schedule_id];
+ if (!session.schedule?.subject) return;
 
  const subjObj = session.schedule?.subject;
  const subjId = subjObj.id;
@@ -108,17 +112,18 @@ export default function Attendance({ isEmbedded = false }) {
  subjectMap[subjId].total_classes += 1;
  totCount += 1;
 
- if (record.status === 'present') { subjectMap[subjId].present += 1; attCount += 1; }
- else if (record.status === 'absent') { subjectMap[subjId].absent += 1; missCount += 1; }
- else if (record.status === 'medical') { subjectMap[subjId].medical += 1; medCount += 1; }
- else if (record.status === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
+ if (record.entry_status === 'present') { subjectMap[subjId].present += 1; attCount += 1; }
+   else if (record.entry_status === 'late') { subjectMap[subjId].late += 1; lateCount += 1; attCount += 1; /* Count late as present for health */ }
+ else if (record.entry_status === 'absent') { subjectMap[subjId].absent += 1; missCount += 1; }
+ else if (record.entry_status === 'medical') { subjectMap[subjId].medical += 1; medCount += 1; }
+ else if (record.entry_status === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
 
  // Add to ledger
  subjectMap[subjId].records.push({ id: record.id,
  date: session.date,
  session_id: session.id,
  start_time: 'N/A',
- status: record.status,
+ status: record.entry_status,
  room: 'N/A'
  });
  });
@@ -139,6 +144,7 @@ export default function Attendance({ isEmbedded = false }) {
  
  setTotalAttended(attCount);
  setTotalMissed(missCount);
+ setTotalLate(lateCount);
  setTotalMedical(medCount);
  setTotalApproved(appCount);
 
@@ -177,7 +183,20 @@ export default function Attendance({ isEmbedded = false }) {
     }, [userSession, fetchAcademicData]);
 
 
- const handleScanQR = async (e) => {
+ const CAMPUS_LAT = 17.3850;
+const CAMPUS_LNG = 78.4867;
+const ALLOWED_RADIUS_METERS = 200;
+
+const getDistanceFromLatLonInM = (lat1, lon1, lat2, lon2) => {
+    const R = 6371000;
+    const dLat = (lat2-lat1) * (Math.PI/180);
+    const dLon = (lon2-lon1) * (Math.PI/180); 
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * (Math.PI/180)) * Math.cos(lat2 * (Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    return R * c;
+};
+
+const handleScanQR = async (e) => {
  e.preventDefault();
  if (!scanToken.trim()) return;
  
@@ -199,15 +218,15 @@ export default function Attendance({ isEmbedded = false }) {
  }
  
  // Mark attendance
- const { error: insError } = await supabase
- .from('attendance_records')
- .upsert({
- session_id: session.id,
- student_id: userSession.db_id,
- status: 'present',
- marked_by: 'student_qr',
- marked_at: new Date().toISOString()
- }, { onConflict: 'session_id,student_id' });
+ const { data: existingRecords } = await supabase.from('attendance_records').select('id').eq('session_id', session.id).eq('student_id', userSession.db_id);
+                    let insError;
+                    if (existingRecords && existingRecords.length > 0) {
+                        const { error } = await supabase.from('attendance_records').update({ entry_status: 'present', marked_by: 'student_qr', entry_marked_at: new Date().toISOString() }).eq('id', existingRecords[0].id);
+                        insError = error;
+                    } else {
+                        const { error } = await supabase.from('attendance_records').insert({ session_id: session.id, student_id: userSession.db_id, entry_status: 'present', marked_by: 'student_qr', entry_marked_at: new Date().toISOString() });
+                        insError = error;
+                    }
  
  if (insError) throw insError;
  
@@ -241,7 +260,7 @@ export default function Attendance({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-16" : "pb-10"}`}>
 
  {/* 1. MASTER HEADER */}
  <PageHeader 
@@ -251,25 +270,25 @@ export default function Attendance({ isEmbedded = false }) {
  isEmbedded={isEmbedded}
  rightContent={
  <button type="button" onClick={() => setShowScanner(true)} className="btn-erp">
- <i className="fa-solid fa-qrcode text-lg"></i> Scan QR
+ <i className="fa-solid fa-keyboard text-lg"></i> Enter OTP
  </button>
  }
  />
 
 {/* 2. OVERVIEW DASHBOARD */}
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-2xl border border-black/10 dark:border-white/20 p-6 lg:p-8 flex flex-col lg:flex-row gap-8 items-center lg:items-start relative overflow-hidden">
+ <div className="bg-white/40 dark:bg-[#1C1C1E]/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 p-8 lg:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col lg:flex-row gap-10 items-center lg:items-start relative overflow-hidden group">
  <div className="absolute top-0 right-0 w-full max-w-[16rem] md:w-64 h-64 bg-themeAccent/5 rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none blur-3xl"></div>
  
  {/* The Linear Gauge */}
  <div className="w-full lg:w-1/2 flex flex-col gap-4 relative z-10">
  <div className="flex justify-between items-end">
  <div>
- <p className="text-[13px] font-medium text-themeTextSec mb-1">Overall Semester Health</p>
+ <p className="text-[14px] font-bold text-[#8E8E93] tracking-tight mb-2">Overall Semester Health</p>
  <h2 className={`text-5xl font-black ${getHealthTextClass(overallAttendance)}`}>{overallAttendance}%</h2>
  </div>
  <div className="text-right">
- <p className="text-[12px] font-medium text-themeTextSec mb-1">Minimum Required</p>
- <p className="text-[15px] font-semibold text-themeText">75%</p>
+ <p className="text-[13px] font-medium text-[#8E8E93] mb-1">Minimum Required</p>
+ <p className="text-[16px] font-bold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7]">75%</p>
  </div>
  </div>
  
@@ -315,9 +334,9 @@ export default function Attendance({ isEmbedded = false }) {
  <p className="text-2xl font-semibold tracking-tight text-amber-500">{totalMedical}</p>
  </div>
  <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-4 rounded-xl border border-black/10 dark:border-white/20 flex flex-col">
- <p className="text-[13px] font-medium text-themeTextSec mb-1">Approved Leaves</p>
- <p className="text-2xl font-semibold tracking-tight text-blue-500">{totalApproved}</p>
- </div>
+    <p className="text-[13px] font-medium text-themeTextSec mb-1">Arrived Late</p>
+    <p className="text-2xl font-semibold tracking-tight text-amber-500">{totalLate}</p>
+</div>
  </div>
  </div>
 
@@ -406,12 +425,12 @@ export default function Attendance({ isEmbedded = false }) {
  }`}>
  {scanStatus === 'success' ? <i className="fa-solid fa-check"></i> :
  scanStatus === 'error' ? <i className="fa-solid fa-xmark"></i> :
- <i className="fa-solid fa-qrcode"></i>}
+ <i className="fa-solid fa-keyboard"></i>}
  </div>
  
  <div className="text-center w-full">
- <h4 className="text-lg font-semibold tracking-tight text-themeText mb-1">Enter QR Token</h4>
- <p className="text-[10px] font-bold text-themeTextSec tracking-normal mb-4">Provided by your faculty on screen</p>
+ <h4 className="text-lg font-semibold tracking-tight text-themeText mb-1">Enter Whiteboard OTP</h4>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal mb-4">Written on the whiteboard by your faculty</p>
  
  <input 
  type="text"
@@ -486,11 +505,11 @@ export default function Attendance({ isEmbedded = false }) {
  {/* Status Icon */}
  <div className="flex flex-col items-center">
  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
- rec.status === 'present' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' :
+ rec.status === 'present' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' : rec.status === 'late' ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' :
  rec.status === 'absent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/30' :
  'bg-amber-500/10 text-amber-500 border-amber-500/30'
  }`}>
- {rec.status === 'present' ? <i className="fa-solid fa-check text-xs"></i> :
+ {rec.status === 'present' ? <i className="fa-solid fa-check text-xs"></i> : rec.status === 'late' ? <i className="fa-solid fa-clock text-xs"></i> :
  rec.status === 'absent' ? <i className="fa-solid fa-xmark text-xs"></i> :
  <i className="fa-solid fa-suitcase-medical text-xs"></i>}
  </div>
@@ -502,7 +521,7 @@ export default function Attendance({ isEmbedded = false }) {
  <div className="flex justify-between items-start mb-1">
  <p className="text-[14px] font-medium text-themeText">{new Date(rec.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
  <p className={`text-[12px] font-medium ${
- rec.status === 'present' ? 'text-emerald-500' :
+ rec.status === 'present' ? 'text-emerald-500' : rec.status === 'late' ? 'text-amber-500' :
  rec.status === 'absent' ? 'text-rose-500' : 'text-amber-500'
  }`}>{rec.status.replace('_', ' ')}</p>
  </div>

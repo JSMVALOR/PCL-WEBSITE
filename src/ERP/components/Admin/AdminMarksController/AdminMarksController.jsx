@@ -27,7 +27,7 @@ export default function AdminMarksController() {
         try {
             const { data, error } = await supabase
                 .from('marks_submissions')
-                .select('*, profiles:faculty_id(full_name), subjects:subject_id(name, code)')
+                .select('*, profiles:faculty_id(full_name), master_subjects:subject_id(name, code)')
                 .order('submitted_at', { ascending: false });
             if (!error && data) setSubmissions(data);
         } catch (e) {
@@ -108,7 +108,7 @@ export default function AdminMarksController() {
             // Build CSV
             let csvContent = "data:text/csv;charset=utf-8,";
             csvContent += `OSMANIA UNIVERSITY INTERNAL ASSESSMENT EXPORT\n`;
-            csvContent += `Subject:,${sub.subjects.name} (${sub.subjects.code})\n`;
+            csvContent += `Subject:,${(sub.master_subjects?.name || sub.master_subjects?.name || "")} (${(sub.master_subjects?.code || sub.subjects?.code || "")})\n`;
             csvContent += `Batch:,${sub.batch}\n`;
             csvContent += `Assessment:,${sub.assessment_type}\n`;
             csvContent += `Faculty:,${sub.profiles.full_name}\n`;
@@ -180,7 +180,7 @@ export default function AdminMarksController() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="text-sm font-bold text-themeText">{sub.batch}</span>
-                                            <p className="text-[10px] text-themeTextSec mt-1">{sub.subjects?.name}</p>
+                                            <p className="text-[10px] text-themeTextSec mt-1">{sub.master_subjects?.name}</p>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-bold text-themeText">
                                             {sub.profiles?.full_name}

@@ -93,18 +93,34 @@ export default function Faculty() {
              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-color)]"></div>
           </div>
         ) : facultyList.length > 0 ? (
-          <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-            {facultyList.map((faculty) => {
-              const fProfile = faculty.faculty_profiles;
-              
+          <div ref={gridRef}>
+            {(() => {
+              const principal = facultyList.find(f => f.faculty_profiles?.designation?.toLowerCase().includes('principal'));
+              const others = facultyList.filter(f => f.id !== principal?.id);
+
               return (
-                <FacultyCard 
-                  key={faculty.id} 
-                  faculty={faculty} 
-                  onClick={() => navigate(`/about/faculty/${faculty.id}`)} 
-                />
+                <div className="flex flex-col items-center w-full">
+                  {principal && (
+                    <div className="mb-16 w-full max-w-sm">
+                      <FacultyCard 
+                        faculty={principal} 
+                        onClick={() => navigate(`/about/faculty/${principal.id}`)} 
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+                    {others.map((faculty) => (
+                      <FacultyCard 
+                        key={faculty.id} 
+                        faculty={faculty} 
+                        onClick={() => navigate(`/about/faculty/${faculty.id}`)} 
+                      />
+                    ))}
+                  </div>
+                </div>
               );
-            })}
+            })()}
           </div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-32">
