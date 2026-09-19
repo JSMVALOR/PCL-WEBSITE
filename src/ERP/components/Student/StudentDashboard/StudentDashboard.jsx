@@ -60,7 +60,7 @@ export default function StudentDashboard({ setActiveTab }) {
 
  const [stats, setStats] = useState({
  cgpa: 0.00,
- attendance: 0,
+ attendance: 100,
  assignmentsPending: 0,
  assignmentsSubmitted: 0,
  libraryIssued: 0,
@@ -94,7 +94,9 @@ export default function StudentDashboard({ setActiveTab }) {
  if (attData && attData.length > 0) {
  const present = attData.filter(a => ['present', 'late'].includes(a.entry_status)).length;
  const total = attData.length;
- setStats(prev => ({ ...prev, attendance: Math.round((present / total) * 100) }));
+ setStats(prev => ({ ...prev, attendance: total === 0 ? 100 : Math.round((present / total) * 100) }));
+ } else {
+ setStats(prev => ({ ...prev, attendance: 100 }));
  }
 
  // Fetch Assignments

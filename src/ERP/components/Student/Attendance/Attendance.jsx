@@ -148,11 +148,11 @@ export default function Attendance({ isEmbedded = false }) {
  setTotalMedical(medCount);
  setTotalApproved(appCount);
 
- const overall = totCount === 0 ? 0 : ((attCount / totCount) * 100).toFixed(1);
+ const overall = totCount === 0 ? 100 : ((attCount / totCount) * 100).toFixed(1);
  setOverallAttendance(Number(overall));
  } else {
  setAttendanceData([]);
- setOverallAttendance(0);
+ setOverallAttendance(100);
  }
  } catch (error) {
  console.warn("Attendance DB syncing..."); // DB constraint pending
