@@ -11,6 +11,19 @@ export default function CourseVault({ isEmbedded = false }) {
     const [subjects, setSubjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("All");
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    const handleResourceClick = (e, item) => {
+        if (item.url && item.url.includes('drive.google.com/file/d/')) {
+            e.preventDefault();
+            const match = item.url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                setPreviewUrl(`https://drive.google.com/file/d/${match[1]}/preview`);
+            } else {
+                window.open(item.url, '_blank');
+            }
+        }
+    };
     
     // State for viewing syllabus
     const [activeSyllabusSubject, setActiveSyllabusSubject] = useState(null);
