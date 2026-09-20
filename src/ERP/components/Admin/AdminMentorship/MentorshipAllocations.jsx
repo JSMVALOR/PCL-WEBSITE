@@ -332,9 +332,9 @@ export default function MentorshipAllocations({}) {
  )}
 
  {/* 2. CONTROL PANEL */}
- <div className={`${theme.layout.panel} rounded-2xl border border-gray-200 dark:border-white/5 p-3 lg:p-6 flex flex-col xl:flex-row items-center justify-between gap-3 lg:gap-6 relative overflow-hidden z-20`}>
+ <div className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 p-3 lg:p-6 flex flex-col xl:flex-row items-center justify-between gap-3 lg:gap-6 relative overflow-hidden z-20`}>
  <div className="flex items-center justify-between xl:justify-start gap-4 w-full xl:w-auto shrink-0">
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-4 rounded-2xl shadow-none dark:shadow-none border border-gray-200 dark:border-white/5 flex items-center justify-between gap-4 lg:gap-6 w-full xl:w-auto">
+ <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-4 rounded-2xl shadow-none dark:shadow-none border border-themeBorder dark:border-white/5 flex items-center justify-between gap-4 lg:gap-6 w-full xl:w-auto">
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeAccent mb-0.5">Max Capacity</p>
  <p className="text-[9px] lg:text-xs font-semibold text-themeTextSec opacity-70">Per Faculty Mentor</p>
@@ -364,21 +364,17 @@ export default function MentorshipAllocations({}) {
  <button type="button"
  onClick={() => fileInputRef.current?.click()}
  disabled={isProcessing}
- className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-blue-500/10 text-themeTextSec hover:text-blue-500 border border-gray-200 dark:border-white/5 hover:border-blue-500/30 rounded-2xl text-[9px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
+ className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-blue-500/10 text-themeTextSec hover:text-blue-500 border border-themeBorder dark:border-white/5 hover:border-blue-500/30 rounded-2xl text-[9px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
  >
  <i className="fa-solid fa-upload"></i> <span className="hidden sm:inline">Bulk </span>CSV
  </button>
- <button type="button"
- onClick={handleClearAll}
- disabled={totalAllocated === 0 || isProcessing}
- className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec hover:text-rose-400 border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 rounded-2xl text-[9px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
- >
- <i className="fa-solid fa-trash-can"></i> Clear All
- </button>
+ <HoldButton size="sm" onHold={handleClearAll} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                Clear All
+            </HoldButton>
  <button type="button"
  onClick={handleAutoAllocate}
  disabled={filteredStudents.length === 0 || isProcessing}
- className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-gray-900 dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
+ className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
  >
  <i className="fa-solid fa-wand-magic-sparkles text-sm lg:text-base"></i> Auto-Allocate View
  </button>
@@ -396,13 +392,13 @@ export default function MentorshipAllocations({}) {
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Unallocated Students</h2>
  <p className="text-[10px] font-black text-themeTextSec tracking-normal mt-1">Search & Filter</p>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black bg-white dark:bg-[#121212] backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-gray-200 dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-black bg-white dark:bg-[#121212] backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
  {filteredStudents.length} / {unallocatedStudents.length}
  </span>
  </div>
 
  {/* Search & Filters */}
- <div className="flex flex-col gap-2 p-3 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem]">
+ <div className="flex flex-col gap-2 p-3 bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem]">
  <input 
  type="text"
  placeholder="Search Name or Reg No..."
@@ -440,7 +436,7 @@ export default function MentorshipAllocations({}) {
  <div 
  ref={provided.innerRef}
  {...provided.droppableProps}
- className={`${theme.layout.panel} rounded-2xl border border-gray-200 dark:border-white/5 p-3 lg:p-4 h-[250px] lg:h-[600px] overflow-y-auto no-scrollbar flex flex-col gap-2 relative transition-colors ${snapshot.isDraggingOver ? 'bg-themeElevated/50 border-indigo-500' : ''}`}
+ className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 p-3 lg:p-4 h-[250px] lg:h-[600px] overflow-y-auto no-scrollbar flex flex-col gap-2 relative transition-colors ${snapshot.isDraggingOver ? 'bg-themeElevated/50 border-indigo-500' : ''}`}
  >
  {isLoading ? (
  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 opacity-60">
@@ -461,7 +457,7 @@ export default function MentorshipAllocations({}) {
  ref={provided.innerRef}
  {...provided.draggableProps}
  {...provided.dragHandleProps}
- className={`bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-3 rounded-2xl shadow-none dark:shadow-none border flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ className={`bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-3 rounded-2xl shadow-none dark:shadow-none border flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  <div className="flex items-start justify-between mb-2">
  <div className="min-w-0 pr-2">
@@ -493,7 +489,7 @@ export default function MentorshipAllocations({}) {
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Faculty Mentors</h2>
  <p className="text-[10px] font-black text-themeTextSec tracking-normal mt-1">Drag & Drop Allocation</p>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black bg-white dark:bg-[#121212] backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-gray-200 dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-black bg-white dark:bg-[#121212] backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
  {faculty.length} Mentors Available
  </span>
  </div>
@@ -501,8 +497,8 @@ export default function MentorshipAllocations({}) {
  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
  {isLoading ? (
  Array(3).fill(0).map((_, i) => (
- <div key={i} className={`${theme.layout.panel} rounded-2xl border border-gray-200 dark:border-white/5 flex flex-col overflow-hidden h-[300px] animate-pulse`}>
- <div className="p-4 lg:p-5 border-b-[length:var(--border-width)] border-gray-200 dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl h-32"></div>
+ <div key={i} className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 flex flex-col overflow-hidden h-[300px] animate-pulse`}>
+ <div className="p-4 lg:p-5 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl h-32"></div>
  <div className="p-3 lg:p-4 flex flex-col gap-2 flex-1"></div>
  </div>
  ))
@@ -512,9 +508,9 @@ export default function MentorshipAllocations({}) {
  const loadPercentage = Math.min((currentLoad / maxCapacity) * 100, 100);
 
  return (
- <div key={fac.id} className={`${theme.layout.panel} rounded-2xl border flex flex-col overflow-hidden transition duration-300 ${isFull ? 'border-black/5 dark:border-white/10' : 'border-gray-200 dark:border-white/5'}`}>
+ <div key={fac.id} className={`${theme.layout.panel} rounded-2xl border flex flex-col overflow-hidden transition duration-300 ${isFull ? 'border-black/5 dark:border-white/10' : 'border-themeBorder dark:border-white/5'}`}>
 
- <div className="p-4 border-b-[length:var(--border-width)] border-gray-200 dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl shrink-0">
+ <div className="p-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl shrink-0">
  <div className="flex justify-between items-start mb-3">
  <div className="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center font-black text-base border border-indigo-500/20 shrink-0">
  {fac.name.charAt(0)}
@@ -553,7 +549,7 @@ export default function MentorshipAllocations({}) {
  ref={provided.innerRef}
  {...provided.draggableProps}
  {...provided.dragHandleProps}
- className={`bg-white dark:bg-[#121212] backdrop-blur-2xl border p-2 lg:p-2.5 rounded-2xl shadow-none dark:shadow-none flex items-center justify-between group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ className={`bg-white dark:bg-[#121212] backdrop-blur-2xl border p-2 lg:p-2.5 rounded-2xl shadow-none dark:shadow-none flex items-center justify-between group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  <div className="min-w-0 pr-2">
  <p className="text-[10px] lg:text-[14px] font-medium text-themeText truncate">{student.name}</p>

@@ -180,12 +180,12 @@ export default function Credentials() {
  <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated relative">
  
  {/* Top Action & Navigation Bar */}
- <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] px-6 py-4 rounded-[2rem] gap-4">
+ <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] px-6 py-4 rounded-[2rem] gap-4">
  <div className="flex bg-black/[0.03] dark:bg-white/[0.03] p-1.5 rounded-xl border border-black/[0.04] dark:border-white/[0.08] shadow-inner">
  <button type="button"
  onClick={() => setActiveTab("profile")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
- activeTab === "profile" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
+ activeTab === "profile" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
  }`}
  >
  <i className="fa-regular fa-user mr-2"></i> HR & Profile
@@ -193,7 +193,7 @@ export default function Credentials() {
  <button type="button"
  onClick={() => setActiveTab("security")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
- activeTab === "security" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
+ activeTab === "security" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
  }`}
  >
  <i className="fa-solid fa-shield-halved mr-2"></i> Security
@@ -201,7 +201,7 @@ export default function Credentials() {
  <button type="button"
  onClick={() => setActiveTab("appearance")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
- activeTab === "appearance" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
+ activeTab === "appearance" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
  }`}
  >
  <i className="fa-solid fa-palette mr-2"></i> Appearance
@@ -380,41 +380,41 @@ export default function Credentials() {
                             <div className="grid grid-cols-1 gap-6 lg:gap-8">
                                 <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl p-6 lg:p-8 flex flex-col gap-8 shadow-inner">
                                     <div>
-                                        <h3 className="text-sm font-bold tracking-widest text-gray-900 dark:text-white uppercase mb-6 border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
+                                        <h3 className="text-sm font-bold tracking-widest text-themeText dark:text-white uppercase mb-6 border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
                                             <i className="fa-solid fa-shield-halved text-themeAccent text-lg"></i> System Clearance & Access
                                         </h3>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                             <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Account Type</span>
-                                                <span className="text-sm font-black text-gray-900 dark:text-white">Super Administrator</span>
+                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Account Type</span>
+                                                <span className="text-sm font-black text-themeText dark:text-white">Super Administrator</span>
                                             </div>
                                             <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Clearance Level</span>
+                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Clearance Level</span>
                                                 <span className="text-sm font-black text-emerald-500">Tier 1 (Global)</span>
                                             </div>
                                             <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Database Access</span>
-                                                <span className="text-sm font-bold text-gray-900 dark:text-white">Read / Write / Delete</span>
+                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Database Access</span>
+                                                <span className="text-sm font-bold text-themeText dark:text-white">Read / Write / Delete</span>
                                             </div>
                                             <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Last Audit</span>
-                                                <span className="text-sm font-bold text-gray-900 dark:text-white">{new Date().toLocaleDateString('en-GB')}</span>
+                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Last Audit</span>
+                                                <span className="text-sm font-bold text-themeText dark:text-white">{new Date().toLocaleDateString('en-GB')}</span>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <div>
-                                        <h3 className="text-sm font-bold tracking-widest text-gray-900 dark:text-white uppercase mb-6 border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
+                                        <h3 className="text-sm font-bold tracking-widest text-themeText dark:text-white uppercase mb-6 border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
                                             <i className="fa-solid fa-satellite-dish text-themeAccent text-lg"></i> Contact Protocols
                                         </h3>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                             <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">System Email</span>
-                                                <span className="text-sm font-bold text-gray-900 dark:text-white break-all">{profileData.email || "Not Updated"}</span>
+                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">System Email</span>
+                                                <span className="text-sm font-bold text-themeText dark:text-white break-all">{profileData.email || "Not Updated"}</span>
                                             </div>
                                             <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Emergency Ping</span>
-                                                <span className="text-sm font-bold text-gray-900 dark:text-white">{profileData.phone || "Not Updated"}</span>
+                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Emergency Ping</span>
+                                                <span className="text-sm font-bold text-themeText dark:text-white">{profileData.phone || "Not Updated"}</span>
                                             </div>
                                         </div>
                                     </div>

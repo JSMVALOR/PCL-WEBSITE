@@ -69,17 +69,34 @@ export default function FacultyMarks({ subjectContext }) {
  if (!userSession?.db_id) return;
  try {
  // 1. Subjects
- const { data: subs } = await supabase.from('subjects').select('id, name, code').eq('faculty_id', userSession.db_id);
+ const { data: rawSubs } = await supabase.from('cohort_subjects').select('id, batch_id, master_subjects(id, name, code)').eq('faculty_id', userSession.db_id);
+ const subs = rawSubs ? rawSubs.map(s => ({ id: s.id, master_id: s.master_subjects?.id, name: s.master_subjects?.name || 'Unknown', code: s.master_subjects?.code || 'Unknown' })) : [];
  if (subs) {
  setSubjects(subs);
  sessionStorage.setItem(`fac_marks_subjects_${userSession.db_id}`, JSON.stringify(subs));
  }
 
  // 2. Batches (from class_schedule)
- const { data: schedule } = await supabase.from('class_schedule').select('subject_id, batch').in('subject_id', (subs || []).map(s => s.id));
+ const { data: schedule } = await supabase.from('class_schedule').select('subject_id, batch').in('subject_id', (subs || []).map(s => s.master_id).filter(Boolean));
  if (schedule) {
  setFacultySchedule(schedule);
  sessionStorage.setItem(`fac_marks_schedule_${userSession.db_id}`, JSON.stringify(schedule));
+ }
+
+ // Handle initial state if opened from Dashboard Action (subjectContext)
+ if (subjectContext) {
+ if (subjectContext.master_subjects && typeof subjectContext.master_subjects === 'object' && subjectContext.master_subjects.id) {
+ setSelectedSubject(subjectContext.master_subjects.id);
+ } else if (subjectContext.subject_id) {
+ setSelectedSubject(subjectContext.subject_id);
+ } else if (subjectContext.master_subjects_id) {
+ setSelectedSubject(subjectContext.master_subjects_id);
+ } else {
+ setSelectedSubject(subjectContext.id);
+ }
+ if (subjectContext.batches && subjectContext.batches.length > 0) {
+ setSelectedBatch(subjectContext.batches[0]);
+ }
  }
 
  // 3. Assignments
@@ -284,7 +301,7 @@ export default function FacultyMarks({ subjectContext }) {
 
  return (
  <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full w-full mx-auto flex flex-col gap-8 pb-12' : 'flex flex-col gap-4'}`}>
+ <div className={`${!subjectContext ? 'w-full max-w-[1800px] mx-auto flex flex-col gap-8 pb-32 xl:pb-8' : 'flex flex-col gap-4'}`}>
  
  {/* HEADER */}
  {!subjectContext && (
@@ -300,7 +317,7 @@ export default function FacultyMarks({ subjectContext }) {
  <button type="button" 
  onClick={handleSaveMarks}
  disabled={isSaving || gradedCount === 0}
- className="px-8 py-3.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"
+ className="px-8 py-3.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:active:scale-100"
  >
  {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-cloud-arrow-up"></i>}
  {isSaving ? 'Saving...' : 'Save Grades'}
@@ -317,28 +334,30 @@ export default function FacultyMarks({ subjectContext }) {
  {!subjectContext && (
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Subject</label>
- <select 
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
+ <div className="relative"><select 
+ className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
  value={selectedSubject}
  onChange={(e) => { setSelectedSubject(e.target.value); setSelectedAssessmentType(""); }}
  >
  <option value="">Select Subject</option>
- {subjects.map(s => <option key={s.id} value={s.id}>{s.code} - {s.name}</option>)}
- </select>
+ {subjects.map(s => <option key={s.id} value={s.master_id || s.id}>{s.code} - {s.name}</option>)}
+ </select><i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec pointer-events-none text-xs"></i></div>
  </div>
  )}
  
- <div className="flex flex-col gap-2">
- <label className="text-[13px] font-medium text-themeTextSec">Target Batch</label>
- <select 
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
+ {(
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[13px] font-medium text-themeTextSec">Target Batch</label>
+ <div className="relative"><select 
+ className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors appearance-none"
  value={selectedBatch}
  onChange={(e) => { setSelectedBatch(e.target.value); setSelectedAssessmentType(""); }}
  >
  <option value="">Select Batch</option>
  {availableBatches.map(b => <option key={b} value={b}>{b}</option>)}
- </select>
+ </select><i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec pointer-events-none text-xs"></i></div>
  </div>
+ )}
  </div>
 
  {selectedSubject && selectedBatch && (
@@ -346,8 +365,8 @@ export default function FacultyMarks({ subjectContext }) {
  <label className="text-[13px] font-medium text-themeTextSec flex items-center gap-2">
  Assessment Type <i className="fa-solid fa-arrow-turn-down text-[8px]"></i>
  </label>
- <select 
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeAccent outline-none focus:border-themeAccent transition-colors appearance-none"
+ <div className="relative"><select 
+ className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeAccent outline-none focus:border-themeAccent transition-colors appearance-none"
  value={selectedAssessmentType}
  onChange={(e) => setSelectedAssessmentType(e.target.value)}
  >
@@ -362,7 +381,7 @@ export default function FacultyMarks({ subjectContext }) {
  <option key={a.id} value={a.id}>{a.title} ({a.total_marks} Marks)</option>
  ))}
  </optgroup>
- </select>
+ </select><i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec pointer-events-none text-xs"></i></div>
  </div>
  )}
 
@@ -373,7 +392,7 @@ export default function FacultyMarks({ subjectContext }) {
  type="number"
  min="1"
  placeholder="e.g. 25 for Internals"
- className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors"
+ className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent transition-colors"
  value={maxMarksOverride}
  onChange={(e) => setMaxMarksOverride(e.target.value)}
  />
@@ -412,11 +431,49 @@ export default function FacultyMarks({ subjectContext }) {
 
  {/* SPREADSHEET GRID */}
  {(!selectedSubject || !selectedBatch || !selectedAssessmentType || (isGenericAssessment && !maxMarksOverride)) && (
- <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
- <i className="fa-solid fa-list-check text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
- <h3 className="text-lg lg:text-xl text-themeText font-black">Ready to Grade</h3>
- <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">Select a Subject, Batch, and Assessment Type above to load the grading roster.</p>
- </div>
+ <div className="flex flex-col gap-6 w-full animate-fade-in">
+    <div className="w-full py-16 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-themeBorder border-dashed">
+        <i className="fa-solid fa-list-check text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
+        <h3 className="text-lg lg:text-xl text-themeText font-black">Ready to Grade</h3>
+        <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">Select a Subject, Batch, and Assessment Type above to load the grading roster.</p>
+    </div>
+
+    {selectedSubject && assignments.filter(a => a.subject_id === selectedSubject).length > 0 && (
+        <div className="bg-black/[0.02] dark:bg-white/[0.02] border border-themeBorder rounded-[2rem] p-6 lg:p-8 animate-fade-in">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center text-lg shadow-inner border border-amber-500/20">
+                    <i className="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <h3 className="text-lg font-bold text-themeText tracking-tight leading-tight">Quick Grade Assignments</h3>
+                    <p className="text-[10px] font-bold text-themeTextSec mt-0.5 tracking-normal">Click an active assignment to auto-load the grading roster</p>
+                </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {assignments.filter(a => a.subject_id === selectedSubject).map(assign => (
+                    <button type="button" key={assign.id} onClick={() => {
+                        setSelectedBatch(assign.batch);
+                        setSelectedAssessmentType(assign.id);
+                    }} className="bg-white/40 dark:bg-white/5 backdrop-blur-xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-2xl p-5 hover:border-themeAccent/50 hover:bg-themeAccent/5 transition-all duration-300 flex flex-col gap-3 group text-left shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-[0_8px_30px_rgb(255,255,255,0.05)] active:scale-[0.98]">
+                        <div className="flex justify-between items-start w-full">
+                            <div className="flex items-center gap-2">
+                                <span className="w-full bg-themeElevated px-2 py-0.5 rounded text-[10px] font-bold text-themeTextSec border border-themeBorder group-hover:border-themeAccent/30">{assign.batch}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-themeText text-[12px] font-bold">
+                                <i className="fa-solid fa-star text-amber-500 text-[10px]"></i> {assign.total_marks}
+                            </div>
+                        </div>
+                        <h3 className="text-sm font-semibold tracking-tight text-themeText leading-tight">{assign.title}</h3>
+                        <div className="flex items-center gap-2 mt-1 text-themeTextSec opacity-70 group-hover:opacity-100 group-hover:text-themeAccent transition-colors">
+                            <span className="text-[11px] font-bold tracking-widest uppercase">Grade Now <i className="fa-solid fa-arrow-right ml-1 -rotate-45 group-hover:rotate-0 transition-transform"></i></span>
+                        </div>
+                    </button>
+                ))}
+            </div>
+        </div>
+    )}
+</div>
  )}
 
  {students.length > 0 && maxMarks > 0 && (
@@ -424,7 +481,7 @@ export default function FacultyMarks({ subjectContext }) {
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
- <tr className="bg-themeElevated/50 border-b border-themeBorder">
+ <tr className="w-full bg-themeElevated/50 border-b border-themeBorder">
  <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec w-24">Roll No</th>
  <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec">Student Name</th>
  <th className="px-6 py-4 text-[13px] font-medium text-themeTextSec w-32 text-center">ERP ID</th>
@@ -457,7 +514,7 @@ export default function FacultyMarks({ subjectContext }) {
  min="0"
  max={maxMarks}
  placeholder="—"
- className="w-20 bg-themeApp border border-themeBorder rounded-lg px-3 py-2 text-right text-[15px] font-semibold text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition"
+ className="w-20 bg-white/40 dark:bg-white/10 border border-themeBorder rounded-lg px-3 py-2 text-right text-[15px] font-semibold text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition"
  value={hasMark ? mark : ""}
  onChange={(e) => handleMarkChange(student.id, e.target.value)}
  />

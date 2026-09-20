@@ -75,7 +75,7 @@ export default function ForgotPasswordModal({ onClose }) {
                         </p>
                         <button type="button" 
                             onClick={onClose}
-                            className="w-full py-4 rounded-lg bg-themeApp border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 text-[15px] font-semibold uppercase tracking-wider text-themeText transition"
+                            className="w-full py-4 rounded-lg bg-themeApp border border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10 text-[15px] font-semibold uppercase tracking-wider text-themeText transition"
                         >
                             Return to Login
                         </button>
@@ -97,7 +97,7 @@ export default function ForgotPasswordModal({ onClose }) {
                                 type="text"
                                 value={institutionalId}
                                 onChange={(e) => setInstitutionalId(e.target.value)}
-                                className="w-full bg-themeApp border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec placeholder:font-normal placeholder:normal-case shadow-inner"
+                                className="w-full bg-themeApp border border-themeBorder dark:border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec placeholder:font-normal placeholder:normal-case shadow-inner"
                                 placeholder="e.g. PCL-STU-2026"
                                 required
                             />
@@ -111,7 +111,7 @@ export default function ForgotPasswordModal({ onClose }) {
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
                                 rows={3}
-                                className="w-full bg-themeApp border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec placeholder:font-normal resize-none shadow-inner"
+                                className="w-full bg-themeApp border border-themeBorder dark:border-white/5 focus:border-themeAccent rounded-lg py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec placeholder:font-normal resize-none shadow-inner"
                                 placeholder="Briefly explain why you need a reset (e.g. Forgot password, locked out)"
                                 required
                             ></textarea>

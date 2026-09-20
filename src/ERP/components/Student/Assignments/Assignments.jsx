@@ -154,7 +154,7 @@ export default function Assignments({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-16" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
 
  {/* ═══════════════ HEADER ═══════════════ */}
  <PageHeader 
@@ -163,7 +163,7 @@ export default function Assignments({ isEmbedded = false }) {
  subtitle="Draft your coursework and submit securely to faculty." 
  isEmbedded={isEmbedded}
  rightContent={
- <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-[2rem] w-full lg:w-auto overflow-x-auto no-scrollbar">
+ <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-2xl w-full lg:w-auto overflow-x-auto no-scrollbar">
  <button type="button"
  onClick={() => setView("pending")}
  className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "pending"
@@ -237,7 +237,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="p-4 border-t-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
  <button type="button"
  onClick={() => openModal(task)}
- className="w-full bg-indigo-600 hover:bg-indigo-500 text-gray-900 dark:text-white font-black tracking-normal text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
+ className="w-full bg-indigo-600 hover:bg-indigo-500 text-themeText dark:text-white font-black tracking-normal text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
  >
  <i className="fa-solid fa-pen-nib mr-2"></i> Start Writing
  </button>
@@ -317,7 +317,7 @@ export default function Assignments({ isEmbedded = false }) {
  <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.subject_name}</span>
  <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">{selectedTask.title}</h3>
  </div>
- <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-gray-900 dark:text-white transition-colors shrink-0">
+ <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-themeText dark:text-white transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -367,7 +367,7 @@ export default function Assignments({ isEmbedded = false }) {
  <button 
  type="submit" 
  disabled={isSubmitting || isOverLimit || !submissionText.trim()}
- className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-gray-900 dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+ className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-themeText dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting...</> : <><i className="fa-solid fa-paper-plane"></i> Submit Final</>}
  </button>

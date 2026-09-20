@@ -42,7 +42,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                 setReportingTo(admins[0] || { full_name: 'Prof. Department Head', role: 'Admin' });
 
                 // Exact mentees for this faculty
-                const myMenteeIds = mentorships.filter(m => m.faculty_id === userSession?.id).map(m => m.student_id);
+                const myMenteeIds = mentorships.filter(m => m.faculty_id === userSession?.id || m.faculty_id === userSession?.db_id).map(m => m.student_id);
                 const myMentees = users.filter(u => myMenteeIds.includes(u.id));
                 setMembers(myMentees.slice(0, 3));
             } else {
@@ -63,7 +63,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
             <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex flex-col relative overflow-hidden"
+                className="w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex flex-col relative overflow-hidden"
             >
                 {/* 1. Profile Section */}
                 <div className="flex flex-col items-center pt-8 pb-6 px-6 relative">
@@ -226,7 +226,7 @@ function FullDirectoryModal({ onClose, allUsers, role, getPresenceStatus }) {
                 initial={{ scale: 0.95, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
-                className="w-full max-w-5xl h-[85vh] bg-themeApp text-themeText shadow-[0_30px_100px_rgba(0,0,0,0.4)] dark:shadow-[0_30px_100px_rgba(0,0,0,0.8)] rounded-3xl flex flex-col overflow-hidden relative border border-gray-300 dark:border-white/10"
+                className="w-full max-w-5xl h-[85vh] bg-themeApp text-themeText shadow-[0_30px_100px_rgba(0,0,0,0.4)] dark:shadow-[0_30px_100px_rgba(0,0,0,0.8)] rounded-3xl flex flex-col overflow-hidden relative border border-themeBorder dark:border-white/10"
             >
                 {/* Header & Search Bar */}
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-8 py-6 border-b border-black/5 dark:border-white/5 bg-themeElevated/50 z-40">
@@ -255,7 +255,7 @@ function FullDirectoryModal({ onClose, allUsers, role, getPresenceStatus }) {
                                 <kbd className="hidden sm:inline-block bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 rounded px-1.5 py-0.5 text-[9px] font-black font-sans text-themeTextSec">⌘K</kbd>
                             </div>
                         </div>
-                        <button onClick={onClose} className="w-10 h-10 shrink-0 rounded-full bg-black/5 dark:bg-white/5 hover:bg-rose-500 hover:text-gray-900 dark:text-white transition-colors flex items-center justify-center border border-black/5 dark:border-white/10">
+                        <button onClick={onClose} className="w-10 h-10 shrink-0 rounded-full bg-black/5 dark:bg-white/5 hover:bg-rose-500 hover:text-themeText dark:text-white transition-colors flex items-center justify-center border border-black/5 dark:border-white/10">
                             <i className="fa-solid fa-xmark text-lg"></i>
                         </button>
                     </div>

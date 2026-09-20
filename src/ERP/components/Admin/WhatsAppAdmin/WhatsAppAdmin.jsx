@@ -31,7 +31,7 @@ export default function WhatsAppAdmin() {
 
     
     const handleGenerateGroups = async () => {
-        if (!window.confirm("This will automatically generate WhatsApp groups for all active academic batches and invite students. Proceed?")) return;
+        if (!(await window.erpDialog?.confirm("This will automatically generate WhatsApp groups for all active academic batches and invite students. Proceed?"))) return;
         setIsLoading(true);
         try {
             // Group students by batch
@@ -82,16 +82,16 @@ export default function WhatsAppAdmin() {
     return (
         <div className="w-full flex flex-col gap-6 relative z-10 p-6 md:p-8 min-h-screen font-sans animate-fade-in">
             <header className="mb-6">
-                <h1 className="text-[28px] font-semibold tracking-tight text-gray-900 dark:text-white flex items-center gap-3">
+                <h1 className="text-[28px] font-semibold tracking-tight text-themeText dark:text-white flex items-center gap-3">
                     <i className="fa-brands fa-whatsapp text-emerald-500"></i> WhatsApp Engine
                 </h1>
-                <p className="text-sm font-medium text-gray-500 dark:text-white/50 mt-2">Link your official WhatsApp Business device here to power automated headless notifications for attendance and exams.</p>
+                <p className="text-sm font-medium text-themeTextSec dark:text-white/50 mt-2">Link your official WhatsApp Business device here to power automated headless notifications for attendance and exams.</p>
             </header>
 
             <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-none rounded-[24px] p-10 max-w-2xl mx-auto w-full text-center flex flex-col items-center gap-6">
                 
                 {waStatus === 'CHECKING' && (
-                    <div className="flex flex-col items-center gap-4 text-gray-500 dark:text-white/50 py-12">
+                    <div className="flex flex-col items-center gap-4 text-themeTextSec dark:text-white/50 py-12">
                         <i className="fa-solid fa-circle-notch fa-spin text-4xl"></i>
                         <p className="text-xs font-bold tracking-normal">Pinging WhatsApp Engine...</p>
                     </div>
@@ -111,8 +111,8 @@ export default function WhatsAppAdmin() {
                             <img src={qrCode} alt="WhatsApp QR Code" className="w-64 h-64 object-contain" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">Link Device</h2>
-                            <ol className="text-sm text-gray-500 dark:text-white/50 text-left list-decimal list-inside space-y-2 max-w-sm">
+                            <h2 className="text-xl font-semibold tracking-tight text-themeText dark:text-white mb-2">Link Device</h2>
+                            <ol className="text-sm text-themeTextSec dark:text-white/50 text-left list-decimal list-inside space-y-2 max-w-sm">
                                 <li>Open WhatsApp on your phone.</li>
                                 <li>Tap <strong>Menu</strong> (⋮) or <strong>Settings</strong> (⚙️).</li>
                                 <li>Tap <strong>Linked Devices</strong>.</li>
@@ -128,32 +128,32 @@ export default function WhatsAppAdmin() {
                             <i className="fa-brands fa-whatsapp text-6xl"></i>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">Engine is Live & Routing</h2>
-                            <p className="text-sm text-gray-500 dark:text-white/50 max-w-md mx-auto">Your WhatsApp session is securely linked. Automated attendance alerts, group generation, and exam reminders will now be routed through this session.</p>
+                            <h2 className="text-2xl font-semibold tracking-tight text-themeText dark:text-white mb-2">Engine is Live & Routing</h2>
+                            <p className="text-sm text-themeTextSec dark:text-white/50 max-w-md mx-auto">Your WhatsApp session is securely linked. Automated attendance alerts, group generation, and exam reminders will now be routed through this session.</p>
                         </div>
                         
                         
                         <div className="flex gap-4 mt-4">
-                            <button onClick={handleGenerateGroups} disabled={isLoading} className="px-6 py-3 bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF] hover:text-gray-900 dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors">
+                            <button onClick={handleGenerateGroups} disabled={isLoading} className="px-6 py-3 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF] hover:text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors">
                                 {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Auto-Generate Batch Groups"}
                             </button>
-                            <button onClick={handleReset} disabled={isLoading} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors">
+                            <button onClick={handleReset} disabled={isLoading} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors">
                                 {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Disconnect Device"}
                             </button>
                         </div>
                         
                         <div className="w-full max-w-2xl mt-8 text-left bg-black/[0.02] dark:bg-white/[0.02] rounded-[20px] p-6 border border-black/[0.04] dark:border-white/[0.04] shadow-inner">
-                            <h3 className="text-sm font-bold text-gray-900 dark:text-white tracking-normal mb-4 flex items-center gap-2">
+                            <h3 className="text-sm font-bold text-themeText dark:text-white tracking-normal mb-4 flex items-center gap-2">
                                 <i className="fa-solid fa-satellite-dish text-emerald-500"></i> Live Broadcast Preview
                             </h3>
                             <div className="flex flex-col gap-3 max-h-64 overflow-y-auto pr-2">
                                 {logs.length === 0 ? (
-                                    <p className="text-xs text-gray-500 dark:text-white/50 italic">No messages broadcasted yet...</p>
+                                    <p className="text-xs text-themeTextSec dark:text-white/50 italic">No messages broadcasted yet...</p>
                                 ) : (
                                     logs.map((log, idx) => (
                                         <div key={idx} className="bg-white/60 dark:bg-black/20 p-3 rounded-lg border border-black/5 dark:border-white/5 text-xs">
-                                            <span className="text-gray-500 dark:text-white/50 font-bold mr-2">[{log.time}]</span>
-                                            <span className="text-gray-900 dark:text-white">{log.msg}</span>
+                                            <span className="text-themeTextSec dark:text-white/50 font-bold mr-2">[{log.time}]</span>
+                                            <span className="text-themeText dark:text-white">{log.msg}</span>
                                         </div>
                                     ))
                                 )}

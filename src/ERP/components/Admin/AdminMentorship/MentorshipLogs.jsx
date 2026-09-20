@@ -31,7 +31,7 @@ export default function MentorshipLogs({}) {
 
  return (
  <div className="flex flex-col gap-6 animate-fade-in relative pb-10">
- <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6">
+ <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6">
  <div className="flex justify-between items-center mb-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText flex items-center gap-2`}>
  <span>Audit Log</span>
@@ -64,7 +64,7 @@ export default function MentorshipLogs({}) {
  {logs.map((log) => {
  const date = new Date(log.created_at);
  return (
- <div key={log.id} className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg md:items-center">
+ <div key={log.id} className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg md:items-center">
  <div className="md:col-span-3 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start border-b md:border-b-0 border-black/5 dark:border-white/10 pb-2 md:pb-0">
  <span className="text-xs font-bold text-themeText">{date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
  <span className="text-[9px] font-bold text-themeTextSec tracking-normal">{date.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' })}</span>
@@ -74,7 +74,7 @@ export default function MentorshipLogs({}) {
  <span className="text-xs font-bold text-themeText leading-relaxed">{log.action}</span>
  </div>
  <div className="md:col-span-2 flex justify-end">
- <span className="text-[12px] font-medium bg-white dark:bg-[#121212] backdrop-blur-2xl px-2 py-1 rounded border border-gray-200 dark:border-white/5 text-indigo-500">
+ <span className="text-[12px] font-medium bg-white dark:bg-[#121212] backdrop-blur-2xl px-2 py-1 rounded border border-themeBorder dark:border-white/5 text-indigo-500">
  Admin
  </span>
  </div>

@@ -31,7 +31,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  ];
 
  return (
- <div className={`w-full w-full mx-auto flex flex-col gap-6 animate-fade-in pb-20 lg:pb-8 ${isHubView ? 'bg-transparent text-themeText font-sans' : ''}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 animate-fade-in pb-20 lg:pb-8 ${isHubView ? 'bg-transparent text-themeText font-sans' : ''}`}>
  
  {/* Header and Tab Navigation */}
  {!isHubView && (
@@ -47,8 +47,8 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  onClick={() => setActiveTab(tab.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab.id 
- ? 'bg-white dark:bg-[#2C2C2E] backdrop-blur-[80px] text-themeText border border-black/10 dark:border-white/40 scale-100' 
- : 'text-themeTextSec hover:text-black dark:hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
+ ? 'bg-white dark:bg-themeElevated backdrop-blur-[80px] text-themeText border border-black/10 dark:border-white/40 scale-100' 
+ : 'text-themeTextSec hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
  }`}
  >
  <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'text-themeAccent' : ''} text-sm lg:text-base`}></i>
@@ -63,7 +63,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  <div className="flex items-center gap-2 relative z-10 pt-2">
  <button type="button"
  onClick={handleCloseReview}
- className="px-5 py-3 bg-gray-50 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/20 hover:bg-white/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal text-gray-900 dark:text-white transition-colors flex items-center gap-2"
+ className="px-5 py-3 bg-gray-50 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/20 hover:bg-white/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal text-themeText dark:text-white transition-colors flex items-center gap-2"
  >
  <i className="fa-solid fa-arrow-left"></i>
  Back to Requests

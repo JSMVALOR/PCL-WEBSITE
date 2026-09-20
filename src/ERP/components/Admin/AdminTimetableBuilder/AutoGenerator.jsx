@@ -174,14 +174,14 @@ export default function AutoGenerator({}) {
  return (
  <div className="mt-8 mb-4 flex flex-col items-center justify-center p-8 border-2 border-dashed border-themeAccent/30 rounded-themePanel bg-themeElevated/50">
  <h2 className={`text-xl lg:text-2xl font-bold tracking-tight text-themeText mb-2 text-center`}>Smart Room & Auto-Timetable Engine</h2>
- <p className={`text-sm text-[#8E8E93] text-center mb-6 max-w-2xl`}>
+ <p className={`text-sm text-themeTextSec text-center mb-6 max-w-2xl`}>
  Let the AI constraint solver build a 100% clash-free schedule. It dynamically checks all faculty assignments, avoids room double-booking, and adapts to your custom operating hours and off-days in real-time.
  </p>
  
  <button type="button"
  onClick={generateTimetable}
  disabled={isGenerating}
- className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
+ className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
  >
  {isGenerating ? (
  <span className="flex items-center gap-3">

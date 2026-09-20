@@ -2,6 +2,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import HoldButton from '../../../../Shared/components/ReactBits/HoldButton/HoldButton';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete02Icon } from '@hugeicons/core-free-icons';
+
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import TargetAudienceSelector from "../../shared/TargetAudienceSelector";
@@ -128,13 +132,13 @@ export default function AdminNotices({ isHubView = false }) {
  };
 
  const handleDeleteNotice = async (id) => {
- if (!confirm("Retract this broadcast?")) return;
+ 
  await supabase.from('notices').delete().eq('id', id);
  fetchNotices();
  };
 
  const handleDeleteEvent = async (id) => {
- if (!confirm("Cancel this event?")) return;
+ 
  await supabase.from('academic_calendar').delete().eq('id', id);
  fetchEvents();
  };
@@ -203,11 +207,11 @@ export default function AdminNotices({ isHubView = false }) {
  }`}>{n.priority}</span>
  <span className="text-[12px] font-medium px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] text-themeTextSec border border-black/5 dark:border-white/10">{n.category}</span>
  </div>
- <button type="button" onClick={() => handleDeleteNotice(n.id)} className="text-themeTextSec hover:text-rose-500 transition-colors"><i className="fa-solid fa-trash-can"></i></button>
+ <HoldButton size="sm" onHold={() => handleDeleteNotice(n.id)} radius={8} backgroundColor="transparent" fillColor="#f43f5e" textColor="#8E8E93" doneLabel="" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
  </div>
  <h4 className="text-lg font-semibold tracking-tight text-themeText">{n.title}</h4>
  <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
- <div className="flex gap-4 mt-2 pt-3 border-t border-gray-200 dark:border-white/5">
+ <div className="flex gap-4 mt-2 pt-3 border-t border-themeBorder dark:border-white/5">
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-regular fa-clock mr-1"></i> {new Date(n.created_at).toLocaleString()}</span>
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {n.target_audience.join(', ')}</span>
  {n.requires_acknowledgement && <span className="text-[10px] font-bold text-emerald-500"><i className="fa-solid fa-signature mr-1"></i> Requires Signature</span>}
@@ -269,11 +273,11 @@ export default function AdminNotices({ isHubView = false }) {
         <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-black/5 dark:border-white/10">
             <div>
                 <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Location</label>
-                <input type="text" value={eventLocation} onChange={e => setEventLocation(e.target.value)} className="w-full bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Main Auditorium" />
+                <input type="text" value={eventLocation} onChange={e => setEventLocation(e.target.value)} className="w-full bg-white dark:bg-themePanel border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Main Auditorium" />
             </div>
             <div>
                 <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Banner Image URL</label>
-                <input type="url" value={eventImageUrl} onChange={e => setEventImageUrl(e.target.value)} className="w-full bg-white dark:bg-[#1C1C1E] border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
+                <input type="url" value={eventImageUrl} onChange={e => setEventImageUrl(e.target.value)} className="w-full bg-white dark:bg-themePanel border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
             </div>
         </div>
     )}
@@ -302,7 +306,7 @@ export default function AdminNotices({ isHubView = false }) {
  )}
  </div>
  </div>
- <button type="button" onClick={() => handleDeleteEvent(e.id)} className="text-themeTextSec hover:text-rose-500 transition-colors p-2"><i className="fa-solid fa-trash-can"></i></button>
+ <HoldButton size="sm" onHold={() => handleDeleteEvent(e.id)} radius={8} backgroundColor="transparent" fillColor="#f43f5e" textColor="#8E8E93" doneLabel="" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
  </div>
  ))}
  </div>
@@ -311,7 +315,7 @@ export default function AdminNotices({ isHubView = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${isHubView ? 'bg-transparent text-themeText font-sans' : ''}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 ${!isHubView && 'px-4 lg:px-8'}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-32 xl:pb-8 ${!isHubView && 'px-4 lg:px-8'}`}>
  
  {/* Header and Tabs */}
  {!isHubView && (
@@ -319,10 +323,10 @@ export default function AdminNotices({ isHubView = false }) {
  )}
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/85 backdrop-blur-md rounded-2xl border border-themeBorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
- <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-gray-900 dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-themeText dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-satellite-dish"></i> Notices
  </button>
- <button type="button" onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-gray-900 dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-themeText dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-calendar-day"></i> Events
  </button>
  </div>

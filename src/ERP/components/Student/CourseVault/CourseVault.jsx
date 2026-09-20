@@ -11,7 +11,11 @@ export default function CourseVault({ isEmbedded = false }) {
     const [subjects, setSubjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("All");
+    const [semesterFilter, setSemesterFilter] = useState("current"); // all, current, previous
+    const [searchQuery, setSearchQuery] = useState("");
+    const [sortBy, setSortBy] = useState("name_asc"); // name_asc, name_desc, code_asc
     const [previewUrl, setPreviewUrl] = useState(null);
+    const [activeMaterialsSubject, setActiveMaterialsSubject] = useState(null);
 
     const handleResourceClick = (e, item) => {
         if (item.url && item.url.includes('drive.google.com/file/d/')) {
@@ -49,7 +53,7 @@ export default function CourseVault({ isEmbedded = false }) {
                 // 2. Fetch assigned cohort_subjects for this student's batch
                 const { data: subjectData, error: subErr } = await supabase
                     .from('cohort_subjects')
-                    .select('id, master_subjects(id, name, code, syllabus)')
+                    .select('id, master_subjects(id, name, code, syllabus, target_semester)')
                     .eq('batch_id', batchId);
 
                 if (subErr) throw subErr;
@@ -114,6 +118,32 @@ export default function CourseVault({ isEmbedded = false }) {
 
     const filteredMaterials = activeFilter === "All" ? materials : materials.filter(m => m.type === activeFilter);
 
+    let processedSubjects = [...subjects];
+    // Semester Filter
+    if (semesterFilter === "current" && userSession?.semester) {
+        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester === parseInt(userSession.semester));
+    } else if (semesterFilter === "previous" && userSession?.semester) {
+        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester < parseInt(userSession.semester));
+    }
+
+    // Search
+    if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        processedSubjects = processedSubjects.filter(s => 
+            s.master_subjects?.name?.toLowerCase().includes(q) || 
+            s.master_subjects?.code?.toLowerCase().includes(q)
+        );
+    }
+
+    // Sort
+    if (sortBy === "name_asc") {
+        processedSubjects.sort((a, b) => (a.master_subjects?.name || "").localeCompare(b.master_subjects?.name || ""));
+    } else if (sortBy === "name_desc") {
+        processedSubjects.sort((a, b) => (b.master_subjects?.name || "").localeCompare(a.master_subjects?.name || ""));
+    } else if (sortBy === "code_asc") {
+        processedSubjects.sort((a, b) => (a.master_subjects?.code || "").localeCompare(b.master_subjects?.code || ""));
+    }
+
     // Group materials by subject ID so we can render empty states properly
     const materialsBySubject = filteredMaterials.reduce((acc, curr) => {
         if (!acc[curr.cohort_subject_id]) acc[curr.cohort_subject_id] = [];
@@ -123,7 +153,7 @@ export default function CourseVault({ isEmbedded = false }) {
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
-            <div className={`w-full mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-16" : "pb-10"}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
                 {/* SINGLE MASTER HEADER */}
                 <PageHeader 
                     icon="fa-brands fa-google-drive" 
@@ -139,8 +169,8 @@ export default function CourseVault({ isEmbedded = false }) {
                                         onClick={() => setActiveFilter(filter)}
                                         className={`flex-1 lg:flex-none px-5 py-2.5 rounded-lg text-[13px] font-bold tracking-tight transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
                                             activeFilter === filter 
-                                            ? 'bg-white dark:bg-[#2C2C2E] text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' 
-                                            : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
+                                            ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText shadow-sm' 
+                                            : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'
                                         }`}
                                     >
                                         {filter === 'All' ? 'All Resources' : filter}
@@ -151,94 +181,120 @@ export default function CourseVault({ isEmbedded = false }) {
                     }
                 />
 
-                {/* CONTENT GRID */}
-                <div className="flex flex-col gap-8 animate-fade-in pb-12">
-                    {isLoading ? (
-                        <div className="flex flex-col gap-6 w-full animate-pulse opacity-70 p-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20"></div>
-                                <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20"></div>
-                                <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20"></div>
-                            </div>
-                            <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 mt-4"></div>
+                {/* TOOLBAR */}
+                {!isLoading && subjects.length > 0 && (
+                    <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-black/[0.02] dark:bg-white/[0.02] p-4 rounded-3xl border border-black/5 dark:border-white/5 animate-fade-in">
+                        {/* Search Bar */}
+                        <div className="relative w-full md:w-auto md:min-w-[280px]">
+                            <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-60"></i>
+                            <input 
+                                type="text"
+                                placeholder="Search courses or codes..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/10 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-themeText focus:border-[#007AFF]/50 focus:ring-2 focus:ring-[#007AFF]/20 outline-none transition-all placeholder:text-themeTextSec"
+                            />
                         </div>
-                    ) : subjects.length === 0 ? (
-                        <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                        
+                        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            {/* Semester Toggle */}
+                            <div className="flex p-1 bg-black/5 dark:bg-white/10 backdrop-blur-3xl rounded-xl border border-black/5 dark:border-white/10">
+                                <button 
+                                    onClick={() => setSemesterFilter("all")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all ${semesterFilter === "all" ? "bg-white dark:bg-themeElevated text-themeText shadow-sm" : "text-themeTextSec hover:text-themeText"}`}
+                                >
+                                    All Semesters
+                                </button>
+                                <button 
+                                    onClick={() => setSemesterFilter("current")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all ${semesterFilter === "current" ? "bg-white dark:bg-themeElevated text-themeText shadow-sm" : "text-themeTextSec hover:text-themeText"}`}
+                                >
+                                    Current
+                                </button>
+                                <button 
+                                    onClick={() => setSemesterFilter("previous")}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold tracking-tight transition-all ${semesterFilter === "previous" ? "bg-white dark:bg-themeElevated text-themeText shadow-sm" : "text-themeTextSec hover:text-themeText"}`}
+                                >
+                                    Previous
+                                </button>
+                            </div>
+
+                            {/* Sort Dropdown */}
+                            <div className="relative flex-1 md:flex-none">
+                                <select 
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="w-full appearance-none bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/10 rounded-xl pl-4 pr-10 py-2.5 text-xs font-bold text-themeText outline-none focus:border-themeAccent transition-all cursor-pointer"
+                                >
+                                    <option value="name_asc">Course Name (A-Z)</option>
+                                    <option value="name_desc">Course Name (Z-A)</option>
+                                    <option value="code_asc">Course Code</option>
+                                </select>
+                                <i className="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] text-themeTextSec pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* CONTENT GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in pb-12">
+                    {isLoading ? (
+                        <>
+                            <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 animate-pulse"></div>
+                            <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 animate-pulse hidden md:block"></div>
+                            <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 animate-pulse hidden lg:block"></div>
+                        </>
+                    ) : processedSubjects.length === 0 ? (
+                        <div className="col-span-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                             <i className={`fa-brands fa-google-drive text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4`}></i>
-                            <h3 className={`font-bold text-xl lg:text-2xl text-[#1C1C1E] dark:text-[#F2F2F7] tracking-tight`}>No Courses Found</h3>
-                            <p className={`${theme.text.secondary} text-xs lg:text-sm mt-2 max-w-sm`}>You are not assigned to any courses yet.</p>
+                            <h3 className={`font-bold text-xl lg:text-2xl text-themeText dark:text-themeText tracking-tight`}>No Courses Found</h3>
+                            <p className="text-themeTextSec text-xs lg:text-sm mt-2 max-w-sm">You are not assigned to any courses yet.</p>
                         </div>
                     ) : (
-                        subjects.map((sub) => {
+                        processedSubjects.map((sub) => {
                             const items = materialsBySubject[sub.id] || [];
                             const masterSubject = sub.master_subjects;
                             if (!masterSubject) return null;
                             const hasSyllabus = masterSubject.syllabus && Object.keys(masterSubject.syllabus).length > 0;
 
                             return (
-                                <div key={sub.id} className="flex flex-col gap-5 bg-black/[0.02] dark:bg-white/[0.02] p-6 rounded-3xl border border-black/5 dark:border-white/5">
+                                <div key={sub.id} className="flex flex-col bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 shadow-sm rounded-[2rem] transition-all hover:shadow-md hover:border-black/10 dark:hover:border-white/20 overflow-hidden">
                                     
-                                    <div className="flex items-start lg:items-center justify-between gap-4 border-b-theme border-black/5 dark:border-white/10 pb-4 flex-col lg:flex-row">
+                                    <div className="flex items-start justify-between gap-4 border-b border-black/5 dark:border-white/10 p-5 bg-black/[0.02] dark:bg-white/[0.02]">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-[#007AFF]/10 flex items-center justify-center border border-[#007AFF]/20 shrink-0">
-                                                <i className="fa-solid fa-folder-open text-[#007AFF] text-lg"></i>
+                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
+                                                <i className="fa-solid fa-folder-open text-amber-500 text-lg"></i>
                                             </div>
                                             <div>
-                                                <h3 className={`font-bold tracking-tight text-lg lg:text-xl text-[#1C1C1E] dark:text-[#F2F2F7] leading-none mb-1`}>
+                                                <h3 className="font-bold tracking-tight text-sm text-themeText dark:text-white leading-tight mb-0.5 line-clamp-2">
                                                     {masterSubject.name}
                                                 </h3>
-                                                <span className="text-[11px] font-bold tracking-tight text-[#8E8E93]">{masterSubject.code}</span>
+                                                <span className="text-[9px] font-black tracking-widest uppercase text-themeTextSec">{masterSubject.code}</span>
                                             </div>
                                         </div>
                                         
                                         {hasSyllabus && (
                                             <button 
                                                 onClick={() => setActiveSyllabusSubject(masterSubject)}
-                                                className="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-bold rounded-xl transition flex items-center gap-2"
+                                                className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-themeTextSec hover:text-themeText dark:hover:text-white transition flex items-center justify-center shrink-0"
+                                                title="View Syllabus"
                                             >
-                                                <i className="fa-solid fa-book-open"></i> View Syllabus
+                                                <i className="fa-solid fa-book-open text-xs"></i>
                                             </button>
                                         )}
                                     </div>
 
-                                    {items.length === 0 ? (
-                                        <div className="text-sm font-medium text-[#8E8E93] py-4 italic text-center">
-                                            No materials published yet.
+                                    <div className="p-4 flex-1 flex flex-col">
+                                        <div className="flex-1 flex flex-col items-center justify-center py-8">
+                                            <button 
+                                                onClick={() => setActiveMaterialsSubject({ subject: masterSubject, items: items })}
+                                                className="px-6 py-3 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-themeText font-bold text-xs tracking-wide transition active:scale-[0.98] shadow-sm flex items-center gap-2"
+                                            >
+                                                <i className="fa-solid fa-layer-group"></i> 
+                                                {items.length === 0 ? "No Materials Yet" : `View Materials (${items.length})`}
+                                            </button>
                                         </div>
-                                    ) : (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            {items.map(item => (
-                                                <a 
-                                                    key={item.id} 
-                                                    href={item.url} 
-                                                    target="_blank" 
-                                                    rel="noreferrer"
-                                                    onClick={(e) => handleResourceClick(e, item)}
-                                                    className="bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-5 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition group flex flex-col justify-between min-h-[140px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] cursor-pointer"
-                                                >
-                                                    <div className="flex flex-col gap-3">
-                                                        <div className="flex items-start justify-between gap-3">
-                                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 border border-black/5 dark:border-white/10 bg-white/5 group-hover:scale-110 transition-transform origin-left ${getTypeIcon(item.type).split(' ').slice(2).join(' ')}`}>
-                                                                <i className={`${getTypeIcon(item.type).split(' ')[0]} ${getTypeIcon(item.type).split(' ')[1]}`}></i>
-                                                            </div>
-                                                            <div className="bg-black/5 dark:bg-white/10 px-2 py-1 rounded text-[10px] font-bold tracking-tight text-[#8E8E93] border border-black/5 dark:border-white/5 whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px]">
-                                                                {item.type}
-                                                            </div>
-                                                        </div>
-                                                        <h4 className="text-sm font-bold text-themeText group-hover:text-themeAccent transition-colors leading-snug line-clamp-2">
-                                                            {item.title}
-                                                        </h4>
-                                                    </div>
-                                                    
-                                                    <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-[11px] font-bold text-[#8E8E93] tracking-tight">
-                                                        <span><i className="fa-solid fa-user-tie mr-1"></i> {item.faculty_name.split(' ')[0]}</span>
-                                                        <span>{new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                                                    </div>
-                                                </a>
-                                            ))}
-                                        </div>
-                                    )}
-
+                                    </div>
                                 </div>
                             );
                         })
@@ -261,6 +317,64 @@ export default function CourseVault({ isEmbedded = false }) {
                 </div>
             )}
             
+            
+            {activeMaterialsSubject && (
+                <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-xl flex items-center justify-center p-4 lg:p-8 animate-fade-in">
+                    <div className="w-full max-w-2xl max-h-[80vh] bg-themeApp rounded-3xl overflow-hidden flex flex-col relative border border-white/10 shadow-2xl">
+                        <div className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                                    <i className="fa-solid fa-folder-open text-amber-500 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-themeText dark:text-white leading-tight">
+                                        {activeMaterialsSubject.subject.name}
+                                    </h3>
+                                    <span className="text-[10px] font-black tracking-widest uppercase text-themeTextSec">{activeMaterialsSubject.subject.code}</span>
+                                </div>
+                            </div>
+                            <button onClick={() => setActiveMaterialsSubject(null)} className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-colors">
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-3 custom-scrollbar">
+                            {activeMaterialsSubject.items.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-12 opacity-50">
+                                    <i className="fa-regular fa-folder-open text-4xl mb-4"></i>
+                                    <p className="text-sm font-bold italic">No materials published yet.</p>
+                                </div>
+                            ) : (
+                                activeMaterialsSubject.items.map(item => (
+                                    <a 
+                                        key={item.id} 
+                                        href={item.url} 
+                                        target="_blank" 
+                                        rel="noreferrer"
+                                        onClick={(e) => handleResourceClick(e, item)}
+                                        className="group bg-black/[0.03] dark:bg-white/[0.03] border border-black/5 dark:border-white/5 p-4 rounded-xl hover:bg-white dark:hover:bg-white/10 hover:border-black/10 dark:hover:border-white/20 transition-all flex items-center gap-4 cursor-pointer"
+                                    >
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border border-black/5 dark:border-white/10 bg-white/5 group-hover:scale-110 transition-transform ${getTypeIcon(item.type).split(' ').slice(2).join(' ')}`}>
+                                            <i className={`${getTypeIcon(item.type).split(' ')[0]} ${getTypeIcon(item.type).split(' ')[1]} text-lg`}></i>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="text-sm font-bold text-themeText dark:text-white group-hover:text-themeAccent transition-colors truncate">
+                                                {item.title}
+                                            </h4>
+                                            <div className="flex items-center gap-2 mt-1 text-[10px] font-black text-themeTextSec uppercase tracking-widest">
+                                                <span>{item.type}</span>
+                                                <span>•</span>
+                                                <span>{new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                            </div>
+                                        </div>
+                                        <i className="fa-solid fa-arrow-up-right-from-square text-themeTextSec opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                    </a>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {activeSyllabusSubject && (
                     <SyllabusEditorModal
                         subject={activeSyllabusSubject}

@@ -177,7 +177,7 @@ export default function SecuritySettings() {
                             <button type="button"
                                 onClick={handleGlobalLogout}
                                 disabled={isLoggingOut}
-                                className={`${theme.layout.panel} border border-themeBorder p-5 w-full flex items-center justify-center gap-3 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white transition-colors duration-300 rounded-themePanel`}
+                                className={`${theme.layout.panel} border border-themeBorder p-5 w-full flex items-center justify-center gap-3 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white transition-colors duration-300 rounded-themePanel`}
                             >
                                 {isLoggingOut ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-power-off text-lg"></i>}
                                 <span className="font-black tracking-normal text-xs">Log out from all devices</span>

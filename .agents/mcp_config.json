@@ -1,8 +1,29 @@
 {
   "mcpServers": {
-    "qa-testing-tools": {
-      "command": "node",
-      "args": ["mcp-qa/index.js"]
+    "sentry-qa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sentry/mcp-server",
+        "--organization-slug",
+        "jsm-70m",
+        "--project-slug",
+        "javascript-react"
+      ],
+      "env": {
+        "SENTRY_ORG_SLUG": "jsm-70m",
+        "SENTRY_PROJECT_SLUG": "pcl-erp",
+        "SENTRY_ACCESS_TOKEN": "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"
+      }
+    },
+    "postgres-qa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://qa_agent.ltcsfdoawpmbdalisagj:PCL_QA_Agent_Secure_2026!@aws-0-us-east-1.pooler.supabase.com:6543/postgres"
+      ],
+      "env": {}
     }
   }
 }

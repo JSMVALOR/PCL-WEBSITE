@@ -32,8 +32,16 @@ export default function ParentDashboard({ onLogout }) {
 
             if (student) {
                 setStudentData(student);
-                const { data: att } = await supabase.from('attendance_records').select('*, class_sessions(subject, date)').eq('student_id', student.id);
-                setAttendance(att || []);
+                const { data: att } = await supabase.from('attendance_records').select('*, class_sessions(id, date, class_schedule(master_subjects(name, code)))').eq('student_id', student.id);
+                // Map it so UI rendering (a.class_sessions?.subject) still works
+                const formattedAtt = (att || []).map(a => ({
+                    ...a,
+                    class_sessions: {
+                        date: a.class_sessions?.date,
+                        subject: a.class_sessions?.class_schedule?.master_subjects?.name || 'Unknown'
+                    }
+                }));
+                setAttendance(formattedAtt);
             }
         } catch (error) {
             console.error("Error fetching parent data", error);
@@ -85,7 +93,7 @@ export default function ParentDashboard({ onLogout }) {
                         <button 
                             onClick={() => setViewMode('dashboard')}
                             className={`flex-1 sm:flex-none px-6 py-2 rounded-lg text-[13px] font-medium transition-all ${
-                                viewMode === 'dashboard' ? 'bg-white dark:bg-[#2C2C2E] text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'
+                                viewMode === 'dashboard' ? 'bg-white dark:bg-themeElevated text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'
                             }`}
                         >
                             Overview
@@ -93,14 +101,14 @@ export default function ParentDashboard({ onLogout }) {
                         <button 
                             onClick={() => setViewMode('organization')}
                             className={`flex-1 sm:flex-none px-6 py-2 rounded-lg text-[13px] font-medium transition-all ${
-                                viewMode === 'organization' ? 'bg-white dark:bg-[#2C2C2E] text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'
+                                viewMode === 'organization' ? 'bg-white dark:bg-themeElevated text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'
                             }`}
                         >
                             Directory
                         </button>
                     </div>
 
-                    <button onClick={onLogout} className="bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-colors shrink-0">
+                    <button onClick={onLogout} className="bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-colors shrink-0">
                         Logout
                     </button>
                 </div>
@@ -140,9 +148,9 @@ export default function ParentDashboard({ onLogout }) {
                         {/* 2. Activity Ring (Attendance) (Span 4) */}
                         <div onClick={() => setActiveModal('attendance')} className="col-span-1 md:col-span-6 lg:col-span-4 bg-white/70 dark:bg-black/40 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none p-8 flex flex-col items-center justify-center cursor-pointer hover:border-[#007AFF]/30 transition-colors relative group">
                             <h3 className="absolute top-6 left-6 text-[15px] font-semibold text-themeText flex items-center gap-2">
-                                <i className="fa-solid fa-chart-pie text-[#007AFF]"></i> Activity
+                                <i className="fa-solid fa-chart-pie text-themeAccent"></i> Activity
                             </h3>
-                            <button className="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-themeTextSec group-hover:bg-[#007AFF]/10 group-hover:text-[#007AFF] transition-colors">
+                            <button className="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-themeTextSec group-hover:bg-[#007AFF]/10 group-hover:text-themeAccent transition-colors">
                                 <i className="fa-solid fa-chevron-right text-[10px]"></i>
                             </button>
 
@@ -224,18 +232,18 @@ export default function ParentDashboard({ onLogout }) {
                             animate={{ scale: 1, opacity: 1 }} 
                             exit={{ scale: 0.95, opacity: 0 }}
                             onClick={e => e.stopPropagation()}
-                            className="bg-themePanel w-full max-w-lg rounded-3xl border border-gray-300 dark:border-white/10 p-6 shadow-2xl relative"
+                            className="bg-themePanel w-full max-w-lg rounded-3xl border border-themeBorder dark:border-white/10 p-6 shadow-2xl relative"
                         >
-                            <button onClick={() => setActiveModal(null)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-themeTextSec hover:text-gray-900 dark:text-white transition">
+                            <button onClick={() => setActiveModal(null)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-themeTextSec hover:text-themeText dark:text-white transition">
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
                             
                             {activeModal === 'attendance' && (
                                 <div>
-                                    <h3 className="text-xl font-semibold tracking-tight text-themeText mb-4"><i className="fa-solid fa-calendar-check text-[#007AFF] mr-2"></i> Attendance Details</h3>
+                                    <h3 className="text-xl font-semibold tracking-tight text-themeText mb-4"><i className="fa-solid fa-calendar-check text-themeAccent mr-2"></i> Attendance Details</h3>
                                     <div className="space-y-3 max-h-[60vh] overflow-y-auto no-scrollbar">
                                         {attendance.length === 0 ? <p className="text-themeTextSec text-sm">No attendance records found.</p> : attendance.map(a => (
-                                            <div key={a.id} className="flex justify-between items-center p-3 rounded-xl bg-themeElevated border border-gray-200 dark:border-white/5">
+                                            <div key={a.id} className="flex justify-between items-center p-3 rounded-xl bg-themeElevated border border-themeBorder dark:border-white/5">
                                                 <div>
                                                     <p className="text-sm font-bold text-themeText">{new Date(a.class_sessions?.date || a.marked_at).toLocaleDateString()}</p>
                                                     <p className="text-[10px] text-themeTextSec tracking-normal font-black">{a.class_sessions?.subject || 'General'}</p>

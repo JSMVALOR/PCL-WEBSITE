@@ -58,7 +58,7 @@ export default function LeaveRequests({ onReviewRequest }) {
                             onClick={() => setFilter(f)}
                             className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                 filter === f 
-                                    ? 'bg-white dark:bg-[#2C2C2E] text-themeText shadow-sm' 
+                                    ? 'bg-white dark:bg-themeElevated text-themeText shadow-sm' 
                                     : 'text-themeTextSec hover:text-themeText'
                             }`}
                         >
@@ -72,7 +72,7 @@ export default function LeaveRequests({ onReviewRequest }) {
                 <div className="w-full py-12 flex justify-center"><div className="w-6 h-6 border-2 border-themeAccent border-t-transparent rounded-full animate-spin"></div></div>
             ) : filtered.length === 0 ? (
                 <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-white/70 dark:bg-[#1C1C1E]/70 border border-black/[0.04] dark:border-white/[0.08] flex items-center justify-center text-themeTextSec/50 mb-4">
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-white/70 dark:bg-themePanel/70 border border-black/[0.04] dark:border-white/[0.08] flex items-center justify-center text-themeTextSec/50 mb-4">
                         <i className="fa-solid fa-inbox text-2xl"></i>
                     </div>
                     <h3 className="text-sm font-black text-themeText mb-1">Inbox Empty</h3>
@@ -81,7 +81,7 @@ export default function LeaveRequests({ onReviewRequest }) {
             ) : (
                 <div className="flex flex-col gap-4">
                     {filtered.map(req => (
-                        <div key={req.id} className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 hover:border-themeAccent/30 transition-colors group">
+                        <div key={req.id} className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 hover:border-themeAccent/30 transition-colors group">
                             
                             <div className="flex items-start gap-4 flex-1">
                                 <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 border border-blue-500/20 font-black">
@@ -127,7 +127,7 @@ export default function LeaveRequests({ onReviewRequest }) {
 
                                 <button 
                                     onClick={() => onReviewRequest(req)}
-                                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-themeAccent text-gray-900 dark:text-white font-black text-[11px] uppercase tracking-widest hover:bg-themeAccent/90 transition-colors shadow-sm whitespace-nowrap"
+                                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-themeAccent text-themeText dark:text-white font-black text-[11px] uppercase tracking-widest hover:bg-themeAccent/90 transition-colors shadow-sm whitespace-nowrap"
                                 >
                                     Review & Action
                                 </button>

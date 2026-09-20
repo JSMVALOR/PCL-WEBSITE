@@ -206,7 +206,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  {/* Premium Full-Screen Header */}
  <div className="sticky top-0 z-50 bg-transparent/80 backdrop-blur-xl border-b border-black/10 dark:border-white/20 px-6 lg:px-12 py-5 flex items-center justify-between">
  <div className="flex items-center gap-4">
- <button type="button" onClick={onClose} className="w-10 h-10 rounded-full bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-sm text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors">
+ <button type="button" onClick={onClose} className="w-10 h-10 rounded-full bg-white/80 dark:bg-themeElevated/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-sm text-themeText dark:text-themeText hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors">
  <i className="fa-solid fa-arrow-left"></i>
  </button>
  <div>
@@ -255,11 +255,11 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  )}
  <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
  {uploadingImage ? (
- <i className="fa-solid fa-circle-notch fa-spin text-gray-900 dark:text-white text-2xl"></i>
+ <i className="fa-solid fa-circle-notch fa-spin text-themeText dark:text-white text-2xl"></i>
  ) : (
  <>
- <i className="fa-solid fa-upload text-gray-900 dark:text-white mb-2 text-xl"></i>
- <span className="text-[9px] font-black text-gray-900 dark:text-white tracking-normal">Update Photo</span>
+ <i className="fa-solid fa-upload text-themeText dark:text-white mb-2 text-xl"></i>
+ <span className="text-[9px] font-black text-themeText dark:text-white tracking-normal">Update Photo</span>
  </>
  )}
  </div>
@@ -379,13 +379,19 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  >
  Cancel
  </button>
- <button type="button" 
- onClick={uploadCroppedImage}
- disabled={!completedCrop?.width || !completedCrop?.height}
- className="px-6 py-2.5 rounded-full text-[14px] font-medium tracking-normal bg-themeAccent text-themeApp hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
- >
- <i className="fa-solid fa-crop-simple"></i> Confirm Crop
- </button>
+ <SlideCommit
+                label="Slide to Confirm"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={uploadCroppedImage}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  </div>
  </div>
  </div>

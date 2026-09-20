@@ -133,7 +133,7 @@ export default function SidebarFramework({
                         text-xs font-bold tracking-wide transition duration-200 outline-none
                         ${isActive 
                             ? "bg-black/5 dark:bg-white/10 backdrop-blur-[30px] border border-black/10 dark:border-white/10 text-themeText shadow-md" 
-                            : "text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 border border-transparent hover:border-black/5 dark:hover:border-gray-200 dark:border-white/5 hover:text-themeText"
+                            : "text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 border border-transparent hover:border-black/5 dark:hover:border-themeBorder dark:border-white/5 hover:text-themeText"
                         }
                         ${isCompact ? "justify-center px-0" : "pr-3"}
                     `}
@@ -266,21 +266,41 @@ export default function SidebarFramework({
                 {/* 4. UTILITY & USER CARD ZONE */}
                 <div className="p-3 shrink-0 border-t border-black/5 dark:border-white/5 flex flex-col gap-2">
                     
-                    {!isCompact && (
-                        <div onClick={() => handleTabSwitch('credentials')} className="flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-black/5 dark:border-white/10 mt-1 cursor-pointer hover:bg-black/5 dark:bg-white/5 hover:border-black/20 dark:border-black/10 dark:border-white/20 transition shadow-inner group-hover:scale-[1.02]">
-                            <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/10 dark:border-black/5 dark:border-white/10 flex items-center justify-center font-black text-xs text-themeText relative shrink-0 overflow-hidden">
-                                {userSession?.profile_picture_url ? (
-                                    <img src={userSession.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
-                                ) : (
-                                    initials
-                                )}
-                                <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-themeApp z-10"></div>
+                    {!isCompact ? (
+                        <div className="flex items-center gap-2 p-2 rounded-xl bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-black/10 dark:border-black/5 dark:border-white/10 mt-1 shadow-inner group">
+                            <div 
+                                onClick={() => handleTabSwitch('credentials')} 
+                                className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 p-1.5 rounded-lg transition-colors"
+                            >
+                                <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-black/10 dark:border-white/10 flex items-center justify-center font-black text-xs text-themeText relative shrink-0 overflow-hidden">
+                                    {userSession?.profile_picture_url ? (
+                                        <img src={userSession.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        initials
+                                    )}
+                                    <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-themeApp z-10"></div>
+                                </div>
+                                <div className="flex flex-col min-w-0 flex-1">
+                                    <span className="text-[13px] font-bold text-themeText truncate leading-tight">{userSession?.name || 'User'}</span>
+                                    <span className="text-[9px] font-black text-themeTextSec tracking-widest uppercase truncate">{userSession?.role || 'Guest'}</span>
+                                </div>
                             </div>
-                            <div className="flex flex-col min-w-0 flex-1">
-                                <span className="text-xs font-bold text-themeText truncate leading-tight">{userSession?.name || 'User'}</span>
-                                <span className="text-[9px] font-black text-themeTextSec tracking-normal truncate">{userSession?.role || 'Guest'}</span>
-                            </div>
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); onLogout?.(); }}
+                                className="w-8 h-8 rounded-lg flex items-center justify-center text-themeTextSec hover:text-rose-500 hover:bg-rose-500/10 transition-colors shrink-0 tooltip-trigger"
+                                title="Log Out"
+                            >
+                                <i className="fa-solid fa-power-off text-[13px]"></i>
+                            </button>
                         </div>
+                    ) : (
+                        <button 
+                            onClick={onLogout}
+                            className="w-full aspect-square mt-2 rounded-xl flex flex-col items-center justify-center gap-1 text-themeTextSec hover:text-rose-500 hover:bg-rose-500/10 transition-colors group"
+                            title="Log Out"
+                        >
+                            <i className="fa-solid fa-power-off text-[15px] group-hover:scale-110 transition-transform"></i>
+                        </button>
                     )}
                     
                 </div>
@@ -321,7 +341,7 @@ export default function SidebarFramework({
                             whileTap={{ scale: 0.9 }}
                             key={link.id}
                             onClick={() => handleTabSwitch(link.id)}
-                            className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${isActive ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-gray-900 dark:text-white'}`}
+                            className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${isActive ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-themeText dark:text-white'}`}
                         >
                             <div className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative overflow-hidden ${isActive ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border border-black/20 dark:border-black/10 dark:border-white/20' : 'bg-transparent'}`}>
                                 
@@ -335,7 +355,7 @@ export default function SidebarFramework({
                 <motion.button 
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${mobileMenuOpen ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-gray-900 dark:text-white'}`}
+                    className={`flex flex-col items-center justify-center w-16 gap-1.5 transition duration-300 relative z-10 ${mobileMenuOpen ? 'text-black dark:text-white -translate-y-1' : 'text-white/60 hover:text-black dark:hover:text-themeText dark:text-white'}`}
                 >
                     <div className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative overflow-hidden ${mobileMenuOpen ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] border border-black/20 dark:border-black/10 dark:border-white/20' : 'bg-transparent'}`}>
                         
@@ -364,10 +384,16 @@ export default function SidebarFramework({
                                 )}
                                 <div className="absolute top-1 right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-transparent z-20 shadow-[0_0_10px_#10b981]"></div>
                             </div>
-                            <div className="relative z-10">
+                            <div className="relative z-10 flex-1">
                                 <p className="text-xl font-semibold tracking-tight text-black dark:text-white tracking-tight drop-shadow-sm dark:drop-shadow-md">{userSession?.name || "User"}</p>
                                 <p className="text-[10px] font-black text-black/70 dark:text-white/70 tracking-normal mt-0.5">{userSession?.role}</p>
                             </div>
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); onLogout?.(); }}
+                                className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/10 flex items-center justify-center text-rose-500 hover:bg-rose-500/20 transition-colors shrink-0"
+                            >
+                                <i className="fa-solid fa-power-off text-[15px]"></i>
+                            </button>
                         </div>
 
                         <div className="p-6 flex flex-col gap-8">
@@ -385,8 +411,8 @@ export default function SidebarFramework({
                                                     whileTap={{ scale: 0.95 }}
                                                     onClick={() => handleTabSwitch(link.id)}
                                                     className={`flex flex-col items-start gap-3 p-4 rounded-xl border transition-colors duration-300 relative overflow-hidden ${isActive 
-                                                        ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-black/20 dark:border-black/10 dark:border-white/20 text-gray-900 dark:text-white' 
-                                                        : 'bg-white/50 dark:bg-black/20 backdrop-blur-xl border-black/5 dark:border-white/5 text-black/80 dark:text-white/80 hover:bg-black/5 dark:bg-white/5 hover:border-black/10 dark:border-black/5 dark:border-white/10 hover:text-black dark:hover:text-gray-900 dark:text-white'}`}
+                                                        ? 'bg-black/10 dark:bg-white/15 backdrop-blur-3xl shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border-black/20 dark:border-black/10 dark:border-white/20 text-themeText dark:text-white' 
+                                                        : 'bg-white/50 dark:bg-black/20 backdrop-blur-xl border-black/5 dark:border-white/5 text-black/80 dark:text-white/80 hover:bg-black/5 dark:bg-white/5 hover:border-black/10 dark:border-black/5 dark:border-white/10 hover:text-black dark:hover:text-themeText dark:text-white'}`}
                                                 >
                                                     
                                                     <i className={`${link.icon} text-2xl ${isActive ? '' : 'text-black/50 dark:text-white/50'}`}></i>

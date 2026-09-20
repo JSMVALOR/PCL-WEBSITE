@@ -99,7 +99,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec group-hover:text-themeText transition-colors mb-1">{label}</p>
  <h3 className="text-2xl lg:text-3xl font-semibold tracking-tight text-themeText">{isLoading ? "-" : value}</h3>
  </div>
- <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-${color}-500/10 flex items-center justify-center text-${color}-500 text-lg lg:text-xl border-[length:var(--border-width)] border-${color}-500/20 group-hover:bg-${color}-500 group-hover:text-gray-900 dark:text-white transition duration-300`}>
+ <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-${color}-500/10 flex items-center justify-center text-${color}-500 text-lg lg:text-xl border-[length:var(--border-width)] border-${color}-500/20 group-hover:bg-${color}-500 group-hover:text-themeText dark:text-white transition duration-300`}>
  <i className={`fa-solid ${icon}`}></i>
  </div>
  </div>

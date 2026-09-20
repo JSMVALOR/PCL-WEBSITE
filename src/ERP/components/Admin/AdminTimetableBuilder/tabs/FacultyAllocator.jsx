@@ -135,12 +135,12 @@ export default function FacultyAllocator() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-blue-500/5 border border-blue-500/20 p-6 rounded-2xl">
                 <div>
                     <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-400">Faculty Allocator</h2>
-                    <p className="text-xs font-bold text-gray-500 dark:text-white/50 tracking-wide mt-1">
+                    <p className="text-xs font-bold text-themeTextSec dark:text-white/50 tracking-wide mt-1">
                         Assign professors to subjects for the current active semester.
                     </p>
                 </div>
                 <div className="w-full md:w-64 shrink-0">
-                    <select value={selectedBatchId} onChange={e => setSelectedBatchId(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-blue-500 shadow-sm appearance-none">
+                    <select value={selectedBatchId} onChange={e => setSelectedBatchId(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-blue-500 shadow-sm appearance-none">
                         <option value="">Select Cohort...</option>
                         {batches.map(b => <option key={b.id} value={b.id}>{b.name} (Sem {b.current_semester})</option>)}
                     </select>
@@ -148,22 +148,22 @@ export default function FacultyAllocator() {
             </div>
 
             {selectedBatchId && !loading && (
-                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm">
+                <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-gray-200 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
-                                    <th className="py-4 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Code</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Subject Name</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Credits</th>
-                                    <th className="py-4 px-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Assigned Faculty</th>
+                                <tr className="border-b border-themeBorder dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
+                                    <th className="py-4 px-6 text-[10px] font-black text-themeTextSec uppercase tracking-widest">Code</th>
+                                    <th className="py-4 px-6 text-[10px] font-black text-themeTextSec uppercase tracking-widest">Subject Name</th>
+                                    <th className="py-4 px-6 text-[10px] font-black text-themeTextSec uppercase tracking-widest">Credits</th>
+                                    <th className="py-4 px-6 text-[10px] font-black text-themeTextSec uppercase tracking-widest">Assigned Faculty</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {masterSubjects.length === 0 ? (
                                     <tr>
                                         <td colSpan="4" className="py-12 text-center">
-                                            <p className="text-sm font-bold text-gray-500">No subjects found in the Curriculum Vault for this program's current semester.</p>
+                                            <p className="text-sm font-bold text-themeTextSec">No subjects found in the Curriculum Vault for this program's current semester.</p>
                                         </td>
                                     </tr>
                                 ) : masterSubjects.map(master => {
@@ -172,14 +172,14 @@ export default function FacultyAllocator() {
                                     
                                     return (
                                         <tr key={master.id} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50/50 dark:hover:bg-white/[0.02] transition">
-                                            <td className="py-4 px-6 text-sm font-black text-gray-900 dark:text-white">{master.code}</td>
-                                            <td className="py-4 px-6 text-sm font-bold text-gray-700 dark:text-gray-300">{master.name}</td>
-                                            <td className="py-4 px-6 text-sm font-bold text-gray-500">{master.credits}</td>
+                                            <td className="py-4 px-6 text-sm font-black text-themeText dark:text-white">{master.code}</td>
+                                            <td className="py-4 px-6 text-sm font-bold text-themeTextSec dark:text-gray-300">{master.name}</td>
+                                            <td className="py-4 px-6 text-sm font-bold text-themeTextSec">{master.credits}</td>
                                             <td className="py-4 px-6">
                                                 <select 
                                                     value={currentFaculty} 
                                                     onChange={e => handleAssign(master.id, e.target.value)}
-                                                    className={`w-full max-w-[250px] border rounded-lg px-3 py-2 text-sm font-bold outline-none appearance-none transition ${currentFaculty ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-gray-50 dark:bg-black border-gray-200 dark:border-white/10 text-gray-900 dark:text-white'}`}
+                                                    className={`w-full max-w-[250px] border rounded-lg px-3 py-2 text-sm font-bold outline-none appearance-none transition ${currentFaculty ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-gray-50 dark:bg-black border-themeBorder dark:border-white/10 text-themeText dark:text-white'}`}
                                                 >
                                                     <option value="">Unassigned</option>
                                                     {faculties.map(f => <option key={f.id} value={f.id}>{f.full_name}</option>)}

@@ -126,7 +126,7 @@ export default function AdminOverview({}) {
  <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
  
  {/* Quick Insights */}
- <div className={`bg-themePanel/85 backdrop-blur-2xl rounded-2xl border border-gray-200 dark:border-white/5 p-5 flex flex-col min-h-[160px] relative`}>
+ <div className={`bg-themePanel/85 backdrop-blur-2xl rounded-2xl border border-themeBorder dark:border-white/5 p-5 flex flex-col min-h-[160px] relative`}>
  <h2 className={`font-bold tracking-tight text-sm text-themeText tracking-tight mb-4 flex justify-between items-center`}>
  <span>Quick Insights</span>
  {loading ? <i className="fa-solid fa-spinner fa-spin text-themeTextSec text-xs"></i> : <i className="fa-solid fa-lightbulb text-themeAccent"></i>}
@@ -153,16 +153,16 @@ export default function AdminOverview({}) {
  </div>
 
  {/* Pending Tasks */}
- <div className={`bg-themePanel/85 backdrop-blur-2xl rounded-2xl border border-gray-200 dark:border-white/5 p-5 flex-1 flex flex-col`}>
+ <div className={`bg-themePanel/85 backdrop-blur-2xl rounded-2xl border border-themeBorder dark:border-white/5 p-5 flex-1 flex flex-col`}>
  <h2 className={`font-bold tracking-tight text-sm text-themeText tracking-tight mb-4 flex justify-between`}>
  <span>Action Required</span>
- <span className="text-[10px] font-bold text-themeTextSec border border-gray-200 dark:border-white/5 px-2 py-0.5 rounded">Queues</span>
+ <span className="text-[10px] font-bold text-themeTextSec border border-themeBorder dark:border-white/5 px-2 py-0.5 rounded">Queues</span>
  </h2>
  <div className="flex flex-col gap-3 flex-1 overflow-y-auto custom-scrollbar pr-1">
  
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-amber-500/50 transition-colors text-left group">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-amber-500/50 transition-colors text-left group">
  <div className="flex items-center gap-3">
- <div className={`w-8 h-8 rounded ${tasks.leaves > 0 ? 'bg-amber-500/10 text-amber-500' : 'bg-themeApp text-themeTextSec border border-gray-200 dark:border-white/5'} flex items-center justify-center shrink-0`}>
+ <div className={`w-8 h-8 rounded ${tasks.leaves > 0 ? 'bg-amber-500/10 text-amber-500' : 'bg-themeApp text-themeTextSec border border-themeBorder dark:border-white/5'} flex items-center justify-center shrink-0`}>
  <span className="font-black text-xs">{tasks.leaves}</span>
  </div>
  <span className="text-xs font-bold text-themeText">Leave Requests</span>
@@ -170,9 +170,9 @@ export default function AdminOverview({}) {
  <span className="text-[10px] font-bold text-themeAccent uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">Review <i className="fa-solid fa-arrow-right"></i></span>
  </button>
  
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-blue-500/50 transition-colors text-left group">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-blue-500/50 transition-colors text-left group">
  <div className="flex items-center gap-3">
- <div className={`w-8 h-8 rounded ${tasks.admissions > 0 ? 'bg-blue-500/10 text-blue-500' : 'bg-themeApp text-themeTextSec border border-gray-200 dark:border-white/5'} flex items-center justify-center shrink-0`}>
+ <div className={`w-8 h-8 rounded ${tasks.admissions > 0 ? 'bg-blue-500/10 text-blue-500' : 'bg-themeApp text-themeTextSec border border-themeBorder dark:border-white/5'} flex items-center justify-center shrink-0`}>
  <span className="font-black text-xs">{tasks.admissions}</span>
  </div>
  <span className="text-xs font-bold text-themeText">Admissions</span>
@@ -180,9 +180,9 @@ export default function AdminOverview({}) {
  <span className="text-[10px] font-bold text-themeAccent uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">Review <i className="fa-solid fa-arrow-right"></i></span>
  </button>
  
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-rose-500/50 transition-colors text-left group">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-rose-500/50 transition-colors text-left group">
  <div className="flex items-center gap-3">
- <div className={`w-8 h-8 rounded ${tasks.tickets > 0 ? 'bg-rose-500/10 text-rose-500' : 'bg-themeApp text-themeTextSec border border-gray-200 dark:border-white/5'} flex items-center justify-center shrink-0`}>
+ <div className={`w-8 h-8 rounded ${tasks.tickets > 0 ? 'bg-rose-500/10 text-rose-500' : 'bg-themeApp text-themeTextSec border border-themeBorder dark:border-white/5'} flex items-center justify-center shrink-0`}>
  <span className="font-black text-xs">{tasks.tickets}</span>
  </div>
  <span className="text-xs font-bold text-themeText">Support Tickets</span>
@@ -190,9 +190,9 @@ export default function AdminOverview({}) {
  <span className="text-[10px] font-bold text-themeAccent uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">Review <i className="fa-solid fa-arrow-right"></i></span>
  </button>
  
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-indigo-500/50 transition-colors text-left group">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-full flex items-center justify-between p-3 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-indigo-500/50 transition-colors text-left group">
  <div className="flex items-center gap-3">
- <div className={`w-8 h-8 rounded ${tasks.docs > 0 ? 'bg-indigo-500/10 text-indigo-500' : 'bg-themeApp text-themeTextSec border border-gray-200 dark:border-white/5'} flex items-center justify-center shrink-0`}>
+ <div className={`w-8 h-8 rounded ${tasks.docs > 0 ? 'bg-indigo-500/10 text-indigo-500' : 'bg-themeApp text-themeTextSec border border-themeBorder dark:border-white/5'} flex items-center justify-center shrink-0`}>
  <span className="font-black text-xs">{tasks.docs}</span>
  </div>
  <span className="text-xs font-bold text-themeText">Student Docs</span>

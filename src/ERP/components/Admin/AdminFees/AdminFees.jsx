@@ -258,13 +258,13 @@ export default function AdminFees({ isEmbedded = false, }) {
   const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0A0A0A] text-themeText dark:text-white">
       {!isEmbedded && <PageHeader icon="fa-solid fa-coins" title="Finance Ledger" subtitle="Master finance control center." />}
       
-      <div className="px-4 lg:px-8 py-6 w-full w-full mx-auto animate-fade-in">
+      <div className="px-4 lg:px-8 py-6 w-full mx-auto animate-fade-in">
         
         {/* TABS */}
-        <div className="flex flex-wrap gap-2 mb-8 bg-white dark:bg-[#121212] p-2 rounded-2xl border border-gray-200 dark:border-white/5 w-fit">
+        <div className="flex flex-wrap gap-2 mb-8 bg-white dark:bg-[#121212] p-2 rounded-2xl border border-themeBorder dark:border-white/5 w-fit">
           {[
             { id: 'overview', label: 'Institutional P&L', icon: 'fa-vault' },
             { id: 'verifications', label: 'Pending Verifications', icon: 'fa-money-check-pen' },
@@ -278,7 +278,7 @@ export default function AdminFees({ isEmbedded = false, }) {
               className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
                 activeTab === tab.id 
                   ? 'bg-amber-500 text-black shadow-lg scale-100' 
-                  : 'text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-white/5 scale-95 hover:scale-100'
+                  : 'text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-white/5 scale-95 hover:scale-100'
               }`}
             >
               <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
@@ -294,24 +294,24 @@ export default function AdminFees({ isEmbedded = false, }) {
               <div className="col-span-full py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
             ) : (
               <>
-                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Expected Revenue (Yr)</p>
-                  <h2 className="text-2xl font-black text-gray-900 dark:text-white font-mono">{formatCurrency(overviewData.totalExpected)}</h2>
+                  <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest mb-1">Expected Revenue (Yr)</p>
+                  <h2 className="text-2xl font-black text-themeText dark:text-white font-mono">{formatCurrency(overviewData.totalExpected)}</h2>
                 </div>
-                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Total Collected (Yr)</p>
+                  <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest mb-1">Total Collected (Yr)</p>
                   <h2 className="text-2xl font-black text-emerald-500 font-mono">{formatCurrency(overviewData.totalCollected)}</h2>
                 </div>
-                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
-                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Current Deficit</p>
+                  <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest mb-1">Current Deficit</p>
                   <h2 className="text-2xl font-black text-rose-500 font-mono">{formatCurrency(overviewData.totalExpected - overviewData.totalCollected)}</h2>
                 </div>
-                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
+                <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 p-6 rounded-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-                  <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest mb-1">Total Monthly Exp.</p>
+                  <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest mb-1">Total Monthly Exp.</p>
                   <h2 className="text-2xl font-black text-purple-500 font-mono">{formatCurrency(overviewData.payrollExpense)}</h2>
                 </div>
               </>
@@ -321,16 +321,16 @@ export default function AdminFees({ isEmbedded = false, }) {
           {/* RECURRING EXPENSES SECTION */}
           {!fetchingOverview && (
               <div className="mt-8 animate-fade-in">
-                <h3 className="text-lg font-black text-gray-900 dark:text-white mb-4">Recurring Operations & Staff Payroll</h3>
-                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-6">
+                <h3 className="text-lg font-black text-themeText dark:text-white mb-4">Recurring Operations & Staff Payroll</h3>
+                <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl p-6">
                     <form onSubmit={handleAddExpense} className="flex gap-4 items-end mb-6">
                         <div className="flex-1">
-                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Expense/Staff Role Title</label>
-                            <input type="text" required value={newExpense.title} onChange={e => setNewExpense({ ...newExpense, title: e.target.value})} placeholder="e.g. Non-Teaching Staff, Electricity Bill" className="w-full bg-gray-50 dark:bg-black/20 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                            <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Expense/Staff Role Title</label>
+                            <input type="text" required value={newExpense.title} onChange={e => setNewExpense({ ...newExpense, title: e.target.value})} placeholder="e.g. Non-Teaching Staff, Electricity Bill" className="w-full bg-gray-50 dark:bg-black/20 border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                         </div>
                         <div className="w-48">
-                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Monthly Amount (₹)</label>
-                            <input type="number" required value={newExpense.amount} onChange={e => setNewExpense({ ...newExpense, amount: e.target.value})} placeholder="Amount" className="w-full bg-gray-50 dark:bg-black/20 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                            <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Monthly Amount (₹)</label>
+                            <input type="number" required value={newExpense.amount} onChange={e => setNewExpense({ ...newExpense, amount: e.target.value})} placeholder="Amount" className="w-full bg-gray-50 dark:bg-black/20 border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                         </div>
                         <button type="submit" className="h-[46px] px-6 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition-colors flex items-center gap-2">
                             <i className="fa-solid fa-plus"></i> Add
@@ -339,24 +339,24 @@ export default function AdminFees({ isEmbedded = false, }) {
                     
                     <div className="flex flex-col gap-2">
                         {recurringExpenses.length === 0 ? (
-                            <p className="text-sm font-bold text-gray-400 py-4 text-center">No recurring staff payroll or expenses added yet.</p>
+                            <p className="text-sm font-bold text-themeTextSec py-4 text-center">No recurring staff payroll or expenses added yet.</p>
                         ) : (
                             recurringExpenses.map(exp => (
-                                <div key={exp.id} className="flex justify-between items-center bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4">
+                                <div key={exp.id} className="flex justify-between items-center bg-gray-50 dark:bg-white/5 border border-themeBorder dark:border-white/10 rounded-xl p-4">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 rounded-full bg-purple-500/10 text-purple-500 flex items-center justify-center border border-purple-500/20">
                                             <i className="fa-solid fa-money-bills"></i>
                                         </div>
                                         <div>
-                                            <h4 className="text-sm font-bold text-gray-900 dark:text-white">{exp.title}</h4>
-                                            <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest">Monthly Deduction</p>
+                                            <h4 className="text-sm font-bold text-themeText dark:text-white">{exp.title}</h4>
+                                            <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Monthly Deduction</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">
                                         <span className="text-base font-black text-rose-500 font-mono">-{formatCurrency(exp.amount)}</span>
-                                        <button onClick={() => handleRemoveExpense(exp.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 flex items-center justify-center transition-colors">
-                                            <i className="fa-solid fa-trash text-xs"></i>
-                                        </button>
+                                        <HoldButton size="sm" onHold={() => handleRemoveExpense(exp.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                null
+            </HoldButton>
                                     </div>
                                 </div>
                             ))
@@ -371,7 +371,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         {/* TAB 2: VERIFICATIONS */}
         {activeTab === 'verifications' && (
           <div className="flex flex-col gap-4">
-            <h3 className="text-lg font-black text-gray-900 dark:text-white">Pending Clearances</h3>
+            <h3 className="text-lg font-black text-themeText dark:text-white">Pending Clearances</h3>
             {loading ? (
               <div className="py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
             ) : pendingVerifications.length === 0 ? (
@@ -379,27 +379,27 @@ export default function AdminFees({ isEmbedded = false, }) {
                 <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-4 border border-emerald-500/20">
                   <i className="fa-solid fa-check-double text-2xl"></i>
                 </div>
-                <h4 className="text-gray-900 dark:text-white font-black text-sm">All Clear!</h4>
-                <p className="text-gray-500 dark:text-white/50 text-xs font-bold mt-1 max-w-sm text-center">There are no pending fee verifications at the moment. You're all caught up.</p>
+                <h4 className="text-themeText dark:text-white font-black text-sm">All Clear!</h4>
+                <p className="text-themeTextSec dark:text-white/50 text-xs font-bold mt-1 max-w-sm text-center">There are no pending fee verifications at the moment. You're all caught up.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {pendingVerifications.map(txn => (
-                  <div key={txn.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 flex flex-col gap-4">
+                  <div key={txn.id} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl p-5 flex flex-col gap-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h4 className="text-sm font-black text-gray-900 dark:text-white">{txn.profiles?.full_name}</h4>
-                        <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase">{txn.profiles?.academic_batch}</p>
+                        <h4 className="text-sm font-black text-themeText dark:text-white">{txn.profiles?.full_name}</h4>
+                        <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase">{txn.profiles?.academic_batch}</p>
                       </div>
                       <span className="px-2 py-1 bg-amber-500/10 text-amber-500 text-[9px] font-black uppercase rounded-md border border-amber-500/20">Pending</span>
                     </div>
-                    <div className="bg-gray-100 dark:bg-[#1A1A1A] rounded-xl p-3 border border-gray-200 dark:border-white/5">
+                    <div className="bg-gray-100 dark:bg-themeApp rounded-xl p-3 border border-themeBorder dark:border-white/5">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-white/50">Amount</span>
-                        <span className="text-xs font-black text-gray-900 dark:text-white font-mono">₹{txn.amount}</span>
+                        <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50">Amount</span>
+                        <span className="text-xs font-black text-themeText dark:text-white font-mono">₹{txn.amount}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-white/50">Ref ID</span>
+                        <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50">Ref ID</span>
                         <span className="text-[10px] font-medium text-white/80">{txn.transaction_id}</span>
                       </div>
                     </div>
@@ -422,10 +422,10 @@ export default function AdminFees({ isEmbedded = false, }) {
           <div className="flex flex-col xl:flex-row gap-6">
             {/* Left: List & Bulk Actions */}
             <div className="flex-1 flex flex-col gap-4">
-              <div className="flex justify-between items-center bg-white dark:bg-[#121212] p-2 pr-4 rounded-2xl border border-gray-200 dark:border-white/5">
+              <div className="flex justify-between items-center bg-white dark:bg-[#121212] p-2 pr-4 rounded-2xl border border-themeBorder dark:border-white/5">
                 <select 
                   value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}
-                  className="bg-transparent text-sm font-bold text-gray-900 dark:text-white px-4 py-2 outline-none w-64 appearance-none"
+                  className="bg-transparent text-sm font-bold text-themeText dark:text-white px-4 py-2 outline-none w-64 appearance-none"
                 >
                   <option value="" disabled>Select Academic Batch</option>
                   {batches.map(b => <option key={b} value={b}>{b}</option>)}
@@ -441,19 +441,19 @@ export default function AdminFees({ isEmbedded = false, }) {
                 <div className="py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
               ) : !selectedBatch ? (
                 <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
-                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-300 dark:text-white/20 mb-4 border border-gray-200 dark:border-white/5">
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-300 dark:text-white/20 mb-4 border border-themeBorder dark:border-white/5">
                       <i className="fa-solid fa-layer-group text-2xl"></i>
                     </div>
-                    <h4 className="text-gray-900 dark:text-white font-black text-sm">Select a Batch</h4>
-                    <p className="text-gray-500 dark:text-white/50 text-xs font-bold mt-1">Choose an academic batch from the dropdown above to view students and assign fees.</p>
+                    <h4 className="text-themeText dark:text-white font-black text-sm">Select a Batch</h4>
+                    <p className="text-themeTextSec dark:text-white/50 text-xs font-bold mt-1">Choose an academic batch from the dropdown above to view students and assign fees.</p>
                 </div>
               ) : students.length === 0 ? (
                 <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
-                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-300 dark:text-white/20 mb-4 border border-gray-200 dark:border-white/5">
+                    <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-300 dark:text-white/20 mb-4 border border-themeBorder dark:border-white/5">
                       <i className="fa-solid fa-users-slash text-2xl"></i>
                     </div>
-                    <h4 className="text-gray-900 dark:text-white font-black text-sm">No Students Found</h4>
-                    <p className="text-gray-500 dark:text-white/50 text-xs font-bold mt-1">There are no students enrolled in {selectedBatch}.</p>
+                    <h4 className="text-themeText dark:text-white font-black text-sm">No Students Found</h4>
+                    <p className="text-themeTextSec dark:text-white/50 text-xs font-bold mt-1">There are no students enrolled in {selectedBatch}.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -464,11 +464,11 @@ export default function AdminFees({ isEmbedded = false, }) {
                       <div 
                         key={s.id} 
                         onClick={() => pendingInv.length > 0 && setSelectedStudentIds(prev => isSelected ? prev.filter(id => id !== s.id) : [...prev, s.id])}
-                        className={`bg-white dark:bg-[#121212] border ${isSelected ? 'border-emerald-500' : 'border-gray-200 dark:border-white/5'} rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-colors hover:bg-white/5`}
+                        className={`bg-white dark:bg-[#121212] border ${isSelected ? 'border-emerald-500' : 'border-themeBorder dark:border-white/5'} rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-colors hover:bg-white/5`}
                       >
                         <div>
-                          <h4 className="text-sm font-black text-gray-900 dark:text-white">{s.full_name}</h4>
-                          <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{s.erp_id}</p>
+                          <h4 className="text-sm font-black text-themeText dark:text-white">{s.full_name}</h4>
+                          <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{s.erp_id}</p>
                         </div>
                         <div className="text-right">
                           {pendingInv.length > 0 ? (
@@ -485,20 +485,20 @@ export default function AdminFees({ isEmbedded = false, }) {
             </div>
 
             {/* Right: Assign Fee Form */}
-            <div className="w-full xl:w-96 bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-6 h-fit shrink-0">
-              <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest mb-6">Assign Bulk Fee</h3>
+            <div className="w-full xl:w-96 bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl p-6 h-fit shrink-0">
+              <h3 className="text-sm font-black text-themeText dark:text-white uppercase tracking-widest mb-6">Assign Bulk Fee</h3>
               <form onSubmit={handleAssignFee} className="flex flex-col gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Fee Title</label>
-                  <input type="text" required value={assignTitle} onChange={e => setAssignTitle(e.target.value)} placeholder="e.g. Sem 4 Tuition" className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                  <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Fee Title</label>
+                  <input type="text" required value={assignTitle} onChange={e => setAssignTitle(e.target.value)} placeholder="e.g. Sem 4 Tuition" className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Amount (₹)</label>
-                  <input type="number" required value={assignAmount} onChange={e => setAssignAmount(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                  <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Amount (₹)</label>
+                  <input type="number" required value={assignAmount} onChange={e => setAssignAmount(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1">Due Date</label>
-                  <input type="date" required value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                  <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Due Date</label>
+                  <input type="date" required value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                 </div>
                 <button type="submit" disabled={!selectedBatch || loading} className="w-full mt-2 py-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-black transition-colors disabled:opacity-50">
                   Deploy to {selectedBatch || 'Batch'}
@@ -519,19 +519,19 @@ export default function AdminFees({ isEmbedded = false, }) {
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-2 h-2 rounded-full bg-rose-500"></div>
-                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Pending Dues (Requires Follow-up)</h3>
+                    <h3 className="text-sm font-black text-themeText dark:text-white uppercase tracking-widest">Pending Dues (Requires Follow-up)</h3>
                   </div>
                   <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                     {invoiceHistory.filter(i => i.status === 'pending').length === 0 ? (
                       <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                         <i className="fa-solid fa-file-invoice text-gray-300 dark:text-white/20 text-xl mb-3"></i>
-                        <p className="text-gray-500 dark:text-white/50 text-xs font-bold">No pending dues found.</p>
+                        <p className="text-themeTextSec dark:text-white/50 text-xs font-bold">No pending dues found.</p>
                       </div>
                     ) : invoiceHistory.filter(i => i.status === 'pending').map(inv => (
-                      <div key={inv.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-xl p-4 flex justify-between items-center">
+                      <div key={inv.id} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-xl p-4 flex justify-between items-center">
                         <div>
-                          <h4 className="text-sm font-black text-gray-900 dark:text-white">{inv.profiles?.full_name}</h4>
-                          <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{inv.title}</p>
+                          <h4 className="text-sm font-black text-themeText dark:text-white">{inv.profiles?.full_name}</h4>
+                          <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{inv.title}</p>
                         </div>
                         <div className="text-right">
                           <span className="text-sm font-black text-rose-500 font-mono">₹{inv.amount}</span>
@@ -546,19 +546,19 @@ export default function AdminFees({ isEmbedded = false, }) {
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                    <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Cleared & Sent</h3>
+                    <h3 className="text-sm font-black text-themeText dark:text-white uppercase tracking-widest">Cleared & Sent</h3>
                   </div>
                   <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                     {invoiceHistory.filter(i => i.status === 'paid' || i.status === 'successful').length === 0 ? (
                       <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                         <i className="fa-solid fa-receipt text-gray-300 dark:text-white/20 text-xl mb-3"></i>
-                        <p className="text-gray-500 dark:text-white/50 text-xs font-bold">No cleared invoices yet.</p>
+                        <p className="text-themeTextSec dark:text-white/50 text-xs font-bold">No cleared invoices yet.</p>
                       </div>
                     ) : invoiceHistory.filter(i => i.status === 'paid' || i.status === 'successful').map(inv => (
-                      <div key={inv.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-xl p-4 flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity">
+                      <div key={inv.id} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-xl p-4 flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity">
                         <div>
-                          <h4 className="text-sm font-black text-gray-900 dark:text-white">{inv.profiles?.full_name}</h4>
-                          <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{inv.title}</p>
+                          <h4 className="text-sm font-black text-themeText dark:text-white">{inv.profiles?.full_name}</h4>
+                          <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{inv.title}</p>
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-sm font-black text-emerald-500 font-mono">₹{inv.amount}</span>

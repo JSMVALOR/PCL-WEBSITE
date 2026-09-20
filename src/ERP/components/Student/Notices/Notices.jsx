@@ -204,7 +204,7 @@ export default function Notices({ setActiveTab }) {
                                     <i className={`fa-solid ${pConf.icon} mr-1.5`}></i>
                                     {pConf.display}
                                 </span>
-                                <span className="text-[11px] font-bold text-[#8E8E93] bg-black/5 dark:bg-white/10 px-3 py-1 rounded-md border border-black/5 dark:border-white/5">{notice.category}</span>
+                                <span className="text-[11px] font-bold text-themeTextSec bg-black/5 dark:bg-white/10 px-3 py-1 rounded-md border border-black/5 dark:border-white/5">{notice.category}</span>
                             </div>
                             <div className="flex gap-4 items-center">
                                 <span className="text-[10px] font-bold text-themeTextSec tracking-normal">{new Date(notice.created_at).toLocaleDateString()}</span>
@@ -256,7 +256,7 @@ export default function Notices({ setActiveTab }) {
                         </div>
                         <div>
                             <div className="flex gap-2 mb-2">
-                                <span className="text-[11px] font-bold text-[#8E8E93] bg-black/5 dark:bg-white/10 px-3 py-1 rounded-md border border-black/5 dark:border-white/5">
+                                <span className="text-[11px] font-bold text-themeTextSec bg-black/5 dark:bg-white/10 px-3 py-1 rounded-md border border-black/5 dark:border-white/5">
                                     {e.event_type}
                                 </span>
                             </div>
@@ -340,7 +340,7 @@ export default function Notices({ setActiveTab }) {
                             disabled={!needsAck}
                             className={`px-8 py-3 rounded-xl text-[13px] font-medium transition-all shadow-lg flex items-center gap-2 ${
                                 needsAck 
-                                    ? 'bg-rose-500 text-gray-900 dark:text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]' 
+                                    ? 'bg-rose-500 text-themeText dark:text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]' 
                                     : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-not-allowed shadow-inner'
                             }`}
                         >
@@ -360,7 +360,7 @@ export default function Notices({ setActiveTab }) {
     return (
         <div className="w-full h-auto xl:h-[calc(100vh-9rem)] xl:min-h-[600px] min-h-full relative flex-1 bg-transparent text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
             
-            <div className="relative z-20 w-full w-full mx-auto flex flex-col gap-4 lg:gap-8 h-full p-2 sm:p-4 lg:p-8 overflow-hidden">
+            <div className="relative z-20 w-full mx-auto flex flex-col gap-4 lg:gap-8 h-full p-2 sm:p-4 lg:p-8 overflow-hidden">
                 
                 {/* Header Container */}
             <PageHeader 
@@ -372,13 +372,13 @@ export default function Notices({ setActiveTab }) {
                         <div className="flex bg-black/5 dark:bg-white/10 p-1 rounded-xl border border-black/5 dark:border-white/5 w-full md:w-auto">
                             <button type="button" 
                                 onClick={() => {setActiveMainTab('broadcasts'); setSelectedNotice(null); setIsBroadcasting(false);}} 
-                                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-[12px] font-bold tracking-tight transition ${activeMainTab === "broadcasts" ? 'bg-white dark:bg-[#2C2C2E] text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-[12px] font-bold tracking-tight transition ${activeMainTab === "broadcasts" ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
                             >
                                 Notices
                             </button>
                             <button type="button" 
                                 onClick={() => {setActiveMainTab('events'); setSelectedNotice(null); setIsBroadcasting(false);}} 
-                                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-[12px] font-bold tracking-tight transition ${activeMainTab === "events" ? 'bg-white dark:bg-[#2C2C2E] text-[#1C1C1E] dark:text-[#F2F2F7] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'}`}
+                                className={`flex-1 md:flex-none px-4 py-2 rounded-lg text-[12px] font-bold tracking-tight transition ${activeMainTab === "events" ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
                             >
                                 Events
                             </button>
@@ -386,13 +386,13 @@ export default function Notices({ setActiveTab }) {
                         
                         {activeMainTab === "broadcasts" && (
                             <div className="relative flex-1 md:w-64 w-full">
-                                <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[#8E8E93] text-[13px]"></i>
+                                <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec text-[13px]"></i>
                                 <input 
                                     type="text" 
                                     placeholder="Search notices..." 
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-[#2C2C2E] rounded-xl pl-9 pr-4 py-2 text-[13px] font-semibold text-[#1C1C1E] dark:text-[#F2F2F7] placeholder:text-[#8E8E93] outline-none transition-all shadow-inner"
+                                    className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-themeElevated rounded-xl pl-9 pr-4 py-2 text-[13px] font-semibold text-themeText dark:text-themeText placeholder:text-themeTextSec outline-none transition-all shadow-inner"
                                 />
                             </div>
                         )}
@@ -400,7 +400,7 @@ export default function Notices({ setActiveTab }) {
                         {(userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'events' && (
                             <button type="button" 
                                 onClick={() => setActiveTab && setActiveTab('events')} 
-                                className="px-5 py-2 bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
+                                className="px-5 py-2 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
                             >
                                 <i className="fa-solid fa-calendar-plus"></i> Manage Events
                             </button>
@@ -408,7 +408,7 @@ export default function Notices({ setActiveTab }) {
                         {(userSession?.role === 'faculty' || userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'broadcasts' && (
                             <button type="button" 
                                 onClick={() => setIsBroadcasting(true)} 
-                                className="px-5 py-2 bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
+                                className="px-5 py-2 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
                             >
                                 <i className="fa-solid fa-satellite-dish"></i> Broadcast
                             </button>
@@ -437,8 +437,8 @@ export default function Notices({ setActiveTab }) {
                                             onClick={() => setActiveFilter(f)}
                                             className={`px-5 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${
                                                 activeFilter === f 
-                                                    ? 'bg-white dark:bg-[#2C2C2E] text-[#1C1C1E] dark:text-[#F2F2F7] border-black/5 dark:border-white/10 shadow-sm scale-105' 
-                                                    : 'bg-black/5 dark:bg-white/10 text-[#8E8E93] border-transparent hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7] hover:border-black/5 dark:hover:border-gray-300 dark:border-white/10'
+                                                    ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText border-black/5 dark:border-white/10 shadow-sm scale-105' 
+                                                    : 'bg-black/5 dark:bg-white/10 text-themeTextSec border-transparent hover:text-themeText dark:hover:text-themeText hover:border-black/5 dark:hover:border-themeBorder dark:border-white/10'
                                             }`}
                                         >
                                             {f}

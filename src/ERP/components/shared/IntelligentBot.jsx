@@ -222,7 +222,7 @@ export default function IntelligentBot() {
                         <div className="flex items-center gap-3">
                             <div className="relative">
                                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-themeAccent to-indigo-500 flex items-center justify-center shadow-lg shadow-themeAccent/20">
-                                    <i className="fa-solid fa-robot text-gray-900 dark:text-white text-sm"></i>
+                                    <i className="fa-solid fa-robot text-themeText dark:text-white text-sm"></i>
                                 </div>
                                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-themePanel rounded-full"></span>
                             </div>
@@ -234,9 +234,9 @@ export default function IntelligentBot() {
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button type="button" onClick={() => setMessages([])} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-themeTextSec transition-colors" title="Clear Chat">
-                                <i className="fa-solid fa-trash-can text-xs"></i>
-                            </button>
+                            <HoldButton size="sm" onHold={() => setMessages([])} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                null
+            </HoldButton>
                             <button type="button" onClick={() => setIsOpen(false)} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-themeText transition-colors">
                                 <i className="fa-solid fa-xmark"></i>
                             </button>
@@ -250,8 +250,8 @@ export default function IntelligentBot() {
                                 key={msg.id}
                                 className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed flex flex-col shadow-sm ${
                                     msg.sender === 'user'
-                                        ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-gray-900 dark:text-white shadow-md self-end rounded-2xl rounded-tr-sm'
-                                        : 'bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-themeText font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
+                                        ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-themeText dark:text-white shadow-md self-end rounded-2xl rounded-tr-sm'
+                                        : 'bg-white/80 dark:bg-themeElevated/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-themeText font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
                                 }`}
                             >
                                 <span className="whitespace-pre-line">{formatMessage(msg.text)}</span>
@@ -259,7 +259,7 @@ export default function IntelligentBot() {
                         ))}
                         
                         {isTyping && (
-                            <div className="bg-white/80 dark:bg-[#2C2C2E]/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] self-start rounded-2xl rounded-tl-sm px-4 py-3.5 bot-msg-anim flex gap-1.5 items-center shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)]">
+                            <div className="bg-white/80 dark:bg-themeElevated/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] self-start rounded-2xl rounded-tl-sm px-4 py-3.5 bot-msg-anim flex gap-1.5 items-center shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)]">
                                 <div className="w-1.5 h-1.5 rounded-full bg-themeAccent/70 animate-bounce" style={{ animationDelay: '0ms' }}></div>
                                 <div className="w-1.5 h-1.5 rounded-full bg-themeAccent/70 animate-bounce" style={{ animationDelay: '150ms' }}></div>
                                 <div className="w-1.5 h-1.5 rounded-full bg-themeAccent/70 animate-bounce" style={{ animationDelay: '300ms' }}></div>
@@ -292,12 +292,12 @@ export default function IntelligentBot() {
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder="Message Assistant..."
-                            className="flex-1 bg-themeElevated backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-themeText focus:outline-none focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-[#2C2C2E] transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-themeTextSec font-medium"
+                            className="flex-1 bg-themeElevated backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-themeText focus:outline-none focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-themeElevated transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-themeTextSec font-medium"
                         />
                         <button
                             type="submit"
                             disabled={!inputText.trim() || isTyping}
-                            className="w-11 h-11 rounded-full bg-themeAccent flex items-center justify-center text-gray-900 dark:text-white cursor-pointer hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-themeAccent/20"
+                            className="w-11 h-11 rounded-full bg-themeAccent flex items-center justify-center text-themeText dark:text-white cursor-pointer hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed shrink-0 shadow-lg shadow-themeAccent/20"
                             aria-label="Send Message"
                         >
                             <i className="fa-solid fa-paper-plane text-sm translate-x-[-1px] translate-y-[1px]"></i>

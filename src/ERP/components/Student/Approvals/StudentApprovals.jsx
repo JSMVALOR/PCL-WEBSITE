@@ -109,12 +109,16 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  try {
  const studentId = userSession?.db_id || userSession?.id;
 
+ const reqId = `LR-${Math.floor(1000 + Math.random() * 9000)}`;
  const payload = {
  student_id: studentId,
- mentor_id: mentor.id,
+ faculty_id: mentor.id,
+ request_id: reqId,
  start_date: leaveData.startDate,
  end_date: leaveData.endDate,
- total_days: diffDays,
+ from_date: leaveData.startDate,
+ to_date: leaveData.endDate,
+ days: diffDays,
  reason: leaveData.reason,
  status: 'pending'
  };
@@ -219,7 +223,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  <PageHeader icon="fa-solid fa-file-signature" title="Approvals & Grievances" subtitle="Track your formal requests and resolutions." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl w-fit relative z-10 overflow-x-auto no-scrollbar">
  <button type="button" 
  onClick={() => setActiveTab('leaves')}
@@ -229,7 +233,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  </button>
  <button type="button" 
  onClick={() => setActiveTab('grievances')}
- className={`px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'grievances' ? 'bg-rose-500 text-gray-900 dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'grievances' ? 'bg-rose-500 text-themeText dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Grievances
  </button>
@@ -251,7 +255,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  
  {/* LEFT PANE: Form */}
  <div className="lg:col-span-5 flex flex-col gap-4">
- <div className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-5 lg:p-6 sticky top-6`}>
+ <div className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-5 lg:p-6 sticky top-6`}>
  
  {activeTab === 'leaves' ? (
  <form onSubmit={submitLeave} className="flex flex-col gap-4">
@@ -310,7 +314,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details of the incident..." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
  </div>
 
- <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-gray-900 dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
+ <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
  {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit Grievance"}
  </button>
  </form>
@@ -335,11 +339,11 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 </div>
  ) : (
  leaves.map(req => (
- <div key={req.id} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-4 flex flex-col gap-3`}>
+ <div key={req.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
  <p className="text-[15px] font-semibold text-themeText mb-0.5">{req.start_date} to {req.end_date}</p>
- <p className="text-[10px] font-bold text-themeTextSec tracking-normal">{req.total_days} Day(s)</p>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal">{req.days} Day(s)</p>
  </div>
  {getStatusBadge(req.status)}
  </div>
@@ -355,12 +359,12 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  )
  ) : (
  grievances.length === 0 ? (
- <div className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-8 text-center opacity-60`}>
+ <div className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No grievances reported.</p>
  </div>
  ) : (
  grievances.map(grievance => (
- <div key={grievance.id} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border-rose-500/20 border p-4 flex flex-col gap-3`}>
+ <div key={grievance.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border-rose-500/20 border p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
  <p className="text-[13px] font-medium text-rose-500 mb-1">{grievance.category}</p>

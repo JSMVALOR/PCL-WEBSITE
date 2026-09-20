@@ -101,23 +101,23 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  </div>
 
  {affectedClasses.length === 0 ? (
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-12 text-center flex flex-col items-center">
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-12 text-center flex flex-col items-center">
  <i className="fa-solid fa-calendar-check text-4xl text-themeTextSec mb-4"></i>
  <h3 className="text-lg font-semibold tracking-tight text-themeText">No Classes Affected</h3>
  <p className="text-sm text-themeTextSec mt-2">This faculty member has no classes scheduled during the leave period. No replacement is necessary.</p>
  <button type="button" 
  onClick={() => handleAssign({ name: "System Auto-Approved" })}
  disabled={isProcessing}
- className="mt-6 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-gray-900 dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition"
+ className="mt-6 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Mark as Handled
  </button>
  </div>
  ) : (
  affectedClasses.map((cls, idx) => (
- <div key={idx} className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
+ <div key={idx} className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
  
- <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-4 border-b-[length:var(--border-width)] border-gray-200 dark:border-white/5 gap-3">
+ <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 gap-3">
  <div>
  <h3 className="text-[15px] font-semibold text-themeText">{cls}</h3>
  <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-1">Pending Assignment</p>
@@ -166,7 +166,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <button type="button" 
  onClick={() => handleAssign(sug)}
  disabled={isProcessing}
- className="mt-2 py-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-500 hover:text-gray-900 dark:text-white border-[length:var(--border-width)] border-indigo-500/20 rounded-lg text-[9px] lg:text-[13px] font-medium transition-colors w-full relative z-10"
+ className="mt-2 py-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-500 hover:text-themeText dark:text-white border-[length:var(--border-width)] border-indigo-500/20 rounded-lg text-[9px] lg:text-[13px] font-medium transition-colors w-full relative z-10"
  >
  Assign
  </button>
@@ -176,7 +176,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  )}
 
  <div className="mt-4 flex justify-center">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-gray-200 dark:border-white/5Strong rounded-lg text-[9px] lg:text-[13px] font-medium text-themeTextSec transition-colors">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-themeBorder dark:border-white/5Strong rounded-lg text-[9px] lg:text-[13px] font-medium text-themeTextSec transition-colors">
  Manual Assignment <i className="fa-solid fa-chevron-right ml-1"></i>
  </button>
  </div>

@@ -565,7 +565,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  )}
 
  {/* Custom Horizontal Navbar matching public site */}
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-2 flex flex-wrap gap-2 relative z-[100]">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-2 flex flex-wrap gap-2 relative z-[100]">
  {navTree.map((item, idx) => {
  if (item.isParent) {
  return (
@@ -574,12 +574,12 @@ export default function AdminSiteEditor({ isHubView = false }) {
  {item.label} <i className="fa-solid fa-chevron-down text-[10px]"></i>
  </button>
  {/* Dropdown */}
- <div className="absolute top-full left-0 mt-1 w-48 bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition z-50 overflow-hidden flex flex-col p-1">
+ <div className="absolute top-full left-0 mt-1 w-48 bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition z-50 overflow-hidden flex flex-col p-1">
  {item.children.map(child => (
  <button type="button" 
  key={child.path}
  onClick={() => { setSelectedPage(child.path); setSelectedSection(siteStructure[child.path].sections[0].id); }}
- className={`px-4 py-3 text-left text-xs font-bold rounded-lg transition-colors ${selectedPage === child.path ? 'bg-themeAccent text-gray-900 dark:text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
+ className={`px-4 py-3 text-left text-xs font-bold rounded-lg transition-colors ${selectedPage === child.path ? 'bg-themeAccent text-themeText dark:text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
  >
  {child.label}
  </button>
@@ -592,7 +592,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <button type="button" 
  key={idx}
  onClick={() => { setSelectedPage(item.path); setSelectedSection(siteStructure[item.path].sections[0].id); }}
- className={`px-4 py-2.5 rounded-lg text-[11px] font-black tracking-normal transition-colors whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-gray-900 dark:text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
+ className={`px-4 py-2.5 rounded-lg text-[11px] font-black tracking-normal transition-colors whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-themeText dark:text-white' : 'text-themeText hover:bg-themeElevated/90 backdrop-blur-2xl'}`}
  >
  {item.label}
  </button>
@@ -629,7 +629,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="flex flex-col xl:flex-row gap-6 items-start relative">
  
  {/* Left Panel: Editor Form (Sticky) */}
- <div className={`${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-5 flex flex-col xl:flex-1 shrink-0 max-h-[calc(100vh-4rem)] overflow-y-auto sticky top-6 z-20`}>
+ <div className={`${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-5 flex flex-col xl:flex-1 shrink-0 max-h-[calc(100vh-4rem)] overflow-y-auto sticky top-6 z-20`}>
  
  {/* Section Selector */}
  <div className="mb-6">
@@ -640,8 +640,8 @@ export default function AdminSiteEditor({ isHubView = false }) {
  key={section.id}
  onClick={() => setSelectedSection(section.id)}
  className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors whitespace-nowrap border shrink-0 ${selectedSection === section.id 
- ? 'bg-themeAccent text-gray-900 dark:text-white border-themeAccent' 
- : 'bg-themeElevated/90 backdrop-blur-2xl text-themeText border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ ? 'bg-themeAccent text-themeText dark:text-white border-themeAccent' 
+ : 'bg-themeElevated/90 backdrop-blur-2xl text-themeText border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  {section.name}
  </button>
@@ -649,7 +649,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  </div>
  </div>
 
- <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-200 dark:border-white/5">
+ <div className="flex justify-between items-center mb-4 pb-2 border-b border-themeBorder dark:border-white/5">
  <h2 className="text-[15px] font-semibold text-themeText tracking-normal">{currentSectionConfig?.name}</h2>
  {loading && <i className="fa-solid fa-circle-notch fa-spin text-themeAccent"></i>}
  </div>
@@ -665,7 +665,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <select
  value={contentData[field.key] || ""}
  onChange={(e) => handleFieldChange(field.key, e.target.value)}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none"
  >
  <option value="" disabled>Select an option...</option>
  {field.options?.map(opt => (
@@ -679,7 +679,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  placeholder={field.placeholder || ""}
  maxLength={field.maxLength || 800}
  rows="4"
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none resize-y placeholder:text-themeTextSec/50"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none resize-y placeholder:text-themeTextSec/50"
  ></textarea>
  ) : (
  <input
@@ -688,7 +688,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  onChange={(e) => handleFieldChange(field.key, e.target.value)}
  placeholder={field.placeholder || ""}
  maxLength={field.maxLength || 80}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none placeholder:text-themeTextSec/50"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10 focus:border-themeAccent focus:ring-1 focus:ring-themeAccent text-themeText rounded-xl px-3 py-2.5 text-xs font-medium transition outline-none placeholder:text-themeTextSec/50"
  />
  )}
  </div>
@@ -698,18 +698,20 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="h-4"></div>
  </div>
 
- <div className="mt-4 pt-4 border-t border-gray-200 dark:border-white/5">
- <button type="button"
- onClick={handleSave}
- disabled={isSaving || fetchError}
- className="w-full bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white px-4 py-3 rounded-xl text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
- >
- {isSaving ? (
- <><i className="fa-solid fa-circle-notch fa-spin"></i> Saving...</>
- ) : (
- <><i className="fa-solid fa-cloud-arrow-up"></i> Save & Publish</>
- )}
- </button>
+ <div className="mt-4 pt-4 border-t border-themeBorder dark:border-white/5">
+ <SlideCommit
+                label="Slide to Publish"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={handleSave}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  </div>
  </div>
 
@@ -720,11 +722,11 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
  <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
- <span className="text-[10px] font-mono text-gray-500 dark:text-white/50 ml-4 font-bold tracking-widest uppercase">Live Preview — {siteStructure[selectedPage]?.name}</span>
+ <span className="text-[10px] font-mono text-themeTextSec dark:text-white/50 ml-4 font-bold tracking-widest uppercase">Live Preview — {siteStructure[selectedPage]?.name}</span>
  </div>
  <button type="button" 
  onClick={() => setIsPreviewFullscreen(!isPreviewFullscreen)} 
- className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition px-2 py-1 flex items-center gap-2 rounded bg-white/5 hover:bg-white/10"
+ className="text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white transition px-2 py-1 flex items-center gap-2 rounded bg-white/5 hover:bg-white/10"
  title={isPreviewFullscreen ? "Exit Fullscreen" : "Fullscreen Preview"}
  >
  <i className={`fa-solid ${isPreviewFullscreen ? 'fa-compress' : 'fa-expand'} text-[10px]`}></i>

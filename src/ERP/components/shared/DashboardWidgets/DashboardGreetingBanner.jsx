@@ -39,13 +39,13 @@ export default function DashboardGreetingBanner({ role = 'student' }) {
         <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-3xl p-6 sm:p-8 flex items-center justify-between relative overflow-hidden group"
+            className="w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-3xl p-6 sm:p-8 flex items-center justify-between relative overflow-hidden group"
         >
             
 
             <div className="flex items-center gap-6 z-10">
                 {/* Left Insignia Box */}
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[20px] bg-white dark:bg-[#2C2C2E] p-1 shadow-none border border-black/5 dark:border-white/10 shrink-0 relative overflow-hidden flex items-center justify-center text-3xl sm:text-4xl">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[20px] bg-white dark:bg-themeElevated p-1 shadow-none border border-black/5 dark:border-white/10 shrink-0 relative overflow-hidden flex items-center justify-center text-3xl sm:text-4xl">
                     <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none"></div>
                     {getRoleInsignia()}
                 </div>

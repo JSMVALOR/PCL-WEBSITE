@@ -46,8 +46,8 @@ export default function AppearanceSettings() {
                         
                         <div className="relative z-10 flex flex-col gap-4">
                             <div className="flex items-center justify-between w-full">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-gray-300 dark:border-white/10 ${t.gradient} shadow-lg`}>
-                                    <i className={`fa-solid ${t.icon} text-gray-900 dark:text-white`}></i>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-themeBorder dark:border-white/10 ${t.gradient} shadow-lg`}>
+                                    <i className={`fa-solid ${t.icon} text-themeText dark:text-white`}></i>
                                 </div>
                                 {activeTheme === t.id && (
                                     <div className="w-6 h-6 rounded-full bg-themeAccent/20 flex items-center justify-center border border-themeAccent/50 text-themeAccent">

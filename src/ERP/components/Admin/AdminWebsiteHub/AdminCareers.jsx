@@ -78,7 +78,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  };
 
  const handleDelete = async () => {
- if (!window.confirm("Are you sure you want to permanently delete this job posting?")) return;
+ // window.confirm removed, using HoldButton
  try {
  const { error } = await supabase.from('admin_careers').delete().eq('id', currentJob.id);
  if (error) throw error;
@@ -102,22 +102,22 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  </button>
  </div>
  
- <form onSubmit={handleSave} className="flex flex-col gap-6 bg-themePanel/85 backdrop-blur-2xl p-6 rounded-2xl border border-gray-200 dark:border-white/5">
+ <form onSubmit={handleSave} className="flex flex-col gap-6 bg-themePanel/85 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Job Title</label>
- <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="e.g. Assistant Professor of Law" />
+ <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="e.g. Assistant Professor of Law" />
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Department</label>
- <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} placeholder="e.g. Faculty, Administration" />
+ <input required type="text" className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} placeholder="e.g. Faculty, Administration" />
  </div>
  </div>
  
  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Job Type</label>
- <select className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
+ <select className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
  <option value="Full-time">Full-time</option>
  <option value="Part-time">Part-time</option>
  <option value="Contract">Contract</option>
@@ -126,7 +126,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Location</label>
- <select className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})}>
+ <select className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})}>
  <option value="On-Campus">On-Campus</option>
  <option value="Hybrid">Hybrid</option>
  <option value="Remote">Remote</option>
@@ -134,7 +134,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Status</label>
- <select className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_active ? "active" : "inactive"} onChange={e => setFormData({...formData, is_active: e.target.value === "active"})}>
+ <select className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_active ? "active" : "inactive"} onChange={e => setFormData({...formData, is_active: e.target.value === "active"})}>
  <option value="active">Active (Visible)</option>
  <option value="inactive">Inactive (Hidden)</option>
  </select>
@@ -143,14 +143,23 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
 
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Description / Requirements</label>
- <textarea className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[200px]" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Job description..."></textarea>
+ <textarea className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[200px]" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Job description..."></textarea>
  </div>
 
  <div className="flex justify-between mt-4">
  {currentJob ? (
- <button type="button" onClick={handleDelete} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 text-[14px] font-medium tracking-normal rounded-lg transition-colors">
- Delete Job
- </button>
+ <HoldButton
+  onHold={handleDelete}
+  backgroundColor="rgba(244, 63, 94, 0.1)"
+  fillColor="#f43f5e"
+  textColor="#f43f5e"
+  doneLabel="Deleted"
+  icon={<HugeiconsIcon icon={Delete02Icon} size={18} />}
+  radius={8}
+  size="md"
+>
+  Hold to Delete
+</HoldButton>
  ) : <div></div>}
  <button type="submit" className="btn-erp">
  {currentJob ? 'Update Job' : 'Post Job'}
@@ -163,7 +172,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  {!isHubView && (
  <div className="flex items-center gap-4 mb-8">
  <div className="w-12 h-12 rounded-xl bg-themeAccent/20 flex items-center justify-center shrink-0">
@@ -179,18 +188,18 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  <div className="flex justify-between items-center mb-6">
  <div className="relative w-full max-w-xs">
  <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec"></i>
- <input type="text" placeholder="Search jobs..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
+ <input type="text" placeholder="Search jobs..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" />
  </div>
  <button type="button" onClick={handleCreateNew} className="px-5 py-2.5 bg-themeAccent text-themeApp hover:opacity-90 text-[14px] font-medium tracking-normal rounded-xl transition flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> New Job
  </button>
  </div>
 
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-2xl overflow-hidden">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-2xl overflow-hidden">
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
- <tr className="bg-themeElevated/90 backdrop-blur-2xl border-b border-gray-200 dark:border-white/5">
+ <tr className="bg-themeElevated/90 backdrop-blur-2xl border-b border-themeBorder dark:border-white/5">
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Title</th>
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Department</th>
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Type</th>
@@ -213,7 +222,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  </tr>
  ) : (
  jobs.map((job) => (
- <tr key={job.id} className="border-b border-gray-200 dark:border-white/5 hover:bg-themeElevated/50 transition-colors">
+ <tr key={job.id} className="border-b border-themeBorder dark:border-white/5 hover:bg-themeElevated/50 transition-colors">
  <td className="p-4 text-sm font-bold text-themeText">{job.title}</td>
  <td className="p-4 text-xs font-bold text-themeTextSec">{job.department}</td>
  <td className="p-4 text-xs font-bold text-themeTextSec">{job.type} / {job.location}</td>
@@ -225,7 +234,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  )}
  </td>
  <td className="p-4 text-right">
- <button type="button" onClick={() => handleEdit(job)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-gray-900 dark:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => handleEdit(job)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-themeText dark:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors">
  <i className="fa-solid fa-pen"></i>
  </button>
  </td>

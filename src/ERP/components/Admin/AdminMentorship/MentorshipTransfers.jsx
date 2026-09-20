@@ -163,7 +163,7 @@ export default function MentorshipTransfers({}) {
  </div>
  )}
 
- <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6">
+ <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Transfer Mentees</span>
  <i className="fa-solid fa-right-left text-themeTextSec"></i>
@@ -194,7 +194,7 @@ export default function MentorshipTransfers({}) {
  <div className="flex flex-col gap-2 mt-2">
  <div className="flex justify-between items-center bg-themeElevated/90 backdrop-blur-2xl p-3 border border-black/5 dark:border-white/10 rounded-lg">
  <span className="text-xs font-bold text-themeText">Total Mentees Assigned</span>
- <span className="text-[14px] font-medium bg-white dark:bg-[#121212] backdrop-blur-2xl px-2 py-1 rounded border border-gray-200 dark:border-white/5">{mentees.length}</span>
+ <span className="text-[14px] font-medium bg-white dark:bg-[#121212] backdrop-blur-2xl px-2 py-1 rounded border border-themeBorder dark:border-white/5">{mentees.length}</span>
  </div>
 
  {mentees.length > 0 ? (
@@ -257,7 +257,7 @@ export default function MentorshipTransfers({}) {
  <button type="button"
  onClick={handleTransfer}
  disabled={!sourceMentorId || !targetMentorId || selectedMentees.size === 0 || isProcessing}
- className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-gray-900 dark:text-white rounded-2xl text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
+ className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
  >
  <i className="fa-solid fa-paper-plane"></i> Execute Transfer ({selectedMentees.size} Students)
  </button>

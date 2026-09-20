@@ -15,7 +15,7 @@ const SUBJECT_COLORS = {
  orange: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/20', solid: 'bg-orange-500' },
  rose: { bg: 'bg-rose-500/10', text: 'text-rose-500', border: 'border-rose-500/20', solid: 'bg-rose-500' },
  amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', border: 'border-amber-500/20', solid: 'bg-amber-500' },
- gray: { bg: 'bg-white/10 backdrop-blur-[80px] border border-white/20', text: 'text-gray-500 dark:text-white/50', border: 'border-white/20', solid: 'bg-themeBorderStrong' }
+ gray: { bg: 'bg-white/10 backdrop-blur-[80px] border border-white/20', text: 'text-themeTextSec dark:text-white/50', border: 'border-white/20', solid: 'bg-themeBorderStrong' }
 };
 
 export default function Timetable({ isEmbedded = false }) {
@@ -61,16 +61,24 @@ export default function Timetable({ isEmbedded = false }) {
  if (currentMins >= eMins) status = 'past';
  else if (currentMins >= sMins && currentMins < eMins) status = 'current';
 
+ // Sync cohort color for generic subjects
+ let cohortColor = 'blue';
+ const bName = batchStringName.toUpperCase();
+ if (bName.includes('BA LLB')) cohortColor = 'rose';
+ else if (bName.includes('BBA LLB')) cohortColor = 'emerald';
+ else if (bName.includes('LLM')) cohortColor = 'purple';
+ else if (bName.includes('LLB')) cohortColor = 'blue';
+
  return {
  id: s.id,
  day: daysMap[s.day_of_week] || s.day_of_week,
  time: sTime,
  endTime: eTime,
- subject: s.cohort_subject?.master_subject?.name || 'Unknown',
- color: s.cohort_subject?.master_subject?.theme_color || 'gray',
- credits: s.cohort_subject?.master_subject?.credits || 4,
+ subject: s.subject?.name || 'Unknown',
+ color: s.subject?.theme_color || cohortColor,
+ credits: s.subject?.credits || 4,
  room: s.room?.name || 'TBA',
- faculty: s.cohort_subject?.faculty?.full_name || 'TBA',
+ faculty: s.faculty?.full_name || 'TBA',
  status
  };
  });
@@ -142,8 +150,8 @@ export default function Timetable({ isEmbedded = false }) {
  if (todayClasses.length === 0) {
  return (
  <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4 mt-8">
- <i className="fa-regular fa-calendar text-4xl mb-4 text-gray-500 dark:text-white/50"></i>
- <p className="text-sm font-bold text-gray-500 dark:text-white/50">No classes scheduled for today.</p>
+ <i className="fa-regular fa-calendar text-4xl mb-4 text-themeTextSec dark:text-white/50"></i>
+ <p className="text-sm font-bold text-themeTextSec dark:text-white/50">No classes scheduled for today.</p>
  </div>
  );
  }
@@ -165,29 +173,29 @@ export default function Timetable({ isEmbedded = false }) {
  return (
  <div key={lec.id} className={`flex gap-6 relative group ${isPast ? 'opacity-40 grayscale-[50%]' : ''}`}>
  <div className="w-16 flex flex-col items-end shrink-0 pt-4">
- <span className="text-[14px] font-medium text-gray-900 dark:text-white">{lec.time}</span>
- <span className="text-[9px] font-bold text-gray-500 dark:text-white/50">{lec.endTime}</span>
+ <span className="text-[14px] font-medium text-themeText dark:text-white">{lec.time}</span>
+ <span className="text-[9px] font-bold text-themeTextSec dark:text-white/50">{lec.endTime}</span>
  </div>
  
  <div className="relative w-px bg-themeBorder flex-col flex items-center">
- <div className={`w-3 h-3 rounded-full border-[3px] border-gray-200 dark:border-white/5App z-10 mt-4 transition-colors ${isCurrent ? c.solid + ' animate-pulse' : 'bg-themeBorderStrong group-hover:' + c.solid}`}></div>
+ <div className={`w-3 h-3 rounded-full border-[3px] border-themeBorder dark:border-white/5App z-10 mt-4 transition-colors ${isCurrent ? c.solid + ' animate-pulse' : 'bg-themeBorderStrong group-hover:' + c.solid}`}></div>
  </div>
 
  <div className="flex-1 pb-8 pt-2">
  <div 
  onClick={() => setSelectedLecture(lec)}
- className={`w-full rounded-2xl p-5 border transition cursor-pointer ${isCurrent ? `${c.bg} ${c.border} scale-[1.02]` : 'bg-white/10 backdrop-blur-[80px] border border-white/20 border-white/20 hover:border-gray-200 dark:border-white/5 hover:scale-[1.01]'}`}
+ className={`w-full rounded-3xl p-6 border transition-all cursor-pointer shadow-sm ${isCurrent ? `${c.bg} ${c.border} scale-[1.02] shadow-md` : 'bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-0.5 hover:shadow-md'}`}
  >
- <div className="flex justify-between items-start mb-2">
+ <div className="flex justify-between items-start mb-3">
  <div className="flex items-center gap-2">
- <div className={`w-2 h-2 rounded-full ${c.solid}`}></div>
- <h3 className={`text-lg font-semibold tracking-tight tracking-tight ${isCurrent ? c.text : 'text-gray-900 dark:text-white'}`}>{lec.subject}</h3>
+ <div className={`w-2.5 h-2.5 rounded-full shadow-sm ${c.solid}`}></div>
+ <h3 className={`text-[17px] font-black tracking-tight ${isCurrent ? c.text : 'text-themeText dark:text-white'}`}>{lec.subject}</h3>
  </div>
- <span className="text-[13px] font-medium bg-white/10 backdrop-blur-[80px] border border-white/20 px-2 py-1 rounded-full text-gray-500 dark:text-white/50 border border-gray-200 dark:border-white/5">{lec.room}</span>
+ <span className="text-[11px] font-bold uppercase tracking-widest bg-black/5 dark:bg-white/10 backdrop-blur-3xl px-3 py-1.5 rounded-xl text-themeTextSec dark:text-white/70 border border-black/5 dark:border-white/5">{lec.room}</span>
  </div>
- <div className="flex items-center gap-4 mt-3">
- <span className="text-xs font-bold text-gray-500 dark:text-white/50 flex items-center gap-1.5"><i className="fa-regular fa-user"></i> {lec.faculty}</span>
- <span className="text-xs font-bold text-gray-500 dark:text-white/50 flex items-center gap-1.5"><i className="fa-regular fa-clock"></i> 60m</span>
+ <div className="flex items-center gap-5 mt-4 border-t border-black/5 dark:border-white/5 pt-4">
+ <span className="text-[12px] font-bold text-themeTextSec dark:text-white/60 flex items-center gap-1.5"><i className="fa-regular fa-user opacity-70"></i> {lec.faculty}</span>
+ <span className="text-[12px] font-bold text-themeTextSec dark:text-white/60 flex items-center gap-1.5"><i className="fa-regular fa-clock opacity-70"></i> 60m</span>
  </div>
  </div>
  </div>
@@ -216,7 +224,7 @@ export default function Timetable({ isEmbedded = false }) {
  return (
  <div className="flex flex-col gap-8 animate-fade-in w-full">
  <div>
- <h3 className="text-[13px] font-medium text-gray-500 dark:text-white/50 mb-4">Enrolled Subjects Overview</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-4">Enrolled Subjects Overview</h3>
  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
  {uniqueSubjects.map((s, i) => (
  <SubjectFlipCard 
@@ -236,8 +244,8 @@ export default function Timetable({ isEmbedded = false }) {
 </div>
  ) : schedule.length === 0 ? (
  <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-calendar-xmark text-4xl mb-4 text-gray-500 dark:text-white/50"></i>
- <p className="text-sm font-bold text-gray-500 dark:text-white/50">No timetable published for your batch yet.</p>
+ <i className="fa-solid fa-calendar-xmark text-4xl mb-4 text-themeTextSec dark:text-white/50"></i>
+ <p className="text-sm font-bold text-themeTextSec dark:text-white/50">No timetable published for your batch yet.</p>
  </div>
  ) : (
  <WeeklyList 
@@ -254,12 +262,12 @@ export default function Timetable({ isEmbedded = false }) {
  <div className="flex flex-col gap-4 animate-fade-in">
  <div className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-6 flex items-center justify-between">
  <div>
- <h3 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white tracking-tight">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
- <p className="text-xs font-bold text-gray-500 dark:text-white/50">Academic Calendar</p>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText dark:text-white tracking-tight">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
+ <p className="text-xs font-bold text-themeTextSec dark:text-white/50">Academic Calendar</p>
  </div>
  <div className="flex gap-2">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-gray-900 dark:text-white hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-left text-xs"></i></button>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-gray-900 dark:text-white hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-right text-xs"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText dark:text-white hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-left text-xs"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText dark:text-white hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-right text-xs"></i></button>
  </div>
  </div>
 
@@ -270,10 +278,10 @@ export default function Timetable({ isEmbedded = false }) {
  <span className="text-xl font-semibold tracking-tight text-purple-500">19</span>
  </div>
  <div className="flex-1">
- <h4 className="text-base font-black text-gray-900 dark:text-white">CAT II Examinations</h4>
- <p className="text-xs font-bold text-gray-500 dark:text-white/50 mt-1">Continuous Assessment Test II begins for all semesters.</p>
+ <h4 className="text-base font-black text-themeText dark:text-white">CAT II Examinations</h4>
+ <p className="text-xs font-bold text-themeTextSec dark:text-white/50 mt-1">Continuous Assessment Test II begins for all semesters.</p>
  </div>
- <span className="px-3 py-1 rounded-full text-[13px] font-medium bg-white/10 backdrop-blur-[80px] border border-white/20 text-gray-500 dark:text-white/50 border border-gray-200 dark:border-white/5">Exam</span>
+ <span className="px-3 py-1 rounded-full text-[13px] font-medium bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeTextSec dark:text-white/50 border border-themeBorder dark:border-white/5">Exam</span>
  </div>
  </div>
  </div>
@@ -291,12 +299,12 @@ export default function Timetable({ isEmbedded = false }) {
  <div className={`absolute top-0 right-0 w-48 h-48 ${c.solid} opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
  <div className="flex justify-between items-start mb-6 relative z-10">
  <span className={`px-2 py-1 rounded-full text-[12px] font-medium bg-transparent/80 backdrop-blur-md ${c.text} border ${c.border}`}>{selectedLecture.day}, {selectedLecture.time} - {selectedLecture.endTime}</span>
- <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-gray-50 dark:bg-black/20 text-gray-900 dark:text-white flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-gray-50 dark:bg-black/20 text-themeText dark:text-white flex items-center justify-center transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
  <h2 className={`text-2xl font-semibold tracking-tight tracking-tight mb-2 ${c.text} relative z-10`}>{selectedLecture.subject}</h2>
- <div className="flex items-center gap-4 text-xs font-bold text-gray-500 dark:text-white/50 relative z-10">
+ <div className="flex items-center gap-4 text-xs font-bold text-themeTextSec dark:text-white/50 relative z-10">
  <span className="flex items-center gap-1.5"><i className="fa-regular fa-user"></i> {selectedLecture.faculty}</span>
  <span className="flex items-center gap-1.5"><i className="fa-solid fa-location-dot"></i> {selectedLecture.room}</span>
  </div>
@@ -304,30 +312,30 @@ export default function Timetable({ isEmbedded = false }) {
 
  <div className="overflow-y-auto p-6 flex flex-col gap-8 custom-scrollbar">
  <div className="grid grid-cols-2 gap-3">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-gray-200 dark:border-white/5Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-gray-900 dark:text-white transition">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeBorder dark:border-white/5Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText dark:text-white transition">
  <i className="fa-solid fa-book-open text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Syllabus
  </button>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-gray-200 dark:border-white/5Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-gray-900 dark:text-white transition">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeBorder dark:border-white/5Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText dark:text-white transition">
  <i className="fa-solid fa-folder-open text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Material
  </button>
  </div>
 
  <div>
- <h3 className="text-[13px] font-medium text-gray-500 dark:text-white/50 mb-4">Subject Workspace</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-4">Subject Workspace</h3>
  <div className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-4 flex justify-between items-center">
  <div className="flex flex-col gap-1">
- <span className="text-[13px] font-medium text-gray-500 dark:text-white/50">Credits</span>
- <span className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">{selectedLecture.credits || 4}</span>
+ <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Credits</span>
+ <span className="text-xl font-semibold tracking-tight text-themeText dark:text-white">{selectedLecture.credits || 4}</span>
  </div>
  <div className="w-px h-8 bg-themeBorderStrong"></div>
  <div className="flex flex-col gap-1 items-center">
- <span className="text-[13px] font-medium text-gray-500 dark:text-white/50">Attendance</span>
+ <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Attendance</span>
  <span className="text-xl font-semibold tracking-tight text-emerald-500">--</span>
  </div>
  <div className="w-px h-8 bg-themeBorderStrong"></div>
  <div className="flex flex-col gap-1 items-end">
- <span className="text-[13px] font-medium text-gray-500 dark:text-white/50">Today</span>
- <span className="text-[15px] font-semibold text-gray-900 dark:text-white">Module 1</span>
+ <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Today</span>
+ <span className="text-[15px] font-semibold text-themeText dark:text-white">Module 1</span>
  </div>
  </div>
  </div>
@@ -338,8 +346,8 @@ export default function Timetable({ isEmbedded = false }) {
  };
 
  return (
- <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-[#1A1A1A] ${!isEmbedded ? "min-h-screen bg-themeApp text-gray-900 dark:text-white" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-16" : "pb-10"}`}>
+ <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText dark:text-white" : ""}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  <PageHeader 
  icon="fa-solid fa-calendar-days" 
  title="Academic Planning" 
@@ -347,11 +355,11 @@ export default function Timetable({ isEmbedded = false }) {
  isEmbedded={isEmbedded}
  rightContent={
  <div className="flex bg-black/[0.04] dark:bg-white/[0.04] p-1.5 rounded-2xl border border-black/5 dark:border-white/5 overflow-x-auto no-scrollbar w-fit gap-1">
- {['Today', 'Week', 'Calendar', 'Changes'].map(tab => (
+ {['Today', 'Week'].map(tab => (
  <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
- className={`min-w-[110px] px-6 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === tab.toLowerCase() ? "bg-white dark:bg-[#2C2C2E] shadow-sm border border-black/5 dark:border-white/5 text-gray-900 dark:text-white" : "text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7] border border-transparent hover:bg-black/5 dark:hover:bg-white/10"}`}
+ className={`min-w-[110px] px-6 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === tab.toLowerCase() ? "bg-white dark:bg-themeElevated shadow-sm border border-black/5 dark:border-white/5 text-themeText dark:text-white" : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-black/5 dark:hover:bg-white/10"}`}
  >
  {tab}
  </button>
@@ -359,68 +367,68 @@ export default function Timetable({ isEmbedded = false }) {
  </div>
  }
  />
- </div>
 
  <div className="w-full flex flex-col lg:flex-row gap-8 items-start mt-4">
- <div className="flex-1 w-full overflow-x-auto pb-4">
+ <div className={`flex-1 w-full pb-4 ${activeTab === 'week' ? 'overflow-x-auto' : ''}`}>
  {activeTab === 'today' && renderTodayTimeline()}
  {activeTab === 'week' && (
  <>
  {renderWeeklyGrid()}
  <div className="lg:hidden w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4 mt-8">
- <i className="fa-solid fa-desktop text-3xl text-gray-500 dark:text-white/50 mb-4"></i>
- <h3 className="text-[15px] font-semibold text-gray-900 dark:text-white mb-1">Desktop Recommended</h3>
- <p className="text-xs font-bold text-gray-500 dark:text-white/50">The weekly timetable chart requires a larger screen. Please use a tablet or desktop, or switch to the 'Today' timeline view.</p>
+ <i className="fa-solid fa-desktop text-3xl text-themeTextSec dark:text-white/50 mb-4"></i>
+ <h3 className="text-[15px] font-semibold text-themeText dark:text-white mb-1">Desktop Recommended</h3>
+ <p className="text-xs font-bold text-themeTextSec dark:text-white/50">The weekly timetable chart requires a larger screen. Please use a tablet or desktop, or switch to the 'Today' timeline view.</p>
  </div>
  </>
  )}
  {activeTab === 'calendar' && renderCalendar()}
  {activeTab === 'changes' && (
  <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-code-compare text-4xl mb-4 text-gray-500 dark:text-white/50"></i>
- <p className="text-sm font-bold text-gray-500 dark:text-white/50">No recent timetable changes.</p>
+ <i className="fa-solid fa-code-compare text-4xl mb-4 text-themeTextSec dark:text-white/50"></i>
+ <p className="text-sm font-bold text-themeTextSec dark:text-white/50">No recent timetable changes.</p>
  </div>
  )}
  </div>
 
  <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6 sticky top-32">
- <div className="bg-white/40 dark:bg-[#1C1C1E]/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
- <div className="absolute -right-12 -top-12 w-32 h-32 bg-themeAccent/5 rounded-full blur-2xl group-hover:bg-themeAccent/10 transition"></div>
- <h3 className="text-[13px] font-medium text-gray-500 dark:text-white/50 mb-4">Daily Academic Pulse</h3>
+ <div className="bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] rounded-[2rem] border border-black/5 dark:border-white/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
+ <div className="absolute -right-12 -top-12 w-32 h-32 bg-themeAccent/10 rounded-full blur-3xl group-hover:bg-themeAccent/20 transition-colors"></div>
+ <h3 className="text-[13px] font-bold text-themeTextSec dark:text-white/50 mb-4">Daily Academic Pulse</h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="flex flex-col gap-1">
- <span className="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">{schedule.length}</span>
- <span className="text-[12px] font-medium text-gray-500 dark:text-white/50">Total Classes</span>
+ <span className="text-3xl font-semibold tracking-tight text-themeText dark:text-white">{schedule.length}</span>
+ <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Total Classes</span>
  </div>
  <div className="flex flex-col gap-1">
  <span className="text-3xl font-semibold tracking-tight text-emerald-500">--</span>
- <span className="text-[12px] font-medium text-gray-500 dark:text-white/50">Overall Attd.</span>
+ <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Overall Attd.</span>
  </div>
- <div className="col-span-2 pt-4 border-t border-gray-200 dark:border-white/5 mt-2">
- <p className="text-[13px] font-medium text-gray-500 dark:text-white/50 mb-2">Next Up</p>
+ <div className="col-span-2 pt-4 border-t border-themeBorder dark:border-white/5 mt-2">
+ <p className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-2">Next Up</p>
  {schedule.find(s => s.status === 'upcoming') ? (
  <div className="flex items-center gap-3">
  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
  <div>
- <p className="text-[15px] font-semibold text-gray-900 dark:text-white">{schedule.find(s => s.status === 'upcoming').subject}</p>
- <p className="text-[10px] font-bold text-gray-500 dark:text-white/50">{schedule.find(s => s.status === 'upcoming').room} at {schedule.find(s => s.status === 'upcoming').time}</p>
+ <p className="text-[15px] font-semibold text-themeText dark:text-white">{schedule.find(s => s.status === 'upcoming').subject}</p>
+ <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{schedule.find(s => s.status === 'upcoming').room} at {schedule.find(s => s.status === 'upcoming').time}</p>
  </div>
  </div>
  ) : (
- <p className="text-xs font-bold text-gray-500 dark:text-white/50">No upcoming classes today.</p>
+ <p className="text-xs font-bold text-themeTextSec dark:text-white/50">No upcoming classes today.</p>
  )}
  </div>
  </div>
  </div>
 
- <div className="bg-white/40 dark:bg-[#1C1C1E]/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden">
- <h3 className="text-[13px] font-medium text-gray-500 dark:text-white/50 mb-4">Personal Calendar Sync</h3>
- <p className="text-xs font-bold text-gray-500 dark:text-white/50 mb-4 leading-relaxed">
+ <div className="bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] rounded-[2rem] border border-black/5 dark:border-white/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden">
+ <h3 className="text-[13px] font-bold text-themeTextSec dark:text-white/50 mb-4">Personal Calendar Sync</h3>
+ <p className="text-xs font-semibold text-themeTextSec dark:text-white/50 mb-4 leading-relaxed">
  Sync official updates, extra classes, and holidays directly to your Apple or Google Calendar.
  </p>
- <button type="button" onClick={exportCalendar} className="w-full py-4 bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/20 text-[#1C1C1E] dark:text-[#F2F2F7] text-[13px] font-bold tracking-tight rounded-2xl transition-all flex items-center justify-center gap-2 mt-2">
+ <button type="button" onClick={exportCalendar} className="w-full py-4 bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/20 text-themeText dark:text-themeText text-[13px] font-bold tracking-tight rounded-2xl transition-all flex items-center justify-center gap-2 mt-2">
  <i className="fa-regular fa-calendar-plus text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Export as .ICS
  </button>
+ </div>
  </div>
  </div>
  </div>

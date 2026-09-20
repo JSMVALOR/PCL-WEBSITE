@@ -124,7 +124,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
 
  const handleReject = async () => {
  const actionText = currentBlog?.is_public ? "delete" : "reject and permanently delete";
- if (!window.confirm(`Are you sure you want to ${actionText} this blog post?`)) return;
+ 
 
  try {
  if (currentBlog?.id) {
@@ -173,7 +173,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
 
  const handleRejectERP = async () => {
  const actionVerb = currentBlog?.is_public ? "delete" : "reject";
- if (!window.confirm(`Are you sure you want to ${actionVerb} this blog and notify the author via ERP?`)) return;
+ 
  try {
  if (!currentBlog?.id) return;
  const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
@@ -252,27 +252,37 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  <div className="flex gap-2 flex-wrap justify-end">
  {currentBlog.author_erp_id && (
  <>
- <button type="button" onClick={handleApproveERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-gray-900 dark:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
- <i className="fa-solid fa-bell text-sm"></i> ERP Approve
- </button>
- <button type="button" onClick={handleRejectERP} className="px-3 py-2 bg-purple-500/10 text-purple-500 hover:bg-purple-500 hover:text-gray-900 dark:text-white border border-purple-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
- <i className="fa-solid fa-bell text-sm"></i> {currentBlog?.is_public ? 'ERP Notify Delete' : 'ERP Reject'}
- </button>
+ <SlideCommit
+                label="Slide to Approve"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={handleApproveERP}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
+ <HoldButton size="sm" onHold={handleRejectERP} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                {currentBlog?.is_public ? 'ERP Notify Delete' : 'ERP Reject'}
+            </HoldButton>
  <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
  </>
  )}
  
- <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-gray-900 dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-themeText dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-brands fa-whatsapp text-sm"></i> Approve
  </a>
- <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-gray-900 dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-themeText dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-brands fa-whatsapp text-sm"></i> Reject
  </a>
  <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
- <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-gray-900 dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Approve
  </a>
- <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-gray-900 dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Reject
  </a>
  </div>
@@ -326,9 +336,9 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
 
  <div className="flex justify-between mt-4">
  {currentBlog ? (
- <button type="button" onClick={handleReject} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 text-xs font-black uppercase tracking-widest rounded-lg transition-colors">
- {currentBlog?.is_public ? 'Delete Post' : 'Reject & Delete'}
- </button>
+ <HoldButton size="sm" onHold={handleReject} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                {currentBlog?.is_public ? 'Delete Post' : 'Reject & Delete'}
+            </HoldButton>
  ) : <div></div>}
  <button type="submit" className="btn-erp">
  {currentBlog ? 'Update Post' : 'Submit Post'}
@@ -341,7 +351,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
         </div>
     )}
     
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  <PageHeader icon="fa-solid fa-newspaper" title="Blog Manager" subtitle="Review submissions, publish, and notify authors." />
 
  <div className="flex justify-between items-center mb-6">
@@ -404,7 +414,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  </td>
  <td className="p-4 text-right">
  <div className="flex items-center justify-end gap-2">
- <button type="button" onClick={() => handleEdit(blog)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-gray-900 dark:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors" title="Review & Edit">
+ <button type="button" onClick={() => handleEdit(blog)} className="w-8 h-8 rounded-lg bg-blue-500/10 hover:bg-blue-500 hover:text-themeText dark:text-white text-blue-500 border border-blue-500/20 flex items-center justify-center transition-colors" title="Review & Edit">
  <i className="fa-solid fa-pen-to-square"></i>
  </button>
  </div>

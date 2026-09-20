@@ -76,26 +76,26 @@ export default function MentorshipDashboard({ setActiveTab }) {
  
  {/* Quick Actions */}
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
- <button type="button" onClick={() => setActiveTab('allocations')} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-500 transition group active:scale-95">
- <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <button type="button" onClick={() => setActiveTab('allocations')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-500 transition group active:scale-95">
+ <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-users-rays text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Assign Mentors</span>
  </button>
- <button type="button" onClick={() => setActiveTab('transfers')} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500 transition group active:scale-95">
- <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <button type="button" onClick={() => setActiveTab('transfers')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500 transition group active:scale-95">
+ <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-shuffle text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Reshuffle</span>
  </button>
- <button type="button" onClick={() => setActiveTab('transfers')} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-emerald-500 transition group active:scale-95">
- <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <button type="button" onClick={() => setActiveTab('transfers')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-emerald-500 transition group active:scale-95">
+ <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-right-left text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Transfer Mentees</span>
  </button>
- <button type="button" onClick={() => setActiveTab('allocations')} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 transition group active:scale-95">
- <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <button type="button" onClick={() => setActiveTab('allocations')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 transition group active:scale-95">
+ <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-file-csv text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Bulk Import</span>
@@ -106,7 +106,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  
  {/* Primary Stats */}
- <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6">
+ <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Overall Progress</span>
  <i className="fa-solid fa-chart-simple text-themeTextSec"></i>
@@ -135,11 +135,11 @@ export default function MentorshipDashboard({ setActiveTab }) {
  </div>
 
  <div className="grid grid-cols-2 gap-4 mt-2">
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-lg border border-gray-200 dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-lg border border-themeBorder dark:border-white/5">
  <span className="text-2xl font-semibold tracking-tight text-themeText block mb-1">{stats.totalStudents}</span>
  <span className="text-[12px] font-medium text-themeTextSec">Total Students</span>
  </div>
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-lg border border-gray-200 dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-lg border border-themeBorder dark:border-white/5">
  <span className="text-2xl font-semibold tracking-tight text-themeText block mb-1">{stats.totalFaculty}</span>
  <span className="text-[12px] font-medium text-themeTextSec">Active Mentors</span>
  </div>
@@ -149,7 +149,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  </div>
 
  {/* Workload Stats */}
- <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 flex flex-col">
+ <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 flex flex-col">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Mentor Workload</span>
  <i className="fa-solid fa-scale-balanced text-themeTextSec"></i>
@@ -167,7 +167,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <span className="text-xl font-semibold tracking-tight text-indigo-500">{stats.avgMentees}</span>
  </div>
 
- <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5">
+ <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5">
  <div className="flex flex-col">
  <span className="text-xs font-bold text-themeText">Largest Load</span>
  <span className="text-[12px] font-medium text-themeTextSec mt-0.5">Maximum Assigned</span>
@@ -175,7 +175,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <span className="text-xl font-semibold tracking-tight text-themeText">{stats.maxLoad}</span>
  </div>
 
- <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5">
+ <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5">
  <div className="flex flex-col">
  <span className="text-xs font-bold text-themeText">Smallest Load</span>
  <span className="text-[12px] font-medium text-themeTextSec mt-0.5">Minimum Assigned</span>

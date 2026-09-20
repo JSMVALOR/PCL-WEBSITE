@@ -615,7 +615,6 @@ export const ErpProvider = ({ children }) => {
                 const { data, error } = await supabase.from('leave_requests').insert([
                     {
                         student_id: userSession.db_id,
-                        class_id: classId,
                         reason,
                         status: 'pending'
                     }
@@ -631,7 +630,7 @@ export const ErpProvider = ({ children }) => {
             if (!userSession) return { success: false };
             try {
                 const { data, error } = await supabase.from('leave_requests')
-                    .update({ status: decision, reviewed_at: new Date().toISOString(), mentor_id: userSession.db_id })
+                    .update({ status: decision, reviewed_at: new Date().toISOString() })
                     .eq('id', requestId);
                 if (error) throw error;
                 return { success: true, data };

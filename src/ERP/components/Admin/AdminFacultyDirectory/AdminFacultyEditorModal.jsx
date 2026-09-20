@@ -154,7 +154,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  const handleSubmit = async (e) => {
  e.preventDefault();
- if (!window.confirm("Are you sure you want to save these changes to the public profile?")) return;
+ if (!(await window.erpDialog?.confirm("Are you sure you want to save these changes to the public profile?"))) return;
  setSaving(true);
  
  try {
@@ -272,7 +272,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <div className="flex gap-3 mb-6">
  <div className="relative overflow-hidden group">
  <input type="file" accept="image/*" onChange={onSelectFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
- <div className="bg-themeAccent text-gray-900 px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition group-hover:bg-themeAccent/90 flex items-center gap-2 pointer-events-none">
+ <div className="bg-themeAccent text-themeText px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition group-hover:bg-themeAccent/90 flex items-center gap-2 pointer-events-none">
  <i className="fa-solid fa-upload"></i> Upload New
  </div>
  </div>
@@ -302,7 +302,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  
  <div className="shrink-0 flex flex-col items-center gap-3 bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-black/5 dark:border-white/10">
  <p className="text-[13px] font-medium text-neutral-400">Current Display</p>
- <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-themeBorder hover:bg-white/10 border border-gray-300 dark:border-white/10">
+ <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-themeBorder hover:bg-white/10 border border-themeBorder dark:border-white/10">
  <img src={formData.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} className="w-full h-full object-cover" alt="Current" />
  </div>
  </div>
@@ -379,10 +379,10 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  {/* FOOTER */}
  <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-black/5 dark:border-white/10 flex justify-end shrink-0 gap-4 z-10">
- <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-gray-300 dark:border-white/10 hover:text-themeText transition">
+ <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-themeBorder dark:border-white/10 hover:text-themeText transition">
  Cancel
  </button>
- <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-gray-900 dark:text-white px-10 py-3 rounded-xl font-black tracking-normal text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+ <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white px-10 py-3 rounded-xl font-black tracking-normal text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
  {saving ? (
  <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div> Saving Changes...</>
  ) : (

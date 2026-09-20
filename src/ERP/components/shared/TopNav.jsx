@@ -97,7 +97,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                             className="absolute top-[calc(100%-8px)] left-0 pt-2 z-50 origin-top-left"
                                         >
-                                            <div className="bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[260px] flex flex-col gap-1.5 relative overflow-hidden">
+                                            <div className="bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[260px] flex flex-col gap-1.5 relative overflow-hidden">
                                                 
                                                 {/* Top edge highlight */}
                                                 <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#007AFF]/30 to-transparent"></div>
@@ -113,7 +113,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                                                 setActiveDropdown(null);
                                                             }}
                                                             className={`group/btn relative flex items-center gap-3 p-2.5 rounded-lg transition-all text-left outline-none ${
-                                                                isActive ? 'bg-themeElevated text-themeText' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 hover:text-themeText dark:hover:text-[#F2F2F7]'
+                                                                isActive ? 'bg-themeElevated text-themeText' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 hover:text-themeText dark:hover:text-themeText'
                                                             }`}
                                                         >
                                                             {isActive && (
@@ -167,10 +167,10 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                         <i className="fa-solid fa-bomb"></i> Break
                     </button>
                     
-                    <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] transition-all relative group outline-none shadow-sm">
+                    <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group outline-none shadow-sm">
                         <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
                         {notices?.length > 0 && (
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-[#1C1C1E]"></span>
+                            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-themeBorder"></span>
                         )}
                     </button>
 
@@ -213,7 +213,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                     className="absolute top-[calc(100%-8px)] right-0 pt-2 z-50 origin-top-right"
                                 >
-                                    <div className="bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
+                                    <div className="bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
                                         <div className="p-3 mb-2 border-b border-black/5 dark:border-white/5 flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-themeElevated flex items-center justify-center font-black text-themeText shadow-inner overflow-hidden border border-black/5 dark:border-white/5">
                                                 {userSession?.profile_picture_url ? (
@@ -233,7 +233,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                                 setActiveTab('credentials');
                                                 setActiveDropdown(null);
                                             }}
-                                            className="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] text-[12px] font-bold"
+                                            className="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-themeTextSec hover:text-themeText dark:hover:text-themeText text-[12px] font-bold"
                                         >
                                             <div className="w-7 h-7 rounded-md bg-black/5 dark:bg-white/5 flex items-center justify-center">
                                                 <i className="fa-solid fa-user-gear text-[11px]"></i>
@@ -269,7 +269,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                     window.location.href = '/';
                                 }}
                                 title="Return to Main Website"
-                                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-themeElevated hover:bg-themeElevated/80 text-themeTextSec hover:text-themeText dark:hover:text-[#F2F2F7] text-[13px] font-medium transition-colors shadow-sm outline-none"
+                                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-themeElevated hover:bg-themeElevated/80 text-themeTextSec hover:text-themeText dark:hover:text-themeText text-[13px] font-medium transition-colors shadow-sm outline-none"
                             >
                                 <i className="fa-solid fa-earth-americas text-[11px]"></i>
                                 <span>Website</span>

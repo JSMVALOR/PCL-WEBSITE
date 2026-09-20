@@ -48,7 +48,7 @@ export default function AdminHeroBanner({}) {
         title={`Good Morning, ${adminName.split(' ')[0]}.`}
         subtitle="Central Command Operations Center."
         rightContent={
-            <div className="relative z-10 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 w-full lg:w-auto lg:min-w-[340px] shrink-0">
+            <div className="relative z-10 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 w-full lg:w-auto lg:min-w-[340px] shrink-0">
                 <h3 className="text-[10px] font-black text-themeText uppercase tracking-widest mb-4 pb-2 border-b border-black/5 dark:border-white/10 flex justify-between items-center">
                     <span className="flex items-center gap-2"><i className="fa-solid fa-chart-pie opacity-70 text-themeAccent"></i> Today's Snapshot</span>
                     {snapshot.loading && <i className="fa-solid fa-circle-notch fa-spin text-themeTextSec"></i>}

@@ -66,7 +66,7 @@ export default function AdminCampusPulse({ className = "" }) {
   const facultyPct = Math.round((data.facultyPresent / data.facultyTotal) * 100) || 0;
 
   return (
-    <div className={`w-full bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl flex flex-col p-5 relative ${className}`}>
+    <div className={`w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl flex flex-col p-5 relative ${className}`}>
         
         {/* Header */}
         <div className="flex items-center justify-between mb-5">

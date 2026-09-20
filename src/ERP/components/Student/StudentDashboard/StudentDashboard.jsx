@@ -83,10 +83,10 @@ export default function StudentDashboard({ setActiveTab }) {
  setStats(prev => ({ ...prev, cgpa: pData.cgpa || 0.00 }));
  }
 
- const { data: mData } = await supabase.from('mentorship').select('faculty_id, profiles!mentorship_faculty_id_fkey(full_name, erp_id, avatar_url)').eq('student_id', sid).eq('status', 'active').single();
+ const { data: mData } = await supabase.from('mentorship').select('faculty_id, profiles!mentorship_faculty_id_fkey(full_name, erp_id, profile_picture_url)').eq('student_id', sid).eq('status', 'active').single();
  if (mData?.profiles) setMentor(mData.profiles);
 
- const { data: nData } = await supabase.from('notices').select('*').eq('status', 'PUBLISHED').order('is_pinned', { ascending: false }).order('created_at', { ascending: false }).limit(5);
+ const { data: nData } = await supabase.from('notices').select('*').order('is_pinned', { ascending: false }).order('created_at', { ascending: false }).limit(5).catch(() => ({ data: [] }));
  if (nData) setDashboardNotices(nData);
 
  // Fetch Attendance
@@ -112,18 +112,18 @@ export default function StudentDashboard({ setActiveTab }) {
 
 
 
- return (
+    return (
         <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
             
-            <div className="relative z-20 w-full w-full mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+            <div className="relative z-20 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
                 
                 {/* LEFT SIDEBAR */}
-                <div className="w-full xl:w-[280px] flex flex-col shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2">
+                <div className="w-full xl:w-[280px] flex flex-col shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2 lg:pr-4">
                     <DirectorySidebarWidget role="student" />
                 </div>
 
                 {/* MAIN CONTENT (flex-1) */}
-                <div className="flex-1 flex flex-col gap-6 lg:gap-8 overflow-y-auto custom-scrollbar pb-10 xl:pb-0 pr-2">
+                <div className="flex-1 flex flex-col gap-6 lg:gap-8 overflow-y-auto custom-scrollbar pb-10 xl:pb-0 pr-2 lg:pr-4">
                     
                     <DashboardGreetingBanner role="student" />
                     
@@ -137,7 +137,7 @@ export default function StudentDashboard({ setActiveTab }) {
                             { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsPending + stats.assignmentsSubmitted}`, icon: 'fa-file-lines' },
                             { label: 'CGPA', val: stats.cgpa.toFixed(2), icon: 'fa-graduation-cap' }
                         ].map((m, i) => (
-                            <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group cursor-pointer hover:border-themeAccent/30 hover:bg-white/80 transition-all">
+                            <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group cursor-pointer hover:border-themeAccent/30 hover:bg-white/80 transition-all">
                                 <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec mb-3">
                                     <i className={`fa-solid ${m.icon}`}></i>
                                 </div>
@@ -152,7 +152,7 @@ export default function StudentDashboard({ setActiveTab }) {
                         <StudentActivityRings stats={stats} />
                         
                         {/* Campus Notices */}
-                        <div className="flex-1 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 relative flex flex-col shrink-0">
+                        <div className="flex-1 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 relative flex flex-col shrink-0">
                             <div className="flex justify-between items-center mb-5 shrink-0">
                                 <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec">Campus Notices</h3>
                                 <button onClick={() => setActiveTab('notices')} className="text-themeAccent text-xs hover:underline font-bold">View All</button>

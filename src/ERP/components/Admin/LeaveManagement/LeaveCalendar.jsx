@@ -50,7 +50,7 @@ export default function LeaveCalendar({}) {
  
  // Blank days before 1st
  for (let i = 0; i < firstDay; i++) {
- days.push(<div key={`blank-${i}`} className="min-h-[100px] border border-gray-200 dark:border-white/5/50 bg-black/5 dark:bg-white/5/30 rounded-xl"></div>);
+ days.push(<div key={`blank-${i}`} className="min-h-[100px] border border-themeBorder dark:border-white/5/50 bg-black/5 dark:bg-white/5/30 rounded-xl"></div>);
  }
 
  // Days of month
@@ -66,7 +66,7 @@ export default function LeaveCalendar({}) {
 
  days.push(
  <div key={day} className={`min-h-[80px] lg:min-h-[100px] border-[length:var(--border-width)] rounded-xl p-1.5 lg:p-2 transition relative flex flex-col gap-1 overflow-hidden group
- ${isToday ? 'border-indigo-500 bg-indigo-500/5' : 'border-gray-200 dark:border-white/5 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8]/85 backdrop-blur-2xl hover:bg-black/5 dark:bg-white/5/90 backdrop-blur-2xl hover:border-black/5 dark:border-white/10'}
+ ${isToday ? 'border-indigo-500 bg-indigo-500/5' : 'border-themeBorder dark:border-white/5 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8]/85 backdrop-blur-2xl hover:bg-black/5 dark:bg-white/5/90 backdrop-blur-2xl hover:border-black/5 dark:border-white/10'}
  `}>
  <div className="flex justify-between items-center mb-0.5 lg:mb-1">
  <span className={`text-[10px] lg:text-[14px] font-medium ${isToday ? 'text-indigo-500' : 'text-themeTextSec'} group-hover:text-themeText transition-colors w-5 h-5 lg:w-6 lg:h-6 flex items-center justify-center rounded-full ${isToday ? 'bg-indigo-500/10' : ''}`}>{day}</span>
@@ -74,7 +74,7 @@ export default function LeaveCalendar({}) {
 
  <div className="flex flex-col gap-1 overflow-y-auto max-h-[60px] lg:max-h-[80px] no-scrollbar">
  {leavesOnDay.map(leave => (
- <div key={leave.id} className={`text-[8px] lg:text-[9px] font-bold px-1.5 py-0.5 lg:px-2 lg:py-1 rounded truncate bg-${leave.leave_type || 'blue'}-500/10 text-${leave.leave_type || 'blue'}-500 hover:bg-${leave.leave_type || 'blue'}-500 hover:text-gray-900 dark:text-white transition-colors cursor-default`}>
+ <div key={leave.id} className={`text-[8px] lg:text-[9px] font-bold px-1.5 py-0.5 lg:px-2 lg:py-1 rounded truncate bg-${leave.leave_type || 'blue'}-500/10 text-${leave.leave_type || 'blue'}-500 hover:bg-${leave.leave_type || 'blue'}-500 hover:text-themeText dark:text-white transition-colors cursor-default`}>
  {'Faculty' || 'Faculty'}
  </div>
  ))}
@@ -89,7 +89,7 @@ export default function LeaveCalendar({}) {
  return (
  <div className="flex flex-col gap-6 animate-fade-in">
  
- <div className="flex flex-col md:flex-row items-center justify-between bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-4 lg:p-5 gap-4">
+ <div className="flex flex-col md:flex-row items-center justify-between bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-4 lg:p-5 gap-4">
  <div className="flex items-center gap-3 lg:gap-4 w-full md:w-auto justify-between md:justify-start">
  <button type="button" onClick={prevMonth} className="w-8 h-8 lg:w-10 lg:h-10 rounded-xl bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong flex items-center justify-center text-themeText hover:text-indigo-500 transition-colors">
  <i className="fa-solid fa-chevron-left"></i>
@@ -117,7 +117,7 @@ export default function LeaveCalendar({}) {
 
  <div className="grid grid-cols-7 gap-3 relative">
  {isLoading && (
- <div className="absolute inset-0 z-10 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8]/50 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl">
+ <div className="absolute inset-0 z-10 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8]/50 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl">
  <i className="fa-solid fa-circle-notch fa-spin text-4xl text-indigo-500 mb-4"></i>
  <span className="text-[15px] font-semibold tracking-normal text-themeText">Loading Calendar...</span>
  </div>

@@ -90,20 +90,20 @@ export default function SemesterManager({}) {
  </div>
 
  {isCreating && (
- <form onSubmit={handleCreate} className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-4 animate-fade-in">
+ <form onSubmit={handleCreate} className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-4 animate-fade-in">
  <h3 className="text-[15px] font-semibold text-themeText">Create New Semester</h3>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Academic Term Name</label>
- <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Winter 2026" className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none" />
+ <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Winter 2026" className="w-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none" />
  </div>
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Start Date</label>
- <input min="2026-09-14" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
+ <input min="2026-09-14" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required className="w-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">End Date</label>
- <input min="2026-09-14" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required className="w-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
+ <input min="2026-09-14" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required className="w-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none color-scheme-dark" />
  </div>
  </div>
  <button type="submit" className="btn-erp">
@@ -112,10 +112,10 @@ export default function SemesterManager({}) {
  </form>
  )}
 
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl overflow-hidden">
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl overflow-hidden">
  <div className="w-full overflow-x-auto">
  <table className="w-full text-left">
- <thead className="bg-themeElevated/90 backdrop-blur-2xl border-b border-gray-200 dark:border-white/5">
+ <thead className="bg-themeElevated/90 backdrop-blur-2xl border-b border-themeBorder dark:border-white/5">
  <tr>
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Academic Term</th>
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Timeline</th>

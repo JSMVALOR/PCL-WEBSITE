@@ -42,7 +42,7 @@ export default function AdminMarksController() {
         try {
             const { data, error } = await supabase
                 .from('mark_correction_requests')
-                .select('*, faculty:faculty_id(full_name), student:student_id(full_name, roll_number, erp_id), subject:subject_id(name, code)')
+                .select('*, faculty:profiles!mark_correction_requests_faculty_id_fkey(full_name), student:profiles!mark_correction_requests_student_id_fkey(full_name, roll_number, erp_id), subject:master_subjects(name, code)')
                 .order('created_at', { ascending: false });
             if (!error && data) setCorrectionRequests(data);
         } catch (e) {
@@ -91,7 +91,7 @@ export default function AdminMarksController() {
             // Fetch all marks for this specific submission lock
             const { data: marks, error } = await supabase
                 .from('marks_ledger')
-                .select('marks_obtained, student:student_id(roll_number, full_name, erp_id)')
+                .select('marks_obtained, student:profiles!marks_ledger_student_id_fkey(roll_number, full_name, erp_id)')
                 .eq('subject_id', sub.subject_id)
                 .eq('assessment_type', sub.assessment_type)
                 .order('student_id', { ascending: true }); // Need a join sort, but JS sort is fine

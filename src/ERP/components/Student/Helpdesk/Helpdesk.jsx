@@ -229,33 +229,46 @@ export default function Helpdesk({ isEmbedded = false, }) {
                 ) : (
                 <>
                 /* GRIEVANCE CONTENT */
-                <div className="flex flex-col gap-6 animate-fade-in w-full max-w-4xl mt-2">
-                    <div className="bg-rose-500/5 border border-rose-500/20 rounded-3xl p-6 lg:p-8 flex flex-col gap-4">
-                        <div className="flex items-center gap-3 text-rose-500 mb-2">
-                            <i className="fa-solid fa-shield-halved text-3xl"></i>
-                            <h3 className="text-2xl font-black tracking-tight">Anonymous Grievance Cell</h3>
+                <div className="flex flex-col gap-6 animate-fade-in w-full max-w-4xl mt-4">
+                    <div className="bg-themePanel border border-rose-500/20 shadow-2xl shadow-rose-500/10 rounded-[2.5rem] p-6 lg:p-10 flex flex-col gap-6 relative overflow-hidden">
+                        
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/4"></div>
+
+                        <div className="flex items-center gap-4 text-rose-500 mb-2 relative z-10">
+                            <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+                                <i className="fa-solid fa-user-secret text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 className="text-2xl lg:text-3xl font-black tracking-tight text-themeText dark:text-white leading-tight">Anonymous Grievance</h3>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-rose-500 mt-1">100% Secure & Untraceable</p>
+                            </div>
                         </div>
-                        <p className="text-sm font-medium text-themeTextSec leading-relaxed">
-                            Report critical issues such as ragging, harassment, or other serious violations. Your submission is 100% anonymous and goes directly to the Central Approvals Command Center.
+                        <p className="text-sm font-medium text-themeTextSec leading-relaxed relative z-10">
+                            Report critical issues such as ragging, harassment, or other serious violations. Your submission is completely anonymous, stripped of session tokens, and goes directly to the Central Approvals Command Center.
                         </p>
                         
-                        <form onSubmit={handleGrievanceSubmit} className="flex flex-col gap-4 mt-4">
+                        <form onSubmit={handleGrievanceSubmit} className="flex flex-col gap-5 mt-2 relative z-10">
                             {grievanceStatus.text && (
-                                <div className={`p-4 rounded-xl text-xs font-bold ${grievanceStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'}`}>
-                                    {grievanceStatus.text}
+                                <div className={`p-4 rounded-2xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 ${grievanceStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border border-rose-500/20'}`}>
+                                    <i className={`fa-solid ${grievanceStatus.type === 'success' ? 'fa-check' : 'fa-triangle-exclamation'}`}></i> {grievanceStatus.text}
                                 </div>
                             )}
-                            <textarea
-                                rows="5"
-                                value={grievanceForm.description}
-                                onChange={(e) => setGrievanceForm({ ...grievanceForm, description: e.target.value })}
-                                placeholder="Describe the incident securely..."
-                                className="w-full bg-black/5 dark:bg-white/5 border border-rose-500/20 rounded-2xl px-5 py-4 text-sm font-medium text-themeText focus:border-rose-500 outline-none transition resize-none placeholder:text-rose-500/50"
-                                required
-                            ></textarea>
-                            <button type="submit" disabled={isSubmitting} className="bg-rose-500 hover:bg-rose-600 text-white font-bold uppercase tracking-widest text-xs px-8 py-4 rounded-2xl transition w-fit flex items-center gap-2 mt-2">
-                                {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
-                                Submit Securely
+                            <div className="relative">
+                                <textarea
+                                    rows="6"
+                                    value={grievanceForm.description}
+                                    onChange={(e) => setGrievanceForm({ ...grievanceForm, description: e.target.value })}
+                                    placeholder="Describe the incident with as much detail as possible..."
+                                    className="w-full bg-white/50 dark:bg-black/20 backdrop-blur-xl border border-themeBorder dark:border-white/10 rounded-3xl px-6 py-5 text-sm font-medium text-themeText dark:text-white focus:border-rose-500 focus:bg-white dark:focus:bg-[#121212] outline-none transition-all resize-none placeholder:text-themeTextSec dark:placeholder:text-white/30 shadow-inner"
+                                    required
+                                ></textarea>
+                                <div className="absolute bottom-5 right-6 pointer-events-none">
+                                    <i className="fa-solid fa-lock text-themeTextSec dark:text-white/20"></i>
+                                </div>
+                            </div>
+                            <button type="submit" disabled={isSubmitting} className="bg-rose-500 hover:bg-rose-400 text-white shadow-xl shadow-rose-500/20 font-black uppercase tracking-widest text-xs lg:text-sm px-8 py-4 rounded-[2rem] transition-all w-full lg:w-fit flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                                {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-paper-plane text-lg"></i>}
+                                Transmit Securely
                             </button>
                         </form>
                     </div>
@@ -266,94 +279,17 @@ export default function Helpdesk({ isEmbedded = false, }) {
                 {/* NEW TICKET MODAL */}
  {showTicketModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
- <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]">
+ <div className="w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-2xl">
 
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-5 lg:p-6 text-themeText relative border-b-theme border-black/10 dark:border-white/20 shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
- <div className="flex justify-between items-start relative z-10">
- <div>
- <h3 className="text-lg lg:text-xl font-semibold tracking-tight tracking-tight mb-1 text-themeText">Create Support Ticket</h3>
- <p className={`text-[10px] lg:text-xs ${theme.text.muted} font-medium`}>We usually respond within 24 hours.</p>
- </div>
- <button type="button" onClick={() => setShowTicketModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border border-black/5 dark:border-white/10 text-themeTextSec hover:text-themeText hover:border-amber-500 transition-colors shrink-0">
- <i className="fa-solid fa-xmark"></i>
- </button>
- </div>
- </div>
-
- <div className="overflow-y-auto no-scrollbar flex-1">
- <form onSubmit={handleRequestSubmit} className="p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
-
- {statusMessage.text && (
- <div className={`p-4 rounded-[2rem] text-[9px] lg:text-[13px] font-medium flex items-center gap-2 border-theme animate-fade-in ${statusMessage.type === "success" ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent" : "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/5 dark:border-white/10 text-rose-400"
- }`}>
- <i className={`fa-solid ${statusMessage.type === "success" ? "fa-check-circle" : "fa-triangle-exclamation"}`}></i>
- {statusMessage.text}
- </div>
- )}
-
- <div>
- <label className={`block text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mb-2 ml-1`}>Department</label>
- <div className="relative">
- <select
- value={ticketForm.category}
- onChange={(e) => setTicketForm({ ...ticketForm, category: e.target.value })}
- className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition appearance-none cursor-pointer"
- required
- >
- <option value="" disabled>Select Department...</option>
- <option value="IT Support">IT & Technical Support</option>
- <option value="Finance">Finance & Fees</option>
- <option value="Academic">Academic & Examination</option>
- <option value="Administration">General Administration</option>
- </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-80 pointer-events-none"></i>
- </div>
- </div>
-
- <div>
- <label className={`block text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mb-2 ml-1`}>Subject</label>
- <input
- type="text"
- value={ticketForm.subject}
- onChange={(e) => setTicketForm({ ...ticketForm, subject: e.target.value })}
- placeholder="Brief description of the issue"
- className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3.5 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition placeholder:text-neutral-600"
- required
- />
- </div>
-
- <div>
- <label className={`block text-[9px] lg:text-[13px] font-medium ${theme.text.muted} mb-2 ml-1`}>Detailed Explanation</label>
- <textarea
- rows="4"
- value={ticketForm.description}
- onChange={(e) => setTicketForm({ ...ticketForm, description: e.target.value })}
- placeholder="Please provide as much detail as possible..."
- className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 lg:py-4 text-xs lg:text-sm font-bold text-themeText focus:border-themeAccent outline-none transition resize-none placeholder:text-neutral-600"
- required
- ></textarea>
- </div>
-
- <button
- type="submit"
- disabled={isSubmitting}
- className={`w-full mt-2 py-4 rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex justify-center items-center gap-2 overflow-hidden group shrink-0 ${isSubmitting
- ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-neutral-600 cursor-not-allowed border border-black/10 dark:border-white/20 '
- : 'bg-amber-500 text-[#050505] hover:bg-amber-400 active:scale-[0.98]'
- }`}
- >
- {!isSubmitting && (
- <div className="absolute inset-0 w-full h-full -translate-x-full group-hover:"></div>
- )}
- {isSubmitting ? (
- <><i className="fa-solid fa-circle-notch fa-spin text-lg"></i> Submitting...</>
- ) : (
- <><i className="fa-solid fa-paper-plane"></i> Submit Ticket</>
- )}
- </button>
- </form>
- </div>
+ <div className="border-b border-black/5 dark:border-white/10 p-6 lg:p-8 shrink-0 flex justify-between items-start relative z-10">
+    <div>
+        <h3 className="text-xl lg:text-2xl font-black tracking-tight mb-1 text-themeText dark:text-white">Create Support Ticket</h3>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">We usually respond within 24 hours.</p>
+    </div>
+    <button type="button" onClick={() => setShowTicketModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-black/10 transition-colors shrink-0">
+        <i className="fa-solid fa-xmark"></i>
+    </button>
+</div>
  </div>
  </div>
  )}

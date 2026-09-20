@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { registerDialogContainer } from "../../utils/DialogManager";
 import { motion, AnimatePresence } from "framer-motion";
+import SlideCommit from "../../../Shared/components/ReactBits/SlideCommit/SlideCommit";
 
 export default function DialogContainer() {
     const [dialogState, setDialogState] = useState({
@@ -56,11 +57,11 @@ export default function DialogContainer() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ type: "spring", delay: 0.1, stiffness: 400, damping: 25 }}
-                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-500" : "bg-white/20 border-white/30 text-gray-900 dark:text-white"}`}
+                                className={`w-14 h-14 rounded-full flex items-center justify-center border-4 ${(isConfirm || isPrompt) ? "bg-amber-500/20 border-amber-500/30 text-amber-500" : "bg-white/20 border-white/30 text-themeText dark:text-white"}`}
                             >
                                 <i className={`fa-solid text-xl ${(isConfirm || isPrompt) ? "fa-circle-question" : (isError ? "fa-xmark" : "fa-check")}`}></i>
                             </motion.div>
-                            <h3 className="font-black tracking-widest uppercase text-gray-900 dark:text-white text-lg drop-shadow-sm dark:drop-shadow-md">
+                            <h3 className="font-black tracking-widest uppercase text-themeText dark:text-white text-lg drop-shadow-sm dark:drop-shadow-md">
                                 {dialogState.title}
                             </h3>
                         </div>
@@ -84,32 +85,59 @@ export default function DialogContainer() {
                                         if (e.key === 'Enter') dialogState.onConfirm(dialogState.inputValue);
                                         if (e.key === 'Escape') dialogState.onCancel();
                                     }}
-                                    className="w-full bg-gray-50 dark:bg-black/20 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white focus:border-rose-500/50 outline-none transition placeholder:text-gray-400 dark:text-white/40"
+                                    className="w-full bg-gray-50 dark:bg-black/20 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white focus:border-rose-500/50 outline-none transition placeholder:text-themeTextSec dark:text-white/40"
                                     placeholder="Type here..."
                                 />
                             </div>
                         )}
 
                         {/* Footer Controls */}
-                        <div className="p-4 border-t border-gray-300 dark:border-white/10 flex flex-col sm:flex-row gap-3 relative z-10">
-                            {(isConfirm || isPrompt) && (
+                        <div className="p-4 border-t border-themeBorder dark:border-white/10 flex flex-col gap-3 relative z-10 w-full items-center">
+                            {isPrompt ? (
+                                <div className="flex gap-3 w-full">
+                                    <motion.button 
+                                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                        onClick={dialogState.onCancel}
+                                        className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-themeText dark:text-white border border-themeBorder dark:border-white/10 hover:border-white/30 rounded-xl font-bold tracking-widest text-[10px] transition-all"
+                                    >Cancel</motion.button>
+                                    <motion.button 
+                                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                        onClick={() => dialogState.onConfirm(dialogState.inputValue)}
+                                        className="flex-1 py-3 rounded-xl font-black tracking-widest text-[10px] transition-colors shadow-lg bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/30 uppercase"
+                                    >Submit</motion.button>
+                                </div>
+                            ) : isConfirm ? (
+                                <div className="flex flex-col w-full gap-3">
+                                    <div className="w-full h-14">
+                                        <SlideCommit
+                                            label="Slide to Confirm"
+                                            doneLabel="Confirmed"
+                                            onConfirm={async () => {
+                                                await new Promise(r => setTimeout(r, 200));
+                                                dialogState.onConfirm();
+                                            }}
+                                            width="100%"
+                                            height={56}
+                                            radius={16}
+                                            className="w-full"
+                                        />
+                                    </div>
+                                    <button 
+                                        onClick={dialogState.onCancel}
+                                        className="py-2.5 w-full rounded-xl bg-transparent text-themeTextSec dark:text-white/40 hover:bg-white/5 hover:text-white font-bold tracking-widest uppercase text-[10px] transition-all"
+                                    >
+                                        Cancel Request
+                                    </button>
+                                </div>
+                            ) : (
                                 <motion.button 
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={dialogState.onCancel}
-                                    className="flex-1 py-3 bg-white/10 hover:bg-white/20 text-gray-900 dark:text-white border border-gray-300 dark:border-white/10 hover:border-white/30 rounded-xl font-bold tracking-normal text-[10px] transition-all"
+                                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                    onClick={() => dialogState.onConfirm()}
+                                    className="w-full py-3 rounded-xl font-black tracking-widest text-[10px] transition-colors shadow-lg bg-white/20 hover:bg-white/30 text-white shadow-none uppercase"
                                 >
-                                    Cancel
+                                    Understood
                                 </motion.button>
                             )}
-                            <motion.button 
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => isPrompt ? dialogState.onConfirm(dialogState.inputValue) : dialogState.onConfirm()}
-                                className={`flex-1 py-3 rounded-xl font-black tracking-normal text-[10px] transition-colors shadow-lg ${(isConfirm || isPrompt) ? "bg-rose-500 hover:bg-rose-400 text-gray-900 dark:text-white shadow-rose-500/30" : "bg-white/20 hover:bg-white/30 text-gray-900 dark:text-white shadow-none"}`}
-                            >
-                                {isPrompt ? 'Submit' : (isConfirm ? ((dialogState.title?.toLowerCase() || "").includes("sign out") || (dialogState.title?.toLowerCase() || "").includes("session") ? "Sign Out" : "Confirm") : "Understood")}
-                            </motion.button>
                         </div>
                     </motion.div>
                 </motion.div>

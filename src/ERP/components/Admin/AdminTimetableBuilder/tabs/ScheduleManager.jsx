@@ -95,7 +95,7 @@ export default function ScheduleManager() {
   };
 
   const deleteClassroom = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this classroom?")) return;
+    
     try {
       const { error } = await supabase
         .from('academic_classrooms')
@@ -114,7 +114,7 @@ export default function ScheduleManager() {
   return (
     <div className="w-full max-w-5xl mx-auto flex flex-col gap-8 animate-fade-in pb-20">
       
-      <div className="bg-themePanel/60 backdrop-blur-3xl border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 md:p-10 shadow-xl relative overflow-hidden">
+      <div className="bg-themePanel/60 backdrop-blur-3xl border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 md:p-10 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/20 via-blue-500 to-blue-500/20"></div>
         <div className="mb-8">
           <h2 className="text-2xl font-black tracking-tight text-themeText flex items-center gap-3">
@@ -129,16 +129,16 @@ export default function ScheduleManager() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           <div className="lg:col-span-1 flex flex-col gap-4">
-            <div className="bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/5 p-5 rounded-2xl">
+            <div className="bg-white/50 dark:bg-black/20 border border-themeBorder dark:border-white/5 p-5 rounded-2xl">
               <h3 className="text-sm font-black uppercase tracking-wider text-themeText mb-4">Add Classroom</h3>
               <form onSubmit={handleAddClassroom} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Room Name / Number</label>
-                  <input type="text" value={newRoomName} onChange={e => setNewRoomName(e.target.value)} required placeholder="e.g. Room 101, Moot Court" className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+                  <input type="text" value={newRoomName} onChange={e => setNewRoomName(e.target.value)} required placeholder="e.g. Room 101, Moot Court" className="w-full bg-white dark:bg-themePanel border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Capacity</label>
-                  <input type="number" value={newRoomCapacity} onChange={e => setNewRoomCapacity(e.target.value)} required placeholder="60" className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+                  <input type="number" value={newRoomCapacity} onChange={e => setNewRoomCapacity(e.target.value)} required placeholder="60" className="w-full bg-white dark:bg-themePanel border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
                 </div>
                 <button type="submit" className="w-full py-3 bg-blue-500 text-white rounded-xl text-xs font-black uppercase tracking-wider hover:bg-blue-600 transition-colors mt-2">
                   Create Room
@@ -151,12 +151,12 @@ export default function ScheduleManager() {
             <h3 className="text-sm font-black uppercase tracking-wider text-themeText">Active Facilities ({classrooms.length})</h3>
             <div className="flex flex-col gap-3">
               {classrooms.length === 0 ? (
-                <div className="text-center py-10 bg-white/30 dark:bg-black/10 rounded-2xl border border-dashed border-gray-300 dark:border-white/10 text-themeTextSec text-sm">
+                <div className="text-center py-10 bg-white/30 dark:bg-black/10 rounded-2xl border border-dashed border-themeBorder dark:border-white/10 text-themeTextSec text-sm">
                   No classrooms defined yet.
                 </div>
               ) : (
                 classrooms.map(room => (
-                  <div key={room.id} className="flex items-center justify-between p-4 bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-md rounded-2xl border border-gray-200 dark:border-white/5 hover:border-black/10 dark:hover:border-white/20 transition-colors">
+                  <div key={room.id} className="flex items-center justify-between p-4 bg-white/80 dark:bg-themePanel/80 backdrop-blur-md rounded-2xl border border-themeBorder dark:border-white/5 hover:border-black/10 dark:hover:border-white/20 transition-colors">
                     <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${room.status === 'Active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                         <i className="fa-solid fa-door-open text-xl"></i>
@@ -189,14 +189,9 @@ export default function ScheduleManager() {
                       >
                         <i className="fa-solid fa-power-off text-[10px]"></i>
                       </button>
-                      <button 
-                        type="button"
-                        onClick={() => deleteClassroom(room.id)}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 transition-colors"
-                        title="Delete Classroom"
-                      >
-                        <i className="fa-solid fa-trash text-[10px]"></i>
-                      </button>
+                      <HoldButton size="sm" onHold={() => deleteClassroom(room.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                null
+            </HoldButton>
                     </div>
                   </div>
                 ))
@@ -217,11 +212,11 @@ export default function ScheduleManager() {
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Room Name / Number</label>
-                <input type="text" value={editRoomName} onChange={e => setEditRoomName(e.target.value)} required className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+                <input type="text" value={editRoomName} onChange={e => setEditRoomName(e.target.value)} required className="w-full bg-white dark:bg-themePanel border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider">Capacity</label>
-                <input type="number" value={editRoomCapacity} onChange={e => setEditRoomCapacity(e.target.value)} required className="w-full bg-white dark:bg-[#1C1C1E] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
+                <input type="number" value={editRoomCapacity} onChange={e => setEditRoomCapacity(e.target.value)} required className="w-full bg-white dark:bg-themePanel border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-blue-500 transition-colors" />
               </div>
               <button type="submit" className="w-full py-4 bg-blue-500 text-white rounded-xl text-sm font-black uppercase tracking-wider hover:bg-blue-600 transition-colors mt-2">
                 Save Changes

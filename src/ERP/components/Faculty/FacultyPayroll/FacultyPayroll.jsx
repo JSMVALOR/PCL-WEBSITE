@@ -10,6 +10,7 @@ export default function FacultyPayroll() {
     const { userSession } = useERP();
     const facultyId = userSession?.db_id || userSession?.id;
     const [payslips, setPayslips] = useState([]);
+    const [pendingLop, setPendingLop] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const [showAccountModal, setShowAccountModal] = useState(false);
@@ -45,6 +46,26 @@ export default function FacultyPayroll() {
     useEffect(() => {
         let isMounted = true;
         const fetchPayroll = async () => {
+            try {
+                // Fetch this month's LOP leaves for pending deduction calculation
+                const currMonthStart = new Date();
+                currMonthStart.setDate(1);
+                currMonthStart.setHours(0,0,0,0);
+                
+                const { data: leaves } = await supabase
+                    .from('faculty_leaves')
+                    .select('days')
+                    .eq('faculty_id', facultyId)
+                    .eq('leave_type', 'Loss of Pay (LOP)')
+                    .in('status', ['approved', 'pending'])
+                    .gte('from_date', currMonthStart.toISOString())
+                    .catch(() => ({ data: [] }));
+                
+                if (leaves && leaves.length > 0) {
+                    const totalLop = leaves.reduce((sum, l) => sum + (Number(l.days) || 0), 0);
+                    if (isMounted) setPendingLop(totalLop);
+                }
+            } catch (e) {}
             try {
                 const { data } = await supabase
                     .from('faculty_payroll')
@@ -95,28 +116,52 @@ export default function FacultyPayroll() {
 
     const handleSaveAccount = async (e) => {
         e.preventDefault();
+
+        const acctRegex = /^[0-9]{9,18}$/;
+        if (!acctRegex.test(accountDetails.account_number)) {
+            if (window.erpDialog) window.erpDialog.alert("Account Number must be between 9 and 18 digits.", "error");
+            else alert("Account Number must be between 9 and 18 digits.");
+            return;
+        }
+
+        const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+        if (!ifscRegex.test(accountDetails.ifsc_code)) {
+            if (window.erpDialog) window.erpDialog.alert("IFSC Code must be valid (e.g. HDFC0001234).", "error");
+            else alert("IFSC Code must be valid (e.g. HDFC0001234).");
+            return;
+        }
+
+        const msg = "Are you sure you want to securely sync these payroll details?";
+        const confirmed = window.erpDialog ? window.erpDialog.confirm(msg) : confirm(msg);
+        if (!confirmed) return;
+
         setIsSaving(true);
         try {
-            // Optimistically save to session storage
-            sessionStorage.setItem(`salary_acc_${facultyId}`, JSON.stringify(accountDetails));
-
-            // Attempt to sync to Supabase JSONB column or fallback
-            await supabase.from('profiles').update({
+            const { error: err1 } = await supabase.from('profiles').update({
                 payment_details: accountDetails
-            }).eq('id', facultyId).catch(() => {});
+            }).eq('id', facultyId);
 
-            // Also try individual columns in case the schema uses that
-            await supabase.from('profiles').update({
+            const { error: err2 } = await supabase.from('profiles').update({
                 bank_name: accountDetails.bank_name,
                 account_number: accountDetails.account_number,
                 ifsc_code: accountDetails.ifsc_code
-            }).eq('id', facultyId).catch(() => {});
+            }).eq('id', facultyId);
 
-            setTimeout(() => {
-                setIsSaving(false);
+            if (err1 && err2) {
+                console.error("Sync Error:", err1, err2);
+                if (window.erpDialog) window.erpDialog.alert("Failed to sync account details. Database error.", "error");
+                else alert("Failed to sync account details. Database error.");
+            } else {
+                sessionStorage.setItem(`salary_acc_${facultyId}`, JSON.stringify(accountDetails));
+                if (window.erpDialog) window.erpDialog.alert("Payroll destination synced securely.", "success");
+                else alert("Payroll destination synced securely.");
                 setShowAccountModal(false);
-            }, 800);
+            }
         } catch (error) {
+            console.error(error);
+            if (window.erpDialog) window.erpDialog.alert("An unexpected error occurred.", "error");
+            else alert("An unexpected error occurred.");
+        } finally {
             setIsSaving(false);
         }
     };
@@ -125,7 +170,7 @@ export default function FacultyPayroll() {
     const lastPayslip = payslips[0];
 
     return (
-        <div className="w-full min-h-screen bg-transparent text-gray-900 dark:text-white font-sans animate-fade-in selection:bg-amber-500/30">
+        <div className="w-full min-h-screen bg-transparent text-themeText dark:text-white font-sans animate-fade-in selection:bg-amber-500/30">
             <div className="w-full mx-auto p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12 flex flex-col gap-6 lg:gap-8">
                 
                 <PageHeader 
@@ -136,31 +181,31 @@ export default function FacultyPayroll() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Last Net Pay */}
-                    <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 lg:p-8 flex flex-col justify-between group">
+                    <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 lg:p-8 flex flex-col justify-between group">
                         <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-6">
                             <i className="fa-solid fa-wallet text-xl"></i>
                         </div>
                         <div>
-                            <h3 className="text-3xl font-black tracking-tighter text-gray-900 dark:text-white mb-1">
+                            <h3 className="text-3xl font-black tracking-tighter text-themeText dark:text-white mb-1">
                                 ₹{lastPayslip ? lastPayslip.net_pay.toLocaleString('en-IN') : '0.00'}
                             </h3>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50">Last Net Pay</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">Last Net Pay</p>
                         </div>
                     </div>
 
                     {/* Total Slips */}
-                    <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 lg:p-8 flex flex-col justify-between group">
-                        <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6">
-                            <i className="fa-solid fa-money-check-dollar text-xl"></i>
+                    <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 lg:p-8 flex flex-col justify-between group">
+                        <div className="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center mb-6">
+                            <i className="fa-solid fa-calendar-minus text-xl"></i>
                         </div>
                         <div>
-                            <h3 className="text-3xl font-black tracking-tighter text-gray-900 dark:text-white mb-1">{payslips.length}</h3>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50">Total Payslips Available</p>
+                            <h3 className="text-3xl font-black tracking-tighter text-themeText dark:text-white mb-1">{pendingLop} <span className="text-sm text-themeTextSec dark:text-white/50 font-bold tracking-normal">Days</span></h3>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">Pending LOP Deductions (This Month)</p>
                         </div>
                     </div>
 
                     {/* Salary Account */}
-                    <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6 lg:p-8 flex flex-col justify-between group relative overflow-hidden">
+                    <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 lg:p-8 flex flex-col justify-between group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         <div className="relative z-10 flex justify-between items-start">
                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${hasAccount ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
@@ -168,16 +213,16 @@ export default function FacultyPayroll() {
                             </div>
                             <button 
                                 onClick={() => setShowAccountModal(true)}
-                                className="px-4 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-gray-300 dark:border-white/10 text-[10px] font-bold uppercase tracking-widest text-gray-900 dark:text-white transition-colors"
+                                className="px-4 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-themeBorder dark:border-white/10 text-[10px] font-bold uppercase tracking-widest text-themeText dark:text-white transition-colors"
                             >
                                 {hasAccount ? 'Update' : 'Add Account'}
                             </button>
                         </div>
                         <div className="relative z-10">
-                            <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white mb-1 truncate">
+                            <h3 className="text-lg font-black tracking-tight text-themeText dark:text-white mb-1 truncate">
                                 {hasAccount ? accountDetails.bank_name : 'Salary Account'}
                             </h3>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 flex items-center gap-1.5">
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 flex items-center gap-1.5">
                                 {hasAccount ? (
                                     <>
                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active (•••{accountDetails.account_number.slice(-4)})
@@ -193,8 +238,8 @@ export default function FacultyPayroll() {
                 </div>
 
                 <div className="flex flex-col gap-6 mt-2">
-                    <h3 className="text-base lg:text-lg font-black tracking-tight text-gray-900 dark:text-white flex items-center gap-3">
-                        <i className="fa-solid fa-list-check text-gray-500 dark:text-white/50"></i>
+                    <h3 className="text-base lg:text-lg font-black tracking-tight text-themeText dark:text-white flex items-center gap-3">
+                        <i className="fa-solid fa-list-check text-themeTextSec dark:text-white/50"></i>
                         Payslip Ledger
                     </h3>
                     
@@ -203,18 +248,18 @@ export default function FacultyPayroll() {
                     ) : payslips.length === 0 ? (
                         <div className="w-full py-20 lg:py-32 text-center flex flex-col items-center justify-center">
                             <i className="fa-solid fa-file-invoice text-4xl lg:text-5xl text-neutral-800 dark:text-neutral-600 mb-4 lg:mb-6"></i>
-                            <h3 className="text-base lg:text-lg font-black text-gray-900 dark:text-white mb-1 lg:mb-2 tracking-tight">No Payslips Found</h3>
-                            <p className="text-[10px] lg:text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 max-w-sm mx-auto">Your payroll records will appear here once processed by HR.</p>
+                            <h3 className="text-base lg:text-lg font-black text-themeText dark:text-white mb-1 lg:mb-2 tracking-tight">No Payslips Found</h3>
+                            <p className="text-[10px] lg:text-xs font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 max-w-sm mx-auto">Your payroll records will appear here once processed by HR.</p>
                         </div>
                     ) : (
                         <div className="flex flex-col gap-4">
                             {payslips.map(slip => (
-                                <div key={slip.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 lg:p-6 flex justify-between items-center group">
+                                <div key={slip.id} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl p-5 lg:p-6 flex justify-between items-center group">
                                     <div className="flex flex-col">
-                                        <h4 className="text-sm font-black text-gray-900 dark:text-white">{slip.month} {slip.year}</h4>
+                                        <h4 className="text-sm font-black text-themeText dark:text-white">{slip.month} {slip.year}</h4>
                                         <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 mt-1">Paid • ₹{slip.net_pay.toLocaleString('en-IN')}</p>
                                     </div>
-                                    <button onClick={() => handleDownloadPayslip(slip)} disabled={downloadingId === slip.id} className="w-10 h-10 rounded-xl bg-white/5 border border-gray-300 dark:border-white/10 text-gray-500 dark:text-white/50 hover:text-amber-500 hover:bg-amber-500/10 hover:border-amber-500/20 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <button onClick={() => handleDownloadPayslip(slip)} disabled={downloadingId === slip.id} className="w-10 h-10 rounded-xl bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-amber-500 hover:bg-amber-500/10 hover:border-amber-500/20 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                                         {downloadingId === slip.id ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>}
                                     </button>
                                 </div>
@@ -230,28 +275,34 @@ export default function FacultyPayroll() {
                             
                             <div className="p-6 border-b border-white/[0.08] flex justify-between items-start bg-[#161616]">
                                 <div>
-                                    <h3 className="text-xl font-black tracking-tight mb-1 text-gray-900 dark:text-white">Direct Deposit Setup</h3>
-                                    <p className="text-[10px] text-gray-500 dark:text-white/50 font-bold uppercase tracking-widest">Securely sync your payroll destination.</p>
+                                    <h3 className="text-xl font-black tracking-tight mb-1 text-themeText dark:text-white">Direct Deposit Setup</h3>
+                                    <p className="text-[10px] text-themeTextSec dark:text-white/50 font-bold uppercase tracking-widest">Securely sync your payroll destination.</p>
                                 </div>
-                                <button type="button" onClick={() => setShowAccountModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-gray-300 dark:border-white/10 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-white/10 transition-colors shrink-0">
+                                <button type="button" onClick={() => setShowAccountModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-white/10 transition-colors shrink-0">
                                     <i className="fa-solid fa-xmark"></i>
                                 </button>
                             </div>
 
                             <form onSubmit={handleSaveAccount} className="p-6 flex flex-col gap-6">
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Bank Name</label>
-                                    <input type="text" required value={accountDetails.bank_name} onChange={(e) => setAccountDetails({...accountDetails, bank_name: e.target.value})} placeholder="e.g. HDFC Bank" className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition placeholder:text-gray-300 dark:text-white/20" />
+                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Bank Name</label>
+                                    <input type="text" required value={accountDetails.bank_name} onChange={(e) => setAccountDetails({...accountDetails, bank_name: e.target.value.replace(/[^a-zA-Z\s]/g, '')})} placeholder="e.g. HDFC Bank" className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition placeholder:text-gray-300 dark:text-white/20" />
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Account Number</label>
-                                    <input type="text" required value={accountDetails.account_number} onChange={(e) => setAccountDetails({...accountDetails, account_number: e.target.value})} placeholder="00000000000" className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition font-mono placeholder:font-sans placeholder:text-gray-300 dark:text-white/20" />
+                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Account Number</label>
+                                    <input type="text" required value={accountDetails.account_number} onChange={(e) => setAccountDetails({...accountDetails, account_number: e.target.value.replace(/\D/g, "").slice(0, 18)})} placeholder="9 to 18 Digit Account Number" minLength={9} maxLength={18} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition font-mono placeholder:font-sans placeholder:text-gray-400 dark:placeholder:text-white/30" />
                                 </div>
 
                                 <div>
-                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">IFSC / SWIFT Code</label>
-                                    <input type="text" required value={accountDetails.ifsc_code} onChange={(e) => setAccountDetails({...accountDetails, ifsc_code: e.target.value})} placeholder="HDFC0001234" className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition uppercase placeholder:normal-case placeholder:text-gray-300 dark:text-white/20" />
+                                    <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">IFSC / SWIFT Code</label>
+                                    <input type="text" required value={accountDetails.ifsc_code} onChange={(e) => {
+                                        let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 11);
+                                        // Enforce formatting inline: First 4 chars must be A-Z, 5th must be 0
+                                        if (val.length > 0) val = val.substring(0, 4).replace(/[^A-Z]/g, '') + val.substring(4);
+                                        if (val.length > 4) val = val.substring(0, 4) + '0' + val.substring(5);
+                                        setAccountDetails({...accountDetails, ifsc_code: val});
+                                    }} placeholder="HDFC0001234" maxLength={11} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition uppercase placeholder:normal-case placeholder:text-gray-400 dark:placeholder:text-white/30" />
                                 </div>
 
                                 <button type="submit" disabled={isSaving} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
@@ -272,10 +323,10 @@ export default function FacultyPayroll() {
                         <div className="flex justify-between items-center border-b-2 border-black pb-6 mb-6">
                             <div>
                                 <h1 className="text-3xl font-black tracking-widest uppercase">Prudentia College of Law</h1>
-                                <p className="text-sm font-bold text-gray-500 uppercase mt-1">Official Salary Slip</p>
+                                <p className="text-sm font-bold text-themeTextSec uppercase mt-1">Official Salary Slip</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-bold text-gray-500 uppercase">Payslip ID</p>
+                                <p className="text-sm font-bold text-themeTextSec uppercase">Payslip ID</p>
                                 <p className="text-sm font-black">{selectedPayslip.id.split('-')[0].toUpperCase()}</p>
                             </div>
                         </div>
@@ -283,19 +334,19 @@ export default function FacultyPayroll() {
                         {/* Employee Details */}
                         <div className="grid grid-cols-2 gap-4 mb-8">
                             <div>
-                                <p className="text-[10px] font-bold text-gray-500 uppercase">Employee ID</p>
+                                <p className="text-[10px] font-bold text-themeTextSec uppercase">Employee ID</p>
                                 <p className="text-sm font-bold">{userSession?.erp_id || "N/A"}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-gray-500 uppercase">Salary Period</p>
+                                <p className="text-[10px] font-bold text-themeTextSec uppercase">Salary Period</p>
                                 <p className="text-sm font-bold">{selectedPayslip.month} {selectedPayslip.year}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-gray-500 uppercase">Department</p>
+                                <p className="text-[10px] font-bold text-themeTextSec uppercase">Department</p>
                                 <p className="text-sm font-bold">{userSession?.department || "Faculty"}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-gray-500 uppercase">Bank Account Number</p>
+                                <p className="text-[10px] font-bold text-themeTextSec uppercase">Bank Account Number</p>
                                 <p className="text-sm font-bold">{accountDetails?.account_number || "XX-XXXX-XXXX"}</p>
                             </div>
                         </div>
@@ -324,7 +375,7 @@ export default function FacultyPayroll() {
                                     </div>
                                     <div className="flex flex-col gap-2 text-right">
                                         <span className="text-sm">₹{selectedPayslip.deductions?.toLocaleString('en-IN') || "0"}</span>
-                                        <span className="text-sm text-gray-400">-</span>
+                                        <span className="text-sm text-themeTextSec">-</span>
                                     </div>
                                 </div>
                             </div>
@@ -348,11 +399,11 @@ export default function FacultyPayroll() {
 
                         {/* Signatures */}
                         <div className="mt-auto pt-20 flex justify-between">
-                            <div className="w-40 border-t border-black text-center pt-2 text-xs font-bold uppercase text-gray-500">Finance Controller</div>
-                            <div className="w-40 border-t border-black text-center pt-2 text-xs font-bold uppercase text-gray-500">Employee Signature</div>
+                            <div className="w-40 border-t border-black text-center pt-2 text-xs font-bold uppercase text-themeTextSec">Finance Controller</div>
+                            <div className="w-40 border-t border-black text-center pt-2 text-xs font-bold uppercase text-themeTextSec">Employee Signature</div>
                         </div>
                         
-                        <div className="text-center mt-8 text-[10px] text-gray-400">
+                        <div className="text-center mt-8 text-[10px] text-themeTextSec">
                             This is a system generated document and does not require a physical signature if accessed securely via PCL ERP.
                         </div>
                     </div>

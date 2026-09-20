@@ -24,9 +24,9 @@ export default function StudentActivityRings() {
 
             // 1. Fetch Assignments
             const { data: assignments } = await supabase
-                .from('assignments')
+                .from('assignment_submissions')
                 .select('status')
-                .eq('student_id', userSession?.id || 'default');
+                .eq('student_id', userSession?.db_id || userSession?.id || 'default');
             
             if (assignments && assignments.length > 0) {
                 const completed = assignments.filter(a => a.status === 'completed' || a.status === 'graded').length;
@@ -35,24 +35,24 @@ export default function StudentActivityRings() {
 
             // 2. Fetch Personal Attendance
             const { data: attendance } = await supabase
-                .from('attendance')
-                .select('status')
-                .eq('profile_id', userSession?.id || 'default');
+                .from('attendance_records')
+                .select('entry_status')
+                .eq('student_id', userSession?.db_id || userSession?.id || 'default');
             
             if (attendance && attendance.length > 0) {
-                const present = attendance.filter(a => a.status === 'present').length;
+                const present = attendance.filter(a => a.entry_status === 'present').length;
                 attendanceScore = Math.round((present / attendance.length) * 100);
             } else { attendanceScore = 0; }
 
             // 3. Fetch Campus Overall Attendance
             const { count: totalAtt } = await supabase
-                .from('attendance')
-                .select('status', { count: 'exact', head: true });
+                .from('attendance_records')
+                .select('id', { count: 'exact', head: true });
             
             const { count: presentAtt } = await supabase
-                .from('attendance')
-                .select('status', { count: 'exact', head: true })
-                .eq('status', 'present');
+                .from('attendance_records')
+                .select('id', { count: 'exact', head: true })
+                .eq('entry_status', 'present');
 
             if (totalAtt && presentAtt) {
                 campusAvgScore = Math.round((presentAtt / totalAtt) * 100);

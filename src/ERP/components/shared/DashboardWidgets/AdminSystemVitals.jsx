@@ -64,7 +64,7 @@ export default function AdminSystemVitals() {
           </div>
           <button type="button" 
             onClick={() => window.location.href = '#sql'} 
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white rounded-lg text-[12px] font-medium transition"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white rounded-lg text-[12px] font-medium transition"
           >
             SQL Console <i className="fa-solid fa-arrow-up-right-from-square"></i>
           </button>

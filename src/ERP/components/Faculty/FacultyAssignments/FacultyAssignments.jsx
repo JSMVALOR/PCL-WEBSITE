@@ -5,6 +5,11 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../../lib/EmailService';
 import { useERP } from "../../../context/ErpContext";
 
+import HoldButton from '../../../../Shared/components/ReactBits/HoldButton/HoldButton';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete02Icon } from '@hugeicons/core-free-icons';
+
+
 
 
 const getBatchColorKey = (batchName) => {
@@ -40,7 +45,7 @@ export default function FacultyAssignments({ subjectContext }) {
 
  // Form State
  const [showForm, setShowForm] = useState(false);
- const tColor = subjectContext ? (THEME_COLORS[getBatchColorKey(subjectContext.batches?.[0])] || THEME_COLORS.default) : THEME_COLORS.default;
+ const tColor = THEME_COLORS.amber; // Enforce premium amber aesthetic
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [formData, setFormData] = useState({
  subject_id: "",
@@ -86,22 +91,33 @@ export default function FacultyAssignments({ subjectContext }) {
  if (!userSession?.db_id) return;
  try {
  // 1. Fetch Subjects assigned to this faculty
- const { data: subs, error: subErr } = await supabase
- .from('subjects')
- .select('id, name, code')
+ const { data: cohortSubs, error: subErr } = await supabase
+ .from('cohort_subjects')
+ .select('id, master_subjects(id, name, code)')
  .eq('faculty_id', userSession.db_id);
  
+ const subs = (cohortSubs || []).map(cs => cs.master_subjects).filter(Boolean);
+ // Remove duplicates
+ const uniqueSubs = [];
+ const seen = new Set();
+ subs.forEach(s => {
+     if (!seen.has(s.id)) {
+         seen.add(s.id);
+         uniqueSubs.push(s);
+     }
+ });
+ 
  if (subErr) throw subErr;
- if (subs) {
- setSubjects(subs);
- sessionStorage.setItem(`fac_assign_subjects_${userSession.db_id}`, JSON.stringify(subs));
- }
+ if (uniqueSubs.length > 0) {
+        setSubjects(uniqueSubs);
+        sessionStorage.setItem(`fac_assign_subjects_${userSession.db_id}`, JSON.stringify(uniqueSubs));
+    }
 
  // 2. Batches taught by this faculty (from class_schedule)
  const { data: schedule, error: schErr } = await supabase
  .from('class_schedule')
  .select('subject_id, batch')
- .in('subject_id', (subs || []).map(s => s.id));
+ .in('subject_id', (uniqueSubs || []).map(s => s.id));
  
  if (schErr) throw schErr;
  if (schedule) {
@@ -131,12 +147,24 @@ export default function FacultyAssignments({ subjectContext }) {
  e.preventDefault();
  setIsSubmitting(true);
  try {
- const finalSubjectId = subjectContext ? subjectContext.id : formData.subject_id;
+ let finalSubjectId = formData.subject_id;
+    if (subjectContext) {
+        if (subjectContext.master_subjects && typeof subjectContext.master_subjects === 'object' && subjectContext.master_subjects.id) {
+            finalSubjectId = subjectContext.master_subjects.id;
+        } else if (subjectContext.subject_id) {
+            finalSubjectId = subjectContext.subject_id;
+        } else if (subjectContext.master_subjects_id) {
+            finalSubjectId = subjectContext.master_subjects_id;
+        } else {
+            finalSubjectId = subjectContext.id;
+        }
+    }
+ const finalBatch = subjectContext ? (subjectContext.batches?.[0] || subjectContext.batch || "") : formData.batch;
  
  const { error } = await supabase.from('assignments').insert({
  faculty_id: userSession.db_id,
  subject_id: finalSubjectId,
- batch: formData.batch,
+ batch: finalBatch,
  title: formData.title,
  description: formData.description,
  total_marks: Number(formData.total_marks),
@@ -166,7 +194,8 @@ export default function FacultyAssignments({ subjectContext }) {
  };
 
  const handleDelete = async (id) => {
- if(!window.confirm("Are you sure you want to delete this assignment?")) return;
+ const confirmed = await window.erpDialog?.confirm("Are you sure you want to delete this assignment?");
+ if (!confirmed) return;
  try {
  await supabase.from('assignments').delete().eq('id', id);
  setAssignments(prev => prev.filter(a => a.id !== id));
@@ -177,7 +206,7 @@ export default function FacultyAssignments({ subjectContext }) {
 
  return (
  <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full w-full mx-auto flex flex-col gap-8 pb-12' : 'flex flex-col gap-4'}`}>
+ <div className={`${!subjectContext ? 'w-full max-w-[1800px] mx-auto flex flex-col gap-8 pb-32 xl:pb-8' : 'flex flex-col gap-4'}`}>
  
  {/* HEADER */}
  {!subjectContext && (
@@ -188,7 +217,7 @@ export default function FacultyAssignments({ subjectContext }) {
  rightContent={
  <button type="button" 
  onClick={() => setShowForm(!showForm)}
- className={`px-6 py-3.5 rounded-xl text-gray-900 dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${
+ className={`px-6 py-3.5 rounded-xl text-themeText dark:text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${
  showForm ? 'bg-neutral-600 hover:bg-neutral-700' : 'bg-themeAccent hover:bg-themeAccent/90'
  }`}
  >
@@ -217,17 +246,17 @@ export default function FacultyAssignments({ subjectContext }) {
  <i className="fa-solid fa-file-signature"></i>
  </div>
  <div>
- <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">Issue New Assignment</h2>
- <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-normal mt-0.5">Offline Submission Tracker</p>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText dark:text-white">Issue New Assignment</h2>
+ <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-normal mt-0.5">Offline Submission Tracker</p>
  </div>
  </div>
 
  <form onSubmit={handlePublish} className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {!subjectContext && (
  <div className="flex flex-col gap-2">
- <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Subject *</label>
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Subject *</label>
  <select 
- className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
+ className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors appearance-none"
  value={formData.subject_id}
  onChange={(e) => setFormData({...formData, subject_id: e.target.value})}
  required
@@ -240,28 +269,29 @@ export default function FacultyAssignments({ subjectContext }) {
  </div>
  )}
 
- {/* Batch */}
- <div className="flex flex-col gap-2">
- <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Target Batch *</label>
- <select 
- className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors appearance-none"
- value={formData.batch}
- onChange={(e) => setFormData({...formData, batch: e.target.value})}
- required
- >
- <option value="">Select Batch</option>
- {availableBatches.map(b => (
- <option key={b} value={b}>{b}</option>
- ))}
- </select>
- </div>
+ {!subjectContext && (
+    <div className="flex flex-col gap-2">
+        <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Target Batch *</label>
+        <select 
+            className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors appearance-none"
+            value={formData.batch}
+            onChange={(e) => setFormData({...formData, batch: e.target.value})}
+            required
+        >
+            <option value="">Select Batch</option>
+            {availableBatches.map(b => (
+                <option key={b} value={b}>{b}</option>
+            ))}
+        </select>
+    </div>
+ )}
 
  {/* Title */}
  <div className="flex flex-col gap-2 md:col-span-2">
- <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Assignment Title *</label>
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Assignment Title *</label>
  <input 
  type="text"
- className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
+ className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
  placeholder="e.g., Constitutional Law Research Paper"
  value={formData.title}
  onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -271,9 +301,9 @@ export default function FacultyAssignments({ subjectContext }) {
 
  {/* Description */}
  <div className="flex flex-col gap-2 md:col-span-2">
- <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Instructions / Description</label>
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Instructions / Description</label>
  <textarea 
- className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors resize-none h-24"
+ className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors resize-none h-24"
  placeholder="Optional instructions for the batch..."
  value={formData.description}
  onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -282,11 +312,11 @@ export default function FacultyAssignments({ subjectContext }) {
 
  {/* Total Marks */}
  <div className="flex flex-col gap-2">
- <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Max Marks *</label>
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Max Marks *</label>
  <input 
  type="number"
  min="1"
- className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors"
+ className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
  value={formData.total_marks}
  onChange={(e) => setFormData({...formData, total_marks: e.target.value})}
  required
@@ -295,10 +325,12 @@ export default function FacultyAssignments({ subjectContext }) {
 
  {/* Due Date */}
  <div className="flex flex-col gap-2">
- <label className="text-[13px] font-medium text-gray-500 dark:text-white/50">Offline Due Date *</label>
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Offline Due Date *</label>
  <input 
- type="datetime-local"
- className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-200 dark:border-white/5Accent transition-colors [color-scheme:dark]"
+ type="date"
+    className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors [color-scheme:dark] cursor-pointer"
+    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+    onKeyDown={(e) => e.preventDefault()}
  value={formData.due_date}
  onChange={(e) => setFormData({...formData, due_date: e.target.value})}
  required
@@ -320,13 +352,13 @@ export default function FacultyAssignments({ subjectContext }) {
 
  {/* ASSIGNMENTS LIST */}
  <div className="flex flex-col gap-4">
- <h2 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white tracking-tight">Active Assignments</h2>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText dark:text-white tracking-tight">Active Assignments</h2>
  
  {assignments.filter(a => subjectContext ? a.subject_id === subjectContext.id : true).length === 0 ? (
- <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
+ <div className="w-full py-16 flex flex-col items-center justify-center bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 shadow-sm">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
- <h3 className="text-lg lg:text-xl text-gray-900 dark:text-white font-black">No Assignments Issued</h3>
- <p className="text-xs lg:text-sm text-gray-500 dark:text-white/50 opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
+ <h3 className="text-lg lg:text-xl text-themeText dark:text-white font-black">No Assignments Issued</h3>
+ <p className="text-xs lg:text-sm text-themeTextSec dark:text-white/50 opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
  </div>
  ) : (
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -343,37 +375,31 @@ export default function FacultyAssignments({ subjectContext }) {
  <span className={`px-2 py-0.5 rounded text-[12px] font-medium ${isPastDue ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
  {isPastDue ? 'Past Due' : 'Active'}
  </span>
- <span className="bg-black/5 dark:bg-white/5 backdrop-blur-xl px-2 py-0.5 rounded text-[12px] font-medium text-gray-500 dark:text-white/50">
+ <span className="bg-black/5 dark:bg-white/5 backdrop-blur-xl px-2 py-0.5 rounded text-[12px] font-medium text-themeTextSec dark:text-white/50">
  {assign.batch}
  </span>
  </div>
- <h3 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white leading-tight">{assign.title}</h3>
- <p className="text-[11px] font-bold text-gray-500 dark:text-white/50 mt-1">{assign.subject?.code} - {assign.subject?.name}</p>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText dark:text-white leading-tight">{assign.title}</h3>
+ <p className="text-[11px] font-bold text-themeTextSec dark:text-white/50 mt-1">{assign.subject?.code} - {assign.subject?.name}</p>
  </div>
  
- <button type="button" 
- onClick={() => handleDelete(assign.id)}
- className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 flex items-center justify-center text-gray-500 dark:text-white/50 hover:text-rose-500 hover:border-rose-500/50 transition opacity-0 group-hover:opacity-100"
- title="Delete Assignment"
- >
- <i className="fa-solid fa-trash text-xs"></i>
- </button>
+ <HoldButton size="sm" onHold={() => handleDelete(assign.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
  </div>
  
  {assign.description && (
- <p className="text-xs text-gray-500 dark:text-white/50 line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 backdrop-blur-xl/50 p-3 rounded-xl border border-black/5 dark:border-white/5/50">
+ <p className="text-xs text-themeTextSec dark:text-white/50 line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 backdrop-blur-xl/50 p-3 rounded-xl border border-black/5 dark:border-white/5/50">
  {assign.description}
  </p>
  )}
  
  <div className="flex items-center justify-between mt-auto pt-2 border-t border-black/5 dark:border-white/5/50">
- <div className="flex items-center gap-2 text-gray-500 dark:text-white/50">
+ <div className="flex items-center gap-2 text-themeTextSec dark:text-white/50">
  <i className="fa-regular fa-calendar text-sm"></i>
  <span className="text-[13px] font-medium">
  Due {dueDate.toLocaleDateString()}
  </span>
  </div>
- <div className="flex items-center gap-2 text-gray-900 dark:text-white">
+ <div className="flex items-center gap-2 text-themeText dark:text-white">
  <i className="fa-solid fa-star text-amber-500 text-sm"></i>
  <span className="text-[14px] font-medium">{assign.total_marks} Marks</span>
  </div>

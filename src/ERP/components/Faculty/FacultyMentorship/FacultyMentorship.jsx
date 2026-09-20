@@ -1,8 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import Attendance from "../../Student/Attendance/Attendance";
+import MenteeAcademicRecord from "./MenteeAcademicRecord";
 
 export default function FacultyMentorship() {
     const { userSession } = useERP();
@@ -13,6 +14,8 @@ export default function FacultyMentorship() {
     const [meetings, setMeetings] = useState([]);
     const [appeals, setAppeals] = useState([]);
     const [actionLoading, setActionLoading] = useState(null);
+    const [selectedMentee, setSelectedMentee] = useState(null);
+    const [menteeTab, setMenteeTab] = useState('attendance');
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -30,7 +33,7 @@ export default function FacultyMentorship() {
             if (studentIds.length > 0) {
                 const { data: profiles } = await supabase
                     .from('profiles')
-                    .select('id, full_name, erp_id, programme, avatar_url')
+                    .select('id, full_name, erp_id, programme, profile_picture_url, academic_batch')
                     .in('id', studentIds);
                 
                 // Fetch attendance for these mentees
@@ -59,7 +62,6 @@ export default function FacultyMentorship() {
                 .order('scheduled_at', { ascending: false });
 
             if (mtgs) {
-                // Map student names
                 const mappedMtgs = mtgs.map(m => {
                     const student = menteesData.find(stu => stu.id === m.student_id);
                     return { ...m, student: student || { full_name: 'Unknown Student' } };
@@ -125,47 +127,141 @@ export default function FacultyMentorship() {
         }
     };
 
-    return (
-        <div className="w-full min-h-screen bg-transparent text-gray-900 dark:text-white font-sans animate-fade-in pb-12">
-            <div className="w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 lg:gap-8">
-                
-                <PageHeader 
-                    icon="fa-solid fa-users-viewfinder" 
-                    title="Mentorship Dashboard" 
-                    subtitle="Manage your assigned students and schedule guidance sessions."
-                />
+    if (isLoading) {
+        return (
+            <div className="w-full min-h-screen bg-themeApp flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <i className="fa-solid fa-circle-notch fa-spin text-3xl text-amber-500"></i>
+                    <p className="text-sm font-bold text-themeTextSec uppercase tracking-widest">Loading Mentorship...</p>
+                </div>
+            </div>
+        );
+    }
 
-                {isLoading ? (
-                    <div className="w-full py-16 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
+    return (
+        <div className="w-full min-h-screen bg-themeApp text-themeText dark:text-themeText animate-fade-in">
+            <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8">
+                
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm p-6 lg:p-8">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl shadow-inner">
+                            <i className="fa-solid fa-users"></i>
+                        </div>
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-themeText dark:text-white">Mentorship Hub</h1>
+                            <p className="text-sm font-medium text-themeTextSec mt-1">Manage mentees and track academic progress.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {selectedMentee ? (
+                    /* ──── MENTEE PROFILE VIEW ──── */
+                    <div className="flex flex-col gap-6">
+                        {/* Back Button + Mentee Header */}
+                        <div className="flex items-center gap-4 flex-wrap">
+                            <button onClick={() => { setSelectedMentee(null); setMenteeTab('attendance'); }} className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center transition-colors">
+                                <i className="fa-solid fa-arrow-left text-themeTextSec dark:text-white/60"></i>
+                            </button>
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-black">
+                                    {selectedMentee.full_name.charAt(0)}
+                                </div>
+                                <div>
+                                    <h2 className="text-xl font-bold tracking-tight text-themeText dark:text-white">{selectedMentee.full_name}</h2>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">{selectedMentee.erp_id} • {selectedMentee.programme}</p>
+                                </div>
+                            </div>
+                            <div className={`ml-auto px-3 py-1 rounded-lg text-xs font-black ${selectedMentee.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                                {selectedMentee.attendance_percentage}% Attendance
+                            </div>
+                        </div>
+
+                        {/* Tab Bar */}
+                        <div className="flex p-1.5 bg-black/[0.03] dark:bg-white/5 backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/5 w-fit gap-1">
+                            {[
+                                { id: 'attendance', label: 'Attendance', icon: 'fa-clipboard-user' },
+                                { id: 'academic', label: 'Academic Record', icon: 'fa-graduation-cap' },
+                            ].map(tab => (
+                                <button key={tab.id} onClick={() => setMenteeTab(tab.id)}
+                                    className={`px-5 py-2.5 rounded-xl text-xs font-bold tracking-tight transition-all flex items-center gap-2 ${
+                                        menteeTab === tab.id
+                                            ? 'bg-white dark:bg-white/15 text-themeText dark:text-white border border-black/5 dark:border-white/20 shadow-sm'
+                                            : 'text-themeTextSec dark:text-white/50 hover:text-themeText dark:hover:text-white/80 hover:bg-black/[0.02] dark:hover:bg-white/[0.03]'
+                                    }`}>
+                                    <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Tab Content */}
+                        <div className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
+                            {menteeTab === 'attendance' && (
+                                <Attendance menteeId={selectedMentee.id} isEmbedded={true} />
+                            )}
+                            {menteeTab === 'academic' && (
+                                <MenteeAcademicRecord menteeId={selectedMentee.id} mentorId={facultyId} />
+                            )}
+                        </div>
+                    </div>
                 ) : (
+                    /* ──── MAIN DASHBOARD ──── */
                     <div className="flex flex-col lg:flex-row gap-6">
-                        
+
                         {/* Mentees Roster */}
                         <div className="w-full lg:w-1/3 flex flex-col gap-4">
-                            <h3 className="text-base font-black tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                                <i className="fa-solid fa-user-graduate text-gray-500 dark:text-white/50"></i> Assigned Mentees
+                            <h3 className="text-base font-black tracking-tight text-themeText dark:text-white flex items-center gap-2">
+                                <i className="fa-solid fa-user-graduate text-themeTextSec dark:text-white/50"></i> Assigned Mentees
+                                {mentees.length > 0 && <span className="text-xs font-bold text-themeTextSec ml-auto">{mentees.length}</span>}
                             </h3>
                             
                             {mentees.length === 0 ? (
                                 <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                                     <i className="fa-solid fa-users-slash text-2xl text-gray-300 dark:text-white/20 mb-3"></i>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50">No mentees assigned.</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">No mentees assigned.</p>
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-3">
                                     {mentees.map(m => (
-                                        <div key={m.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-4 flex items-center gap-4 group hover:border-amber-500/30 transition-colors">
-                                            <div className="w-10 h-10 rounded-full bg-white/5 text-gray-400 dark:text-white/30 flex items-center justify-center font-black">
+                                        <div 
+                                            key={m.id} 
+                                            onClick={() => setSelectedMentee(m)}
+                                            className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-4 flex items-center gap-4 group hover:border-amber-500/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]"
+                                        >
+                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-sm">
                                                 {m.full_name.charAt(0)}
                                             </div>
-                                            <div>
+                                            <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-3">
-    <h4 className="text-sm font-black text-gray-900 dark:text-white">{m.full_name}</h4>
-    <div className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
-        {m.attendance_percentage}% Att.
-    </div>
-</div>
-                                                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mt-1">{m.programme} • {m.erp_id}</p>
+                                                    <h4 className="text-sm font-black text-themeText dark:text-white truncate">{m.full_name}</h4>
+                                                    <div className={`px-2 py-0.5 rounded-md text-[10px] font-bold shrink-0 ${m.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                                                        {m.attendance_percentage}%
+                                                    </div>
+                                                </div>
+                                                <p className="text-[9px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mt-1">{m.programme} • {m.erp_id}</p>
+                                            </div>
+                                            <i className="fa-solid fa-chevron-right text-[10px] text-themeTextSec dark:text-white/30 group-hover:text-amber-500 transition-colors"></i>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Attendance Appeals */}
+                            {appeals.length > 0 && (
+                                <div className="flex flex-col gap-3 mt-4">
+                                    <h3 className="text-base font-black tracking-tight text-themeText dark:text-white flex items-center gap-2">
+                                        <i className="fa-solid fa-gavel text-rose-500/70"></i> Attendance Appeals
+                                        <span className="bg-rose-500/10 text-rose-500 px-2 py-0.5 rounded-md text-[10px] font-black ml-auto">{appeals.length}</span>
+                                    </h3>
+                                    {appeals.map(appeal => (
+                                        <div key={appeal.id} className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-4 flex flex-col gap-3">
+                                            <div>
+                                                <h4 className="text-sm font-black text-themeText dark:text-white">{appeal.student?.full_name}</h4>
+                                                <p className="text-[10px] text-themeTextSec dark:text-white/50 mt-1">{appeal.description || 'No reason provided'}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleAppealAction(appeal.id, true)} disabled={actionLoading === appeal.id} className="flex-1 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 rounded-xl text-xs font-black transition-colors">Approve</button>
+                                                <button onClick={() => handleAppealAction(appeal.id, false)} disabled={actionLoading === appeal.id} className="flex-1 py-2 bg-white/5 hover:bg-rose-500/10 text-themeTextSec hover:text-rose-500 border border-black/5 dark:border-white/10 hover:border-rose-500/20 rounded-xl text-xs font-black transition-colors">Reject</button>
                                             </div>
                                         </div>
                                     ))}
@@ -175,20 +271,20 @@ export default function FacultyMentorship() {
 
                         {/* Meeting Requests */}
                         <div className="w-full lg:w-2/3 flex flex-col gap-4">
-                            <h3 className="text-base font-black tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                                <i className="fa-solid fa-inbox text-gray-500 dark:text-white/50"></i> Session Requests
+                            <h3 className="text-base font-black tracking-tight text-themeText dark:text-white flex items-center gap-2">
+                                <i className="fa-solid fa-inbox text-themeTextSec dark:text-white/50"></i> Session Requests
                             </h3>
                             
                             {meetings.length === 0 ? (
                                 <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                                     <i className="fa-solid fa-mug-hot text-4xl text-neutral-800 mb-4"></i>
-                                    <h3 className="text-base font-black text-gray-900 dark:text-white mb-1 tracking-tight">Inbox Empty</h3>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50">No session requests from mentees.</p>
+                                    <h3 className="text-base font-black text-themeText dark:text-white mb-1 tracking-tight">Inbox Empty</h3>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">No session requests from mentees.</p>
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-3">
                                     {meetings.map(meeting => (
-                                        <div key={meeting.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                        <div key={meeting.id} className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                                             <div>
                                                 <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border mb-2 inline-block ${
                                                     meeting.status === 'completed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
@@ -198,8 +294,8 @@ export default function FacultyMentorship() {
                                                 }`}>
                                                     {meeting.status}
                                                 </span>
-                                                <h4 className="text-sm font-black text-gray-900 dark:text-white">{meeting.topic || 'Mentorship Session'}</h4>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mt-1 flex items-center gap-2">
+                                                <h4 className="text-sm font-black text-themeText dark:text-white">{meeting.topic || 'Mentorship Session'}</h4>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mt-1 flex items-center gap-2">
                                                     <i className="fa-solid fa-user text-amber-500/50"></i> {meeting.student?.full_name}
                                                 </p>
                                                 {meeting.scheduled_at && (
@@ -221,7 +317,7 @@ export default function FacultyMentorship() {
                                                     <button 
                                                         onClick={() => handleMeetingStatus(meeting.id, 'cancelled')}
                                                         disabled={actionLoading === meeting.id}
-                                                        className="flex-1 sm:flex-none px-4 py-2 bg-white/5 hover:bg-rose-500/10 text-gray-500 dark:text-white/50 hover:text-rose-500 border border-gray-300 dark:border-white/10 hover:border-rose-500/20 rounded-xl text-xs font-black transition-colors"
+                                                        className="flex-1 sm:flex-none px-4 py-2 bg-white/5 hover:bg-rose-500/10 text-themeTextSec dark:text-white/50 hover:text-rose-500 border border-black/5 dark:border-white/10 hover:border-rose-500/20 rounded-xl text-xs font-black transition-colors"
                                                     >
                                                         Decline
                                                     </button>
@@ -241,7 +337,6 @@ export default function FacultyMentorship() {
                                 </div>
                             )}
                         </div>
-
                     </div>
                 )}
             </div>

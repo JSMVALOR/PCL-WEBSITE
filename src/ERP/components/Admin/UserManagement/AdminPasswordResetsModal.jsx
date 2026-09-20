@@ -93,7 +93,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  };
 
  const handleReject = async (requestId) => {
- if (!window.confirm("Are you sure you want to reject this request?")) return;
+ if (!(await window.erpDialog?.confirm("Are you sure you want to reject this request?"))) return;
  setProcessingId(requestId);
  try {
  await supabase
@@ -129,7 +129,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-themeAccent opacity-[0.05] mix-blend-screen filter blur-[120px] animate-pulse-slow"></div>
  </div>
 
- <div className="w-full w-full mx-auto p-6 lg:p-12 flex flex-col h-screen relative z-10">
+ <div className="w-full mx-auto p-6 lg:p-12 flex flex-col h-screen relative z-10">
 
  <div className="mb-8">
  <h2 className="text-2xl font-semibold tracking-tight text-themeText tracking-tight mb-2">Password Reset Requests</h2>
@@ -158,7 +158,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  </div>
  ) : (
  requests.map(req => (
- <div key={req.id} className="bg-themeApp border border-gray-200 dark:border-white/5 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+ <div key={req.id} className="bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
  <div className="flex-1">
  <div className="flex items-center gap-3 mb-2">
  <span className="px-2 py-1 bg-themeElevated/90 backdrop-blur-2xl rounded text-[10px] font-black uppercase tracking-wider text-themeText">
@@ -183,7 +183,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  <button type="button"
  onClick={() => handleApprove(req)}
  disabled={processingId === req.id}
- className="flex-1 md:flex-none px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-gray-900 dark:text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+ className="flex-1 md:flex-none px-5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-themeText dark:text-white text-xs font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
  >
  {processingId === req.id ? (
  <i className="fa-solid fa-circle-notch fa-spin"></i>

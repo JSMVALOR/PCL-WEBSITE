@@ -19,21 +19,21 @@ export default function ZohoProfileCard({ session, roleLabel }) {
                 {session?.avatar_url ? (
                     <img src={session.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-gray-900 dark:text-white text-3xl font-bold">
+                    <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-themeText dark:text-white text-3xl font-bold">
                         {session?.full_name?.charAt(0) || 'U'}
                     </div>
                 )}
             </div>
 
             <div className="text-center w-full">
-                <h3 className="text-[#F2F2F7] font-semibold text-[15px] truncate tracking-tight">{session?.full_name || 'Admin User'}</h3>
-                <p className="text-[#8E8E93] text-[12px] mt-1 font-medium">{roleLabel}</p>
+                <h3 className="text-themeText font-semibold text-[15px] truncate tracking-tight">{session?.full_name || 'Admin User'}</h3>
+                <p className="text-themeTextSec text-[12px] mt-1 font-medium">{roleLabel}</p>
                 
                 <div className="mt-5 text-[#FF453A] font-bold text-[11px] uppercase tracking-[0.2em]">
                     Out
                 </div>
                 
-                <div className="mt-3 text-[#F2F2F7] font-mono text-[22px] tracking-widest bg-black/40 py-3 rounded-xl border border-black/50 w-full shadow-inner">
+                <div className="mt-3 text-themeText font-mono text-[22px] tracking-widest bg-black/40 py-3 rounded-xl border border-black/50 w-full shadow-inner">
                     {formatTime(time)}
                 </div>
             </div>

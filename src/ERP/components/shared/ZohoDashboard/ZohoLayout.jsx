@@ -30,11 +30,11 @@ export default function ZohoLayout({
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         <div className="hidden lg:block lg:col-span-3 xl:col-span-2"></div>
                         <div className="lg:col-span-9 xl:col-span-10 flex items-center gap-10">
-                            <h1 className="text-gray-900 dark:text-white font-bold text-[32px] tracking-tight drop-shadow-2xl">My Space</h1>
+                            <h1 className="text-themeText dark:text-white font-bold text-[32px] tracking-tight drop-shadow-2xl">My Space</h1>
                             <div className="hidden md:flex gap-8 mt-2">
-                                <button className="text-gray-900 dark:text-white text-[15px] font-semibold border-b-2 border-blue-500 pb-1">Overview</button>
-                                <button className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition-colors text-[15px] font-medium pb-1">Dashboard</button>
-                                <button className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition-colors text-[15px] font-medium pb-1">Calendar</button>
+                                <button className="text-themeText dark:text-white text-[15px] font-semibold border-b-2 border-blue-500 pb-1">Overview</button>
+                                <button className="text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white transition-colors text-[15px] font-medium pb-1">Dashboard</button>
+                                <button className="text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white transition-colors text-[15px] font-medium pb-1">Calendar</button>
                             </div>
                         </div>
                     </div>

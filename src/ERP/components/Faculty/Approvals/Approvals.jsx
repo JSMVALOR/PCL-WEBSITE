@@ -30,26 +30,32 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  try {
  setIsLoading(true);
 
- const [
- { data: leavesData },
- { data: grievancesData },
- { data: profilesData }
- ] = await Promise.all([
- // Fetch leaves where this faculty is the mentor
- supabase.from('leave_requests')
- .select('*, profiles!leave_requests_student_id_fkey(full_name, erp_id)')
- .eq('mentor_id', userSession.db_id)
- .order('created_at', { ascending: false }),
- 
- // Fetch grievances assigned to this faculty
- supabase.from('grievances')
- .select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role), accused:profiles!grievances_accused_id_fkey(full_name, role)')
- .eq('assigned_to', userSession.db_id)
- .order('created_at', { ascending: false }),
- 
- // Fetch profiles for the "Report Grievance" dropdown
- supabase.from('profiles').select('id, full_name, role').neq('id', userSession.db_id).neq('role', 'admin')
- ]);
+  // Fetch mentees of this faculty
+  const { data: menteeData } = await supabase.from('mentorship').select('student_id').eq('faculty_id', userSession.db_id);
+  const menteeIds = (menteeData || []).map(m => m.student_id).filter(Boolean);
+
+  const [
+  { data: leavesData },
+  { data: grievancesData },
+  { data: profilesData }
+  ] = await Promise.all([
+  // Fetch leaves from mentees
+  menteeIds.length > 0
+    ? supabase.from('leave_requests')
+      .select('*, profiles!leave_requests_student_id_fkey(full_name, erp_id)')
+      .in('student_id', menteeIds)
+      .order('created_at', { ascending: false })
+    : Promise.resolve({ data: [] }),
+  
+  // Fetch grievances assigned to this faculty
+  supabase.from('grievances')
+  .select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role), accused:profiles!grievances_accused_id_fkey(full_name, role)')
+  .eq('assigned_to', userSession.db_id)
+  .order('created_at', { ascending: false }),
+  
+  // Fetch profiles for the "Report Grievance" dropdown
+  supabase.from('profiles').select('id, full_name, role').neq('id', userSession.db_id).neq('role', 'admin')
+  ]);
 
  setLeaves(leavesData || []);
  setGrievances(grievancesData || []);
@@ -185,10 +191,10 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  
  {/* Header */}
- <PageHeader icon="fa-solid fa-stamp" title="Approvals & Disciplinary" subtitle="Manage mentee leave requests and investigate grievances." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl border border-gray-200 dark:border-white/5 w-fit relative z-10 overflow-x-auto max-w-full">
+ <PageHeader icon="fa-solid fa-stamp" title="Approvals & Disciplinary" subtitle="Manage mentee leave requests and investigate grievances." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl border border-themeBorder dark:border-white/5 w-fit relative z-10 overflow-x-auto max-w-full">
  <button type="button" 
  onClick={() => setActiveTab('mentee_leaves')}
  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
@@ -203,7 +209,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  </button>
  <button type="button" 
  onClick={() => setActiveTab('report_grievance')}
- className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'report_grievance' ? 'bg-rose-500 text-gray-900 dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'report_grievance' ? 'bg-rose-500 text-themeText dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Report Grievance
  </button>
@@ -223,12 +229,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_leaves' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {leaves.length === 0 ? (
- <div className={`col-span-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No leave requests pending from mentees.</p>
  </div>
  ) : (
  leaves.map(req => (
- <div key={req.id} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={req.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -244,11 +250,23 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  {req.status === 'pending' ? (
  <div className="flex gap-2 mt-auto">
- <button type="button" onClick={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Approve</button>
+ <SlideCommit
+                label="Slide to Approve"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  <button type="button" onClick={() => {
  const reason = window.prompt("Reason for rejection:");
  if(reason) handleLeaveAction(req.id, 'rejected', reason);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-themeBorderStrong pt-3">
@@ -265,12 +283,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_grievances' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {grievances.length === 0 ? (
- <div className={`col-span-full bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No active grievances assigned to you.</p>
  </div>
  ) : (
  grievances.map(g => (
- <div key={g.id} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={g.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -291,16 +309,16 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {g.status === 'pending' || g.status === 'investigating' ? (
  <div className="flex flex-wrap gap-2 mt-auto">
  {g.status === 'pending' && (
- <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-gray-900 dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
  )}
  <button type="button" onClick={() => {
  const notes = window.prompt("Resolution details:");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
- }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
+ }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
  <button type="button" onClick={() => {
  const notes = window.prompt("Reason for dismissal:");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-themeBorderStrong pt-3">
@@ -316,7 +334,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  {activeTab === 'report_grievance' && (
  <div className="max-w-2xl mx-auto">
- <form onSubmit={submitFacultyGrievance} className={`bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-themePanel border-rose-500/30 border p-6 lg:p-8 flex flex-col gap-5`}>
+ <form onSubmit={submitFacultyGrievance} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-themePanel border-rose-500/30 border p-6 lg:p-8 flex flex-col gap-5`}>
  <div>
  <h2 className="text-xl font-semibold tracking-tight text-rose-500 mb-1"><i className="fa-solid fa-gavel mr-2"></i> Report Misconduct</h2>
  <p className="text-xs text-themeTextSec">Grievances filed by Faculty are immediately escalated to the Administration.</p>
@@ -347,7 +365,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  <textarea required rows="5" className="w-full bg-themeElevated border-theme border-themeBorder rounded-lg px-3 py-3 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details. The administration will review this confidentially." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
  </div>
 
- <button disabled={isProcessing} type="submit" className="w-full bg-rose-500 text-gray-900 dark:text-white font-black tracking-normal text-sm py-4 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
+ <button disabled={isProcessing} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-sm py-4 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
  {isProcessing ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit to Administration"}
  </button>
  </form>

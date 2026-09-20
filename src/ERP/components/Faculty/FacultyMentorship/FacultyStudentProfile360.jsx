@@ -10,6 +10,8 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  
  // For verifying achievements
  const [verifyingId, setVerifyingId] = useState(null);
+ const [analytics, setAnalytics] = useState(null);
+ const [attendance, setAttendance] = useState("Awaiting Data");
  const [remarks, setRemarks] = useState("");
  const [showVerifyModal, setShowVerifyModal] = useState(false);
  const [actionType, setActionType] = useState('verified'); // verified, rejected, revision_requested
@@ -122,23 +124,46 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  {/* Academic Snapshot (Mocked for future DB integration) */}
  <div>
  <h3 className="text-[15px] font-semibold tracking-normal text-themeTextSec mb-4 flex items-center gap-2">
- <i className="fa-solid fa-graduation-cap text-themeAccent"></i> Academic Snapshot
+ <i className="fa-solid fa-graduation-cap text-themeAccent"></i> Academic Snapshot & Reports
  </h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="bg-themePanel border border-themeBorder p-4 rounded-xl flex items-center gap-4">
  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg"><i className="fa-solid fa-clipboard-user"></i></div>
  <div>
- <p className="text-2xl font-semibold tracking-tight text-themeText leading-none mb-1">87%</p>
+ <p className="text-2xl font-semibold tracking-tight text-themeText leading-none mb-1">{attendance}</p>
  <p className="text-[12px] font-medium text-themeTextSec">Overall Attendance</p>
  </div>
  </div>
  <div className="bg-themePanel border border-themeBorder p-4 rounded-xl flex items-center gap-4">
  <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center text-lg"><i className="fa-solid fa-chart-line"></i></div>
  <div>
- <p className="text-2xl font-semibold tracking-tight text-themeText leading-none mb-1">7.8</p>
+ <p className="text-2xl font-semibold tracking-tight text-themeText leading-none mb-1">{analytics?.cgpa || 'N/A'}</p>
  <p className="text-[12px] font-medium text-themeTextSec">CGPA (Current)</p>
  </div>
  </div>
+ 
+ {/* NEW: Marks and CV Buttons */}
+ <button type="button" onClick={() => window.erpDialog?.alert("Redirecting to comprehensive marks ledger...")} className="bg-themePanel border border-themeBorder p-4 rounded-xl flex items-center justify-between group hover:border-themeAccent transition">
+    <div className="flex items-center gap-4">
+      <div className="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center text-lg"><i className="fa-solid fa-marker"></i></div>
+      <div className="text-left">
+         <p className="text-[14px] font-semibold tracking-tight text-themeText leading-tight mb-0.5 group-hover:text-themeAccent transition">View Marks</p>
+         <p className="text-[10px] font-medium text-themeTextSec">Internal & University</p>
+      </div>
+    </div>
+    <i className="fa-solid fa-chevron-right text-themeTextSec"></i>
+ </button>
+
+ <button type="button" onClick={() => window.erpDialog?.alert("Initiating CV Auto-Generation for Mentor Review...")} className="bg-gradient-to-br from-amber-400 to-amber-600 text-black border border-amber-500/30 p-4 rounded-xl flex items-center justify-between group hover:brightness-110 transition shadow-lg shadow-amber-500/20">
+    <div className="flex items-center gap-4">
+      <div className="w-10 h-10 rounded-lg bg-white/20 text-black flex items-center justify-center text-lg"><i className="fa-solid fa-file-pdf"></i></div>
+      <div className="text-left">
+         <p className="text-[14px] font-black tracking-tight leading-tight mb-0.5">Download CV</p>
+         <p className="text-[10px] font-bold text-black/60 uppercase tracking-widest">Auto-Generated</p>
+      </div>
+    </div>
+    <i className="fa-solid fa-arrow-down text-black"></i>
+ </button>
  </div>
  </div>
 
@@ -227,9 +252,19 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule }
  </div>
  <div className="p-5 border-t border-themeBorder bg-themePanel/85 backdrop-blur-2xl flex justify-end gap-3">
  <button type="button" onClick={() => setShowVerifyModal(false)} className="px-4 py-2 rounded-lg text-xs font-bold text-themeTextSec hover:text-themeText">Cancel</button>
- <button type="button" onClick={handleVerifySubmit} className={`px-4 py-2 rounded-lg text-[14px] font-medium tracking-normal text-gray-900 dark:text-white ${actionType === 'verified' ? 'bg-emerald-500' : actionType === 'rejected' ? 'bg-rose-500' : 'bg-blue-500'}`}>
- Confirm
- </button>
+ <SlideCommit
+                label="Slide to Confirm"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={handleVerifySubmit}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  </div>
  </div>
  </div>

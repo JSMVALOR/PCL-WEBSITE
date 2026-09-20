@@ -18,8 +18,7 @@ export const FACULTY_NAV_MEGA = [
         children: [
           { id: "materials", label: "My Courses", icon: "fa-brands fa-google-drive" },
           { id: "timetable", label: "My Schedule", icon: "fa-solid fa-calendar-days" },
-          { id: "attendance", label: "Attendance", icon: "fa-solid fa-clipboard-user" },
-          { id: "roster", label: "Class Roster", icon: "fa-solid fa-users-viewfinder" }
+          { id: "attendance", label: "Attendance & Roster", icon: "fa-solid fa-clipboard-user" }
         ] 
       },
       {

@@ -228,7 +228,7 @@ export default function App() {
         />
         <div className="flex items-center gap-3">
           <i className="fa-solid fa-circle-notch fa-spin text-xl text-neutral-500"></i>
-          <h1 className="text-xl font-black tracking-widest text-gray-900 dark:text-white uppercase">Initializing ERP System...</h1>
+          <h1 className="text-xl font-black tracking-widest text-themeText dark:text-white uppercase">Initializing ERP System...</h1>
         </div>
       </div>
     );
@@ -298,7 +298,7 @@ export default function App() {
         // Standalone Desktop/Direct Routes
         case 'timetable': return <FacultyTimetable setActiveTab={setActiveTab} />;
         case 'attendance': return <FacultyAttendance />;
-        case 'roster': return <ClassRoster />;
+        case 'roster': return <FacultyAttendance />;
         case 'courses':
         case 'materials': return <FacultyCourses setActiveTab={setActiveTab} />;
         case 'assignments': return <FacultyAssignments />;
@@ -364,7 +364,7 @@ export default function App() {
       <SessionTimeoutGuard>
         <DialogContainer />
         <ToastContainer />
-        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-gray-50 dark:bg-black text-gray-900 dark:text-white premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
+        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-gray-50 dark:bg-black text-themeText dark:text-white premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
           
           {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
           {navLayout === 'classic' && (
@@ -393,10 +393,10 @@ export default function App() {
                 </div>
 
               {/* ERP Footer with Privacy & Terms */}
-              <div className="w-full shrink-0 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-white/5Border bg-white dark:bg-[#121212]/30 text-xs font-medium text-gray-500 dark:text-white/50 mt-auto z-10 relative">
+              <div className="w-full shrink-0 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder dark:border-white/5Border bg-white dark:bg-[#121212]/30 text-xs font-medium text-themeTextSec dark:text-white/50 mt-auto z-10 relative">
                 <div className="flex gap-4 mb-2 sm:mb-0">
-                  <a href="/privacy" target="_blank" className="hover:text-gray-900 dark:text-white transition-colors">Privacy Policy</a>
-                  <a href="/terms" target="_blank" className="hover:text-gray-900 dark:text-white transition-colors">Terms of Service</a>
+                  <a href="/privacy" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Privacy Policy</a>
+                  <a href="/terms" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Terms of Service</a>
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -442,14 +442,14 @@ export default function App() {
 
 function ModuleUnderConstruction({ tabName, role }) {
   return (
-    <div className="w-full w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
+    <div className="w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
       <div className={`${theme.layout.panel} rounded-2xl p-8`}>
       <div className="flex items-center gap-4 mb-6">
-        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-gray-200 dark:border-white/5BorderStrong bg-white dark:bg-[#121212]`}>
+        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorder dark:border-white/5BorderStrong bg-white dark:bg-[#121212]`}>
           <i className="fa-solid fa-layer-group"></i>
         </div>
         <div>
-          <h3 className={`${theme.text.heading} text-xl text-gray-900 dark:text-white capitalize`}>
+          <h3 className={`${theme.text.heading} text-xl text-themeText dark:text-white capitalize`}>
             {tabName.replace('-', ' ')} Module
           </h3>
           <p className={theme.text.secondary}>
@@ -457,11 +457,11 @@ function ModuleUnderConstruction({ tabName, role }) {
           </p>
         </div>
       </div>
-      <div className={`p-6 border-gray-200 dark:border-white/5 border-dashed border-neutral-800 rounded-2xl bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-center py-24 `}>
+      <div className={`p-6 border-themeBorder dark:border-white/5 border-dashed border-neutral-800 rounded-2xl bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-center py-24 `}>
         <i className={`fa-solid fa-code text-5xl ${theme.text.muted} mb-4`}></i>
-        <h4 className={`${theme.text.heading} text-xl text-gray-900 dark:text-white mb-2`}>Module Under Construction</h4>
+        <h4 className={`${theme.text.heading} text-xl text-themeText dark:text-white mb-2`}>Module Under Construction</h4>
         <p className={`${theme.text.secondary} text-sm max-w-md leading-relaxed`}>
-          The <span className="font-black text-gray-900 dark:text-white">{tabName}</span> component is currently being developed for the {role} portal. Please select another module from the sidebar.
+          The <span className="font-black text-themeText dark:text-white">{tabName}</span> component is currently being developed for the {role} portal. Please select another module from the sidebar.
         </p>
       </div>
     </div>

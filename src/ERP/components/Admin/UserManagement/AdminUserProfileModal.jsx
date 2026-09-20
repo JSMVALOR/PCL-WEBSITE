@@ -62,7 +62,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  // Fetch Workload (from class_schedule where faculty is assigned)
  const { data: sessions } = await supabase
  .from("attendance")
- .select("id, class_id")
+ .select("id")
  .eq("faculty_id", user.db_id);
 
  const finished = sessions?.length || 0;
@@ -115,13 +115,13 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
 
  return (
  <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
- <div className="w-full w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-gray-200 dark:border-white/5">
+ <div className="w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-themeBorder dark:border-white/5">
  
  {/* Header Profile Card */}
  <div className={`p-6 lg:p-8 bg-gradient-to-r ${user.role === 'student' ? 'from-themeAccent to-themeAccent/80' : 'from-blue-600 to-blue-500'} relative overflow-hidden shrink-0`}>
  <div className="absolute top-0 right-0 w-full max-w-[300px] md:w-[300px] h-[300px] bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 mix-blend-overlay pointer-events-none"></div>
  
- <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-black/20 hover:bg-black/40 text-gray-900 dark:text-white transition-colors z-20">
+ <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-black/20 hover:bg-black/40 text-themeText dark:text-white transition-colors z-20">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
 
@@ -135,7 +135,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
      </span>
  )}
  </div>
- <div className="text-gray-900 dark:text-white min-w-0">
+ <div className="text-themeText dark:text-white min-w-0">
  <div className="flex items-center gap-2 mb-1">
  <span className="px-2 py-0.5 bg-white/20 rounded-md text-[13px] font-medium backdrop-blur-md border border-black/10 dark:border-white/20">
  {user.role}
@@ -158,12 +158,12 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  
  {/* Basic Info Section */}
  <div>
- <h4 className={`text-[13px] font-medium text-[#8E8E93] mb-4 flex items-center gap-2`}>
+ <h4 className={`text-[13px] font-medium text-themeTextSec mb-4 flex items-center gap-2`}>
  <i className="fa-solid fa-address-card"></i> Core Assignment
  </h4>
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-4 grid grid-cols-2 gap-4">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-4 grid grid-cols-2 gap-4">
  <div>
- <span className={`text-[12px] font-medium text-[#8E8E93] block mb-1`}>
+ <span className={`text-[12px] font-medium text-themeTextSec block mb-1`}>
  {user.role === 'student' ? 'Academic Batch' : 'Department'}
  </span>
  <span className="text-[15px] font-semibold text-themeText">
@@ -176,19 +176,19 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
                         {/* ONBOARDING DOSSIER / QUESTIONNAIRE DATA */}
                         {user.questionnaire_data && (
                             <div className="mt-8 animate-fade-in">
-                                <h4 className={`text-[13px] font-medium text-[#8E8E93] mb-4 flex items-center gap-2`}>
+                                <h4 className={`text-[13px] font-medium text-themeTextSec mb-4 flex items-center gap-2`}>
                                     <i className="fa-solid fa-file-shield"></i> Onboarding Dossier
                                 </h4>
-                                <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-5 flex flex-col gap-5">
+                                <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-5 flex flex-col gap-5">
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {/* Professional */}
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">Aadhaar / Gov ID</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Aadhaar / Gov ID</span>
                                             <span className="text-sm font-mono text-themeText tracking-wider">{user.questionnaire_data.aadharNumber || 'N/A'}</span>
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">LinkedIn Profile</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">LinkedIn Profile</span>
                                             {user.questionnaire_data.linkedInProfile ? (
                                                 <a href={user.questionnaire_data.linkedInProfile.startsWith('http') ? user.questionnaire_data.linkedInProfile : `https://${user.questionnaire_data.linkedInProfile}`} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-themeAccent hover:underline flex items-center gap-2">
                                                     <i className="fa-brands fa-linkedin"></i> View Profile
@@ -200,17 +200,17 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
 
                                         {/* Academic Interest */}
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">Legal Interest / Domain</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Legal Interest / Domain</span>
                                             <span className="text-sm font-semibold text-themeText">{user.questionnaire_data.legalInterest || 'N/A'}</span>
                                         </div>
                                     </div>
 
-                                    <div className="w-full border-t border-gray-200 dark:border-white/5 my-2"></div>
+                                    <div className="w-full border-t border-themeBorder dark:border-white/5 my-2"></div>
 
                                     {/* Emergency & Family */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">Emergency Contact</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Emergency Contact</span>
                                             <span className="text-sm font-bold text-rose-500 flex items-center gap-2">
                                                 <i className="fa-solid fa-phone-volume"></i> {user.questionnaire_data.emergencyPhone || 'N/A'}
                                             </span>
@@ -218,24 +218,24 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
                                         </div>
                                         
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">Parents / Guardians</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Parents / Guardians</span>
                                             <span className="text-sm font-medium text-themeText">F: {user.questionnaire_data.fatherName || 'N/A'}</span>
                                             <span className="text-sm font-medium text-themeText">M: {user.questionnaire_data.motherName || 'N/A'}</span>
                                         </div>
                                     </div>
 
-                                    <div className="w-full border-t border-gray-200 dark:border-white/5 my-2"></div>
+                                    <div className="w-full border-t border-themeBorder dark:border-white/5 my-2"></div>
 
                                     {/* Addresses */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">Present Address</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Present Address</span>
                                             <p className="text-xs font-medium text-themeTextSec leading-relaxed">
                                                 {user.questionnaire_data.presentAddress || 'N/A'}
                                             </p>
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-[11px] font-bold tracking-widest text-[#8E8E93] uppercase">Permanent Address</span>
+                                            <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Permanent Address</span>
                                             <p className="text-xs font-medium text-themeTextSec leading-relaxed">
                                                 {user.questionnaire_data.sameAsPresentAddress 
                                                     ? (user.questionnaire_data.presentAddress || 'N/A') 
@@ -250,23 +250,23 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
 
  {loading ? (
  <div className="py-12 flex flex-col items-center justify-center gap-3">
- <i className={`fa-solid fa-circle-notch fa-spin text-2xl text-[#8E8E93]`}></i>
- <span className={`text-xs font-bold text-[#8E8E93]`}>Gathering Operations Analytics...</span>
+ <i className={`fa-solid fa-circle-notch fa-spin text-2xl text-themeTextSec`}></i>
+ <span className={`text-xs font-bold text-themeTextSec`}>Gathering Operations Analytics...</span>
  </div>
  ) : (
  <div className="flex flex-col gap-8 animate-fade-in">
  
  {/* Academic / Workload Analytics */}
  <div>
- <h4 className={`text-[13px] font-medium text-[#8E8E93] mb-4 flex items-center gap-2`}>
+ <h4 className={`text-[13px] font-medium text-themeTextSec mb-4 flex items-center gap-2`}>
  <i className="fa-solid fa-chart-line"></i> Academic Metrics
  </h4>
  
  {user.role === "student" ? (
  <div className="grid grid-cols-1 gap-4">
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-5 flex items-center justify-between">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-5 flex items-center justify-between">
  <div>
- <span className={`text-[13px] font-medium text-[#8E8E93] block mb-1`}>Semester Attendance</span>
+ <span className={`text-[13px] font-medium text-themeTextSec block mb-1`}>Semester Attendance</span>
  <span className="text-3xl font-semibold tracking-tight text-themeText">{stats.attendancePercentage}%</span>
  </div>
  <div className="w-12 h-12 rounded-full border-[4px] border-themeElevated relative flex items-center justify-center">
@@ -277,16 +277,16 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  </div>
  ) : (
  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-5 text-center">
- <span className={`text-[12px] font-medium text-[#8E8E93] block mb-1`}>Assigned Workload</span>
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-5 text-center">
+ <span className={`text-[12px] font-medium text-themeTextSec block mb-1`}>Assigned Workload</span>
  <span className="text-2xl font-semibold tracking-tight text-themeText">{stats.workload} Classes</span>
  </div>
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-5 text-center">
- <span className={`text-[12px] font-medium text-[#8E8E93] block mb-1`}>Classes Finished</span>
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-5 text-center">
+ <span className={`text-[12px] font-medium text-themeTextSec block mb-1`}>Classes Finished</span>
  <span className="text-2xl font-semibold tracking-tight text-blue-500">{stats.finishedClasses}</span>
  </div>
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-5 text-center col-span-2 lg:col-span-1">
- <span className={`text-[12px] font-medium text-[#8E8E93] block mb-1`}>Student Avg Att.</span>
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-5 text-center col-span-2 lg:col-span-1">
+ <span className={`text-[12px] font-medium text-themeTextSec block mb-1`}>Student Avg Att.</span>
  <span className={`text-2xl font-semibold tracking-tight ${stats.studentAvgAttendance >= 75 ? 'text-emerald-500' : 'text-amber-500'}`}>
  {stats.studentAvgAttendance}%
  </span>
@@ -297,13 +297,13 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
 
  {/* Leave Analytics */}
  <div>
- <h4 className={`text-[13px] font-medium text-[#8E8E93] mb-4 flex items-center gap-2`}>
+ <h4 className={`text-[13px] font-medium text-themeTextSec mb-4 flex items-center gap-2`}>
  <i className="fa-solid fa-calendar-day"></i> Leave Record
  </h4>
  <div className="grid grid-cols-3 gap-4">
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-xl p-4 flex flex-col gap-1 items-center justify-center text-center">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-xl p-4 flex flex-col gap-1 items-center justify-center text-center">
  <span className="text-xl font-semibold tracking-tight text-themeText">{stats.totalLeaves}</span>
- <span className={`text-[12px] font-medium text-[#8E8E93]`}>Total Applied</span>
+ <span className={`text-[12px] font-medium text-themeTextSec`}>Total Applied</span>
  </div>
  <div className="bg-emerald-500/5 border-theme border-emerald-500/20 rounded-xl p-4 flex flex-col gap-1 items-center justify-center text-center">
  <span className="text-xl font-semibold tracking-tight text-emerald-500">{stats.approvedLeaves}</span>

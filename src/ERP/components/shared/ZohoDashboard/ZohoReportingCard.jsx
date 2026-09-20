@@ -2,13 +2,13 @@ import React from 'react';
 
 export default function ZohoReportingCard({ mode = "reporting", users = [] }) {
     return (
-        <div className="bg-[#18181A] rounded-xl border border-gray-200 dark:border-white/5 p-4 shadow-lg flex flex-col gap-3">
-            <h4 className="text-[#8E8E93] text-xs font-semibold uppercase tracking-wider mb-1">
+        <div className="bg-[#18181A] rounded-xl border border-themeBorder dark:border-white/5 p-4 shadow-lg flex flex-col gap-3">
+            <h4 className="text-themeTextSec text-xs font-semibold uppercase tracking-wider mb-1">
                 {mode === 'reporting' ? 'Reporting To' : 'Mentoring'}
             </h4>
             
             {users.length === 0 ? (
-                <div className="text-[#F2F2F7] text-xs">No assignments found.</div>
+                <div className="text-themeText text-xs">No assignments found.</div>
             ) : (
                 users.map((user, idx) => (
                     <div key={idx} className="flex items-center gap-3">
@@ -16,13 +16,13 @@ export default function ZohoReportingCard({ mode = "reporting", users = [] }) {
                             {user.avatar ? (
                                 <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-gray-900 dark:text-white bg-blue-500">
+                                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-themeText dark:text-white bg-blue-500">
                                     {user.name?.charAt(0) || 'U'}
                                 </div>
                             )}
                         </div>
                         <div className="flex flex-col overflow-hidden">
-                            <span className="text-[#F2F2F7] text-xs font-medium truncate">{user.id} - {user.name}</span>
+                            <span className="text-themeText text-xs font-medium truncate">{user.id} - {user.name}</span>
                             <span className="text-[#FF453A] text-[10px] mt-0.5">Out</span>
                         </div>
                     </div>

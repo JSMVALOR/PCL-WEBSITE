@@ -50,7 +50,7 @@ export default function AdminAttendanceIssues() {
 
     const handleAction = async (appeal, action) => {
         if(!appeal.session_id || !appeal.student_id) return window.erpDialog?.alert("Invalid payload. Missing session/student ID.");
-        if(!window.confirm(`Are you sure you want to ${action} this appeal?`)) return;
+        if(!(await window.erpDialog?.confirm(`Are you sure you want to ${action} this appeal?`))) return;
         
         setProcessingId(appeal.id);
         try {
@@ -91,7 +91,7 @@ export default function AdminAttendanceIssues() {
     };
 
     return (
-        <div className="w-full min-h-screen bg-transparent text-gray-900 dark:text-white font-sans animate-fade-in pb-12">
+        <div className="w-full min-h-screen bg-transparent text-themeText dark:text-white font-sans animate-fade-in pb-12">
             <div className="w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 lg:gap-8">
                 
                 <PageHeader 
@@ -107,25 +107,25 @@ export default function AdminAttendanceIssues() {
                         {appeals.length === 0 ? (
                             <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                                 <i className="fa-solid fa-clipboard-check text-4xl text-white/10 mb-4"></i>
-                                <h3 className="text-base font-black text-gray-900 dark:text-white">No Issues Pending</h3>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-white/40 mt-1">All attendance disputes have been resolved.</p>
+                                <h3 className="text-base font-black text-themeText dark:text-white">No Issues Pending</h3>
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/40 mt-1">All attendance disputes have been resolved.</p>
                             </div>
                         ) : (
                             appeals.map(appeal => (
-                                <div key={appeal.id} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-3xl p-6 flex flex-col gap-4">
+                                <div key={appeal.id} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-3xl p-6 flex flex-col gap-4">
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border mb-2 inline-block ${
                                                 appeal.status === 'open' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
                                                 appeal.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
-                                                'bg-white/5 text-gray-500 dark:text-white/50 border-gray-300 dark:border-white/10'
+                                                'bg-white/5 text-themeTextSec dark:text-white/50 border-themeBorder dark:border-white/10'
                                             }`}>
                                                 {appeal.status}
                                             </span>
-                                            <h4 className="text-sm font-black text-gray-900 dark:text-white">{appeal.student_name}</h4>
-                                            <p className="text-[10px] font-bold tracking-widest text-gray-500 dark:text-white/50 uppercase">{appeal.student_erp}</p>
+                                            <h4 className="text-sm font-black text-themeText dark:text-white">{appeal.student_name}</h4>
+                                            <p className="text-[10px] font-bold tracking-widest text-themeTextSec dark:text-white/50 uppercase">{appeal.student_erp}</p>
                                         </div>
-                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/30 text-xs font-black">
+                                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-themeTextSec dark:text-white/30 text-xs font-black">
                                             {appeal.student_name.charAt(0)}
                                         </div>
                                     </div>
@@ -147,7 +147,7 @@ export default function AdminAttendanceIssues() {
                                             <button 
                                                 onClick={() => handleAction(appeal, 'reject')}
                                                 disabled={processingId === appeal.id}
-                                                className="flex-1 py-3 bg-white/5 hover:bg-rose-500/10 border border-gray-300 dark:border-white/10 hover:border-rose-500/20 rounded-xl text-gray-500 dark:text-white/50 hover:text-rose-500 text-xs font-black transition-colors"
+                                                className="flex-1 py-3 bg-white/5 hover:bg-rose-500/10 border border-themeBorder dark:border-white/10 hover:border-rose-500/20 rounded-xl text-themeTextSec dark:text-white/50 hover:text-rose-500 text-xs font-black transition-colors"
                                             >
                                                 Reject
                                             </button>

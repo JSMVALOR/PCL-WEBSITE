@@ -16,13 +16,18 @@ export default function FacultyActionItems() {
                 const fid = userSession?.db_id || userSession?.id || 'default';
                 const items = [];
 
-                // 1. Pending Leaves (Assuming faculty is HOD or Mentor)
-                // We'll just fetch any pending leaves where faculty might be involved
-                const { data: leaves } = await supabase
+                // Fetch mentee IDs first
+                const { data: menteeData } = await supabase.from('mentorship').select('student_id').eq('faculty_id', fid);
+                const menteeIds = (menteeData || []).map(m => m.student_id).filter(Boolean);
+                
+                const { data: leaves } = menteeIds.length > 0
+                    ? await supabase
                     .from('leave_requests')
-                    .select('id, student_id, from_date, to_date')
+                    .select('id, student_id, start_date, end_date')
                     .eq('status', 'pending')
-                    .limit(2);
+                    .in('student_id', menteeIds)
+                    .limit(2)
+                    : { data: [] };
                     
                 if (leaves && leaves.length > 0) {
                     items.push({
@@ -86,7 +91,7 @@ export default function FacultyActionItems() {
     }, [userSession]);
 
     return (
-        <div className="flex-1 bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 relative flex flex-col shrink-0 h-[320px]">
+        <div className="flex-1 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 relative flex flex-col shrink-0 h-[320px]">
             <div className="flex justify-between items-center mb-5 shrink-0">
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
                     <i className="fa-solid fa-inbox text-themeAccent"></i> Action Items

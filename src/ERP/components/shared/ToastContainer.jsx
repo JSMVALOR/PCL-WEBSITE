@@ -70,7 +70,7 @@ function ToastItem({ toast, onRemove }) {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, x: 100, scale: 0.9 }}
-            className="bg-[#1C1C1E] dark:bg-[#2C2C2E]/90 backdrop-blur-2xl border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white p-4 lg:p-5 rounded-2xl shadow-2xl flex flex-col gap-3 min-w-[320px] pointer-events-auto"
+            className="bg-themePanel dark:bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/10 text-themeText dark:text-white p-4 lg:p-5 rounded-2xl shadow-2xl flex flex-col gap-3 min-w-[320px] pointer-events-auto"
         >
             <div className="flex items-center justify-between gap-6">
                 <div className="flex items-center gap-3">

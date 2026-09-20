@@ -151,7 +151,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeAccent/30 ${!isEmbedded ? "min-h-screen bg-transparent text-themeText font-sans" : ""}`}>
-            <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
                 
                 {!isEmbedded && (
                     <PageHeader 
@@ -240,7 +240,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                                 <button 
                                                     onClick={() => handleMarkStatus(fac.id, 'present', fac.status)}
                                                     disabled={actionLoading === fac.id}
-                                                    className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-emerald-500/20 text-gray-400 hover:text-emerald-500 transition-colors flex items-center justify-center border border-transparent hover:border-emerald-500/30"
+                                                    className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-emerald-500/20 text-themeTextSec hover:text-emerald-500 transition-colors flex items-center justify-center border border-transparent hover:border-emerald-500/30"
                                                     title="Force Mark Present"
                                                 >
                                                     {actionLoading === fac.id ? <i className="fa-solid fa-spinner fa-spin text-[10px]"></i> : <i className="fa-solid fa-check text-[10px]"></i>}
@@ -250,7 +250,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                                 <button 
                                                     onClick={() => handleMarkStatus(fac.id, 'absent', fac.status)}
                                                     disabled={actionLoading === fac.id}
-                                                    className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-500 transition-colors flex items-center justify-center border border-transparent hover:border-rose-500/30"
+                                                    className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-rose-500/20 text-themeTextSec hover:text-rose-500 transition-colors flex items-center justify-center border border-transparent hover:border-rose-500/30"
                                                     title="Force Mark Absent (LOP)"
                                                 >
                                                     {actionLoading === fac.id ? <i className="fa-solid fa-spinner fa-spin text-[10px]"></i> : <i className="fa-solid fa-xmark text-[10px]"></i>}
@@ -258,7 +258,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                             )}
                                             <button 
                                                 onClick={() => fetchAuditHistory(fac.id)}
-                                                className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex items-center justify-center border border-transparent hover:border-white/20 ml-2"
+                                                className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-white/10 text-themeTextSec hover:text-white transition-colors flex items-center justify-center border border-transparent hover:border-white/20 ml-2"
                                                 title="View Edit History"
                                             >
                                                 <i className="fa-solid fa-clock-rotate-left text-[10px]"></i>

@@ -86,7 +86,7 @@ export default function GlobalSearch() {
           }}
           onFocus={() => setIsOpen(true)}
           placeholder="Search modules, features, or quick links..."
-          className="w-full bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-gray-200 dark:border-white/5 text-themeText rounded-full py-3.5 pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-themeAccent/20 focus:border-themeAccent transition shadow-sm placeholder:text-themeTextSec text-sm"
+          className="w-full bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-themeBorder dark:border-white/5 text-themeText rounded-full py-3.5 pl-12 pr-6 focus:outline-none focus:ring-2 focus:ring-themeAccent/20 focus:border-themeAccent transition shadow-sm placeholder:text-themeTextSec text-sm"
         />
       </div>
 
@@ -110,7 +110,7 @@ export default function GlobalSearch() {
                       <button type="button"
                         key={link.id}
                         onClick={() => handleSelect(link.path)}
-                        className="flex items-center gap-3 w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition-colors group border border-transparent hover:border-gray-200 dark:border-white/5"
+                        className="flex items-center gap-3 w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition-colors group border border-transparent hover:border-themeBorder dark:border-white/5"
                       >
                         <div className="w-8 h-8 flex items-center justify-center rounded-md bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-themeTextSec group-hover:text-themeAccent group-hover:bg-themeAccent/10 transition-colors">
                           <i className={link.icon}></i>
@@ -158,10 +158,10 @@ export default function GlobalSearch() {
                     <button type="button"
                       key={module.id}
                       onClick={() => handleSelect(module.path)}
-                      className="flex items-center justify-between w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition group border border-transparent hover:border-gray-200 dark:border-white/5"
+                      className="flex items-center justify-between w-full p-3 rounded-themeBtn hover:bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated text-left transition group border border-transparent hover:border-themeBorder dark:border-white/5"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 flex items-center justify-center rounded-md bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-gray-200 dark:border-white/5 text-themeTextSec group-hover:text-themeAccent group-hover:border-themeAccent/30 group-hover:bg-themeAccent/10 transition-colors">
+                        <div className="w-10 h-10 flex items-center justify-center rounded-md bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-themeBorder dark:border-white/5 text-themeTextSec group-hover:text-themeAccent group-hover:border-themeAccent/30 group-hover:bg-themeAccent/10 transition-colors">
                           <i className={`${module.icon} text-lg`}></i>
                         </div>
                         <div>
@@ -182,7 +182,7 @@ export default function GlobalSearch() {
               </div>
             ) : (
               <div className="py-14 px-6 text-center flex flex-col items-center justify-center">
-                <div className="w-14 h-14 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-gray-200 dark:border-white/5 flex items-center justify-center mb-4">
+                <div className="w-14 h-14 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 flex items-center justify-center mb-4">
                   <i className="fa-solid fa-magnifying-glass text-xl text-themeTextSec"></i>
                 </div>
                 <p className="text-sm text-themeText font-medium mb-1">No results found</p>
@@ -192,19 +192,19 @@ export default function GlobalSearch() {
           </div>
           
           {/* Footer */}
-          <div className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border-t-theme border-gray-200 dark:border-white/5 p-3 px-5 flex items-center justify-between text-xs text-themeTextSec">
+          <div className="bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border-t-theme border-themeBorder dark:border-white/5 p-3 px-5 flex items-center justify-between text-xs text-themeTextSec">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1.5">
-                <kbd className="px-1.5 py-0.5 rounded bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-gray-200 dark:border-white/5 shadow-sm font-sans font-medium text-themeText">↑↓</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-themeBorder dark:border-white/5 shadow-sm font-sans font-medium text-themeText">↑↓</kbd>
                 <span>to navigate</span>
               </span>
               <span className="flex items-center gap-1.5">
-                <kbd className="px-1.5 py-0.5 rounded bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-gray-200 dark:border-white/5 shadow-sm font-sans font-medium text-themeText">↵</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-themeBorder dark:border-white/5 shadow-sm font-sans font-medium text-themeText">↵</kbd>
                 <span>to select</span>
               </span>
             </div>
             <span className="flex items-center gap-1.5">
-              <kbd className="px-1.5 py-0.5 rounded bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-gray-200 dark:border-white/5 shadow-sm font-sans font-medium text-themeText">ESC</kbd>
+              <kbd className="px-1.5 py-0.5 rounded bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-themeBorder dark:border-white/5 shadow-sm font-sans font-medium text-themeText">ESC</kbd>
               <span>to close</span>
             </span>
           </div>

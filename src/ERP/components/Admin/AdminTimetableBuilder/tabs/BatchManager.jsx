@@ -87,7 +87,7 @@ export default function CohortManager() {
     };
 
     const handleDeleteProgram = async (id) => {
-        if(!window.confirm("Are you sure you want to delete this Degree Program? This will fail if there are existing cohorts attached to it.")) return;
+        if(!(await window.erpDialog?.confirm("Are you sure you want to delete this Degree Program? This will fail if there are existing cohorts attached to it."))) return;
         
         const { error } = await supabase.from('academic_programs').delete().eq('id', id);
         if (error) {
@@ -141,13 +141,13 @@ export default function CohortManager() {
     };
 
     const handleDeleteBatch = async (id) => {
-        if (!await window.erpDialog?.confirm("Are you sure? This deletes the cohort and ALL associated subjects.", "Delete Cohort")) return;
+        
         await supabase.from('academic_batches').delete().eq('id', id);
         fetchData();
     };
 
     const handlePromoteBatch = async (batch) => {
-        if (!await window.erpDialog?.confirm(`Are you sure you want to promote ${batch.name} to Semester ${batch.current_semester + 1}? This will trigger curriculum deployment.`, "Promote Cohort")) return;
+        
         const { error } = await supabase.from('academic_batches').update({ current_semester: batch.current_semester + 1 }).eq('id', batch.id);
         if (error) {
             window.erpDialog?.alert("Failed to promote cohort.");
@@ -164,8 +164,8 @@ export default function CohortManager() {
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-xl font-black tracking-tight text-gray-900 dark:text-white">Degree Programs</h2>
-                        <p className="text-xs font-bold text-gray-500 dark:text-white/50 tracking-wide mt-1">Foundational degree structures.</p>
+                        <h2 className="text-xl font-black tracking-tight text-themeText dark:text-white">Degree Programs</h2>
+                        <p className="text-xs font-bold text-themeTextSec dark:text-white/50 tracking-wide mt-1">Foundational degree structures.</p>
                     </div>
                     <button type="button" onClick={() => { setIsCreatingProg(!isCreatingProg); setEditingProgId(null); setProgName(''); setProgCode(''); }} className="px-5 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-black font-black text-xs tracking-wide rounded-xl transition shadow-sm hover:opacity-90">
                         {isCreatingProg ? 'Cancel' : 'New Program'}
@@ -173,25 +173,25 @@ export default function CohortManager() {
                 </div>
 
                 {isCreatingProg && (
-                    <form onSubmit={handleCreateProgram} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl flex flex-col gap-6 shadow-sm">
+                    <form onSubmit={handleCreateProgram} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 p-6 rounded-2xl flex flex-col gap-6 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div className="md:col-span-1">
-                                <label className="text-[10px] font-black text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1.5">Program Code</label>
-                                <input required type="text" placeholder="e.g. BALLB" value={progCode} onChange={e => setProgCode(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-500" />
+                                <label className="text-[10px] font-black text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1.5">Program Code</label>
+                                <input required type="text" placeholder="e.g. BALLB" value={progCode} onChange={e => setProgCode(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-gray-500" />
                             </div>
                             <div className="md:col-span-2">
-                                <label className="text-[10px] font-black text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1.5">Full Name</label>
-                                <input required type="text" placeholder="e.g. BA.LLB (Hons.)" value={progName} onChange={e => setProgName(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-500" />
+                                <label className="text-[10px] font-black text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1.5">Full Name</label>
+                                <input required type="text" placeholder="e.g. BA.LLB (Hons.)" value={progName} onChange={e => setProgName(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-gray-500" />
                             </div>
                             <div className="md:col-span-1">
-                                <label className="text-[10px] font-black text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-1.5">Duration (Yrs)</label>
-                                <select required value={progDuration} onChange={e => setProgDuration(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-gray-500 appearance-none">
+                                <label className="text-[10px] font-black text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1.5">Duration (Yrs)</label>
+                                <select required value={progDuration} onChange={e => setProgDuration(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-gray-500 appearance-none">
                                     {[1,2,3,4,5,6].map(y => <option key={y} value={y}>{y} Years</option>)}
                                 </select>
                             </div>
                         </div>
                         <div>
-                            <label className="text-[10px] font-black text-gray-500 dark:text-white/50 uppercase tracking-widest block mb-2">Program Identity Color (Cohorts & Subjects will inherit this)</label>
+                            <label className="text-[10px] font-black text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-2">Program Identity Color (Cohorts & Subjects will inherit this)</label>
                             <div className="flex flex-wrap gap-3">
                                 {AVAILABLE_COLORS.map(c => (
                                     <button type="button" key={c.value} onClick={() => setProgTheme(c.value)} className={`w-10 h-10 rounded-full transition-transform ${progTheme === c.value ? 'scale-110 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-black ring-gray-400 dark:ring-white/30' : 'hover:scale-105 opacity-70'} ${c.solid}`}></button>
@@ -211,18 +211,18 @@ export default function CohortManager() {
                         <div key={p.id} className={`bg-white dark:bg-white/[0.02] border ${theme.border} p-5 rounded-2xl flex flex-col items-center justify-center text-center group transition relative overflow-hidden shadow-sm hover:shadow-md`}>
                             <div className={`absolute top-0 right-0 w-24 h-24 blur-3xl opacity-10 -z-10 ${theme.solid}`}></div>
                             <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition z-10">
-                                <button onClick={() => handleEditProgram(p)} className="w-7 h-7 rounded bg-white/50 dark:bg-black/50 text-gray-700 dark:text-white/70 hover:bg-amber-500 hover:text-white flex items-center justify-center transition backdrop-blur-sm">
+                                <button onClick={() => handleEditProgram(p)} className="w-7 h-7 rounded bg-white/50 dark:bg-black/50 text-themeTextSec dark:text-white/70 hover:bg-amber-500 hover:text-white flex items-center justify-center transition backdrop-blur-sm">
                                     <i className="fa-solid fa-pen text-[10px]"></i>
                                 </button>
-                                <button onClick={() => handleDeleteProgram(p.id)} className="w-7 h-7 rounded bg-white/50 dark:bg-black/50 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition backdrop-blur-sm">
-                                    <i className="fa-solid fa-trash text-[10px]"></i>
-                                </button>
+                                <HoldButton size="sm" onHold={() => handleDeleteProgram(p.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                null
+            </HoldButton>
                             </div>
                             <div className={`w-12 h-12 rounded-xl ${theme.bg} ${theme.text} flex items-center justify-center font-black text-lg mb-3 ring-1 ring-black/5 dark:ring-white/10`}>
                                 {p.duration_years}Y
                             </div>
                             <span className={`text-[14px] font-black tracking-tight ${theme.text} leading-none`}>{p.code}</span>
-                            <span className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-wide mt-1.5">{p.name}</span>
+                            <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-wide mt-1.5">{p.name}</span>
                         </div>
                         );
                     })}
@@ -230,7 +230,7 @@ export default function CohortManager() {
             </div>
 
 
-            <hr className="border-gray-200 dark:border-white/5 my-4" />
+            <hr className="border-themeBorder dark:border-white/5 my-4" />
 
 
             {/* COHORTS SECTION */}
@@ -238,7 +238,7 @@ export default function CohortManager() {
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-black tracking-tight text-blue-600 dark:text-blue-400">Cohort State</h2>
-                        <p className="text-xs font-bold text-gray-500 dark:text-white/50 tracking-wide mt-1">Mathematically generate class identities.</p>
+                        <p className="text-xs font-bold text-themeTextSec dark:text-white/50 tracking-wide mt-1">Mathematically generate class identities.</p>
                     </div>
                     <button type="button" onClick={() => { setIsCreatingBatch(!isCreatingBatch); setEditingBatchId(null); setBatchProgId(''); }} className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-black text-xs tracking-wide rounded-xl transition shadow-lg shadow-blue-500/20">
                         <i className={`fa-solid ${isCreatingBatch ? 'fa-xmark' : 'fa-plus'} mr-2`}></i> {isCreatingBatch ? 'Cancel' : 'Auto-Generate'}
@@ -250,14 +250,14 @@ export default function CohortManager() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1.5">1. Select Program</label>
-                                <select required value={batchProgId} onChange={e => setBatchProgId(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-blue-500 appearance-none shadow-sm">
+                                <select required value={batchProgId} onChange={e => setBatchProgId(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-blue-500 appearance-none shadow-sm">
                                     <option value="">Choose Degree...</option>
                                     {programs.map(p => <option key={p.id} value={p.id}>{p.code} ({p.duration_years}Y)</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1.5">2. Admission Year</label>
-                                <select required value={batchStart} onChange={e => setBatchStart(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-blue-500 appearance-none shadow-sm">
+                                <select required value={batchStart} onChange={e => setBatchStart(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-blue-500 appearance-none shadow-sm">
                                     {[...Array(6)].map((_, i) => {
                                         const year = new Date().getFullYear() - 2 + i;
                                         return <option key={year} value={year}>{year}</option>;
@@ -291,22 +291,22 @@ export default function CohortManager() {
                                         <button onClick={() => handlePromoteBatch(b)} className={`px-3 py-1.5 rounded-lg ${theme.bg} ${theme.text} font-bold text-[10px] uppercase tracking-wider hover:${theme.solid} hover:text-white transition`}>
                                             Promote
                                         </button>
-                                        <button onClick={() => handleEditBatch(b)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white/70 opacity-0 group-hover:opacity-100 transition hover:bg-amber-500 hover:text-white flex items-center justify-center shrink-0">
+                                        <button onClick={() => handleEditBatch(b)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-themeTextSec dark:text-white/70 opacity-0 group-hover:opacity-100 transition hover:bg-amber-500 hover:text-white flex items-center justify-center shrink-0">
                                             <i className="fa-solid fa-pen text-xs"></i>
                                         </button>
-                                        <button onClick={() => handleDeleteBatch(b.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 opacity-0 group-hover:opacity-100 transition hover:bg-rose-500 hover:text-white flex items-center justify-center shrink-0">
-                                            <i className="fa-solid fa-trash text-xs"></i>
-                                        </button>
+                                        <HoldButton size="sm" onHold={() => handleDeleteBatch(b.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                null
+            </HoldButton>
                                     </div>
                                 </div>
                                 
-                                <h3 className="text-xl font-black tracking-tight text-gray-900 dark:text-white mb-3">{b.name}</h3>
+                                <h3 className="text-xl font-black tracking-tight text-themeText dark:text-white mb-3">{b.name}</h3>
                                 
                                 <div className="space-y-2">
-                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
+                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
                                         <i className="fa-solid fa-graduation-cap w-4"></i> {b.academic_programs?.name} ({b.academic_programs?.duration_years} Years)
                                     </div>
-                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
+                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
                                         <i className="fa-solid fa-calendar w-4"></i> Batch of {b.start_year} - {b.end_year}
                                     </div>
                                 </div>

@@ -44,12 +44,12 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  <div className="flex flex-col gap-8 animate-fade-in">
  {/* Hero Stats */}
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => {}}>
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => {}}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition"></div>
  <span className="text-3xl font-semibold tracking-tight text-themeText z-10">{stats.loading ? '-' : stats.activeSubjects}</span>
  <span className="text-[12px] font-medium text-themeTextSec z-10">Active Subjects</span>
  </div>
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('schedule-builder')}>
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('schedule-builder')}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition"></div>
  <span className="text-3xl font-semibold tracking-tight text-rose-500 z-10">{stats.loading ? '-' : stats.timetableRows}</span>
  <span className="text-[12px] font-medium text-themeTextSec z-10">Scheduled Classes</span>
@@ -64,7 +64,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  <span className="text-[10px] font-bold text-themeTextSec">Add and configure academic classrooms.</span>
  </div>
 
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6">
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-6">Welcome to the Command Center</h3>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  
@@ -121,7 +121,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  className={`px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab.id 
  ? 'bg-themePanel/85 backdrop-blur-2xl text-themeAccent border border-white dark:border-white/20 scale-100 shadow-sm' 
- : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
+ : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
  }`}
  >
  <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'animate-pulse text-blue-500' : ''}`}></i> {tab.label}

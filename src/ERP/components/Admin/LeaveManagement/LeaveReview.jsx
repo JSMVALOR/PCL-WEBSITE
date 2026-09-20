@@ -78,7 +78,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <div className="flex flex-col gap-6 animate-fade-in max-w-4xl mx-auto">
  
  {/* Header Profile Card */}
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-8 flex flex-col md:flex-row items-start md:items-center gap-4 lg:gap-6 relative overflow-hidden">
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-8 flex flex-col md:flex-row items-start md:items-center gap-4 lg:gap-6 relative overflow-hidden">
  <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong rounded-full flex items-center justify-center text-xl lg:text-2xl text-themeTextSec shrink-0">
  <i className="fa-solid fa-user"></i>
  </div>
@@ -102,9 +102,9 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  
  <div className="lg:col-span-2 flex flex-col gap-6">
  {/* Details Box */}
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-6">
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-6">
  
- <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-gray-200 dark:border-white/5 pb-6">
+ <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 pb-6">
  <div>
  <p className="text-[13px] font-medium text-themeTextSec">Leave Type</p>
  <div className="flex items-center gap-2 mt-1">
@@ -117,13 +117,13 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <p className="text-sm font-bold text-themeText mt-1">
  {new Date(request.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - {new Date(request.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
  </p>
- <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-0.5">{request.total_days} Days</p>
+ <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-0.5">{request.days} Days</p>
  </div>
  </div>
 
  <div className="mb-6">
  <p className="text-[13px] font-medium text-themeTextSec mb-2">Reason Provided</p>
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-gray-200 dark:border-white/5Strong">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-themeBorder dark:border-white/5Strong">
  <p className="text-sm text-themeText italic leading-relaxed">"{request.reason}"</p>
  </div>
  </div>
@@ -143,7 +143,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  )}
  </div>
  
- <div className="mt-6 pt-6 border-t-[length:var(--border-width)] border-gray-200 dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+ <div className="mt-6 pt-6 border-t-[length:var(--border-width)] border-themeBorder dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <p className="text-[13px] font-medium text-themeTextSec">Class Replacement Status</p>
  <span className="bg-rose-500/10 border-[length:var(--border-width)] border-rose-500/20 text-rose-500 px-3 py-1 rounded text-[9px] lg:text-[13px] font-medium w-fit">
  {request.replacement_status === 'Assigned' ? 'Assigned' : 'Not Assigned'}
@@ -169,25 +169,37 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
 
  {/* Actions Box */}
  {request.status === 'Pending' && (
- <div className="bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 flex flex-col gap-3">
- <button type="button" 
- onClick={() => handleAction('ApproveAndReplace')}
- disabled={isProcessing}
- className="w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-gray-900 dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2"
- >
- <i className="fa-solid fa-user-clock"></i> Approve & Assign Replacement
- </button>
- <button type="button" 
- onClick={() => handleAction('Approve')}
- disabled={isProcessing}
- className="w-full py-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-gray-900 dark:text-white border-[length:var(--border-width)] border-emerald-500/20 rounded-xl text-[14px] font-medium tracking-normal transition"
- >
- Approve (No Replacement)
- </button>
+ <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 flex flex-col gap-3">
+ <SlideCommit
+                label="Slide to Approve"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={() => handleAction('ApproveAndReplace')}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
+ <SlideCommit
+                label="Slide to Approve"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={() => handleAction('Approve')}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  <button type="button" 
  onClick={() => handleAction('Reject')}
  disabled={isProcessing}
- className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-gray-900 dark:text-white text-rose-500 border border-gray-200 dark:border-white/5Strong rounded-xl text-[14px] font-medium tracking-normal transition"
+ className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-themeText dark:text-white text-rose-500 border border-themeBorder dark:border-white/5Strong rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Reject
  </button>

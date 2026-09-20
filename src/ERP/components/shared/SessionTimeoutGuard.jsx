@@ -97,12 +97,12 @@ export default function SessionTimeoutGuard({ children }) {
                             className="w-full max-w-md bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl overflow-hidden"
                         >
                             <div className="p-8 flex flex-col items-center text-center gap-4">
-                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#FF3B30] to-[#FF453A] flex items-center justify-center text-gray-900 dark:text-white mb-2 shadow-sm border border-white/20">
+                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#FF3B30] to-[#FF453A] flex items-center justify-center text-themeText dark:text-white mb-2 shadow-sm border border-white/20">
                                     <i className="fa-solid fa-shield-halved text-2xl animate-pulse"></i>
                                 </div>
                                 
-                                <h2 className="text-[22px] font-bold text-[#1C1C1E] dark:text-[#F2F2F7] tracking-tight">Security Timeout</h2>
-                                <p className="text-[#8E8E93] text-[14px] leading-relaxed font-medium">
+                                <h2 className="text-[22px] font-bold text-themeText dark:text-themeText tracking-tight">Security Timeout</h2>
+                                <p className="text-themeTextSec text-[14px] leading-relaxed font-medium">
                                     Your session has been inactive. For the security of your academic data, you will be automatically logged out in:
                                 </p>
 
@@ -119,7 +119,7 @@ export default function SessionTimeoutGuard({ children }) {
                                     </button>
                                     <button type="button" 
                                         onClick={continueSession}
-                                        className="flex-[2] py-3 px-4 bg-[#34C759] text-gray-900 dark:text-white rounded-lg font-bold tracking-normal text-[11px] hover:bg-[#32B353] transition-colors shadow-sm"
+                                        className="flex-[2] py-3 px-4 bg-[#34C759] text-themeText dark:text-white rounded-lg font-bold tracking-normal text-[11px] hover:bg-[#32B353] transition-colors shadow-sm"
                                     >
                                         <i className="fa-solid fa-bolt mr-2"></i> Continue Session
                                     </button>

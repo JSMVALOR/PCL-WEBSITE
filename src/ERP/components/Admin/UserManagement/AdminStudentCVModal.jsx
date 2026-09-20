@@ -149,10 +149,10 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
 
  return (
  <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
- <div className="w-full w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-gray-200 dark:border-white/5">
+ <div className="w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-themeBorder dark:border-white/5">
  
  {/* Header */}
- <div className="flex justify-between items-center p-6 border-b-theme border-gray-200 dark:border-white/5 bg-themePanel/85 backdrop-blur-2xl">
+ <div className="flex justify-between items-center p-6 border-b-theme border-themeBorder dark:border-white/5 bg-themePanel/85 backdrop-blur-2xl">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-500">
  <i className="fa-solid fa-file-pdf"></i>

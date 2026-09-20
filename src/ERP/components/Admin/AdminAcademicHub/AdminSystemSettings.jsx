@@ -71,7 +71,7 @@ export default function AdminSystemSettings({}) {
  }
 
  return (
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-3xl p-6 lg:p-8">
+ <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-3xl p-6 lg:p-8">
  <div className="mb-8">
  <h2 className="text-2xl font-semibold tracking-tight text-themeText">System Parameters</h2>
  <p className="text-sm font-medium text-themeTextSec mt-1">Configure global rules for attendance, grading, and operations.</p>
@@ -79,7 +79,7 @@ export default function AdminSystemSettings({}) {
 
  <form onSubmit={handleSave} className="max-w-2xl flex flex-col gap-8">
  {/* Attendance Engine Settings */}
- <div className="flex flex-col gap-5 bg-themeApp/50 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
+ <div className="flex flex-col gap-5 bg-themeApp/50 p-6 rounded-2xl border border-themeBorder dark:border-white/5">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg">
  <i className="fa-solid fa-clipboard-user"></i>
@@ -99,7 +99,7 @@ export default function AdminSystemSettings({}) {
  required
  value={settings.lock_days}
  onChange={(e) => setSettings({...settings, lock_days: parseInt(e.target.value)})}
- className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
+ className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
  />
  <p className="text-[10px] text-themeTextSec font-medium">Number of days a faculty can go back to mark attendance before it locks.</p>
  </div>
@@ -115,7 +115,7 @@ export default function AdminSystemSettings({}) {
  required
  value={settings.debar_percentage}
  onChange={(e) => setSettings({...settings, debar_percentage: parseInt(e.target.value)})}
- className="bg-themeElevated/90 backdrop-blur-2xl border border-gray-200 dark:border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
+ className="bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none transition"
  />
  <p className="text-[10px] text-themeTextSec font-medium">Minimum global attendance % required before a student is flagged.</p>
  </div>

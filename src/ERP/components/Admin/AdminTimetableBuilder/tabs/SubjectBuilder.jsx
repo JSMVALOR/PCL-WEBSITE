@@ -109,7 +109,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
     };
 
     const handleDelete = async (id) => {
-        if (!await window.erpDialog?.confirm("Delete this master subject? This removes it from the curriculum permanently.", "Delete Syllabus")) return;
+        
         await supabase.from('master_subjects').delete().eq('id', id);
         fetchData();
     };
@@ -118,8 +118,8 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
         <div className="flex flex-col gap-6 animate-fade-in pb-12">
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-black tracking-tight text-gray-900 dark:text-white">Curriculum Vault</h2>
-                    <p className="text-xs font-bold text-gray-500 dark:text-white/50 tracking-wide mt-1">Design the 5-year master syllabus. Assign faculty later.</p>
+                    <h2 className="text-xl font-black tracking-tight text-themeText dark:text-white">Curriculum Vault</h2>
+                    <p className="text-xs font-bold text-themeTextSec dark:text-white/50 tracking-wide mt-1">Design the 5-year master syllabus. Assign faculty later.</p>
                 </div>
                 <button type="button" onClick={() => { if(isCreating) resetForm(); else setIsCreating(true); }} className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-black font-black text-xs tracking-wide rounded-xl transition shadow-lg shadow-amber-500/20">
                     <i className={`fa-solid ${isCreating ? 'fa-xmark' : 'fa-plus'} mr-2`}></i> {isCreating ? 'Cancel' : 'New Template'}
@@ -127,31 +127,31 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             </div>
 
             {isCreating && (
-                <form onSubmit={handleSave} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 p-6 rounded-2xl flex flex-col gap-6 shadow-sm">
+                <form onSubmit={handleSave} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 p-6 rounded-2xl flex flex-col gap-6 shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-widest uppercase mb-1.5 block">Subject Code *</label>
-                            <input required type="text" placeholder="e.g. LAW101" value={code} onChange={e => setCode(e.target.value.toUpperCase())} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                            <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-widest uppercase mb-1.5 block">Subject Code *</label>
+                            <input required type="text" placeholder="e.g. LAW101" value={code} onChange={e => setCode(e.target.value.toUpperCase())} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-widest uppercase mb-1.5 block">Subject Name *</label>
-                            <input required type="text" placeholder="e.g. Constitutional Law I" value={name} onChange={e => setName(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                            <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-widest uppercase mb-1.5 block">Subject Name *</label>
+                            <input required type="text" placeholder="e.g. Constitutional Law I" value={name} onChange={e => setName(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                         </div>
                         <div>
-                            <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-widest uppercase mb-1.5 block">Target Degree Program</label>
-                            <select required value={programId} onChange={e => setProgramId(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500 appearance-none">
+                            <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-widest uppercase mb-1.5 block">Target Degree Program</label>
+                            <select required value={programId} onChange={e => setProgramId(e.target.value)} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500 appearance-none">
                                 <option value="">Select Degree...</option>
                                 {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
                             </select>
                         </div>
                         <div className="flex gap-4">
                             <div className="flex-1">
-                                <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-widest uppercase mb-1.5 block">Target Semester</label>
-                                <input required type="number" min="1" max="10" value={semester} onChange={e => setSemester(Number(e.target.value))} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                                <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-widest uppercase mb-1.5 block">Target Semester</label>
+                                <input required type="number" min="1" max="10" value={semester} onChange={e => setSemester(Number(e.target.value))} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                             </div>
                             <div className="flex-1">
-                                <label className="text-[10px] font-bold text-gray-500 dark:text-white/50 tracking-widest uppercase mb-1.5 block">Credits</label>
-                                <input required type="number" min="1" value={credits} onChange={e => setCredits(Number(e.target.value))} className="w-full bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500" />
+                                <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-widest uppercase mb-1.5 block">Credits</label>
+                                <input required type="number" min="1" value={credits} onChange={e => setCredits(Number(e.target.value))} className="w-full bg-gray-50 dark:bg-black border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                             </div>
                         </div>
 
@@ -166,19 +166,19 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             {/* Search and Filters */}
             <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="flex-1 relative">
-                    <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/30 text-sm"></i>
+                    <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/30 text-sm"></i>
                     <input 
                         type="text" 
                         placeholder="Search subjects by code or name..." 
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500 transition"
+                        className="w-full bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500 transition"
                     />
                 </div>
                 <select 
                     value={programFilter} 
                     onChange={e => setProgramFilter(e.target.value)}
-                    className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-amber-500 appearance-none min-w-[200px]"
+                    className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500 appearance-none min-w-[200px]"
                 >
                     <option value="All">All Programs</option>
                     {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
@@ -188,10 +188,10 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             {loading ? (
                 <div className="w-full text-center py-10 opacity-50"><i className="fa-solid fa-circle-notch fa-spin text-2xl"></i></div>
             ) : subjects.length === 0 ? (
-                <div className="w-full py-16 flex flex-col items-center justify-center bg-gray-50 dark:bg-[#121212] border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl text-center px-4">
-                    <i className="fa-solid fa-vault text-4xl text-gray-400 dark:text-white/20 mb-4"></i>
-                    <h3 className="font-black text-xl text-gray-900 dark:text-white tracking-tight">Vault is Empty</h3>
-                    <p className="text-sm font-bold text-gray-500 dark:text-white/50 mt-1 max-w-sm">Design your first master syllabus template for a degree program.</p>
+                <div className="w-full py-16 flex flex-col items-center justify-center bg-gray-50 dark:bg-[#121212] border-2 border-dashed border-themeBorder dark:border-white/10 rounded-2xl text-center px-4">
+                    <i className="fa-solid fa-vault text-4xl text-themeTextSec dark:text-white/20 mb-4"></i>
+                    <h3 className="font-black text-xl text-themeText dark:text-white tracking-tight">Vault is Empty</h3>
+                    <p className="text-sm font-bold text-themeTextSec dark:text-white/50 mt-1 max-w-sm">Design your first master syllabus template for a degree program.</p>
                 </div>
             ) : (() => {
                 const filtered = subjects.filter(sub => {
@@ -205,7 +205,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
 
                 if (filtered.length === 0) {
                     return (
-                        <div className="text-center py-10 text-gray-500 font-bold text-sm">
+                        <div className="text-center py-10 text-themeTextSec font-bold text-sm">
                             No subjects match your search.
                         </div>
                     );
@@ -226,7 +226,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
                 
                 return sortedPrograms.map(prog => (
                     <div key={prog} className="mb-10">
-                        <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-6 flex items-center gap-3 border-b border-gray-200 dark:border-white/10 pb-3">
+                        <h2 className="text-2xl font-black text-themeText dark:text-white mb-6 flex items-center gap-3 border-b border-themeBorder dark:border-white/10 pb-3">
                             <i className="fa-solid fa-graduation-cap text-amber-500"></i> {prog}
                         </h2>
                         
@@ -236,20 +236,20 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
                             return (
                             <div key={sem} className="mb-8 ml-4">
                                 <div className="flex items-center justify-between mb-4 pr-2">
-                                    <h3 className="text-sm font-black text-gray-500 dark:text-white/50 tracking-widest uppercase flex items-center gap-2">
+                                    <h3 className="text-sm font-black text-themeTextSec dark:text-white/50 tracking-widest uppercase flex items-center gap-2">
                                         <span className="w-6 h-px bg-gray-300 dark:bg-white/20"></span> 
                                         Semester {sem}
                                     </h3>
                                     <div className="flex gap-2">
-                                        <span className="px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-gray-500 dark:text-white/40 tracking-wider uppercase">{semSubjects.length} Subjects</span>
-                                        <span className="px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-gray-500 dark:text-white/40 tracking-wider uppercase">{semCredits} Credits</span>
+                                        <span className="px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-themeTextSec dark:text-white/40 tracking-wider uppercase">{semSubjects.length} Subjects</span>
+                                        <span className="px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-themeTextSec dark:text-white/40 tracking-wider uppercase">{semCredits} Credits</span>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                     {grouped[prog][sem].map(sub => {
                                         const theme = AVAILABLE_COLORS.find(c => c.value === sub.theme_color) || AVAILABLE_COLORS.find(c => c.value === sub.academic_programs?.theme_color) || AVAILABLE_COLORS[0];
                                         return (
-                                            <div key={sub.id} onClick={() => setActiveSyllabusSubject(sub)} className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/50 transition cursor-pointer">
+                                            <div key={sub.id} onClick={() => setActiveSyllabusSubject(sub)} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/50 transition cursor-pointer">
                                                 <div className={`absolute top-0 right-0 w-24 h-24 blur-3xl opacity-20 -z-10 ${theme.solid}`}></div>
                                                 
                                                 <div className="flex justify-between items-start mb-4">
@@ -257,19 +257,19 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
                                                         {sub.code}
                                                     </div>
                                                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition" onClick={e => e.stopPropagation()}>
-                                                        <button onClick={() => handleEdit(sub)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white/70 hover:bg-amber-500 hover:text-black flex items-center justify-center transition">
+                                                        <button onClick={() => handleEdit(sub)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-themeTextSec dark:text-white/70 hover:bg-amber-500 hover:text-black flex items-center justify-center transition">
                                                             <i className="fa-solid fa-pen text-xs"></i>
                                                         </button>
-                                                        <button onClick={() => handleDelete(sub.id)} className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition">
-                                                            <i className="fa-solid fa-trash text-xs"></i>
-                                                        </button>
+                                                        <HoldButton size="sm" onHold={() => handleDelete(sub.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                null
+            </HoldButton>
                                                     </div>
                                                 </div>
                                                 
-                                                <h3 className="text-lg font-black tracking-tight text-gray-900 dark:text-white leading-tight mb-2">{sub.name}</h3>
+                                                <h3 className="text-lg font-black tracking-tight text-themeText dark:text-white leading-tight mb-2">{sub.name}</h3>
                                                 
                                                 <div className="space-y-1.5 mb-2">
-                                                    <div className="text-[11px] font-bold text-gray-500 dark:text-white/50 flex items-center gap-2">
+                                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
                                                         <i className="fa-solid fa-award w-4"></i> {sub.credits} Credits
                                                     </div>
                                                     {sub.syllabus && Object.keys(sub.syllabus).length > 0 && (

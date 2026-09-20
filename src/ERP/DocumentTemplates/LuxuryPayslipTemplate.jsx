@@ -121,17 +121,17 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
             style={{ width: '210mm', minHeight: '297mm', padding: '0', boxSizing: 'border-box' }}
         >
             {/* ============ HEADER ============ */}
-            <div className="bg-[#1C1C1E] text-white px-12 pt-10 pb-8 flex justify-between items-start relative overflow-hidden">
+            <div className="bg-themePanel text-white px-12 pt-10 pb-8 flex justify-between items-start relative overflow-hidden">
                 {/* faint oversized crest watermark, purely atmospheric */}
                 <PCLCrest className="absolute -right-16 -top-16 w-72 h-72 text-white opacity-[0.04] pointer-events-none" />
 
                 <div className="flex items-center gap-6 relative z-10">
                     <PCLCrest className="w-16 h-16 text-[#e9e1d4] shrink-0" />
                     <div>
-                        <h1 className="text-3xl font-serif font-black tracking-widest text-[#F2F2F7] leading-none">PRUDENTIA</h1>
+                        <h1 className="text-3xl font-serif font-black tracking-widest text-themeText leading-none">PRUDENTIA</h1>
                         <h2 className="text-[10px] font-sans font-bold tracking-[0.3em] text-[#b59c72] uppercase mt-1.5">College of Law</h2>
                         <div className="h-px w-44 bg-[#4a4a4d] my-2.5"></div>
-                        <p className="text-[8px] font-sans tracking-[0.2em] text-[#8E8E93]">TRUTH &bull; JUSTICE &bull; EXCELLENCE</p>
+                        <p className="text-[8px] font-sans tracking-[0.2em] text-themeTextSec">TRUTH &bull; JUSTICE &bull; EXCELLENCE</p>
                     </div>
                 </div>
 
@@ -148,7 +148,7 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                 {/* ============ EMPLOYEE + PAY PERIOD ============ */}
                 <div className="grid grid-cols-5 gap-8 mb-10">
                     <div className="col-span-3 space-y-2">
-                        <h3 className="text-sm font-bold tracking-wide text-[#1C1C1E] border-b border-[#e9e1d4] pb-2 mb-4 uppercase">Employee Details</h3>
+                        <h3 className="text-sm font-bold tracking-wide text-themeText border-b border-[#e9e1d4] pb-2 mb-4 uppercase">Employee Details</h3>
                         <div className="grid grid-cols-3 text-xs gap-y-3">
                             <div className="font-bold text-[#8a8a70]">Name</div>
                             <div className="col-span-2 font-medium">{faculty.full_name}</div>
@@ -165,7 +165,7 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                     </div>
 
                     <div className="col-span-2 bg-white border border-[#f0ebe1] rounded p-5 text-xs space-y-3 h-fit">
-                        <h3 className="text-sm font-bold tracking-wide text-[#1C1C1E] uppercase mb-1">Pay Period</h3>
+                        <h3 className="text-sm font-bold tracking-wide text-themeText uppercase mb-1">Pay Period</h3>
                         <div className="flex justify-between">
                             <span className="text-[#8a8a70] font-bold">Period</span>
                             <span className="font-medium">{payload.month} {payload.year}</span>
@@ -182,7 +182,7 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                 </div>
 
                 {/* ============ NET PAY ============ */}
-                <div className="bg-[#1C1C1E] text-white rounded-lg p-10 mb-10 border border-[#e9e1d4] relative overflow-hidden text-center">
+                <div className="bg-themePanel text-white rounded-lg p-10 mb-10 border border-[#e9e1d4] relative overflow-hidden text-center">
                     <PCLCrest className="absolute -left-10 -bottom-14 w-56 h-56 text-[#b59c72] opacity-[0.06] pointer-events-none" />
                     <p className="text-[10px] font-sans tracking-[0.3em] uppercase text-[#a3a3a3] relative z-10 mb-3">Amount Payable &middot; {payload.month} {payload.year}</p>
                     <h2 className="text-6xl font-serif text-[#b59c72] relative z-10 mb-4">
@@ -195,14 +195,14 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
 
                 {/* ============ QUOTE ============ */}
                 <div className="bg-[#EBE5D9] p-6 rounded border border-[#e9e1d4] text-center mb-10">
-                    <p className="font-serif italic text-sm text-[#1C1C1E] leading-relaxed">&ldquo;Empowering minds, strengthening society.&rdquo;</p>
+                    <p className="font-serif italic text-sm text-themeText leading-relaxed">&ldquo;Empowering minds, strengthening society.&rdquo;</p>
                     <p className="text-[7px] font-sans font-bold uppercase tracking-widest text-[#b59c72] mt-3">Prudentia College of Law</p>
                 </div>
 
                 {/* ============ NOTES + SIGNATURE ============ */}
                 <div className="grid grid-cols-2 gap-12 pt-8 border-t border-[#e9e1d4]">
                     <div>
-                        <h4 className="text-sm font-bold text-[#1C1C1E] mb-4 uppercase tracking-wide">Notes</h4>
+                        <h4 className="text-sm font-bold text-themeText mb-4 uppercase tracking-wide">Notes</h4>
                         <ol className="list-decimal list-inside text-[10px] text-[#5a5a5c] space-y-2 font-sans leading-relaxed">
                             <li>This is a system generated payslip securely processed by PCL ERP.</li>
                             <li>For any discrepancies, please contact the PCL Finance Department within 7 days.</li>
@@ -213,20 +213,20 @@ const LuxuryPayslipTemplate = forwardRef(({ faculty, payload }, ref) => {
                         <p className="text-xs text-[#5a5a5c] font-sans mb-4">With best regards,</p>
                         <div className="h-12 w-32 border-b border-[#d1d1d1] mb-2 relative">
                             <span
-                                className="text-3xl absolute bottom-1 right-2 text-[#1C1C1E] opacity-80"
+                                className="text-3xl absolute bottom-1 right-2 text-themeText opacity-80"
                                 style={{ fontFamily: "'Brush Script MT', cursive" }}
                             >
                                 System Admin
                             </span>
                         </div>
-                        <p className="text-xs font-bold text-[#1C1C1E]">Registrar (Finance)</p>
+                        <p className="text-xs font-bold text-themeText">Registrar (Finance)</p>
                         <p className="text-[10px] text-[#5a5a5c] font-sans mt-1">Prudentia College of Law</p>
                     </div>
                 </div>
             </div>
 
             {/* ============ ABSOLUTE FOOTER ============ */}
-            <div className="absolute bottom-0 w-full bg-[#1C1C1E] text-[#a3a3a3] text-[9px] font-sans tracking-widest uppercase py-4 px-12 flex justify-between items-center border-t border-[#dacdae]">
+            <div className="absolute bottom-0 w-full bg-themePanel text-[#a3a3a3] text-[9px] font-sans tracking-widest uppercase py-4 px-12 flex justify-between items-center border-t border-[#dacdae]">
                 <div className="flex gap-6">
                     <span>Hyderabad, Telangana</span>
                     <span>accounts@prudentia.edu.in</span>

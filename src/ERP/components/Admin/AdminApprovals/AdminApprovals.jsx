@@ -250,7 +250,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  
  {/* Header and Tabs */}
  <PageHeader icon="fa-solid fa-scale-balanced" title="Central Approvals Center" subtitle="Manage student profile changes, mentor requests, faculty leaves, and document verifications." />
@@ -295,12 +295,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'faculty_leaves' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {facultyLeaves.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending leave requests from Faculty.</p>
  </div>
  ) : (
  facultyLeaves.map(req => (
- <div key={req.id} className={`${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={req.id} className={`${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -311,20 +311,32 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
  
  <div className="flex gap-2">
- <span className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.leave_type}</span>
- <span className="bg-themePanel/85 backdrop-blur-2xl border border-gray-200 dark:border-white/5 px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.total_days} Days</span>
+ <span className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.leave_type}</span>
+ <span className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.days} Days</span>
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-gray-200 dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-themeBorder dark:border-white/5">
  <p className="text-xs text-themeText italic">"{req.reason}"</p>
  </div>
 
  {req.status === 'pending' ? (
  <div className="flex gap-2 mt-auto">
- <button type="button" onClick={() => handleLeaveAction(req.id, 'approved', 'Approved by Administration')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Approve</button>
+ <SlideCommit
+                label="Slide to Approve"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={() => handleLeaveAction(req.id, 'approved', 'Approved by Administration')}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  <button type="button" onClick={async () => { const reason = await window.erpDialog.prompt("Reason for rejection:", "Input Required");
  if(reason) handleLeaveAction(req.id, 'rejected', reason);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-black/5 dark:border-white/10 pt-3">
@@ -341,12 +353,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'escalated_grievances' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {grievances.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No escalated grievances require admin attention.</p>
  </div>
  ) : (
  grievances.map(g => (
- <div key={g.id} className={"bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={g.id} className={"bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -360,21 +372,21 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(g.status)}
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-gray-200 dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-themeBorder dark:border-white/5">
  <p className="text-xs text-themeText">"{g.description}"</p>
  </div>
 
  {g.status === 'pending' || g.status === 'investigating' ? (
  <div className="flex flex-wrap gap-2 mt-auto">
  {g.status === 'pending' && (
- <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-gray-900 dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
  )}
  <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Resolution details:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
- }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
+ }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
  <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Reason for dismissal:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-black/5 dark:border-white/10 pt-3">
@@ -390,12 +402,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'document_verification' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {pendingDocuments.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending documents require verification.</p>
  </div>
  ) : (
  pendingDocuments.map(doc => (
- <div key={doc.id} className={"bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-blue-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={doc.id} className={"bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-blue-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -420,8 +432,8 @@ export default function AdminApprovals({ isEmbedded = false }) {
  Preview Document
  </button>
  <div className="flex w-full gap-2">
- <button type="button" onClick={() => handleDocumentAction(doc.id, 'verified')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Verify</button>
- <button type="button" onClick={() => handleDocumentAction(doc.id, 'rejected')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ <button type="button" onClick={() => handleDocumentAction(doc.id, 'verified')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Verify</button>
+ <button type="button" onClick={() => handleDocumentAction(doc.id, 'rejected')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
  </div>
  </div>
  </div>
@@ -433,12 +445,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'profile_updates' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {profileUpdates.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-gray-200 dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending profile update requests.</p>
  </div>
  ) : (
  profileUpdates.map(req => (
- <div key={req.id} className={"bg-white/60 dark:bg-[#1C1C1E]/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-amber-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={req.id} className={"bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-amber-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -449,7 +461,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(req.status)}
  </div>
  
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-gray-200 dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-themeBorder dark:border-white/5">
  <p className="text-[13px] font-medium text-themeTextSec mb-2 border-b border-black/5 dark:border-white/10 pb-1">Requested Changes</p>
  <ul className="text-xs text-themeText flex flex-col gap-1.5">
  {req.requested_changes?.phone && <li><span className="text-themeTextSec">Phone:</span> {req.requested_changes.phone}</li>}
@@ -462,10 +474,22 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
 
  <div className="flex gap-2 mt-auto">
- <button type="button" onClick={() => handleProfileUpdateAction(req, 'approved', 'Approved by Administration')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Approve</button>
+ <SlideCommit
+                label="Slide to Approve"
+                doneLabel="Done"
+                errorLabel="Failed"
+                onConfirm={() => handleProfileUpdateAction(req, 'approved', 'Approved by Administration')}
+                trackColor="rgba(28, 28, 30, 0.05)"
+                handleColor="#007AFF"
+                successColor="#10b981"
+                dangerColor="#f43f5e"
+                width={200}
+                height={48}
+                radius={12}
+            />
  <button type="button" onClick={async () => { const remarks = await window.erpDialog.prompt("Reason for rejection:", "Input Required");
  if(remarks) handleProfileUpdateAction(req, 'rejected', remarks);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
  </div>
  </div>
  ))

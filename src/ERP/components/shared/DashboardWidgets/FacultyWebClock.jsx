@@ -108,17 +108,17 @@ export default function FacultyWebClock() {
     const rules = FACULTY_ATTENDANCE_RULES.getWorkingHours(new Date());
 
     return (
-        <div className="w-full bg-[#1C1C1E] rounded-2xl p-6 text-white relative overflow-hidden border border-[#2C2C2E]">
+        <div className="w-full bg-themePanel rounded-2xl p-6 text-white relative overflow-hidden border border-[#2C2C2E]">
             {/* Background elements */}
             <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
             
             <div className="flex justify-between items-start relative z-10">
                 <div>
-                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-1">Campus Web Clock</h3>
+                    <h3 className="text-sm font-bold text-themeTextSec uppercase tracking-widest mb-1">Campus Web Clock</h3>
                     <div className="text-3xl font-black font-mono tracking-tighter">
                         {format(currentTime, 'hh:mm:ss a')}
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">{format(currentTime, 'EEEE, MMMM do, yyyy')}</p>
+                    <p className="text-xs text-themeTextSec mt-1">{format(currentTime, 'EEEE, MMMM do, yyyy')}</p>
                 </div>
 
                 <div className="text-right">
@@ -127,7 +127,7 @@ export default function FacultyWebClock() {
                             <span className="bg-white/10 px-2 py-1 rounded text-[10px] font-bold tracking-widest uppercase mb-1">
                                 Shift: {rules.start} - {rules.end}
                             </span>
-                            <span className="text-[9px] text-gray-400 uppercase tracking-widest">
+                            <span className="text-[9px] text-themeTextSec uppercase tracking-widest">
                                 Grace: {FACULTY_ATTENDANCE_RULES.GRACE_PERIOD_MINUTES} Mins
                             </span>
                         </div>
@@ -146,7 +146,7 @@ export default function FacultyWebClock() {
                     className={`p-4 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${
                         attendanceRecord?.clock_in 
                         ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 opacity-80' 
-                        : isWorkingDay ? 'bg-emerald-500 hover:bg-emerald-400 text-black active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-white/5 text-gray-500 cursor-not-allowed'
+                        : isWorkingDay ? 'bg-emerald-500 hover:bg-emerald-400 text-black active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-white/5 text-themeTextSec cursor-not-allowed'
                     }`}
                 >
                     <i className="fa-solid fa-right-to-bracket text-xl"></i>
@@ -161,7 +161,7 @@ export default function FacultyWebClock() {
                     className={`p-4 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${
                         attendanceRecord?.clock_out 
                         ? 'bg-amber-500/20 border border-amber-500/30 text-amber-400 opacity-80' 
-                        : (attendanceRecord?.clock_in && isWorkingDay) ? 'bg-amber-500 hover:bg-amber-400 text-black active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'bg-white/5 text-gray-500 cursor-not-allowed'
+                        : (attendanceRecord?.clock_in && isWorkingDay) ? 'bg-amber-500 hover:bg-amber-400 text-black active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'bg-white/5 text-themeTextSec cursor-not-allowed'
                     }`}
                 >
                     <i className="fa-solid fa-right-from-bracket text-xl"></i>

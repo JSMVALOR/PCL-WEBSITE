@@ -320,8 +320,8 @@ export default function ClassRoster({ isEmbedded = false }) {
  const isComplete = rosterData.length > 0 && rosterData.every(s => attendanceState[s.id] !== null);
 
  return (
- <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-white/5 backdrop-blur-xl ${!isEmbedded ? "min-h-screen bg-themeApp text-gray-900 dark:text-white" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-white/5 backdrop-blur-xl ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText dark:text-white" : ""}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
 
  {/* 1. HEADER & COURSE SELECTOR */}
  <PageHeader 
@@ -332,7 +332,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <div className="flex flex-col sm:flex-row items-center gap-3 lg:gap-4 w-full lg:w-auto">
  <div className="relative w-full sm:w-64 lg:w-72 shrink-0">
  <select 
- className="w-full appearance-none bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 hover:border-black/5 dark:border-white/5Strong text-gray-900 dark:text-white text-[14px] font-medium px-4 py-3.5 rounded-2xl outline-none cursor-pointer transition-colors"
+ className="w-full appearance-none bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 hover:border-black/5 dark:border-white/5Strong text-themeText dark:text-white text-[14px] font-medium px-4 py-3.5 rounded-2xl outline-none cursor-pointer transition-colors"
  value={activeClass}
  onChange={(e) => setActiveClass(e.target.value)}
  >
@@ -342,20 +342,20 @@ export default function ClassRoster({ isEmbedded = false }) {
  facultyClasses.map(cls => {
  const timeStr = cls.start_time ? cls.start_time.substring(0,5) : "TBD";
  return (
- <option key={cls.id} value={cls.id} className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-gray-900 dark:text-white">
+ <option key={cls.id} value={cls.id} className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-themeText dark:text-white">
  {cls.day_of_week} {timeStr} - {cls.master_subjects?.name || cls.subject_id} ({cls.batch})
  </option>
  );
  })
  )}
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-white/50 opacity-70 pointer-events-none"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/50 opacity-70 pointer-events-none"></i>
  </div>
 
  <button type="button" 
  onClick={generateQRCode}
  disabled={facultyClasses.length === 0 || rosterData.length === 0}
- className="w-full sm:w-auto px-6 py-3.5 bg-black/5 dark:bg-white/5 backdrop-blur-xl hover:bg-themeAccent hover:text-gray-900 dark:text-white disabled:bg-themeApp disabled:text-gray-500 dark:text-white/50 opacity-70 disabled:border-black/5 dark:border-white/5Strong text-gray-900 dark:text-white border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-95 flex items-center justify-center gap-2 group shrink-0 no-print"
+ className="w-full sm:w-auto px-6 py-3.5 bg-black/5 dark:bg-white/5 backdrop-blur-xl hover:bg-themeAccent hover:text-themeText dark:text-white disabled:bg-themeApp disabled:text-themeTextSec dark:text-white/50 opacity-70 disabled:border-black/5 dark:border-white/5Strong text-themeText dark:text-white border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-95 flex items-center justify-center gap-2 group shrink-0 no-print"
  >
  <i className="fa-solid fa-qrcode group-hover:scale-110 transition-transform"></i> Live QR
  </button>
@@ -367,7 +367,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  {facultyClasses.length === 0 ? (
  <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
  <i className="fa-solid fa-users-slash text-4xl lg:text-5xl text-neutral-700 mb-4 lg:mb-6"></i>
- <h3 className={`${theme.text.heading} text-lg lg:text-2xl text-gray-900 dark:text-white tracking-tight`}>No Roster Available</h3>
+ <h3 className={`${theme.text.heading} text-lg lg:text-2xl text-themeText dark:text-white tracking-tight`}>No Roster Available</h3>
  <p className={`${theme.text.secondary} text-xs lg:text-sm mt-2`}>You have no active classes scheduled in the Timetable.</p>
  </div>
  ) : (
@@ -376,7 +376,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  {showQR && (
  <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050505]/95 backdrop-blur-md p-4 animate-fade-in no-print">
  <div className="bg-gradient-to-b from-[#1a1a1a] to-[#121212] border border-[#2a2a2a] p-10 rounded-2xl flex flex-col items-center max-w-lg w-full relative">
- <button type="button" onClick={() => setShowQR(false)} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-[#888888] hover:text-gray-900 dark:text-white bg-[#222222] rounded-full border border-black/5 dark:border-white/5Strong transition-colors hover:scale-110">
+ <button type="button" onClick={() => setShowQR(false)} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-[#888888] hover:text-themeText dark:text-white bg-[#222222] rounded-full border border-black/5 dark:border-white/5Strong transition-colors hover:scale-110">
  <i className="fa-solid fa-xmark text-lg"></i>
  </button>
  
@@ -384,8 +384,8 @@ export default function ClassRoster({ isEmbedded = false }) {
  <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center rounded-xl text-3xl mb-6">
  <i className="fa-solid fa-qrcode"></i>
  </div>
- <h3 className="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2 tracking-tight text-center">Scan to Mark Present</h3>
- <div className="flex items-center gap-3 mb-8 text-center bg-[#1a1a1a] px-5 py-2.5 rounded-lg border border-black/5 dark:border-white/5Strong">
+ <h3 className="text-3xl font-semibold tracking-tight text-themeText dark:text-white mb-2 tracking-tight text-center">Scan to Mark Present</h3>
+ <div className="flex items-center gap-3 mb-8 text-center bg-themeApp px-5 py-2.5 rounded-lg border border-black/5 dark:border-white/5Strong">
  <span className="text-sm text-gray-300 font-bold">{qrCodeData?.subject}</span>
  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
  <span className="text-sm text-blue-400 font-bold tracking-widest">{qrCodeData?.batch}</span>
@@ -399,7 +399,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  </div>
  </div>
  
- <div className="w-full bg-[#1a1a1a] p-5 rounded-xl border border-black/5 dark:border-white/5Strong">
+ <div className="w-full bg-themeApp p-5 rounded-xl border border-black/5 dark:border-white/5Strong">
  <div className="flex items-center justify-between mb-3">
  <p className="text-[11px] font-black tracking-normal text-blue-400 flex items-center gap-2">
  <i className="fa-solid fa-circle-dot text-rose-500 animate-pulse"></i> Live Sync Active
@@ -417,7 +417,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  `}</style>
  </div>
  
- <p className="text-[10px] text-gray-500 mt-6 text-center italic tracking-widest font-medium uppercase max-w-sm">
+ <p className="text-[10px] text-themeTextSec mt-6 text-center italic tracking-widest font-medium uppercase max-w-sm">
  "Students scanning will automatically appear on your roster."
  </p>
  </div>
@@ -426,43 +426,43 @@ export default function ClassRoster({ isEmbedded = false }) {
 
  {/* 2. ATTENDANCE SUMMARY STATS */}
  <div className="grid grid-cols-3 gap-3 lg:gap-4 animate-fade-in">
- <div className={`${theme.layout.panel} p-4 lg:p-6 rounded-2xl rounded-2xl flex flex-col sm:flex-row items-center sm:items-start sm:justify-between border-b-4 sm:border-b-0 sm:border-l-4 border-emerald-500 border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 gap-3 text-center sm:text-left`}>
+ <div className={`${theme.layout.panel} p-4 lg:p-6 rounded-2xl rounded-2xl flex flex-col sm:flex-row items-center sm:items-start sm:justify-between border-b-4 sm:border-b-0 sm:border-l-4 border-emerald-500 border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 gap-3 text-center sm:text-left`}>
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-emerald-500 mb-1">Present</p>
- <p className="text-xl lg:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{presentCount}</p>
+ <p className="text-xl lg:text-2xl font-semibold tracking-tight text-themeText dark:text-white">{presentCount}</p>
  </div>
- <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-black/5 dark:bg-white/5 backdrop-blur-xl border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5Strong text-emerald-400 flex items-center justify-center text-base lg:text-xl shrink-0"><i className="fa-solid fa-user-check"></i></div>
+ <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-black/5 dark:bg-white/5 backdrop-blur-xl border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5Strong text-emerald-400 flex items-center justify-center text-base lg:text-xl shrink-0"><i className="fa-solid fa-user-check"></i></div>
  </div>
- <div className={`${theme.layout.panel} p-4 lg:p-6 rounded-2xl rounded-2xl flex flex-col sm:flex-row items-center sm:items-start sm:justify-between border-b-4 sm:border-b-0 sm:border-l-4 border-rose-500 border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 gap-3 text-center sm:text-left`}>
+ <div className={`${theme.layout.panel} p-4 lg:p-6 rounded-2xl rounded-2xl flex flex-col sm:flex-row items-center sm:items-start sm:justify-between border-b-4 sm:border-b-0 sm:border-l-4 border-rose-500 border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 gap-3 text-center sm:text-left`}>
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-rose-500 mb-1">Absent</p>
- <p className="text-xl lg:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{absentCount}</p>
+ <p className="text-xl lg:text-2xl font-semibold tracking-tight text-themeText dark:text-white">{absentCount}</p>
  </div>
- <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-black/5 dark:bg-white/5 backdrop-blur-xl border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5Strong text-rose-400 flex items-center justify-center text-base lg:text-xl shrink-0"><i className="fa-solid fa-user-xmark"></i></div>
+ <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-black/5 dark:bg-white/5 backdrop-blur-xl border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5Strong text-rose-400 flex items-center justify-center text-base lg:text-xl shrink-0"><i className="fa-solid fa-user-xmark"></i></div>
  </div>
- <div className={`${theme.layout.panel} p-4 lg:p-6 rounded-2xl rounded-2xl flex flex-col sm:flex-row items-center sm:items-start sm:justify-between border-b-4 sm:border-b-0 sm:border-l-4 border-amber-500 border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 gap-3 text-center sm:text-left`}>
+ <div className={`${theme.layout.panel} p-4 lg:p-6 rounded-2xl rounded-2xl flex flex-col sm:flex-row items-center sm:items-start sm:justify-between border-b-4 sm:border-b-0 sm:border-l-4 border-amber-500 border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 gap-3 text-center sm:text-left`}>
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeAccent mb-1">Excused</p>
- <p className="text-xl lg:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">{excusedCount}</p>
+ <p className="text-xl lg:text-2xl font-semibold tracking-tight text-themeText dark:text-white">{excusedCount}</p>
  </div>
- <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-black/5 dark:bg-white/5 backdrop-blur-xl border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5Strong text-themeAccent flex items-center justify-center text-base lg:text-xl shrink-0"><i className="fa-solid fa-user-shield"></i></div>
+ <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-black/5 dark:bg-white/5 backdrop-blur-xl border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5Strong text-themeAccent flex items-center justify-center text-base lg:text-xl shrink-0"><i className="fa-solid fa-user-shield"></i></div>
  </div>
  </div>
 
  {/* 3. ROSTER TABLE */}
- <div className={`${theme.layout.panel} rounded-2xl overflow-hidden border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 relative min-h-[300px]`}>
+ <div className={`${theme.layout.panel} rounded-2xl overflow-hidden border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 relative min-h-[300px]`}>
 
  {rosterData.length === 0 ? (
  <div className="w-full py-20 flex flex-col items-center justify-center text-center">
  <i className="fa-solid fa-users-slash text-4xl text-neutral-700 mb-4"></i>
- <h3 className={`${theme.text.heading} text-lg lg:text-xl text-gray-900 dark:text-white`}>Batch is Empty</h3>
+ <h3 className={`${theme.text.heading} text-lg lg:text-xl text-themeText dark:text-white`}>Batch is Empty</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.muted} mt-2`}>No active students are currently enrolled in this specific batch.</p>
  </div>
  ) : (
  <div className="overflow-x-auto no-scrollbar animate-fade-in printable-area">
  <table className="w-full text-left border-collapse min-w-[600px]">
  <thead>
- <tr className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5">
+ <tr className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5">
  <th className={`p-4 lg:p-5 pl-6 lg:pl-8 text-[9px] lg:text-[10px] font-black ${theme.text.muted} tracking-normal w-24 lg:w-28`}>Enrollment</th>
  <th className={`p-4 lg:p-5 text-[9px] lg:text-[10px] font-black ${theme.text.muted} tracking-normal`}>Student Name</th>
  <th className={`p-4 lg:p-5 text-[9px] lg:text-[10px] font-black ${theme.text.muted} tracking-normal text-center`}>Overall Att.</th>
@@ -474,7 +474,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <tr key={student.id} className="hover:bg-black/5 dark:bg-white/5 backdrop-blur-xl transition-colors group">
  <td className={`p-4 lg:p-5 pl-6 lg:pl-8 text-[10px] lg:text-xs font-bold ${theme.text.secondary}`}>{student.erp_id}</td>
  <td className="p-4 lg:p-5">
- <p className="text-xs lg:text-[15px] font-semibold text-gray-900 dark:text-white group-hover:text-emerald-400 transition-colors">{student.full_name}</p>
+ <p className="text-xs lg:text-[15px] font-semibold text-themeText dark:text-white group-hover:text-emerald-400 transition-colors">{student.full_name}</p>
  </td>
  <td className="p-4 lg:p-5 text-center">
  <Badge variant={student.status === 'safe' ? 'success' : student.status === 'warning' ? 'warning' : 'destructive'}>
@@ -485,9 +485,9 @@ export default function ClassRoster({ isEmbedded = false }) {
  <div className="flex justify-end gap-1.5 lg:gap-2">
  <button type="button"
  onClick={() => handleMark(student.id, "present")}
- className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition border-gray-200 dark:border-white/5 ${attendanceState[student.id] === "present"
+ className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition border-themeBorder dark:border-white/5 ${attendanceState[student.id] === "present"
  ? "bg-emerald-500 text-themeApp border-emerald-400 scale-[1.02]"
- : "bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-gray-500 dark:text-white/50 opacity-70 border-black/5 dark:border-white/5Strong hover:border-black/5 dark:border-white/5Strong hover:text-emerald-400 "
+ : "bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-themeTextSec dark:text-white/50 opacity-70 border-black/5 dark:border-white/5Strong hover:border-black/5 dark:border-white/5Strong hover:text-emerald-400 "
  }`}
  >
  <span className="hidden sm:inline">Present</span>
@@ -495,9 +495,9 @@ export default function ClassRoster({ isEmbedded = false }) {
  </button>
  <button type="button"
  onClick={() => handleMark(student.id, "absent")}
- className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition border-gray-200 dark:border-white/5 ${attendanceState[student.id] === "absent"
- ? "bg-rose-500 text-gray-900 dark:text-white border-rose-400 scale-[1.02]"
- : "bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-gray-500 dark:text-white/50 opacity-70 border-black/5 dark:border-white/5Strong hover:border-black/5 dark:border-white/5Strong hover:text-rose-400 "
+ className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition border-themeBorder dark:border-white/5 ${attendanceState[student.id] === "absent"
+ ? "bg-rose-500 text-themeText dark:text-white border-rose-400 scale-[1.02]"
+ : "bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-themeTextSec dark:text-white/50 opacity-70 border-black/5 dark:border-white/5Strong hover:border-black/5 dark:border-white/5Strong hover:text-rose-400 "
  }`}
  >
  <span className="hidden sm:inline">Absent</span>
@@ -505,9 +505,9 @@ export default function ClassRoster({ isEmbedded = false }) {
  </button>
  <button type="button"
  onClick={() => handleMark(student.id, "excused")}
- className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition border-gray-200 dark:border-white/5 ${attendanceState[student.id] === "excused"
+ className={`w-9 h-9 sm:w-auto sm:px-4 sm:py-2.5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition border-themeBorder dark:border-white/5 ${attendanceState[student.id] === "excused"
  ? "bg-amber-500 text-themeApp border-amber-400 scale-[1.02]"
- : "bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-gray-500 dark:text-white/50 opacity-70 border-black/5 dark:border-white/5Strong hover:border-black/5 dark:border-white/5Strong hover:text-themeAccent "
+ : "bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl text-themeTextSec dark:text-white/50 opacity-70 border-black/5 dark:border-white/5Strong hover:border-black/5 dark:border-white/5Strong hover:text-themeAccent "
  }`}
  title="Medical / Official Duty"
  >
@@ -526,9 +526,9 @@ export default function ClassRoster({ isEmbedded = false }) {
 
  {/* 4. STICKY ACTION BAR */}
  {rosterData.length > 0 && (
- <div className="fixed bottom-0 left-0 lg:left-[280px] right-0 p-4 lg:p-6 bg-themeApp border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5 flex justify-end z-40 lg:z-30 pb-safe">
+ <div className="fixed bottom-0 left-0 lg:left-[280px] right-0 p-4 lg:p-6 bg-themeApp border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 flex justify-end z-40 lg:z-30 pb-safe">
  {saveSuccess ? (
- <div className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5Strong text-emerald-400 px-6 lg:px-8 py-3.5 lg:py-4 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal flex items-center gap-2 animate-fade-in w-full sm:w-auto justify-center">
+ <div className="bg-black/5 dark:bg-white/5 backdrop-blur-xl border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5Strong text-emerald-400 px-6 lg:px-8 py-3.5 lg:py-4 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal flex items-center gap-2 animate-fade-in w-full sm:w-auto justify-center">
  <i className="fa-solid fa-check-double text-lg"></i> Official Sync Complete
  </div>
  ) : (
@@ -537,8 +537,8 @@ export default function ClassRoster({ isEmbedded = false }) {
  disabled={isSaving || !isComplete}
  title={!isComplete ? "Mark all students to submit" : ""}
  className={`w-full sm:w-auto px-6 lg:px-8 py-3.5 lg:py-4 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center justify-center gap-2 overflow-hidden group ${isSaving || !isComplete
- ? 'bg-neutral-800 text-gray-500 dark:text-white/50 opacity-70 cursor-not-allowed border-gray-200 dark:border-white/5 border-black/5 dark:border-white/5Strong'
- : 'bg-emerald-600 text-gray-900 dark:text-white hover:bg-emerald-500 active:scale-[0.98]'
+ ? 'bg-neutral-800 text-themeTextSec dark:text-white/50 opacity-70 cursor-not-allowed border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5Strong'
+ : 'bg-emerald-600 text-themeText dark:text-white hover:bg-emerald-500 active:scale-[0.98]'
  }`}
  >
  {!isSaving && isComplete && (

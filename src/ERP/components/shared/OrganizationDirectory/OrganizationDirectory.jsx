@@ -55,7 +55,7 @@ export default function OrganizationDirectory() {
                     <button type="button" 
                         onClick={() => setActiveTab('faculty')}
                         className={`px-6 py-2 rounded-lg text-xs font-bold tracking-normal transition-all ${
-                            activeTab === 'faculty' ? 'bg-white dark:bg-[#1C1C1E] text-[#007AFF] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
+                            activeTab === 'faculty' ? 'bg-white dark:bg-themePanel text-themeAccent shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'
                         }`}
                     >
                         Faculty ({members.faculty.length})
@@ -63,7 +63,7 @@ export default function OrganizationDirectory() {
                     <button type="button" 
                         onClick={() => setActiveTab('student')}
                         className={`px-6 py-2 rounded-lg text-xs font-bold tracking-normal transition-all ${
-                            activeTab === 'student' ? 'bg-white dark:bg-[#1C1C1E] text-[#007AFF] shadow-sm' : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-[#F2F2F7]'
+                            activeTab === 'student' ? 'bg-white dark:bg-themePanel text-themeAccent shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'
                         }`}
                     >
                         Students ({members.student.length})
@@ -74,13 +74,13 @@ export default function OrganizationDirectory() {
                 </div>
 
                 <div className="relative w-full md:w-64">
-                    <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93] text-sm"></i>
+                    <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-themeTextSec text-sm"></i>
                     <input 
                         type="text" 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search directory..."
-                        className="w-full bg-white/50 dark:bg-[#1C1C1E]/50 backdrop-blur-xl border border-black/10 dark:border-white/10 focus:border-[#007AFF] rounded-lg py-2.5 pl-9 pr-4 text-xs font-bold text-[#1C1C1E] dark:text-[#F2F2F7] outline-none transition-colors shadow-inner"
+                        className="w-full bg-white/50 dark:bg-themePanel/50 backdrop-blur-xl border border-black/10 dark:border-white/10 focus:border-[#007AFF] rounded-lg py-2.5 pl-9 pr-4 text-xs font-bold text-themeText dark:text-themeText outline-none transition-colors shadow-inner"
                     />
                 </div>
             </div>
@@ -88,11 +88,11 @@ export default function OrganizationDirectory() {
             {/* Directory Grid */}
             <div className="min-h-[400px]">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-64 text-[#8E8E93]">
+                    <div className="flex items-center justify-center h-64 text-themeTextSec">
                         <i className="fa-solid fa-circle-notch fa-spin text-2xl"></i>
                     </div>
                 ) : filteredMembers.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-64 text-[#8E8E93] gap-3">
+                    <div className="flex flex-col items-center justify-center h-64 text-themeTextSec gap-3">
                         <i className="fa-regular fa-address-book text-4xl opacity-50"></i>
                         <p className="text-xs font-bold tracking-normal">No members found</p>
                     </div>
@@ -113,21 +113,21 @@ export default function OrganizationDirectory() {
                                         {member.profile_picture_url ? (
                                             <img src={member.profile_picture_url} alt={member.full_name} className="w-full h-full object-cover" />
                                         ) : (
-                                            <span className="text-lg font-semibold tracking-tight text-[#8E8E93]">
+                                            <span className="text-lg font-semibold tracking-tight text-themeTextSec">
                                                 {member.full_name ? member.full_name.substring(0,2).toUpperCase() : 'US'}
                                             </span>
                                         )}
                                     </div>
                                     <div className="flex flex-col min-w-0 flex-1">
-                                        <h4 className="text-[14px] font-bold text-[#1C1C1E] dark:text-[#F2F2F7] truncate tracking-tight mb-0.5">
+                                        <h4 className="text-[14px] font-bold text-themeText dark:text-themeText truncate tracking-tight mb-0.5">
                                             {member.full_name || 'Unknown User'}
                                         </h4>
                                         {member.erp_id && (
-                                            <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#007AFF] mb-1.5">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.15em] text-themeAccent mb-1.5">
                                                 {member.erp_id}
                                             </p>
                                         )}
-                                        <div className="flex flex-col gap-1 text-[11px] font-medium text-[#8E8E93]">
+                                        <div className="flex flex-col gap-1 text-[11px] font-medium text-themeTextSec">
                                             <div className="flex items-center gap-2 truncate">
                                                 <i className="fa-solid fa-envelope w-3"></i>
                                                 <span className="truncate">{member.email || 'No email provided'}</span>

@@ -86,7 +86,7 @@ export default function MentorshipReports({}) {
 
  return (
  <div className="flex flex-col gap-6 animate-fade-in relative pb-10">
- <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/5 rounded-[2rem] p-6">
+ <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Export Reports</span>
  <i className="fa-solid fa-file-csv text-themeTextSec"></i>
@@ -94,13 +94,13 @@ export default function MentorshipReports({}) {
 
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-indigo-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Faculty Workload Report")}>
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-indigo-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Faculty Workload Report")}>
  {loadingReport === "Faculty Workload Report" && (
  <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-indigo-500 text-2xl"></i>
  </div>
  )}
- <div className="w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-5 group-hover:bg-indigo-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <div className="w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-5 group-hover:bg-indigo-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-scale-balanced text-lg"></i>
  </div>
  <h4 className="text-[15px] font-semibold text-themeText mb-2">Mentor Workload</h4>
@@ -111,13 +111,13 @@ export default function MentorshipReports({}) {
  </div>
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-emerald-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Student Allocation Report")}>
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-emerald-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Student Allocation Report")}>
  {loadingReport === "Student Allocation Report" && (
  <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-emerald-500 text-2xl"></i>
  </div>
  )}
- <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-5 group-hover:bg-emerald-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-5 group-hover:bg-emerald-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-users-rays text-lg"></i>
  </div>
  <h4 className="text-[15px] font-semibold text-themeText mb-2">Student Allocations</h4>
@@ -128,13 +128,13 @@ export default function MentorshipReports({}) {
  </div>
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-rose-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Unassigned Students Report")}>
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-rose-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Unassigned Students Report")}>
  {loadingReport === "Unassigned Students Report" && (
  <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-rose-500 text-2xl"></i>
  </div>
  )}
- <div className="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mb-5 group-hover:bg-rose-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <div className="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center mb-5 group-hover:bg-rose-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-user-xmark text-lg"></i>
  </div>
  <h4 className="text-[15px] font-semibold text-themeText mb-2">Unassigned Students</h4>
@@ -145,13 +145,13 @@ export default function MentorshipReports({}) {
  </div>
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-gray-200 dark:border-white/5 hover:border-amber-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Programme Wise Distribution")}>
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-amber-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Programme Wise Distribution")}>
  {loadingReport === "Programme Wise Distribution" && (
  <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-amber-500 text-2xl"></i>
  </div>
  )}
- <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mb-5 group-hover:bg-amber-500 group-hover:text-gray-900 dark:text-white transition duration-300">
+ <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mb-5 group-hover:bg-amber-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-chart-pie text-lg"></i>
  </div>
  <h4 className="text-[15px] font-semibold text-themeText mb-2">Programme Distribution</h4>

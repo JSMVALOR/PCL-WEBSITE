@@ -4,8 +4,9 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 import PageHeader from "../../shared/PageHeader/PageHeader"; 
 
-export default function Attendance({ isEmbedded = false }) {
+export default function Attendance({ menteeId, isEmbedded = false }) {
  const { userSession } = useERP();
+    const targetUserId = menteeId || userSession?.db_id;
 
  const [attendanceData, setAttendanceData] = useState([]);
  const [overallAttendance, setOverallAttendance] = useState(0);
@@ -57,120 +58,191 @@ export default function Attendance({ isEmbedded = false }) {
  };
 
  const fetchAcademicData = useCallback(async () => {
- const studentId = userSession?.db_id || userSession?.id;
- if (!studentId) return;
- setIsLoading(true);
- try {
- // 1. Fetch RAW verifiable attendance from new schema
- const { data: attData, error } = await supabase
- .from('attendance_records')
- .select('id, entry_status, exit_status, entry_marked_at, session:class_sessions(id, date, status, schedule_id)')
- .eq('student_id', studentId)
- .order('entry_marked_at', { ascending: false });
+        const studentId = targetUserId || userSession?.id;
+        if (!studentId) return;
+        setIsLoading(true);
+        try {
+            // Resolve the student's batch — if viewing as mentor, fetch from profiles
+            let studentBatch = userSession?.academic_batch || '';
+            if (menteeId) {
+                const { data: menteeProfile } = await supabase
+                    .from('profiles')
+                    .select('academic_batch')
+                    .eq('id', menteeId)
+                    .single();
+                if (menteeProfile?.academic_batch) studentBatch = menteeProfile.academic_batch;
+            }
 
- if (error) throw error;
+            // 1. Fetch RAW verifiable attendance
+            const { data: attData, error } = await supabase
+                .from('attendance_records')
+                .select('id, entry_status, exit_status, entry_marked_at, session:class_sessions(id, date, status, schedule_id)')
+                .eq('student_id', studentId)
+                .order('entry_marked_at', { ascending: false });
 
- if (attData && attData.length > 0) {
- // Fetch Schedule & Subjects manually since foreign key is missing
- const scheduleIds = [...new Set(attData.map(a => a.session?.schedule_id).filter(Boolean))];
- let schedMap = {};
- if (scheduleIds.length > 0) {
-    const { data: schedData } = await supabase.from('class_schedule').select('id, start_time, end_time, room, batch, subject:master_subjects(id, name, code, faculty_id)').in('id', scheduleIds);
-    if (schedData) {
-        schedData.forEach(s => { schedMap[s.id] = s; });
-    }
- }
+            if (error) throw error;
 
- // 2. Client-Side Aggregation
- const subjectMap = {};
- let attCount = 0, missCount = 0, medCount = 0, appCount = 0, totCount = 0, lateCount = 0;
+            // 1b. Fetch all schedules for this batch to find unmarked/unconducted
+            const { data: allSchedules } = await supabase.from('class_schedule')
+                .select('id, start_time, end_time, room_id, batch, day_of_week, faculty_id, subject:master_subjects(id, name, code, theme_color), room:academic_classrooms(name)')
+                .eq('batch', studentBatch);
+                
+            const schedMap = {};
+            (allSchedules||[]).forEach(s => { schedMap[s.id] = s; });
 
- attData.forEach(record => {
- const session = record.session;
- if (!session) return;
- session.schedule = schedMap[session.schedule_id];
- if (!session.schedule?.subject) return;
+            const scheduleIds = Object.keys(schedMap);
+            let allSessions = [];
+            if (scheduleIds.length > 0) {
+                const { data: sData } = await supabase.from('class_sessions').select('id, date, status, schedule_id').in('schedule_id', scheduleIds);
+                if (sData) allSessions = sData;
+            }
 
- const subjObj = session.schedule?.subject;
- const subjId = subjObj.id;
- 
- if(!subjectMap[subjId]) {
- subjectMap[subjId] = {
- id: subjId,
- course_code: subjObj?.code || 'N/A',
- course_name: subjObj?.name || 'Unknown Course',
- faculty_id: subjObj?.faculty_id,
- total_classes: 0,
- present: 0,
- absent: 0,
- medical: 0,
- approved: 0,
- records: []
- };
- }
- 
- subjectMap[subjId].total_classes += 1;
- totCount += 1;
+            // Calculate past dates up to 14 days to find completely un-started classes
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const pastDates = [];
+            for(let i=0; i<=14; i++) { // Include today for un-started
+                let d = new Date(today);
+                d.setDate(d.getDate() - i);
+                pastDates.push(d);
+            }
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
- if (record.entry_status === 'present') { subjectMap[subjId].present += 1; attCount += 1; }
-   else if (record.entry_status === 'late') { subjectMap[subjId].late += 1; lateCount += 1; attCount += 1; /* Count late as present for health */ }
- else if (record.entry_status === 'absent') { subjectMap[subjId].absent += 1; missCount += 1; }
- else if (record.entry_status === 'medical') { subjectMap[subjId].medical += 1; medCount += 1; }
- else if (record.entry_status === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
+            // 2. Client-Side Aggregation
+            const subjectMap = {};
+            let attCount = 0, missCount = 0, medCount = 0, appCount = 0, totCount = 0, lateCount = 0;
 
- // Add to ledger
- subjectMap[subjId].records.push({ id: record.id,
- date: session.date,
- session_id: session.id,
- start_time: 'N/A',
- status: record.entry_status,
- room: 'N/A'
- });
- });
+            // Initialize subject map
+            (allSchedules||[]).forEach(sch => {
+                if (!sch.subject) return;
+                const subjId = sch.subject.id;
+                if (!subjectMap[subjId]) {
+                    subjectMap[subjId] = {
+                        id: subjId,
+                        course_code: sch.subject?.code || 'N/A',
+                        course_name: sch.subject?.name || 'Unknown Course',
+                        theme_color: sch.subject?.theme_color || 'default',
+                        faculty_id: sch.faculty_id,
+                        total_classes: 0,
+                        present: 0,
+                        absent: 0,
+                        medical: 0,
+                        approved: 0,
+                        unmarked: 0,
+                        records: []
+                    };
+                }
+            });
 
- const groupedData = Object.values(subjectMap);
- 
- // Fetch Faculty Names (since they are only referenced by faculty_id in subjects now)
- const facIds = [...new Set(groupedData.map(d => d.faculty_id).filter(Boolean))];
- if(facIds.length > 0) {
- const { data: profs } = await supabase.from('profiles').select('id, full_name').in('id', facIds);
- groupedData.forEach(d => {
- const prof = profs?.find(p => p.id === d.faculty_id);
- d.faculty_name = prof ? prof.full_name : '—';
- });
- }
+            // Iterate over past dates to simulate what classes *should* have happened
+            pastDates.forEach(dateObj => {
+                const dateStr = dateObj.toISOString().split('T')[0];
+                const dayName = dayNames[dateObj.getDay()];
+                const dayNumStr = String(dateObj.getDay());
 
- setAttendanceData(groupedData);
- 
- setTotalAttended(attCount);
- setTotalMissed(missCount);
- setTotalLate(lateCount);
- setTotalMedical(medCount);
- setTotalApproved(appCount);
+                (allSchedules||[]).forEach(sch => {
+                    if (String(sch.day_of_week) !== dayName && String(sch.day_of_week) !== dayNumStr) return;
+                    if (!sch.subject) return;
+                    const subjId = sch.subject.id;
 
- const overall = totCount === 0 ? 100 : ((attCount / totCount) * 100).toFixed(1);
- setOverallAttendance(Number(overall));
- } else {
- setAttendanceData([]);
- setOverallAttendance(100);
- }
- } catch (error) {
- console.warn("Attendance DB syncing..."); // DB constraint pending
- } finally {
- setIsLoading(false);
- }
- }, [userSession]);
+                    // Did the faculty create a session for this?
+                    const sessionExists = allSessions.find(ses => ses.schedule_id === sch.id && ses.date === dateStr);
+                    
+                    if (sessionExists) {
+                        // Check if student was marked
+                        const studentRecord = (attData||[]).find(a => a.session?.id === sessionExists.id);
+                        
+                        subjectMap[subjId].total_classes += 1;
+                        totCount += 1;
+                        
+                        if (studentRecord) {
+                            if (studentRecord.entry_status === 'present') { subjectMap[subjId].present += 1; attCount += 1; }
+                            else if (studentRecord.entry_status === 'late') { subjectMap[subjId].late += 1; lateCount += 1; attCount += 1; }
+                            else if (studentRecord.entry_status === 'absent') { subjectMap[subjId].absent += 1; missCount += 1; }
+                            else if (studentRecord.entry_status === 'medical') { subjectMap[subjId].medical += 1; medCount += 1; }
+                            else if (studentRecord.entry_status === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
+                            
+                            subjectMap[subjId].records.push({ 
+                                id: studentRecord.id,
+                                date: sessionExists.date,
+                                session_id: sessionExists.id,
+                                start_time: sch.start_time,
+                                status: studentRecord.entry_status,
+                                room: sch.room?.name || 'N/A'
+                            });
+                        } else {
+                            // Faculty started class, but student was completely unmarked (missing record)
+                            subjectMap[subjId].unmarked += 1;
+                            subjectMap[subjId].records.push({ 
+                                id: 'unmarked-' + sessionExists.id,
+                                date: sessionExists.date,
+                                session_id: sessionExists.id,
+                                start_time: sch.start_time,
+                                status: 'unmarked', // We render this as a grey minus
+                                room: sch.room?.name || 'N/A'
+                            });
+                        }
+                    } else {
+                        // Faculty NEVER started the class. It is 'Not Conducted' / Unmarked completely.
+                        // We do not increment total_classes for the student so it doesn't hurt their %.
+                        subjectMap[subjId].records.push({
+                            id: 'not-conducted-' + sch.id + '-' + dateStr,
+                            date: dateStr,
+                            session_id: null,
+                            start_time: sch.start_time,
+                            status: 'unmarked',
+                            room: sch.room?.name || 'N/A'
+                        });
+                    }
+                });
+            });
+            
+            // Sort records by date desc
+            Object.values(subjectMap).forEach(subj => {
+                subj.records.sort((a, b) => new Date(b.date) - new Date(a.date));
+            });
+
+            const groupedData = Object.values(subjectMap).filter(d => d.total_classes > 0 || d.records.length > 0);
+            
+            // Fetch Faculty Names
+            const facIds = [...new Set(groupedData.map(d => d.faculty_id).filter(Boolean))];
+            if(facIds.length > 0) {
+                const { data: profs } = await supabase.from('profiles').select('id, full_name').in('id', facIds);
+                groupedData.forEach(d => {
+                    const prof = profs?.find(p => p.id === d.faculty_id);
+                    d.faculty_name = prof ? prof.full_name : '—';
+                });
+            }
+
+            setAttendanceData(groupedData);
+            setTotalAttended(attCount);
+            setTotalMissed(missCount);
+            setTotalLate(lateCount);
+            setTotalMedical(medCount);
+            setTotalApproved(appCount);
+
+            if (totCount > 0) {
+                setOverallAttendance(Math.round(((attCount + lateCount) / totCount) * 100));
+            } else {
+                setOverallAttendance(100);
+            }
+        } catch (e) {
+            console.error("Error fetching student attendance:", e);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [userSession, menteeId, targetUserId]);
 
  useEffect(() => { fetchAcademicData(); }, [fetchAcademicData]);
 
     useEffect(() => {
-        if (!userSession?.db_id) return;
+        if (!targetUserId) return;
         
         const channel = supabase
             .channel('student-attendance-updates')
             .on(
                 'postgres_changes',
-                { event: '*', schema: 'public', table: 'attendance_records', filter: `student_id=eq.${userSession.db_id}` },
+                { event: '*', schema: 'public', table: 'attendance_records', filter: `student_id=eq.${targetUserId}` },
                 (payload) => {
                     fetchAcademicData();
                 }
@@ -260,7 +332,7 @@ const handleScanQR = async (e) => {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-16" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
 
  {/* 1. MASTER HEADER */}
  <PageHeader 
@@ -276,19 +348,19 @@ const handleScanQR = async (e) => {
  />
 
 {/* 2. OVERVIEW DASHBOARD */}
- <div className="bg-white/40 dark:bg-[#1C1C1E]/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 p-8 lg:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col lg:flex-row gap-10 items-center lg:items-start relative overflow-hidden group">
+ <div className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 p-8 lg:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col lg:flex-row gap-10 items-center lg:items-start relative overflow-hidden group">
  <div className="absolute top-0 right-0 w-full max-w-[16rem] md:w-64 h-64 bg-themeAccent/5 rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none blur-3xl"></div>
  
  {/* The Linear Gauge */}
  <div className="w-full lg:w-1/2 flex flex-col gap-4 relative z-10">
  <div className="flex justify-between items-end">
  <div>
- <p className="text-[14px] font-bold text-[#8E8E93] tracking-tight mb-2">Overall Semester Health</p>
+ <p className="text-[14px] font-bold text-themeTextSec tracking-tight mb-2">Overall Semester Health</p>
  <h2 className={`text-5xl font-black ${getHealthTextClass(overallAttendance)}`}>{overallAttendance}%</h2>
  </div>
  <div className="text-right">
- <p className="text-[13px] font-medium text-[#8E8E93] mb-1">Minimum Required</p>
- <p className="text-[16px] font-bold tracking-tight text-[#1C1C1E] dark:text-[#F2F2F7]">75%</p>
+ <p className="text-[13px] font-medium text-themeTextSec mb-1">Minimum Required</p>
+ <p className="text-[16px] font-bold tracking-tight text-themeText dark:text-themeText">75%</p>
  </div>
  </div>
  
@@ -432,15 +504,31 @@ const handleScanQR = async (e) => {
  <h4 className="text-lg font-semibold tracking-tight text-themeText mb-1">Enter Whiteboard OTP</h4>
  <p className="text-[10px] font-bold text-themeTextSec tracking-normal mb-4">Written on the whiteboard by your faculty</p>
  
- <input 
- type="text"
- placeholder="e.g. A7X9P2"
- value={scanToken}
- onChange={(e) => setScanToken(e.target.value)}
- className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl px-4 py-3 text-center text-xl font-mono font-black text-themeText tracking-[0.2em] outline-none focus:border-themeAccent uppercase placeholder:tracking-normal placeholder:font-sans placeholder:font-bold placeholder:text-sm"
- maxLength={8}
- disabled={scanStatus !== 'idle'}
- />
+ <div className="flex justify-center mt-2 mb-2">
+    <CodeSlots
+        length={8}
+        value={scanToken}
+        onChange={setScanToken}
+        onComplete={(code) => {
+            setScanToken(code);
+            // Optionally auto-submit if scanStatus is idle
+            if (scanStatus === 'idle') {
+                // we simulate form submit by calling handleScanSubmit
+                // but handleScanSubmit needs e.preventDefault(), so we mock it
+                handleScanSubmit({ preventDefault: () => {} });
+            }
+        }}
+        status={scanStatus === 'success' ? 'success' : scanStatus === 'error' ? 'error' : 'idle'}
+        slotSize={38}
+        gap={6}
+        radius={10}
+        accentColor="#007AFF"
+        inkColor="#FFFFFF"
+        slotColor="var(--bg-glass)"
+        digitColor="var(--text-primary)"
+        disabled={scanStatus !== 'idle'}
+    />
+ </div>
  </div>
  
  <button 
@@ -459,35 +547,35 @@ const handleScanQR = async (e) => {
  
  {/* Subject Details Drawer */}
  {activeSubject && (
- <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-fade-in">
- <div className="w-full max-w-md h-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-l border-black/10 dark:border-white/20 flex flex-col animate-slide-in-right">
- <div className="p-6 border-b border-black/10 dark:border-white/20 flex justify-between items-start bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 shrink-0">
+ <div className="fixed inset-0 z-50 flex justify-end bg-black/40 dark:bg-black/60 backdrop-blur-md animate-fade-in">
+ <div className="w-full max-w-md h-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-l border-black/5 dark:border-white/10 flex flex-col animate-slide-in-right shadow-2xl">
+ <div className="p-6 md:p-8 border-b border-black/5 dark:border-white/10 flex justify-between items-start shrink-0 bg-gradient-to-b from-white/40 to-transparent dark:from-black/20">
  <div>
- <p className="text-[13px] font-medium text-themeTextSec mb-1">{activeSubject.course_code}</p>
- <h2 className="text-xl font-semibold tracking-tight text-themeText leading-tight">{activeSubject.course_name}</h2>
- <p className="text-xs font-bold text-themeTextSec mt-2"><i className="fa-solid fa-user-tie mr-1"></i> {activeSubject.faculty_name}</p>
+ <p className="text-[11px] font-bold tracking-widest uppercase text-themeTextSec opacity-70 mb-1">{activeSubject.course_code}</p>
+ <h2 className="text-xl md:text-2xl font-black tracking-tight text-themeText leading-tight">{activeSubject.course_name}</h2>
+ <p className="text-xs font-semibold text-themeTextSec mt-2 flex items-center gap-1.5"><i className="fa-solid fa-user-tie"></i> {activeSubject.faculty_name}</p>
  </div>
- <button type="button" onClick={() => setActiveSubject(null)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors shrink-0">
+ <button type="button" onClick={() => setActiveSubject(null)} className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-themeTextSec hover:bg-black/10 dark:hover:bg-white/20 hover:text-themeText transition-all shrink-0">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
  
- <div className="flex-1 overflow-y-auto p-6 custom-scrollbar flex flex-col gap-8">
+ <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar flex flex-col gap-8">
  {/* Prediction Engine */}
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-5 rounded-2xl border border-black/10 dark:border-white/20 relative overflow-hidden">
- <div className="absolute top-0 right-0 w-24 h-24 bg-themeAccent/5 rounded-full -translate-y-1/2 translate-x-1/3 blur-xl pointer-events-none"></div>
- <h3 className="text-[14px] font-medium text-themeText tracking-normal mb-4 flex items-center gap-2">
+ <div className="bg-white/60 dark:bg-black/20 backdrop-blur-xl border border-black/5 dark:border-white/5 p-6 rounded-3xl shadow-sm relative overflow-hidden group">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-[#007AFF]/10 dark:bg-[#007AFF]/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
+ <h3 className="text-[13px] font-bold text-themeText tracking-tight mb-5 flex items-center gap-2">
  <i className="fa-solid fa-wand-magic-sparkles text-themeAccent"></i> Prediction Engine
  </h3>
  
- <div className="flex items-center justify-between mb-2">
- <p className="text-[10px] font-bold text-themeTextSec tracking-normal">Current</p>
- <p className="text-[15px] font-semibold text-themeText">{activeSubject.total_classes === 0 ? 0 : Math.round((activeSubject.present / activeSubject.total_classes) * 100)}%</p>
+ <div className="flex items-center justify-between mb-3 bg-white/40 dark:bg-white/5 p-3.5 rounded-2xl border border-black/5 dark:border-white/5">
+ <p className="text-[11px] font-semibold text-themeTextSec tracking-tight">Current Attendance</p>
+ <p className="text-[16px] font-black tracking-tight text-themeText">{activeSubject.total_classes === 0 ? 0 : Math.round((activeSubject.present / activeSubject.total_classes) * 100)}%</p>
  </div>
  
- <div className="flex items-center justify-between">
- <p className="text-[10px] font-bold text-themeTextSec tracking-normal">If you miss next class</p>
- <p className="text-[15px] font-semibold text-rose-500">
+ <div className="flex items-center justify-between bg-white/40 dark:bg-white/5 p-3.5 rounded-2xl border border-black/5 dark:border-white/5">
+ <p className="text-[11px] font-semibold text-themeTextSec tracking-tight">If you miss next class</p>
+ <p className="text-[16px] font-black tracking-tight text-rose-500">
  {activeSubject.total_classes === 0 ? 0 : Math.round((activeSubject.present / (activeSubject.total_classes + 1)) * 100)}%
  </p>
  </div>
@@ -495,43 +583,51 @@ const handleScanQR = async (e) => {
  
  {/* Timeline */}
  <div>
- <h3 className="text-[14px] font-medium text-themeText tracking-normal mb-4">Class Timeline</h3>
- <div className="flex flex-col gap-3">
+ <h3 className="text-[13px] font-bold text-themeText tracking-tight mb-5 px-1">Class Timeline</h3>
+ <div className="flex flex-col gap-4">
  {activeSubject.records.length === 0 ? (
- <p className="text-xs font-bold text-themeTextSec">No records available.</p>
+ <div className="text-center py-8 bg-white/40 dark:bg-black/20 border border-black/5 dark:border-white/5 rounded-3xl">
+    <p className="text-xs font-semibold text-themeTextSec">No records available yet.</p>
+ </div>
  ) : (
  activeSubject.records.map((rec) => (
- <div key={rec.id} className="flex gap-4 items-stretch">
- {/* Status Icon */}
+ <div key={rec.id} className="flex gap-4 items-stretch group">
+ {/* Status Line */}
  <div className="flex flex-col items-center">
- <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
- rec.status === 'present' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' : rec.status === 'late' ? 'bg-amber-500/10 text-amber-500 border-amber-500/30' :
- rec.status === 'absent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/30' :
- 'bg-amber-500/10 text-amber-500 border-amber-500/30'
+ <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110 ${
+ rec.status === 'present' ? 'bg-emerald-500/10 text-emerald-500' : rec.status === 'late' ? 'bg-amber-500/10 text-amber-500' :
+ rec.status === 'absent' ? 'bg-rose-500/10 text-rose-500' :
+ rec.status === 'unmarked' ? 'bg-black/5 dark:bg-white/10 text-themeTextSec dark:text-white/50' :
+ 'bg-amber-500/10 text-amber-500'
  }`}>
- {rec.status === 'present' ? <i className="fa-solid fa-check text-xs"></i> : rec.status === 'late' ? <i className="fa-solid fa-clock text-xs"></i> :
- rec.status === 'absent' ? <i className="fa-solid fa-xmark text-xs"></i> :
- <i className="fa-solid fa-suitcase-medical text-xs"></i>}
+ {rec.status === 'present' ? <i className="fa-solid fa-check text-[11px]"></i> : rec.status === 'late' ? <i className="fa-solid fa-clock text-[11px]"></i> :
+ rec.status === 'absent' ? <i className="fa-solid fa-xmark text-[11px]"></i> :
+ rec.status === 'unmarked' ? <i className="fa-solid fa-minus text-[11px]"></i> :
+ <i className="fa-solid fa-suitcase-medical text-[11px]"></i>}
  </div>
- <div className="w-px h-full bg-themeBorder my-1 last:hidden"></div>
+ <div className="w-px h-full bg-black/5 dark:bg-white/10 my-2 last:hidden"></div>
  </div>
  
- {/* Details */}
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-3 rounded-xl border border-black/10 dark:border-white/20 flex-1 mb-2 last:mb-0">
- <div className="flex justify-between items-start mb-1">
- <p className="text-[14px] font-medium text-themeText">{new Date(rec.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
- <p className={`text-[12px] font-medium ${
+ {/* Details Card */}
+ <div className="bg-white/60 dark:bg-black/20 hover:bg-white dark:hover:bg-black/40 backdrop-blur-xl border border-black/5 dark:border-white/5 p-4 rounded-3xl shadow-sm transition-colors flex-1 mb-2 last:mb-0">
+ <div className="flex justify-between items-start mb-1.5">
+ <p className="text-[14px] font-bold tracking-tight text-themeText">{new Date(rec.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</p>
+ <p className={`text-[11px] font-black uppercase tracking-widest ${
  rec.status === 'present' ? 'text-emerald-500' : rec.status === 'late' ? 'text-amber-500' :
- rec.status === 'absent' ? 'text-rose-500' : 'text-amber-500'
+ rec.status === 'absent' ? 'text-rose-500' :
+ rec.status === 'unmarked' ? 'text-themeTextSec dark:text-white/50' :
+ 'text-amber-500'
  }`}>{rec.status.replace('_', ' ')}</p>
  </div>
- <div className="flex justify-between items-center">
-    <p className="text-[10px] font-bold text-themeTextSec tracking-normal">
-        {rec.start_time?.substring(0, 5)} • Room {rec.room}
+ <div className="flex justify-between items-center mt-3 pt-3 border-t border-black/5 dark:border-white/5">
+    <p className="text-[11px] font-semibold text-themeTextSec tracking-tight flex items-center gap-1.5">
+        <i className="fa-regular fa-clock opacity-70"></i> 
+        {rec.start_time?.substring(0, 5) || 'N/A'} 
+        {rec.room && rec.room !== 'N/A' && <><span className="mx-1 opacity-40">•</span> Room {rec.room}</>}
     </p>
     {rec.status === 'absent' && (
-        <button type="button" onClick={() => { setAppealRecord(rec); setShowAppealModal(true); }} className="px-3 py-1 bg-white/5 hover:bg-white/10 border border-gray-300 dark:border-white/10 rounded-lg text-[10px] font-bold text-themeText transition-colors">
-            File Appeal
+        <button type="button" onClick={() => { setAppealRecord(rec); setShowAppealModal(true); }} className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm">
+            Appeal
         </button>
     )}
 </div>
@@ -549,22 +645,22 @@ const handleScanQR = async (e) => {
              {/* APPEAL MODAL */}
             {showAppealModal && appealRecord && (
                 <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-                    <div className="w-full max-w-md bg-white dark:bg-[#121212] border border-gray-300 dark:border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-4">
+                    <div className="w-full max-w-md bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/10 rounded-3xl p-6 shadow-2xl flex flex-col gap-4">
                         <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Appeal Missing Attendance</h3>
-                            <button onClick={() => setShowAppealModal(false)} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white"><i className="fa-solid fa-xmark"></i></button>
+                            <h3 className="text-lg font-black text-themeText dark:text-white">Appeal Missing Attendance</h3>
+                            <button onClick={() => setShowAppealModal(false)} className="text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white"><i className="fa-solid fa-xmark"></i></button>
                         </div>
                         <p className="text-sm font-medium text-white/70">
-                            Filing appeal for <span className="text-gray-900 dark:text-white font-bold">{activeSubject?.course_name}</span> on <span className="text-gray-900 dark:text-white font-bold">{new Date(appealRecord.date).toLocaleDateString()}</span>.
+                            Filing appeal for <span className="text-themeText dark:text-white font-bold">{activeSubject?.course_name}</span> on <span className="text-themeText dark:text-white font-bold">{new Date(appealRecord.date).toLocaleDateString()}</span>.
                         </p>
                         <textarea
-                            className="w-full h-32 bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl p-4 text-sm font-medium text-gray-900 dark:text-white outline-none resize-none focus:border-amber-500/50"
+                            className="w-full h-32 bg-white/5 border border-themeBorder dark:border-white/10 rounded-xl p-4 text-sm font-medium text-themeText dark:text-white outline-none resize-none focus:border-amber-500/50"
                             placeholder="Explain why you were marked absent incorrectly..."
                             value={appealReason}
                             onChange={(e) => setAppealReason(e.target.value)}
                         />
                         <div className="flex justify-end gap-3 mt-2">
-                            <button onClick={() => setShowAppealModal(false)} className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-900 dark:text-white text-sm font-bold transition-colors">Cancel</button>
+                            <button onClick={() => setShowAppealModal(false)} className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-themeText dark:text-white text-sm font-bold transition-colors">Cancel</button>
                             <button onClick={handleFileAppeal} disabled={isAppealing} className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-black transition-colors">
                                 {isAppealing ? 'Submitting...' : 'Submit Appeal'}
                             </button>

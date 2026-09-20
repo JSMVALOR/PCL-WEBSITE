@@ -73,7 +73,7 @@ export default function ElectiveBidding() {
  };
 
  return (
- <div className="w-full w-full mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
+ <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-32 xl:pb-8 animate-fade-in">
  <div className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] p-6 border border-black/10 dark:border-white/20 flex flex-col gap-2">
  <h1 className={`${theme.text.heading} text-2xl tracking-tight text-themeText mb-1`}>Elective Bidding</h1>
  <p className={`${theme.text.secondary} text-sm font-medium`}>Bid for your preferred electives and faculty for the upcoming semester.</p>

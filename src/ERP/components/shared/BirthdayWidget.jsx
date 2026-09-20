@@ -115,11 +115,11 @@ export default function BirthdayWidget() {
                 <div className="flex flex-col gap-3">
                     {birthdays.map((person, idx) => (
                         <div key={idx} className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-3 py-2.5 rounded-xl border border-black/5 dark:border-white/10 group hover:bg-black/5 dark:hover:bg-white/15 transition-colors">
-                            <div className="w-8 h-8 rounded-lg bg-white dark:bg-[#2C2C2E] border border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                            <div className="w-8 h-8 rounded-lg bg-white dark:bg-themeElevated border border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden shrink-0">
                                 {person.profile_picture_url ? (
                                     <img src={person.profile_picture_url} alt={person.full_name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <i className="fa-solid fa-user text-[10px] text-[#8E8E93]"></i>
+                                    <i className="fa-solid fa-user text-[10px] text-themeTextSec"></i>
                                 )}
                             </div>
                             <div className="flex flex-col text-left pr-2">

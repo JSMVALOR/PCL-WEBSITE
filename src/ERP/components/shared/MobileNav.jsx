@@ -162,7 +162,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                 ></div>
                 
                 {/* Sheet */}
-                <div className={`relative bg-white/80 dark:bg-[#1C1C1E]/80 backdrop-blur-3xl saturate-[1.8] w-full rounded-t-[2.5rem] border-t border-x border-black/[0.04] dark:border-white/[0.08] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${mobileMenuOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+                <div className={`relative bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] w-full rounded-t-[2.5rem] border-t border-x border-black/[0.04] dark:border-white/[0.08] shadow-[0_-20px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_40px_rgba(0,0,0,0.4)] transition-transform duration-300 ease-out flex flex-col max-h-[85vh] ${mobileMenuOpen ? 'translate-y-0' : 'translate-y-full'}`}>
                     <div className="w-full flex justify-center pt-4 pb-2">
                         <div className="w-12 h-1.5 bg-black/10 dark:bg-white/10 rounded-full"></div>
                     </div>
@@ -183,8 +183,8 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                                                     key={link.id}
                                                     onClick={() => handleTabSwitch(link.id)}
                                                     className={`relative flex flex-col items-start gap-3 p-4 rounded-themePanel border transition duration-300 ${isActive 
-                                                        ? `bg-white dark:bg-[#2C2C2E] shadow-sm border-black/[0.04] dark:border-white/[0.08] ${accentColor}` 
-                                                        : 'bg-black/5 dark:bg-white/5 backdrop-blur-md border-transparent text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-white dark:hover:bg-white/10'}`}
+                                                        ? `bg-white dark:bg-themeElevated shadow-sm border-black/[0.04] dark:border-white/[0.08] ${accentColor}` 
+                                                        : 'bg-black/5 dark:bg-white/5 backdrop-blur-md border-transparent text-themeText dark:text-themeText hover:bg-white dark:hover:bg-white/10'}`}
                                                 >
                                                     <div className="flex justify-between w-full">
                                                         <i className={`${link.icon} text-xl ${isActive ? '' : 'text-themeTextSec opacity-80'}`}></i>
@@ -206,7 +206,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
                         <div className="mt-8 animate-slide-up" style={{ animationDelay: `${navGroups.length * 40}ms` }}>
                             <button type="button"
                                 onClick={() => handleTabSwitch('credentials')}
-                                className="w-full flex items-center justify-center gap-3 text-[#1C1C1E] dark:text-[#F2F2F7] bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs tracking-normal font-black border border-black/10 dark:border-black/5 dark:border-white/10 hover:border-themeAccent active:bg-themeElevated transition shadow-premiumElevated mb-4"
+                                className="w-full flex items-center justify-center gap-3 text-themeText dark:text-themeText bg-black/5 dark:bg-white/5 backdrop-blur-md shadow-sm p-4 rounded-themePanel text-xs tracking-normal font-black border border-black/10 dark:border-black/5 dark:border-white/10 hover:border-themeAccent active:bg-themeElevated transition shadow-premiumElevated mb-4"
                             >
                                 <i className="fa-solid fa-user-gear text-lg"></i> Settings & Credentials
                             </button>

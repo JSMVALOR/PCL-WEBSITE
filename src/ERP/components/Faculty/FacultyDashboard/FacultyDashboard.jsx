@@ -74,15 +74,15 @@ export default function FacultyDashboard({ setActiveTab }) {
     return (
         <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
             
-            <div className="flex-1 w-full w-full mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
                 
                 {/* LEFT SIDEBAR */}
-                <div className="w-full xl:w-[280px] shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2">
+                <div className="w-full xl:w-[280px] shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2 lg:pr-4">
                     <DirectorySidebarWidget role="faculty" />
                 </div>
 
                 {/* MAIN CONTENT AREA */}
-                <div className="flex-1 flex flex-col gap-6 lg:gap-8 overflow-y-auto custom-scrollbar pb-10 xl:pb-0 pr-2">
+                <div className="flex-1 flex flex-col gap-6 lg:gap-8 overflow-y-auto custom-scrollbar pb-10 xl:pb-0 pr-2 lg:pr-4">
                     
                     <DashboardGreetingBanner role="faculty" />
                     
@@ -96,7 +96,7 @@ export default function FacultyDashboard({ setActiveTab }) {
                             { label: 'Classes Today', value: dashboardData.stats.classesToday, icon: 'fa-chalkboard-user', color: 'text-indigo-500' },
                             { label: 'Active Mentees', value: dashboardData.stats.mentees, icon: 'fa-users', color: 'text-blue-500' }
                         ].map((stat, i) => (
-                            <div key={i} className="bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group">
+                            <div key={i} className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group">
                                 <div className={`w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center ${stat.color} mb-3`}>
                                     <i className={`fa-solid ${stat.icon}`}></i>
                                 </div>

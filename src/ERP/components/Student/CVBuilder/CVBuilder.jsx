@@ -110,65 +110,65 @@ const AchSection = ({ title, items, headStyle, mode }) => {
 
 // --- Template 1: Modern ---
 const ModernTemplate = (data, config) => {
- const HS = { color: "#d97706" };
- return (
- <div>
- <div style={{ borderBottom: "3px solid #f59e0b", paddingBottom: "14px", marginBottom: "20px" }}>
- <h1 style={{ fontSize: "26pt", fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.02em", color: "#0f172a", margin: "0 0 6px" }}>
- {data.personal.name}
- </h1>
- <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 14px", fontSize: "8.5pt", fontWeight: 500, color: "#475569" }}>
- <span style={{ fontWeight: 700, color: "#d97706" }}>{data.academic.degree}</span>
- {data.personal.email && <span>· {data.personal.email}</span>}
- {data.personal.phone && data.personal.phone !== "Update in Profile" && <span>· {data.personal.phone}</span>}
- {data.personal.linkedin && data.personal.linkedin !== "Update in Profile" && <span>· {data.personal.linkedin}</span>}
- </div>
- </div>
+  const HS = { color: "#d97706", fontSize: "11pt", fontWeight: 800, borderBottom: "1px solid #fde68a", paddingBottom: "4px" };
+  return (
+    <div style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", color: "#1e293b", lineHeight: 1.5 }}>
+      <div style={{ borderBottom: "4px solid #f59e0b", paddingBottom: "16px", marginBottom: "24px" }}>
+        <h1 style={{ fontSize: "28pt", fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.03em", color: "#0f172a", margin: "0 0 8px" }}>
+          {data.personal.name}
+        </h1>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", fontSize: "9pt", fontWeight: 500, color: "#64748b" }}>
+          <span style={{ fontWeight: 800, color: "#d97706", letterSpacing: "0.05em" }}>{data.academic.degree}</span>
+          {data.personal.email && <span>{data.personal.email}</span>}
+          {data.personal.phone && data.personal.phone !== "Update in Profile" && <span>• {data.personal.phone}</span>}
+          {data.personal.linkedin && data.personal.linkedin !== "Update in Profile" && <span>• {data.personal.linkedin}</span>}
+        </div>
+      </div>
 
- <div style={{ marginBottom: "18px" }}>
- <SectionHeading text="Education" style={HS} />
- <EntryRow left={data.academic.university} right={data.academic.duration} />
- <SubLine>{data.academic.degree}</SubLine>
- <Bullet
- items={[
- ...(config.includeCGPA ? [`Cumulative GPA: ${data.academic.cgpa}`] : []),
- ...(config.includeClassRank ? [`University Batch Rank: ${data.academic.rank}`] : []),
- ]}
- />
- </div>
+      <div style={{ marginBottom: "20px" }}>
+        <SectionHeading text="Education" style={HS} />
+        <EntryRow left={data.academic.university} right={data.academic.duration} />
+        <SubLine style={{ fontWeight: 600, color: "#334155" }}>{data.academic.degree}</SubLine>
+        <Bullet
+          items={[
+            ...(config.includeCGPA && data.academic.cgpa && data.academic.cgpa !== "Awaiting Data" ? [`Cumulative GPA: ${data.academic.cgpa}`] : []),
+            ...(config.includeClassRank && data.academic.rank && data.academic.rank !== "N/A" ? [`University Batch Rank: ${data.academic.rank}`] : []),
+          ]}
+        />
+      </div>
 
- {config.includeExperience && data.experience.length > 0 && (
- <div style={{ marginBottom: "18px" }}>
- <SectionHeading text="Legal Experience" style={HS} />
- {data.experience.map((exp, i) => (
- <div key={i} style={{ marginBottom: "14px", pageBreakInside: "avoid" }}>
- <EntryRow left={exp.company_name} right={exp.duration} />
- <SubLine>
- {exp.role_title}
- {exp.location ? ` · ${exp.location}` : ""}
- </SubLine>
- {exp.description && <Desc text={exp.description} />}
- </div>
- ))}
- </div>
- )}
+      {config.includeExperience && data.experience.length > 0 && (
+        <div style={{ marginBottom: "20px" }}>
+          <SectionHeading text="Legal Experience" style={HS} />
+          {data.experience.map((exp, i) => (
+            <div key={i} style={{ marginBottom: "16px", pageBreakInside: "avoid" }}>
+              <EntryRow left={exp.company_name} right={exp.duration} />
+              <SubLine style={{ fontWeight: 600, color: "#475569" }}>
+                {exp.role_title}
+                {exp.location ? ` • ${exp.location}` : ""}
+              </SubLine>
+              {exp.description && <Desc text={exp.description} />}
+            </div>
+          ))}
+        </div>
+      )}
 
- {config.includeMootCourt && <AchSection title="Moot Court & Competitions" items={data.mootCourt} headStyle={HS} />}
- {config.includeAwards && <AchSection title="Awards & Honors" items={data.awards} headStyle={HS} />}
- {config.includePublications && <AchSection title="Publications" items={data.publications} headStyle={HS} mode="bullet" />}
- {config.includeCertifications && <AchSection title="Certificates" items={data.certifications} headStyle={HS} mode="bullet" />}
- {config.includeExtracurriculars && <AchSection title="Extracurricular Activities" items={data.extracurriculars} headStyle={HS} />}
+      {config.includeMootCourt && <AchSection title="Moot Court & Competitions" items={data.mootCourt} headStyle={HS} />}
+      {config.includeAwards && <AchSection title="Awards & Honors" items={data.awards} headStyle={HS} />}
+      {config.includePublications && <AchSection title="Publications" items={data.publications} headStyle={HS} mode="bullet" />}
+      {config.includeCertifications && <AchSection title="Certificates" items={data.certifications} headStyle={HS} mode="bullet" />}
+      {config.includeExtracurriculars && <AchSection title="Extracurricular Activities" items={data.extracurriculars} headStyle={HS} />}
 
- <div style={{ marginTop: "auto", paddingTop: "24px", borderTop: "1px solid #e2e8f0", textAlign: "center" }}>
- <p style={{ fontSize: "6.5pt", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: "#cbd5e1", margin: 0 }}>
- Officially Verified & Minted · Prudentia College of Law ERP Engine
- </p>
- <p style={{ fontSize: "6pt", fontWeight: 600, color: "#e2e8f0", marginTop: "2px", textTransform: "uppercase", letterSpacing: "0.15em" }}>
- Document ID: {data.docId}
- </p>
- </div>
- </div>
- );
+      <div style={{ marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #e2e8f0", textAlign: "center" }}>
+        <p style={{ fontSize: "6.5pt", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: "#94a3b8", margin: 0 }}>
+          Officially Verified & Minted • Prudentia College of Law
+        </p>
+        <p style={{ fontSize: "6pt", fontWeight: 600, color: "#cbd5e1", marginTop: "4px", textTransform: "uppercase", letterSpacing: "0.15em" }}>
+          Document ID: {data.docId}
+        </p>
+      </div>
+    </div>
+  );
 };
 
 // --- Template 2: Classic ---
@@ -637,7 +637,7 @@ export default function CVBuilder() {
 
  return (
  <>
- <div className="w-full w-full mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated" id="cv-builder-shell">
+ <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-32 xl:pb-8 animate-fade-in selection:bg-themeElevated" id="cv-builder-shell">
  <PageHeader 
  icon="fa-solid fa-file-invoice" 
  title="CV Builder" 
@@ -646,7 +646,7 @@ export default function CVBuilder() {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-themePanel border-theme border-themeBorderStrong hover:bg-neutral-200 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 shrink-0"
+ className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export PDF"}

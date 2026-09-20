@@ -101,7 +101,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  };
 
  const handleApprovePipeline = async (app) => {
- if (!window.confirm(`Are you sure you want to approve ${app.name} and provision their ERP account?`)) return;
+ if (!(await window.erpDialog?.confirm(`Are you sure you want to approve ${app.name} and provision their ERP account?`))) return;
 
  setShowProvisionModal(true);
  setProvisionStatus("running");
@@ -223,8 +223,8 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  const filteredApps = filter === "all" ? applications : applications.filter(a => a.status === filter);
 
  return (
- <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-[#1A1A1A] ${!isEmbedded ? "min-h-screen bg-transparent text-gray-900 dark:text-white" : ""}`}>
- <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+ <div className={`w-full animate-fade-in selection:bg-themeAccent/30 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-transparent text-themeText dark:text-white" : ""}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8" : "pb-10"}`}>
  {/* Header and Tabs */}
  {!isHubView && (
  <PageHeader icon="fa-solid fa-user-graduate" title="Admissions Command Center" subtitle="Review and process incoming website applications." rightContent={
@@ -233,7 +233,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  <button type="button"
  onClick={handleToggleAdmissions}
  disabled={isTogglingStatus}
- className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 border border-black/10 dark:border-white/20 backdrop-blur-md ${isAdmissionsOpen ? 'bg-rose-500/20 hover:bg-rose-500 text-gray-900 dark:text-white' : 'bg-emerald-500/20 hover:bg-emerald-500 text-gray-900 dark:text-white'}`}
+ className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 border border-black/10 dark:border-white/20 backdrop-blur-md ${isAdmissionsOpen ? 'bg-rose-500/20 hover:bg-rose-500 text-themeText dark:text-white' : 'bg-emerald-500/20 hover:bg-emerald-500 text-themeText dark:text-white'}`}
  >
  <i className={`fa-solid ${isAdmissionsOpen ? 'fa-lock' : 'fa-lock-open'}`}></i>
  {isTogglingStatus ? 'Processing...' : (isAdmissionsOpen ? 'Close Admissions' : 'Open Admissions')}
@@ -244,15 +244,15 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  )}
 
  <div className={`flex items-center justify-between relative z-10 flex-wrap gap-4`}>
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-gray-100 dark:bg-[#1A1A1A] backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
+ <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-gray-100 dark:bg-themeApp backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['all', 'pending', 'approved', 'rejected'].map(f => (
  <button type="button" 
  key={f}
  onClick={() => setFilter(f)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${
  filter === f 
- ? 'bg-themeAccent text-gray-900 dark:text-white border border-gray-200 dark:border-white/5Accent scale-100' 
- : 'text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-white dark:bg-[#121212] backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'
+ ? 'bg-themeAccent text-themeText dark:text-white border border-themeBorder dark:border-white/5Accent scale-100' 
+ : 'text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-white dark:bg-[#121212] backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'
  }`}
  >
  {f}
@@ -274,63 +274,63 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
 
  {isLoading ? (
  <div className="flex justify-center p-12">
- <div className="animate-spin w-8 h-8 border-4 border-gray-200 dark:border-white/5Accent border-t-transparent rounded-full"></div>
+ <div className="animate-spin w-8 h-8 border-4 border-themeBorder dark:border-white/5Accent border-t-transparent rounded-full"></div>
  </div>
  ) : (
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl rounded-2xl border border-gray-200 dark:border-white/5 overflow-hidden">
+ <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl rounded-2xl border border-themeBorder dark:border-white/5 overflow-hidden">
  <div className="overflow-x-auto">
  <table className="w-full text-left">
- <thead className="bg-gray-100 dark:bg-[#1A1A1A] backdrop-blur-2xl border-b-theme border-gray-200 dark:border-white/5 text-xs tracking-normal text-gray-500 dark:text-white/50 font-black">
+ <thead className="bg-gray-100 dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder dark:border-white/5 text-xs tracking-normal text-themeTextSec dark:text-white/50 font-black">
  <tr>
- <th className="p-4 border-r-theme border-gray-200 dark:border-white/5">Applicant</th>
- <th className="p-4 border-r-theme border-gray-200 dark:border-white/5">Program</th>
- <th className="p-4 border-r-theme border-gray-200 dark:border-white/5">Marks / Exams</th>
- <th className="p-4 border-r-theme border-gray-200 dark:border-white/5">Date</th>
- <th className="p-4 border-r-theme border-gray-200 dark:border-white/5">Status</th>
+ <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Applicant</th>
+ <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Program</th>
+ <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Marks / Exams</th>
+ <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Date</th>
+ <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Status</th>
  <th className="p-4 text-right">Actions</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-themeBorder">
  {filteredApps.length === 0 ? (
- <tr><td colSpan="6" className="p-8 text-center text-gray-500 dark:text-white/50 font-black tracking-normal">No applications found.</td></tr>
+ <tr><td colSpan="6" className="p-8 text-center text-themeTextSec dark:text-white/50 font-black tracking-normal">No applications found.</td></tr>
  ) : (
  filteredApps.map(app => (
- <tr key={app.id} className="hover:bg-gray-100 dark:bg-[#1A1A1A] backdrop-blur-2xl transition-colors group">
- <td className="p-4 border-r-theme border-gray-200 dark:border-white/5">
- <p className="font-black text-gray-900 dark:text-white">{app.name}</p>
- <p className="text-xs text-gray-500 dark:text-white/50 font-medium mt-1">{app.email}</p>
- <p className="text-xs text-gray-500 dark:text-white/50 font-medium mt-0.5">{app.phone}</p>
+ <tr key={app.id} className="hover:bg-gray-100 dark:bg-themeApp backdrop-blur-2xl transition-colors group">
+ <td className="p-4 border-r-theme border-themeBorder dark:border-white/5">
+ <p className="font-black text-themeText dark:text-white">{app.name}</p>
+ <p className="text-xs text-themeTextSec dark:text-white/50 font-medium mt-1">{app.email}</p>
+ <p className="text-xs text-themeTextSec dark:text-white/50 font-medium mt-0.5">{app.phone}</p>
  </td>
- <td className="p-4 text-[15px] font-semibold text-gray-900 dark:text-white border-r-theme border-gray-200 dark:border-white/5">{app.program}</td>
- <td className="p-4 border-r-theme border-gray-200 dark:border-white/5">
- <p className="text-xs text-gray-900 dark:text-white font-black tracking-normal mb-1">
+ <td className="p-4 text-[15px] font-semibold text-themeText dark:text-white border-r-theme border-themeBorder dark:border-white/5">{app.program}</td>
+ <td className="p-4 border-r-theme border-themeBorder dark:border-white/5">
+ <p className="text-xs text-themeText dark:text-white font-black tracking-normal mb-1">
  10th: <span className="text-indigo-400">{app.marks_10th}</span> | 12th: <span className="text-emerald-400">{app.marks_inter}</span>
  </p>
- {app.exam_tglawcet && <p className="text-xs text-gray-900 dark:text-white font-black tracking-normal">TGLAWCET: <span className="text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">{app.exam_tglawcet}</span></p>}
- {app.exam_clat && <p className="text-xs text-gray-900 dark:text-white font-black tracking-normal mt-1">CLAT: <span className="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">{app.exam_clat}</span></p>}
- {app.exam_other && <p className="text-[10px] text-gray-500 dark:text-white/50 font-bold tracking-normal mt-2">Other Exam: {app.exam_other}</p>}
- {app.family_in_legal === 'Yes' && <p className="text-[10px] text-gray-500 dark:text-white/50 font-bold tracking-normal mt-1">Legal Family: {app.family_in_legal_who}</p>}
+ {app.exam_tglawcet && <p className="text-xs text-themeText dark:text-white font-black tracking-normal">TGLAWCET: <span className="text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">{app.exam_tglawcet}</span></p>}
+ {app.exam_clat && <p className="text-xs text-themeText dark:text-white font-black tracking-normal mt-1">CLAT: <span className="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">{app.exam_clat}</span></p>}
+ {app.exam_other && <p className="text-[10px] text-themeTextSec dark:text-white/50 font-bold tracking-normal mt-2">Other Exam: {app.exam_other}</p>}
+ {app.family_in_legal === 'Yes' && <p className="text-[10px] text-themeTextSec dark:text-white/50 font-bold tracking-normal mt-1">Legal Family: {app.family_in_legal_who}</p>}
  </td>
- <td className="p-4 text-xs text-gray-500 dark:text-white/50 font-medium border-r-theme border-gray-200 dark:border-white/5">
+ <td className="p-4 text-xs text-themeTextSec dark:text-white/50 font-medium border-r-theme border-themeBorder dark:border-white/5">
  {new Date(app.created_at).toLocaleDateString()}
  </td>
- <td className="p-4 border-r-theme border-gray-200 dark:border-white/5">
- <span className={`px-2.5 py-1 rounded-md text-[13px] font-medium border border-gray-200 dark:border-white/5 inline-block mb-2 ${
+ <td className="p-4 border-r-theme border-themeBorder dark:border-white/5">
+ <span className={`px-2.5 py-1 rounded-md text-[13px] font-medium border border-themeBorder dark:border-white/5 inline-block mb-2 ${
  app.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
  app.status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
  'bg-amber-500/10 text-amber-400 border-amber-500/30'
  }`}>
  {app.status}
  </span>
- {app.erp_id && <p className="text-[13px] font-medium text-gray-500 dark:text-white/50">ID: <span className="text-gray-900 dark:text-white select-all">{app.erp_id}</span></p>}
+ {app.erp_id && <p className="text-[13px] font-medium text-themeTextSec dark:text-white/50">ID: <span className="text-themeText dark:text-white select-all">{app.erp_id}</span></p>}
  </td>
  <td className="p-4 text-right space-x-2">
  {app.status === 'pending' && (
  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <button type="button" onClick={() => handleApprovePipeline(app)} className="w-8 h-8 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-gray-900 dark:text-white rounded-lg transition" title="Approve">
+ <button type="button" onClick={() => handleApprovePipeline(app)} className="w-8 h-8 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white rounded-lg transition" title="Approve">
  <i className="fa-solid fa-check"></i>
  </button>
- <button type="button" onClick={() => handleReject(app.id)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-gray-900 dark:text-white rounded-lg transition" title="Reject">
+ <button type="button" onClick={() => handleReject(app.id)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white rounded-lg transition" title="Reject">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -348,14 +348,14 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  {/* Automation Pipeline Modal */}
  {showProvisionModal && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-gray-200 dark:border-white/5 rounded-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[500px]">
- <div className="bg-gray-100 dark:bg-[#1A1A1A] backdrop-blur-2xl border-b-theme border-gray-200 dark:border-white/5 p-5 flex justify-between items-center shrink-0">
+ <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[500px]">
+ <div className="bg-gray-100 dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder dark:border-white/5 p-5 flex justify-between items-center shrink-0">
  <div className="flex items-center gap-3">
  <i className="fa-solid fa-robot text-themeAccent text-xl"></i>
- <span className="font-mono text-[15px] font-semibold text-gray-900 dark:text-white tracking-widest uppercase">Pipeline Execution</span>
+ <span className="font-mono text-[15px] font-semibold text-themeText dark:text-white tracking-widest uppercase">Pipeline Execution</span>
  </div>
  {provisionStatus !== "running" && (
- <button type="button" onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }} className="w-8 h-8 flex items-center justify-center bg-transparent hover:bg-gray-100 dark:bg-[#1A1A1A] backdrop-blur-2xl rounded-full border border-black/5 dark:border-white/10 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition">
+ <button type="button" onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }} className="w-8 h-8 flex items-center justify-center bg-transparent hover:bg-gray-100 dark:bg-themeApp backdrop-blur-2xl rounded-full border border-black/5 dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white transition">
  <i className="fa-solid fa-xmark"></i>
  </button>
  )}
@@ -366,23 +366,23 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  <div className="w-16 h-16 bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 rounded-2xl flex items-center justify-center text-3xl mb-4">
  <i className="fa-solid fa-check"></i>
  </div>
- <h3 className={`font-black tracking-normal text-2xl text-gray-900 dark:text-white mb-1`}>Student Provisioned!</h3>
- <p className={`text-sm font-medium text-gray-500 dark:text-white/50 mb-6 tracking-normal`}>Securely share these credentials with the student.</p>
+ <h3 className={`font-black tracking-normal text-2xl text-themeText dark:text-white mb-1`}>Student Provisioned!</h3>
+ <p className={`text-sm font-medium text-themeTextSec dark:text-white/50 mb-6 tracking-normal`}>Securely share these credentials with the student.</p>
 
  <div className="w-full max-w-sm bg-transparent p-6 rounded-2xl border border-black/5 dark:border-white/10 flex flex-col gap-5 text-left">
  <div className="flex flex-col gap-2">
- <span className="text-[13px] font-medium text-gray-500 dark:text-white/50 ml-1">Generated ERP ID</span>
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-gray-200 dark:border-white/5 p-3 rounded-lg text-base font-black text-gray-900 dark:text-white tracking-widest select-all text-center">
+ <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50 ml-1">Generated ERP ID</span>
+ <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 p-3 rounded-lg text-base font-black text-themeText dark:text-white tracking-widest select-all text-center">
  {generatedCredentials.id}
  </div>
  </div>
  <div className="flex flex-col gap-2">
- <span className="text-[13px] font-medium text-gray-500 dark:text-white/50 ml-1">Temporary Password</span>
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-gray-200 dark:border-white/5 p-3 rounded-lg text-base font-black text-gray-900 dark:text-white tracking-widest select-all text-center">
+ <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50 ml-1">Temporary Password</span>
+ <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 p-3 rounded-lg text-base font-black text-themeText dark:text-white tracking-widest select-all text-center">
  {generatedCredentials.password}
  </div>
  </div>
- <p className="text-[10px] font-bold text-gray-500 dark:text-white/50 leading-relaxed text-center mt-2">These credentials have been emailed to the applicant. They will be prompted to change their password upon first login.</p>
+ <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 leading-relaxed text-center mt-2">These credentials have been emailed to the applicant. They will be prompted to change their password upon first login.</p>
  </div>
  </div>
  ) : (
@@ -401,19 +401,19 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  </div>
  ))}
  {provisionStatus === "running" && (
- <div className="text-gray-500 dark:text-white/50 animate-pulse font-black mt-2">_</div>
+ <div className="text-themeTextSec dark:text-white/50 animate-pulse font-black mt-2">_</div>
  )}
  <div ref={logsEndRef} />
  </div>
  )}
 
- <div className="bg-gray-100 dark:bg-[#1A1A1A] backdrop-blur-2xl border-t-theme border-gray-200 dark:border-white/5 p-4 shrink-0 flex justify-end">
+ <div className="bg-gray-100 dark:bg-themeApp backdrop-blur-2xl border-t-theme border-themeBorder dark:border-white/5 p-4 shrink-0 flex justify-end">
  {provisionStatus === "running" ? (
  <div className="text-amber-400 font-mono text-[15px] font-semibold tracking-widest animate-pulse px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded">PIPELINE ACTIVE...</div>
  ) : (
  <button type="button"
  onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }}
- className="bg-transparent hover:bg-neutral-800 text-gray-900 dark:text-white border border-black/5 dark:border-white/10 px-6 py-2.5 font-black tracking-normal rounded-lg transition-colors"
+ className="bg-transparent hover:bg-neutral-800 text-themeText dark:text-white border border-black/5 dark:border-white/10 px-6 py-2.5 font-black tracking-normal rounded-lg transition-colors"
  >
  {provisionStatus === "success" ? "Done & Close" : "Close Pipeline"}
  </button>

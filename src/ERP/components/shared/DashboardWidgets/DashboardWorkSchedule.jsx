@@ -129,7 +129,7 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
     };
 
     return (
-        <div className="w-full bg-white/70 dark:bg-[#1C1C1E]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 flex flex-col relative shrink-0">
+        <div className="w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 flex flex-col relative shrink-0">
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center text-sm shrink-0">
                     <i className="fa-solid fa-business-time"></i>
@@ -151,7 +151,7 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
                         <div 
                             key={i} 
                             onClick={() => setSelectedDate(d.fullDate)} 
-                            className={`flex flex-col items-center justify-center gap-1 min-w-[48px] py-2 rounded-xl cursor-pointer transition-all ${isSelected ? 'bg-white dark:bg-[#2C2C2E] shadow-sm scale-100 border border-black/5 dark:border-white/10' : 'hover:bg-white/50 dark:hover:bg-white/10 scale-95 opacity-80 hover:opacity-100'}`}
+                            className={`flex flex-col items-center justify-center gap-1 min-w-[48px] py-2 rounded-xl cursor-pointer transition-all ${isSelected ? 'bg-white dark:bg-themeElevated shadow-sm scale-100 border border-black/5 dark:border-white/10' : 'hover:bg-white/50 dark:hover:bg-white/10 scale-95 opacity-80 hover:opacity-100'}`}
                         >
                             <span className={`text-[8px] font-black uppercase tracking-widest ${isSelected ? 'text-themeAccent' : 'text-themeTextSec'}`}>{d.dayName}</span>
                             <span className={`text-sm font-black ${isSelected ? 'text-themeText' : 'text-themeTextSec'}`}>{d.dateNum}</span>
@@ -191,7 +191,7 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
                             let iconColor = 'text-themeTextSec';
                             
                             if (isActive) {
-                                bgColor = 'bg-themeAccent text-gray-900 dark:text-white shadow-md border-themeAccent';
+                                bgColor = 'bg-themeAccent text-themeText dark:text-white shadow-md border-themeAccent';
                                 iconColor = 'text-white/80';
                             } else if (attStatus === 'present') {
                                 bgColor = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-500';

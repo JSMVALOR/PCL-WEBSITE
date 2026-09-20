@@ -12,6 +12,11 @@ export default function FacultyLeave({ isEmbedded = false, }) {
     const [facultyList, setFacultyList] = useState([]);
     const [showRequestModal, setShowRequestModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    // NEW STATES
+    const [isSingleDay, setIsSingleDay] = useState(true);
+    const [editingLeaveId, setEditingLeaveId] = useState(null);
+
 
     // Form State
     const [leaveType, setLeaveType] = useState("Casual Leave (CL)");
@@ -32,8 +37,8 @@ export default function FacultyLeave({ isEmbedded = false, }) {
     
     leaveHistory.forEach(l => {
         if (l.status === 'approved' || l.status === 'pending') {
-            const s = new Date(l.start_date);
-            const e = new Date(l.end_date);
+            const s = new Date(l.from_date);
+            const e = new Date(l.to_date);
             const days = Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
             
             if (l.leave_type === "Casual Leave (CL)") usedCL += days;
@@ -44,6 +49,46 @@ export default function FacultyLeave({ isEmbedded = false, }) {
     });
 
 
+
+    const handleWithdraw = async (id) => {
+        if (!confirm("Are you sure you want to withdraw this leave request?")) return;
+        try {
+            await supabase.from('faculty_leaves').delete().eq('id', id);
+            fetchLeaveData();
+            if (window.erpDialog) window.erpDialog.alert("Leave request withdrawn successfully.", "success");
+            else alert("Leave request withdrawn successfully.");
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleEdit = (leave) => {
+        setLeaveType(leave.leave_type);
+        setFromDate(leave.from_date);
+        setToDate(leave.to_date);
+        setReason(leave.reason || "");
+        setSubstituteId(leave.replacement_faculty_id || "");
+        setIsSingleDay(leave.from_date === leave.to_date);
+        setEditingLeaveId(leave.id);
+        setShowRequestModal(true);
+    };
+
+    const resetForm = () => {
+        setLeaveType("Casual Leave (CL)");
+        setFromDate("");
+        setToDate("");
+        setReason("");
+        setSubstituteId("");
+        setIsSingleDay(true);
+        setEditingLeaveId(null);
+        setStatusMessage({ type: "", text: "" });
+    };
+
+    const openNewRequest = () => {
+        resetForm();
+        setShowRequestModal(true);
+    };
+
     const fetchLeaveData = async () => {
         if (!userSession?.db_id) return;
         try {
@@ -51,7 +96,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
                 .from('faculty_leaves')
                 .select('*')
                 .eq('faculty_id', userSession.db_id)
-                .order('created_at', { ascending: false });
+                ;
             
             if (history) setLeaveHistory(history);
 
@@ -76,7 +121,9 @@ export default function FacultyLeave({ isEmbedded = false, }) {
         setIsSubmitting(true);
         setStatusMessage({ type: "", text: "" });
 
-        if (!leaveType || !fromDate || !toDate || !reason) {
+        const finalToDate = isSingleDay ? fromDate : toDate;
+        
+        if (!leaveType || !fromDate || (!isSingleDay && !toDate) || !reason) {
             setStatusMessage({ type: "error", text: "Please fill in all required fields." });
             setIsSubmitting(false);
             return;
@@ -84,7 +131,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
         
         // HR Clubbing Rule Validation
         const start = new Date(fromDate);
-        const end = new Date(toDate);
+        const end = new Date(finalToDate);
         const diffTime = Math.abs(end - start);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         
@@ -92,8 +139,8 @@ export default function FacultyLeave({ isEmbedded = false, }) {
         let usedDays = 0;
         leaveHistory.forEach(l => {
             if (l.leave_type === leaveType && (l.status === 'approved' || l.status === 'pending')) {
-                const s = new Date(l.start_date);
-                const e = new Date(l.end_date);
+                const s = new Date(l.from_date);
+                const e = new Date(l.to_date);
                 usedDays += Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
             }
         });
@@ -137,18 +184,25 @@ export default function FacultyLeave({ isEmbedded = false, }) {
             const payload = {
                 faculty_id: userSession.db_id,
                 leave_type: leaveType,
-                start_date: fromDate,
-                end_date: toDate,
+                from_date: fromDate,
+                to_date: finalToDate,
+                days: Math.ceil(Math.abs(new Date(finalToDate) - new Date(fromDate)) / (1000 * 60 * 60 * 24)) + 1,
                 reason: reason,
                 status: 'pending',
                 replacement_faculty_id: substituteId || null,
-                /* replacement_status removed */
             };
 
-            const { error } = await supabase.from('faculty_leaves').insert([payload]);
+            let error;
+            if (editingLeaveId) {
+                const { error: updErr } = await supabase.from('faculty_leaves').update(payload).eq('id', editingLeaveId);
+                error = updErr;
+            } else {
+                const { error: insErr } = await supabase.from('faculty_leaves').insert([payload]);
+                error = insErr;
+            }
             if (error) throw error;
 
-            setStatusMessage({ type: "success", text: "Leave request submitted successfully." });
+            setStatusMessage({ type: "success", text: editingLeaveId ? "Leave request updated successfully." : "Leave request submitted successfully." });
             fetchLeaveData();
             setTimeout(() => setShowRequestModal(false), 2000);
         } catch (error) {
@@ -160,7 +214,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeAccent/30 ${!isEmbedded ? "min-h-screen bg-transparent text-themeText font-sans" : ""}`}>
-            <div className={`w-full mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-12" : "pb-10"}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
                 
                 {!isEmbedded && (
                     <PageHeader 
@@ -169,7 +223,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
                         subtitle="Request time off and assign substitutes to ensure academic continuity."
                         rightContent={
                             <button 
-                                onClick={() => setShowRequestModal(true)}
+                                onClick={openNewRequest}
                                 className="px-6 py-2.5 rounded-xl bg-themeAccent text-[var(--bg-color)] font-bold text-xs lg:text-sm hover:bg-themeAccent/90 transition-colors shadow-sm flex items-center gap-2 relative z-10 whitespace-nowrap"
                             >
                                 <i className="fa-solid fa-paper-plane"></i> New Request
@@ -215,7 +269,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
                                                 )}
                                             </h4>
                                             <p className="text-[9px] lg:text-[10px] font-bold text-themeTextSec uppercase tracking-widest">
-                                                {new Date(leave.start_date).toLocaleDateString()} - {new Date(leave.end_date).toLocaleDateString()}
+                                                {new Date(leave.from_date).toLocaleDateString()} - {new Date(leave.to_date).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
@@ -253,10 +307,10 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  
  <div className="p-6 border-b border-white/[0.08] shrink-0 flex justify-between items-start bg-[#161616]">
  <div>
- <h3 className="text-xl font-black tracking-tight mb-1 text-gray-900 dark:text-white">New Leave Request</h3>
- <p className="text-[10px] text-gray-500 dark:text-white/50 font-bold uppercase tracking-widest">Submit details to HOD for approval.</p>
+ <h3 className="text-xl font-black tracking-tight mb-1 text-themeText dark:text-white">New Leave Request</h3>
+ <p className="text-[10px] text-themeTextSec dark:text-white/50 font-bold uppercase tracking-widest">Submit details to HOD for approval.</p>
  </div>
- <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-gray-300 dark:border-white/10 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-white/10 transition-colors shrink-0">
+ <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-white/10 transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -272,51 +326,80 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  )}
 
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Leave Category</label>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Leave Category</label>
  <div className="relative">
- <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
- <option value="Casual Leave (CL)">Casual Leave (CL) [12/yr]</option>
- <option value="Earned Leave (EL)">Earned Leave (EL) [Rollover]</option>
- <option value="On Duty (OD)">On Duty (OD) [30/yr]</option>
- <option value="Winter Vacation">Winter Vacation [15/yr]</option>
- <option value="Summer Vacation">Summer Vacation [15/yr]</option>
+ <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
+ <option value="Casual Leave (CL)">Casual Leave (CL)</option>
+ <option value="Earned Leave (EL)">Earned Leave (EL)</option>
+ <option value="On Duty (OD)">On Duty (OD)</option>
+ <option value="Winter Vacation">Winter Vacation</option>
+ <option value="Summer Vacation">Summer Vacation</option>
  <option value="Loss of Pay (LOP)">Loss of Pay (LOP)</option>
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/30 pointer-events-none text-xs"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/30 pointer-events-none text-xs"></i>
  </div>
- </div>
+ 
+
+                            {leaveType && (
+                                <div className="mt-2 text-xs font-medium text-themeTextSec dark:text-white/60 bg-black/5 dark:bg-white/5 p-3 rounded-xl flex items-center justify-between border border-black/5 dark:border-white/5">
+                                    <span>Available Balance:</span>
+                                    <span className="font-bold text-themeText dark:text-white">
+                                        {(() => {
+                                            let used = 0;
+                                            leaveHistory.forEach(l => {
+                                                if (l.leave_type === leaveType && (l.status === 'approved' || l.status === 'pending')) {
+                                                    const s = new Date(l.from_date);
+                                                    const e = new Date(l.to_date);
+                                                    used += Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
+                                                }
+                                            });
+                                            if (leaveType === 'Casual Leave (CL)') {
+                                                const accrued = new Date().getMonth() + 1;
+                                                return `${Math.max(0, accrued - used)} Days (Accrued: ${accrued}/12, Used: ${used})`;
+                                            }
+                                            if (leaveType === 'On Duty (OD)') return `${Math.max(0, 30 - used)} Days (Used: ${used}/30)`;
+                                            if (leaveType === 'Winter Vacation' || leaveType === 'Summer Vacation') return `${Math.max(0, 15 - used)} Days (Used: ${used}/15)`;
+                                            if (leaveType === 'Earned Leave (EL)') return `Rollover Based (Used: ${used})`;
+                                            if (leaveType === 'Loss of Pay (LOP)') return `Unlimited (Used: ${used})`;
+                                            return 'Unknown';
+                                        })()}
+                                    </span>
+                                </div>
+                            )}
+
+</div>
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Start Date</label>
- <input type="date" required value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition [color-scheme:dark]" />
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Start Date</label>
+ <input type="date" min="2024-01-01" max="2026-12-31" required value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition dark:[color-scheme:dark]" />
  </div>
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">End Date</label>
- <input type="date" required value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition [color-scheme:dark]" />
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">End Date</label>
+ <input type="date" max="2026-12-31" required value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition dark:[color-scheme:dark]" />
  </div>
  </div>
 
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Assign Substitute (Optional)</label>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Assign Substitute (Optional)</label>
  <div className="relative">
- <select value={substituteId} onChange={(e) => setSubstituteId(e.target.value)} className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-gray-900 dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
+ <select value={substituteId} onChange={(e) => setSubstituteId(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
  <option value="">No substitute required</option>
  {facultyList.map(f => (
  <option key={f.id} value={f.id}>{f.full_name}</option>
  ))}
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-white/30 pointer-events-none text-xs"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/30 pointer-events-none text-xs"></i>
  </div>
  </div>
 
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Reason for Leave</label>
- <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-gray-100 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-medium text-gray-900 dark:text-white focus:border-amber-500 outline-none transition resize-none placeholder:text-gray-400 dark:text-white/30"></textarea>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Reason for Leave</label>
+ <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-medium text-themeText dark:text-white focus:border-amber-500 outline-none transition resize-none placeholder:text-themeTextSec dark:text-white/30"></textarea>
  </div>
 
  <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
- {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> Submit Request</>}
+ {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> {editingLeaveId ? "Update Request" : "Submit Request"}</>}
  </button>
  </form>
  </div>
