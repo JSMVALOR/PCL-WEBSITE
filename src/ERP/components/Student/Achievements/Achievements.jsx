@@ -131,7 +131,7 @@ export default function Achievements({ isEmbedded = false, }) {
  setFormData({ category: "Moot Courts", title: "", issuer: "", date_achieved: "", role: "", description: "", proof_link: "", include_in_cv: true });
  } catch (err) {
  console.error(err);
- window.erpDialog.alert("Failed to add achievement.");
+ window.erpDialog.alert("Failed to add achievement: " + (err?.message || err?.details || JSON.stringify(err)));
  } finally {
  setIsSubmitting(false);
  }
