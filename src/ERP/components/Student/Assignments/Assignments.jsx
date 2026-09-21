@@ -38,15 +38,25 @@ export default function Assignments({ isEmbedded = false }) {
  if (!userSession) return;
  try {
  const studentId = userSession.db_id || userSession.id;
- const batchId = userSession.academic_batch || 'BATCH-2026';
+ const batchName = userSession.academic_batch || 'BATCH-2026';
+ 
+ const { data: batchData } = await supabase.from('academic_batches').select('id').eq('name', batchName).single();
+ const actualBatchId = batchData?.id;
+
+ let assignQuery = supabase
+ .from('assignments')
+ .select('*, profiles!faculty_id(full_name)')
+ .order('due_date', { ascending: true });
+ 
+ if (actualBatchId) {
+ assignQuery = assignQuery.eq('batch_id', actualBatchId);
+ } else {
+ assignQuery = assignQuery.eq('batch', batchName);
+ }
 
  // Parallel fetch: assignments + submissions
  const [assignRes, subRes] = await Promise.all([
- supabase
- .from('assignments')
- .select('*, profiles!faculty_id(full_name)')
- .eq('batch_id', batchId)
- .order('due_date', { ascending: true }),
+ assignQuery,
  supabase
  .from('assignment_submissions')
  .select('*')
