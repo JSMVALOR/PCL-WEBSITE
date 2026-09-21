@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './Preloader.css';
 import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
 
-const DISPLAY_DURATION = 2500; // ms the preloader stays up once shown
+const DISPLAY_DURATION = 300; // ms the preloader stays up once shown
 
 export default function Preloader() {
   // Computed once, synchronously, on first render — avoids the brief
