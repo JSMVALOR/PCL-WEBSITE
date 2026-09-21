@@ -187,7 +187,7 @@ export default function FacultyAssignments({ subjectContext }) {
  
  } catch (error) {
  console.error("Error creating assignment:", error);
- window.erpDialog?.alert("Failed to create assignment.");
+ window.erpDialog?.alert("Failed to create assignment: " + (error?.message || error?.details || JSON.stringify(error)));
  } finally {
  setIsSubmitting(false);
  }
@@ -201,6 +201,7 @@ export default function FacultyAssignments({ subjectContext }) {
  setAssignments(prev => prev.filter(a => a.id !== id));
  } catch (error) {
  console.error("Error deleting:", error);
+ window.erpDialog?.alert("Failed to delete assignment: " + (error?.message || error?.details || JSON.stringify(error)));
  }
  };
 
