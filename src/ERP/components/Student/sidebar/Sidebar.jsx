@@ -37,7 +37,7 @@ export const STUDENT_NAV_MEGA = [
         children: [
           { id: "fees", label: "Fees", icon: "fa-solid fa-indian-rupee-sign" },
           { id: "leave", label: "Leave Requests", icon: "fa-solid fa-mug-hot" },
-          { id: "approvals", label: "My Approvals", icon: "fa-solid fa-check-to-slot" },
+          { id: "grievances", label: "Grievance Cell", icon: "fa-solid fa-scale-balanced" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
         ]
       }

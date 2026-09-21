@@ -8,7 +8,7 @@ import { useERP } from "../../../context/ErpContext";
 
 export default function StudentApprovals({ isEmbedded = false, }) {
  const { userSession } = useERP();
- const [activeTab, setActiveTab] = useState("leaves"); // 'leaves' or 'grievances'
+ const [activeTab, setActiveTab] = useState("grievances");
  const [isLoading, setIsLoading] = useState(true);
  const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -224,20 +224,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
- <PageHeader icon="fa-solid fa-file-signature" title="Approvals & Grievances" subtitle="Track your formal requests and resolutions." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl w-fit relative z-10 overflow-x-auto no-scrollbar">
- <button type="button" 
- onClick={() => setActiveTab('leaves')}
- className={`px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
- >
- Leave Requests
- </button>
- <button type="button" 
- onClick={() => setActiveTab('grievances')}
- className={`px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'grievances' ? 'bg-rose-500 text-themeText dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
- >
- Grievances
- </button>
- </div>} />
+ <PageHeader icon="fa-solid fa-scale-balanced" title="Grievance Cell" subtitle="Report and track disciplinary and academic grievances." />
  
 
  {isLoading ? (
@@ -257,7 +244,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <div className="lg:col-span-5 flex flex-col gap-4">
  <div className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-5 lg:p-6 sticky top-6`}>
  
- {activeTab === 'leaves' ? (
+ {false ? (
  <form onSubmit={submitLeave} className="flex flex-col gap-4">
  <h2 className="text-lg font-semibold tracking-tight text-themeText mb-2"><i className="fa-solid fa-calendar-minus mr-2 text-themeAccent"></i> New Leave Request</h2>
  
@@ -326,11 +313,11 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  {/* RIGHT PANE: History Ledger */}
  <div className="lg:col-span-7 flex flex-col gap-4">
  <div className="flex justify-between items-end mb-1">
- <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">{activeTab === 'leaves' ? 'Leave History' : 'Grievance History'}</h2>
+ <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">'Grievance History'</h2>
  </div>
 
  <div className="flex flex-col gap-3">
- {activeTab === 'leaves' ? (
+ {false ? (
  leaves.length === 0 ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
  <i className={`fa-solid fa-bed text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4`}></i>

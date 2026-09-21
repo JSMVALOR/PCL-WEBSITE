@@ -189,6 +189,7 @@ export default function App() {
       courses: userSession?.role === 'faculty' ? "My Courses" : "Course Vault",
       materials: userSession?.role === 'faculty' ? "My Courses" : "Course Vault",
       mentorship: "Mentorship & Advising",
+      grievances: "Grievance Cell",
       approvals: "Student Approvals",
       facultyleave: "Time Off & Leaves",
 
@@ -274,6 +275,7 @@ export default function App() {
         case 'mootcourt': return <MootCourt />;
         case 'fees': return <Fees />;
         case 'leave': return <Leave />;
+        case 'grievances': return <StudentApprovals />;
         case 'approvals': return <StudentApprovals />;
         case 'helpdesk': return <Helpdesk />;
         case 'achievements': return <Achievements />;
