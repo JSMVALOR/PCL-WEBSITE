@@ -191,7 +191,7 @@ export default function Notices({ setActiveTab }) {
                             setSelectedNotice(notice);
                             setNotices(notices.map(n => n.id === notice.id ? { ...n, isUnread: false } : n));
                         }}
-                        className={`bg-black/5 dark:bg-white/5 backdrop-blur-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border ${notice.isUnread ? 'border-black/5 dark:border-white/10' : 'border-black/10 dark:border-white/20'} hover:bg-white/10 rounded-[1.5rem] p-6 cursor-pointer flex flex-col group relative overflow-hidden`}
+                        className={`bg-black/5 dark:bg-white/5 backdrop-blur-[30px] shadow-none border ${notice.isUnread ? 'border-black/5 dark:border-white/10' : 'border-black/10 dark:border-white/20'} hover:bg-white/10 rounded-[1.5rem] p-6 cursor-pointer flex flex-col group relative overflow-hidden`}
                     >
                         {/* Specular Highlight */}
                         {/* Glow effect for unread/pinned */}
@@ -247,7 +247,7 @@ export default function Notices({ setActiveTab }) {
                     transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 30 }}
                     whileHover={{ scale: 1.01 }}
                     key={e.id} 
-                    className="bg-black/5 dark:bg-white/5 backdrop-blur-[30px] shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] border border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 rounded-[2rem] p-6 flex items-center justify-between group relative overflow-hidden"
+                    className="bg-black/5 dark:bg-white/5 backdrop-blur-[30px] shadow-none border border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 rounded-[2rem] p-6 flex items-center justify-between group relative overflow-hidden"
                 >
                     <div className="flex gap-6 items-center relative z-10">
                         <div className="w-24 h-24 rounded-[1.5rem] bg-gray-50 dark:bg-black/20 dark:bg-white/10 backdrop-blur-md shadow-inner border border-black/5 dark:border-white/10 flex flex-col items-center justify-center shrink-0 group-hover:bg-themeAccent/10 group-hover:border-themeAccent/30 transition-colors">
@@ -286,7 +286,7 @@ export default function Notices({ setActiveTab }) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                className="flex-1 flex flex-col bg-white/5 backdrop-blur-[40px] shadow-[0_15px_50px_0_rgba(0,0,0,0.2)] border border-black/5 dark:border-white/10 rounded-[2rem] overflow-hidden relative"
+                className="flex-1 flex flex-col bg-white/5 backdrop-blur-[40px] shadow-none border border-black/5 dark:border-white/10 rounded-[2rem] overflow-hidden relative"
             >
                 {/* Edge Specular */}
                 {/* Header Area */}
@@ -327,9 +327,30 @@ export default function Notices({ setActiveTab }) {
                                 <i className="fa-solid fa-link"></i> Go to Portal
                             </motion.button>
                         )}
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-md shadow-inner border border-black/5 dark:border-white/10 hover:border-white/30 text-themeTextSec hover:text-themeText px-5 py-3 rounded-xl text-[13px] font-medium transition-colors flex items-center gap-2">
-                            <i className="fa-solid fa-paperclip"></i> Download Attachments
-                        </motion.button>
+                        {(userSession?.role === 'admin' || userSession?.role === 'faculty' || selectedNotice.author_id === userSession?.db_id) && (
+                            <motion.button 
+                                whileHover={{ scale: 1.05 }} 
+                                whileTap={{ scale: 0.95 }} 
+                                onClick={async (e) => { 
+                                    e.preventDefault(); 
+                                    e.stopPropagation(); 
+                                    const confirmed = await window.erpDialog?.confirm("Are you sure you want to permanently delete this notice?", "Delete Notice");
+                                    if (confirmed) {
+                                        const { error } = await supabase.from('notices').delete().eq('id', selectedNotice.id);
+                                        if (!error) {
+                                            setSelectedNotice(null);
+                                            window.erpDialog?.alert("Notice deleted successfully.", "Success");
+                                            setNotices(prev => prev.filter(n => n.id !== selectedNotice.id));
+                                        } else {
+                                            window.erpDialog?.alert("Failed to delete notice: " + error.message, "Error");
+                                        }
+                                    }
+                                }} 
+                                className="bg-rose-500/10 backdrop-blur-md border border-rose-500/20 hover:border-rose-500 hover:text-rose-500 text-rose-400 px-5 py-3 rounded-xl text-[13px] font-medium transition-colors flex items-center gap-2"
+                            >
+                                <i className="fa-solid fa-trash"></i> Delete Notice
+                            </motion.button>
+                        )}
                     </div>
 
                     {selectedNotice.requires_acknowledgement ? (
@@ -459,7 +480,7 @@ export default function Notices({ setActiveTab }) {
                                     <motion.div key="broadcast" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="bg-white/5 backdrop-blur-3xl border border-black/5 dark:border-white/10 rounded-3xl md:rounded-[2rem] p-0 sm:p-4 md:p-8 overflow-hidden">
                                         <FacultyBroadcastForm 
                                             onCancel={() => setIsBroadcasting(false)}
-                                            onNoticePublished={() => { setIsBroadcasting(false); window.location.reload(); }}
+                                            onNoticePublished={async () => { setIsBroadcasting(false); await window.erpDialog?.alert("Notice successfully published to the notice board.", "Broadcast Sent"); window.location.reload(); }}
                                         />
                                     </motion.div>
                                 ) : selectedNotice ? (
