@@ -160,11 +160,13 @@ export default function FacultyAssignments({ subjectContext }) {
         }
     }
  const finalBatch = subjectContext ? (subjectContext.batches?.[0] || subjectContext.batch || "") : formData.batch;
+ const finalBatchId = subjectContext ? subjectContext.batch_id : null;
  
  const { error } = await supabase.from('assignments').insert({
  faculty_id: userSession.db_id,
  subject_id: finalSubjectId,
  batch: finalBatch,
+ batch_id: finalBatchId,
  title: formData.title,
  description: formData.description,
  total_marks: Number(formData.total_marks),
@@ -355,7 +357,7 @@ export default function FacultyAssignments({ subjectContext }) {
  <div className="flex flex-col gap-4">
  <h2 className="text-xl font-semibold tracking-tight text-themeText dark:text-white tracking-tight">Active Assignments</h2>
  
- {assignments.filter(a => subjectContext ? a.subject_id === subjectContext.id : true).length === 0 ? (
+ {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).length === 0 ? (
  <div className="w-full py-16 flex flex-col items-center justify-center bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl rounded-[2rem] text-center px-4 border border-black/5 dark:border-white/5 shadow-sm">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-themeText dark:text-white font-black">No Assignments Issued</h3>
@@ -363,7 +365,7 @@ export default function FacultyAssignments({ subjectContext }) {
  </div>
  ) : (
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
- {assignments.filter(a => subjectContext ? a.subject_id === subjectContext.id : true).map(assign => {
+ {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).map(assign => {
  const dueDate = new Date(assign.due_date);
  const isPastDue = dueDate < new Date();
  
