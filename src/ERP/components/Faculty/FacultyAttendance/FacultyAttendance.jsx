@@ -668,9 +668,12 @@ export default function FacultyAttendance({ subjectContext }) {
 
  
 
+    
     useEffect(() => {
+        // Disabled: Auto-wiring should only be done by Admins or via database migrations.
         const wireDataset = async () => {
-            if (localStorage.getItem('wired_dataset_aug_17_v2')) return;
+            return;
+
             
             try {
                 const facultyId = userSession?.db_id;
