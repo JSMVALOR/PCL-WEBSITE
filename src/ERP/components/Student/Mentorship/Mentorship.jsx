@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
+import MentorshipChatHub from '../../shared/MentorshipChatHub';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 export default function Mentorship() {
@@ -330,6 +331,15 @@ export default function Mentorship() {
                     </div>
                 )}
 
+
+                {mentorData?.id && (
+                    <MentorshipChatHub 
+                        receiverId={mentorData.id}
+                        receiverName={mentorData.full_name}
+                        receiverRole="Mentor"
+                        receiverAvatar={mentorData.profile_picture_url}
+                    />
+                )}
             </div>
         </div>
     );

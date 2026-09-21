@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { useERP } from "../../../context/ErpContext";
+import MentorshipChatHub from '../../shared/MentorshipChatHub';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import Attendance from "../../Student/Attendance/Attendance";
 import MenteeAcademicRecord from "./MenteeAcademicRecord";
@@ -338,6 +339,15 @@ export default function FacultyMentorship() {
                             )}
                         </div>
                     </div>
+                )}
+
+                {selectedMentee && (
+                    <MentorshipChatHub 
+                        receiverId={selectedMentee.id}
+                        receiverName={selectedMentee.full_name}
+                        receiverRole="Mentee"
+                        receiverAvatar={selectedMentee.profile_picture_url}
+                    />
                 )}
             </div>
         </div>
