@@ -99,13 +99,20 @@ export default function StudentDashboard({ setActiveTab }) {
  setStats(prev => ({ ...prev, attendance: 100 }));
  }
 
- // Fetch Assignments
+ // Fetch Assignments: total from assignments table, submitted from submissions table
+ const batchName = pData?.academic_batch || userSession?.academic_batch || '';
+ const batchId = userSession?.batch_id;
+ 
+ let totalQuery = supabase.from('assignments').select('id', { count: 'exact', head: true }).eq('status', 'active');
+ if (batchId) totalQuery = totalQuery.eq('batch_id', batchId);
+ else if (batchName) totalQuery = totalQuery.eq('batch', batchName);
+ const { count: totalAssignments } = await totalQuery;
+
  const { data: asgData } = await supabase.from('assignment_submissions').select('status').eq('student_id', sid);
- if (asgData) {
- const submitted = asgData.filter(a => a.status === 'submitted' || a.status === 'Submitted').length;
- const pending = asgData.filter(a => a.status === 'pending' || a.status === 'Pending').length;
- setStats(prev => ({ ...prev, assignmentsSubmitted: submitted, assignmentsPending: pending }));
- }
+ const submitted = asgData ? asgData.length : 0;
+ const totalAvailable = totalAssignments || 0;
+ const pending = Math.max(0, totalAvailable - submitted);
+ setStats(prev => ({ ...prev, assignmentsSubmitted: submitted, assignmentsPending: pending, assignmentsTotal: totalAvailable }));
  };
  fetchData();
  }, [userSession]);
@@ -134,7 +141,7 @@ export default function StudentDashboard({ setActiveTab }) {
                         {[
                             { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check' },
                             { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check' },
-                            { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsPending + stats.assignmentsSubmitted}`, icon: 'fa-file-lines' },
+                            { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsTotal || 0}`, icon: 'fa-file-lines' },
                             { label: 'CGPA', val: stats.cgpa.toFixed(2), icon: 'fa-graduation-cap' }
                         ].map((m, i) => (
                             <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group cursor-pointer hover:border-themeAccent/30 hover:bg-white/80 transition-all">

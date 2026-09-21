@@ -396,26 +396,35 @@ export default function Timetable({ isEmbedded = false }) {
  <h3 className="text-[13px] font-bold text-themeTextSec dark:text-white/50 mb-4">Daily Academic Pulse</h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="flex flex-col gap-1">
- <span className="text-3xl font-semibold tracking-tight text-themeText dark:text-white">{schedule.length}</span>
- <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Total Classes</span>
+ {(() => {
+   const dMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
+   const todayCount = schedule.filter(c => c.day === dMap[new Date().getDay()]).length;
+   return <span className="text-3xl font-semibold tracking-tight text-themeText dark:text-white">{todayCount}</span>;
+ })()}
+ <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Today's Classes</span>
  </div>
  <div className="flex flex-col gap-1">
- <span className="text-3xl font-semibold tracking-tight text-emerald-500">--</span>
- <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Overall Attd.</span>
+ <span className="text-3xl font-semibold tracking-tight text-emerald-500">{schedule.length}</span>
+ <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Weekly Total</span>
  </div>
  <div className="col-span-2 pt-4 border-t border-themeBorder dark:border-white/5 mt-2">
  <p className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-2">Next Up</p>
- {schedule.find(s => s.status === 'upcoming') ? (
+ {(() => {
+   const dMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
+   const todayName = dMap[new Date().getDay()];
+   const upcoming = schedule.find(s => s.day === todayName && s.status === 'upcoming');
+   return upcoming ? (
  <div className="flex items-center gap-3">
  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
  <div>
- <p className="text-[15px] font-semibold text-themeText dark:text-white">{schedule.find(s => s.status === 'upcoming').subject}</p>
- <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{schedule.find(s => s.status === 'upcoming').room} at {schedule.find(s => s.status === 'upcoming').time}</p>
+ <p className="text-[15px] font-semibold text-themeText dark:text-white">{upcoming.subject}</p>
+ <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{upcoming.room} at {upcoming.time}</p>
  </div>
  </div>
- ) : (
+   ) : (
  <p className="text-xs font-bold text-themeTextSec dark:text-white/50">No upcoming classes today.</p>
- )}
+   );
+ })()}
  </div>
  </div>
  </div>

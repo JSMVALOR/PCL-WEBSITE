@@ -110,21 +110,30 @@ export default function FacultyMarks({ subjectContext }) {
  }
  };
 
- // When subjectContext changes, auto-select it and its batches
- useEffect(() => {
- if (subjectContext) {
- setSelectedSubject(subjectContext.id);
- const subjSchedule = facultySchedule.filter(s => s.subject_id === subjectContext.id);
- const uniqueBatches = [...new Set(subjSchedule.map(s => s.batch).filter(Boolean))];
- setAvailableBatches(uniqueBatches);
- if (uniqueBatches.length === 1) setSelectedBatch(uniqueBatches[0]);
- else if (!uniqueBatches.includes(selectedBatch)) setSelectedBatch("");
- } else {
- setSelectedSubject("");
- setAvailableBatches([]);
- setSelectedBatch("");
- }
- }, [subjectContext, facultySchedule]);
+  // When subjectContext changes, auto-select it and its batches
+  useEffect(() => {
+  if (subjectContext) {
+  const masterId = subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.master_subjects_id || subjectContext.id;
+  setSelectedSubject(masterId);
+  
+  // Find batch from subjects list (sourced from cohort_subjects -> academic_batches)
+  const matchedSub = subjects.find(s => s.master_id === masterId || s.id === masterId);
+  if (matchedSub && matchedSub.batch_name) {
+  setAvailableBatches([matchedSub.batch_name]);
+  setSelectedBatch(matchedSub.batch_name);
+  } else {
+  // Fallback: try schedule
+  const subjSchedule = facultySchedule.filter(s => s.subject_id === masterId);
+  const uniqueBatches = [...new Set(subjSchedule.map(s => s.batch).filter(Boolean))];
+  setAvailableBatches(uniqueBatches);
+  if (uniqueBatches.length > 0) setSelectedBatch(uniqueBatches[0]);
+  }
+  } else {
+  setSelectedSubject("");
+  setAvailableBatches([]);
+  setSelectedBatch("");
+  }
+  }, [subjectContext, facultySchedule, subjects]);
 
  // When criteria changes, fetch students and existing marks
  useEffect(() => {

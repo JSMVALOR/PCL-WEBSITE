@@ -21,26 +21,35 @@ export default function StudentActivityRings() {
             let assignmentsScore = 0;
             let attendanceScore = 0;
             let campusAvgScore = 0;
+            const sid = userSession?.db_id || userSession?.id || 'default';
 
-            // 1. Fetch Assignments
-            const { data: assignments } = await supabase
-                .from('assignment_submissions')
-                .select('status')
-                .eq('student_id', userSession?.db_id || userSession?.id || 'default');
+            // 1. Fetch total assignments for this student's batch
+            const batchId = userSession?.batch_id;
+            const batchName = userSession?.academic_batch;
             
-            if (assignments && assignments.length > 0) {
-                const completed = assignments.filter(a => a.status === 'completed' || a.status === 'graded').length;
-                assignmentsScore = Math.round((completed / assignments.length) * 100);
-            } else { assignmentsScore = 0; }
+            let totalQuery = supabase.from('assignments').select('id', { count: 'exact', head: true }).eq('status', 'active');
+            if (batchId) totalQuery = totalQuery.eq('batch_id', batchId);
+            else if (batchName) totalQuery = totalQuery.eq('batch', batchName);
+            const { count: totalAssignments } = await totalQuery;
+            
+            // Count how many this student has submitted (any submission = done)
+            const { count: submittedCount } = await supabase
+                .from('assignment_submissions')
+                .select('id', { count: 'exact', head: true })
+                .eq('student_id', sid);
+            
+            const total = totalAssignments || 0;
+            const done = submittedCount || 0;
+            assignmentsScore = total > 0 ? Math.round((done / total) * 100) : 0;
 
             // 2. Fetch Personal Attendance
             const { data: attendance } = await supabase
                 .from('attendance_records')
                 .select('entry_status')
-                .eq('student_id', userSession?.db_id || userSession?.id || 'default');
+                .eq('student_id', sid);
             
             if (attendance && attendance.length > 0) {
-                const present = attendance.filter(a => a.entry_status === 'present').length;
+                const present = attendance.filter(a => ['present', 'late'].includes(a.entry_status)).length;
                 attendanceScore = Math.round((present / attendance.length) * 100);
             } else { attendanceScore = 0; }
 
