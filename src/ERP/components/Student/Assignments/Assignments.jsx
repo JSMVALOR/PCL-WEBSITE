@@ -217,7 +217,7 @@ export default function Assignments({ isEmbedded = false }) {
 
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
- <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.subject_name || 'Subject'}</span>
+ <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>
  <span className={`px-2.5 py-1 rounded-md text-[11px] font-medium shrink-0 border-theme ${timeLeft.urgent
  ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
  : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeTextSec border-black/10 dark:border-white/20'
@@ -278,7 +278,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div key={sub.id} className={`${theme.layout.panel} border border-black/10 dark:border-white/20 rounded-[2rem] flex flex-col relative`}>
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
- <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.subject_name}</span>
+ <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>
  <span className={`px-2 py-1 rounded-md text-[11px] font-medium shrink-0 border-theme ${badge.color}`}>
  <i className={`fa-solid ${badge.icon} mr-1`}></i> {badge.label}
  </span>
@@ -324,7 +324,7 @@ export default function Assignments({ isEmbedded = false }) {
  {/* Modal Header */}
  <div className="p-5 border-b-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 flex items-start justify-between gap-4 rounded-t-xl">
  <div>
- <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.subject_name}</span>
+ <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.master_subjects?.name || selectedTask.subject_name || 'Subject'}</span>
  <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">{selectedTask.title}</h3>
  </div>
  <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-themeText dark:text-white transition-colors shrink-0">
