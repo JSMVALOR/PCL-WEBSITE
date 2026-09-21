@@ -25,6 +25,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
     const [reason, setReason] = useState("");
     const [substituteId, setSubstituteId] = useState("");
     const [statusMessage, setStatusMessage] = useState({ type: "", text: "" });
+    const today = new Date().toISOString().split("T")[0];
 
     // Calculate Balances
     const currentMonth = new Date().getMonth() + 1;
@@ -285,6 +286,18 @@ export default function FacultyLeave({ isEmbedded = false, }) {
                                                 {leave.status}
                                             </span>
                                         </div>
+                                        
+                                        {leave.status === 'pending' && (
+                                            <div className="flex items-center gap-2 mt-2 pt-2 border-t border-black/5 dark:border-white/5 w-full">
+                                                <button onClick={() => handleEdit(leave)} className="flex-1 py-1.5 rounded-lg bg-themeAccent/10 text-themeAccent text-[10px] font-black uppercase tracking-widest hover:bg-themeAccent/20 transition-colors">
+                                                    Edit
+                                                </button>
+                                                <button onClick={() => handleWithdraw(leave.id)} className="flex-1 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/20 transition-colors">
+                                                    Withdraw
+                                                </button>
+                                            </div>
+                                        )}
+
                                         {leave.replacement_faculty_id && (
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest w-20">Substitute:</span>
@@ -302,10 +315,10 @@ export default function FacultyLeave({ isEmbedded = false, }) {
 
                 {/* MODAL */}
  {showRequestModal && (
- <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
- <div className="bg-white dark:bg-[#121212] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-white/[0.08] shadow-2xl flex flex-col max-h-[90vh]">
+ <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 dark:bg-black/80 backdrop-blur-xl animate-fade-in">
+ <div className="bg-white/90 dark:bg-[#1C1C1E]/90 backdrop-blur-3xl saturate-[1.8] w-full max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden border border-black/5 dark:border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col max-h-[90vh]">
  
- <div className="p-6 border-b border-white/[0.08] shrink-0 flex justify-between items-start bg-[#161616]">
+ <div className="p-6 sm:p-8 border-b border-black/5 dark:border-white/[0.08] shrink-0 flex justify-between items-start bg-transparent">
  <div>
  <h3 className="text-xl font-black tracking-tight mb-1 text-themeText dark:text-white">New Leave Request</h3>
  <p className="text-[10px] text-themeTextSec dark:text-white/50 font-bold uppercase tracking-widest">Submit details to HOD for approval.</p>
@@ -315,7 +328,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  </button>
  </div>
 
- <div className="overflow-y-auto no-scrollbar flex-1 bg-white dark:bg-[#121212]">
+ <div className="overflow-y-auto no-scrollbar flex-1 bg-transparent p-2">
  <form onSubmit={handleRequestSubmit} className="p-6 flex flex-col gap-6">
 
  {statusMessage.text && (
@@ -328,7 +341,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Leave Category</label>
  <div className="relative">
- <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
+ <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm appearance-none cursor-pointer">
  <option value="Casual Leave (CL)">Casual Leave (CL)</option>
  <option value="Earned Leave (EL)">Earned Leave (EL)</option>
  <option value="On Duty (OD)">On Duty (OD)</option>
@@ -372,18 +385,18 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Start Date</label>
- <input type="date" min="2024-01-01" max="2026-12-31" required value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition dark:[color-scheme:dark]" />
+ <input type="date" min={today} max="2026-12-31" required value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm dark:[color-scheme:dark]" />
  </div>
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">End Date</label>
- <input type="date" max="2026-12-31" required value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition dark:[color-scheme:dark]" />
+ <input type="date" max="2026-12-31" required value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate || today} className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm dark:[color-scheme:dark]" />
  </div>
  </div>
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Assign Substitute (Optional)</label>
  <div className="relative">
- <select value={substituteId} onChange={(e) => setSubstituteId(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
+ <select value={substituteId} onChange={(e) => setSubstituteId(e.target.value)} className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm appearance-none cursor-pointer">
  <option value="">No substitute required</option>
  {facultyList.map(f => (
  <option key={f.id} value={f.id}>{f.full_name}</option>
@@ -395,10 +408,10 @@ export default function FacultyLeave({ isEmbedded = false, }) {
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Reason for Leave</label>
- <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-medium text-themeText dark:text-white focus:border-amber-500 outline-none transition resize-none placeholder:text-themeTextSec dark:text-white/30"></textarea>
+ <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-medium text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm resize-none placeholder:text-themeTextSec dark:text-white/30"></textarea>
  </div>
 
- <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+ <button type="submit" disabled={isSubmitting} className="w-full mt-4 py-4 rounded-2xl bg-amber-500 text-black font-black text-[13px] tracking-wide uppercase hover:bg-amber-400 hover:shadow-[0_0_20px_#f59e0b40] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
  {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> {editingLeaveId ? "Update Request" : "Submit Request"}</>}
  </button>
  </form>
