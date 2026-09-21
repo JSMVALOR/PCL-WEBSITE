@@ -26,18 +26,17 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  setIsPublishing(true);
  try {
 
- const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
  const { error } = await supabase.from('notices').insert([{
  notice_id: noticeId,
- title,
-
  title,
  content,
  category,
  priority,
- target_audience: Array.isArray(targetAudience) ? targetAudience.join(", ") : targetAudience,
- // requires_acknowledgement: requiresAck, // Removed: Column missing in schema
- author_id: userSession?.db_id
+ target_audience: targetAudience,
+ requires_acknowledgement: requiresAck,
+ author_id: userSession?.db_id,
+ author_name: userSession?.name
  }]);
 
  if (error) throw error;
@@ -51,7 +50,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  if (onNoticePublished) onNoticePublished();
  } catch (err) {
  console.error("Failed to publish notice:", err);
- window.erpDialog?.alert("Failed to publish notice. Check console.");
+ window.erpDialog?.alert(`Failed to publish notice: ${err?.message || JSON.stringify(err)}`);
  } finally {
  setIsPublishing(false);
  }
