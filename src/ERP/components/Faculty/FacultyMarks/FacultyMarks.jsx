@@ -69,8 +69,8 @@ export default function FacultyMarks({ subjectContext }) {
  if (!userSession?.db_id) return;
  try {
  // 1. Subjects
- const { data: rawSubs } = await supabase.from('cohort_subjects').select('id, batch_id, master_subjects(id, name, code)').eq('faculty_id', userSession.db_id);
- const subs = rawSubs ? rawSubs.map(s => ({ id: s.id, master_id: s.master_subjects?.id, name: s.master_subjects?.name || 'Unknown', code: s.master_subjects?.code || 'Unknown' })) : [];
+ const { data: rawSubs } = await supabase.from('cohort_subjects').select('id, batch_id, academic_batches(batch_name), master_subjects(id, name, code)').eq('faculty_id', userSession.db_id);
+ const subs = rawSubs ? rawSubs.map(s => ({ id: s.id, master_id: s.master_subjects?.id, name: s.master_subjects?.name || 'Unknown', code: s.master_subjects?.code || 'Unknown', batch_name: s.academic_batches?.batch_name })) : [];
  if (subs) {
  setSubjects(subs);
  sessionStorage.setItem(`fac_marks_subjects_${userSession.db_id}`, JSON.stringify(subs));
@@ -345,7 +345,7 @@ export default function FacultyMarks({ subjectContext }) {
  </div>
  )}
  
- {(
+ {!subjectContext && (
                             <div className="flex flex-col gap-2">
                                 <label className="text-[13px] font-medium text-themeTextSec">Target Batch</label>
  <div className="relative"><select 
