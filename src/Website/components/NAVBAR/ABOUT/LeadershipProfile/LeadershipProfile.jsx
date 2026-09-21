@@ -1,5 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useEffect } from 'react';
+
+import NotFound404 from "../../../UI/NotFound404";
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';

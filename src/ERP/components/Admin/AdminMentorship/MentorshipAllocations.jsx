@@ -1,5 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useRef } from "react";
+
+import HoldButton from '../../../../Shared/components/ReactBits/HoldButton/HoldButton';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete02Icon } from '@hugeicons/core-free-icons';
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";

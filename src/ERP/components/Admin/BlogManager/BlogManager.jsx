@@ -1,5 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
+import SlideCommit from '../../../../Shared/components/ReactBits/SlideCommit/SlideCommit';
 import React, { useState, useEffect } from "react";
+
+import HoldButton from '../../../../Shared/components/ReactBits/HoldButton/HoldButton';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete02Icon } from '@hugeicons/core-free-icons';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 

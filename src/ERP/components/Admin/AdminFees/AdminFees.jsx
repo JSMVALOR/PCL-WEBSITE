@@ -1,6 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+
+import HoldButton from '../../../../Shared/components/ReactBits/HoldButton/HoldButton';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete02Icon } from '@hugeicons/core-free-icons';
 import { generateComponentPDF } from '../../../DocumentTemplates/pdfEngine';
 import { sendSystemEmail } from '../../../lib/EmailService';
 import { QRCodeSVG } from 'qrcode.react';
