@@ -25,12 +25,17 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
 
  setIsPublishing(true);
  try {
+
+ const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
  const { error } = await supabase.from('notices').insert([{
+ notice_id: noticeId,
+ title,
+
  title,
  content,
  category,
  priority,
- target_audience: targetAudience,
+ target_audience: Array.isArray(targetAudience) ? targetAudience.join(", ") : targetAudience,
  // requires_acknowledgement: requiresAck, // Removed: Column missing in schema
  author_id: userSession?.db_id
  }]);
