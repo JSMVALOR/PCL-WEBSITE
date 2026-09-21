@@ -156,7 +156,7 @@ export default function Fees({ isEmbedded = false }) {
             const purposeStr = feeBreakdown.filter(f => selectedFees.includes(f.id)).map(f => f.title).join(", ");
 
             // 1. Record pending transaction
-            const { error: txnError } = await supabase.from('fee_transactions').insert({
+            const { data: txnData, error: txnError } = await supabase.from('fee_transactions').insert({
                 id: transactionId,
                 student_id: studentId,
                 amount: currentTotal,
@@ -165,15 +165,18 @@ export default function Fees({ isEmbedded = false }) {
                 reference_number: verificationData.referenceNumber,
                 transfer_date: verificationData.transferDate,
                 purpose: purposeStr
-            });
+            }).select();
             if (txnError) throw txnError;
+            if (!txnData || txnData.length === 0) throw new Error("Transaction blocked by security policies (RLS).");
 
             // 2. Mark invoices as under_verification
-            const { error: invError } = await supabase
+            const { data: invData, error: invError } = await supabase
                 .from('fee_invoices')
                 .update({ status: 'under_verification' })
-                .in('id', selectedFees);
+                .in('id', selectedFees)
+                .select();
             if (invError) throw invError;
+            if (!invData || invData.length === 0) throw new Error("Invoice update blocked by security policies (RLS).");
 
             // Refresh UI
             await fetchFinancialData();

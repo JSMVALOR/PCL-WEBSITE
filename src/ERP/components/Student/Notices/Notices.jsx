@@ -336,8 +336,10 @@ export default function Notices({ setActiveTab }) {
                                     e.stopPropagation(); 
                                     const confirmed = await window.erpDialog?.confirm("Are you sure you want to permanently delete this notice?", "Delete Notice");
                                     if (confirmed) {
-                                        const { error } = await supabase.from('notices').delete().eq('id', selectedNotice.id);
-                                        if (!error) {
+                                        const { data, error } = await supabase.from('notices').delete().eq('id', selectedNotice.id).select();
+                                        if (!error && data && data.length > 0) {
+                                        } else if (!error && (!data || data.length === 0)) {
+                                            window.erpDialog?.alert("Access Denied: You do not have permission to delete this notice (RLS blocked).", "Error");
                                             setSelectedNotice(null);
                                             window.erpDialog?.alert("Notice deleted successfully.", "Success");
                                             setNotices(prev => prev.filter(n => n.id !== selectedNotice.id));
