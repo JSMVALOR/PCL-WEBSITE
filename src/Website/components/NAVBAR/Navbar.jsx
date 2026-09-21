@@ -5,7 +5,6 @@ import { ArrowRight } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import StaggeredMenu from './MOBILE_MENU/MobileMenu';
-import NoticeBanner from '../UI/NoticeBanner';
 import GlobeMap from '../UI/GlobeMap';
 import { useSite } from '../../context/SiteContext';
 
@@ -188,12 +187,7 @@ export default function Navbar() {
         className="combined-nav-wrapper bg-[var(--bg-color)] border-b border-[var(--card-border)] transition-colors duration-400 ease-out"
       >
         <div className="w-full relative z-50 flex flex-col">
-          {/* Top Info Banner - Collapses on scroll */}
-          <div 
-            style={{ transition: 'max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease', overflow: 'hidden', maxHeight: scrolled || activeDropdown ? '0px' : '100px', opacity: scrolled || activeDropdown ? 0 : 1 }}
-          >
-            <NoticeBanner />
-          </div>
+
 
           <nav
             className="navbar relative"
