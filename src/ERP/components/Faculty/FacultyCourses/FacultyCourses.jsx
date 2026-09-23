@@ -321,10 +321,12 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  />
 
  {courses.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
- <h3 className="text-lg lg:text-xl text-themeText dark:text-themeText font-black">No Courses Assigned</h3>
- <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">You do not have any active subjects mapped to you.</p>
+ <div className="w-full py-16 lg:py-24 flex flex-col items-center justify-center text-center px-4">
+ <div className="w-24 h-24 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-4xl mb-6 shadow-inner">
+    <i className="fa-solid fa-folder-open"></i>
+ </div>
+ <h3 className="text-xl lg:text-2xl text-themeText dark:text-white font-black tracking-tight">No Courses Assigned</h3>
+ <p className="text-sm text-themeTextSec mt-2 max-w-sm mx-auto leading-relaxed">You currently do not have any active subjects mapped to your account. Once assigned, they will automatically appear here.</p>
  </div>
  ) : (
  <div className="flex flex-col xl:flex-row gap-6 items-start">
