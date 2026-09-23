@@ -499,7 +499,7 @@ const TEMPLATES = {
 // MAIN BUILDER COMPONENT
 // ═══════════════════════════════════════════════════════════════
 
-export default function CVBuilder() {
+export default function CVBuilder({ isEmbedded = false }) {
  const { userSession } = useERP();
  const [isExporting, setIsExporting] = useState(false);
  const [previewScale, setPreviewScale] = useState(1);
@@ -638,7 +638,7 @@ export default function CVBuilder() {
  return (
  <>
  <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-32 xl:pb-8 animate-fade-in selection:bg-themeElevated" id="cv-builder-shell">
- <PageHeader 
+ {!isEmbedded && <PageHeader 
  icon="fa-solid fa-file-invoice" 
  title="CV Builder" 
  subtitle="Auto-generate your professional legal resume." 
@@ -652,11 +652,23 @@ export default function CVBuilder() {
  {isExporting ? "Generating Document..." : "Export PDF"}
  </button>
  }
- />
+ />}
 
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
  {/* ═══════════════ LEFT: CONTROLS ═══════════════ */}
  <div className="lg:col-span-4 flex flex-col gap-5 lg:gap-6">
+ 
+ {isEmbedded && (
+ <button type="button"
+ onClick={handleExport}
+ disabled={isExporting}
+ className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+ >
+ {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
+ {isExporting ? "Generating Document..." : "Export Professional CV"}
+ </button>
+ )}
+
  {/* Template Selector */}
  <div className={`${theme.layout.panel} rounded-[2rem] p-5 lg:p-6 border border-black/10 dark:border-white/20`}>
  <h2 className="text-[10px] lg:text-[14px] font-medium text-themeText tracking-normal mb-4 flex items-center gap-2">

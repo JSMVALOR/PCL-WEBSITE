@@ -30,8 +30,7 @@ export const STUDENT_NAV_MEGA = [
         children: [
           { id: "internships", label: "Internships", icon: "fa-solid fa-building" },
           { id: "mootcourt", label: "Moot Courts", icon: "fa-solid fa-scale-balanced" },
-          { id: "achievements", label: "Achievements", icon: "fa-solid fa-trophy" },
-          { id: "cvbuilder", label: "Resumes/CV", icon: "fa-solid fa-file-pdf" }
+          { id: "portfolio", label: "Achievements & CV", icon: "fa-solid fa-trophy" }
         ]
       },
       {

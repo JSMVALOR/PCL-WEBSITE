@@ -53,9 +53,7 @@ import MootCourt from './components/Student/MootCourt/MootCourt';
 import Fees from './components/Student/Fees/Fees';
 import Leave from './components/Student/Leave/Leave';
 import StudentApprovals from './components/Student/Approvals/StudentApprovals';
-import Achievements from './components/Student/Achievements/Achievements';
-import CVBuilder from './components/Student/CVBuilder/CVBuilder';
-
+import Portfolio from './components/Student/Portfolio/Portfolio';
 
 // ==========================================
 // 4. FACULTY PORTAL MODULES
@@ -280,8 +278,7 @@ export default function App() {
         case 'grievances': return <StudentApprovals />;
         case 'approvals': return <StudentApprovals />;
         case 'helpdesk': return <Helpdesk />;
-        case 'achievements': return <Achievements />;
-        case 'cvbuilder': return <CVBuilder />;
+        case 'portfolio': return <Portfolio />;
         
         case 'credentials': return <Credentials />;
         default: return <ModuleUnderConstruction tabName={activeTab} role="Student" />;
