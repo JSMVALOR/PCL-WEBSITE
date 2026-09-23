@@ -161,7 +161,7 @@ export default function Internships({ isEmbedded = false }) {
  if (!start || !end) return 0;
  const s = new Date(start);
  const e = new Date(end);
- if (s > e) return 0;
+ if (isNaN(s) || isNaN(e) || s > e) return 0;
  return Math.round((e - s) / (1000 * 60 * 60 * 24 * 7));
  };
 
@@ -173,13 +173,21 @@ export default function Internships({ isEmbedded = false }) {
  // --- SUBMISSION HANDLERS ---
  const handleExpSubmit = async (e) => {
  e.preventDefault();
+ 
+ const sDate = new Date(expForm.start_date);
+ const eDate = new Date(expForm.end_date);
+ if (isNaN(sDate) || isNaN(eDate) || sDate > eDate) {
+ alert("Please provide valid start and end dates.");
+ return;
+ }
+
  setIsSubmitting(true);
  try {
  const studentId = userSession?.db_id || userSession?.id;
- 
+
  const weeks = calculateWeeks(expForm.start_date, expForm.end_date);
- const shortStart = new Date(expForm.start_date).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
- const shortEnd = new Date(expForm.end_date).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+ const shortStart = sDate.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+ const shortEnd = eDate.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
  const durationStr = `${weeks} Weeks (${shortStart} - ${shortEnd})`;
 
  const { error } = await supabase.from('student_experiences').insert({
@@ -195,23 +203,37 @@ export default function Internships({ isEmbedded = false }) {
  daily_logs: packLogs([])
  });
  if (error) throw error;
+
+ // Auto-sync to Achievements if completed and has certificate
+ if (expForm.status === 'Completed' && expForm.certificate_notes?.trim().length > 0) {
+ await supabase.from('student_achievements').insert({
+ student_id: studentId,
+ category: 'Certificates',
+ title: `Internship: ${expForm.company_name}`,
+ issuer: expForm.company_name,
+ date_achieved: shortEnd,
+ role: expForm.role_title,
+ is_verified: false // Awaiting mentor verification
+ });
+ }
+
  setSubmitSuccess(true);
  fetchAll();
- 
+
  if (shareExpOnSubmit) {
  setLinkedInDraftText(generateLinkedInDraft(expForm));
  setShowLinkedInDraftModal(true);
  }
-
  setTimeout(() => {
  setShowExpModal(false);
  setSubmitSuccess(false);
- setExpForm({ company_name: "", role_title: "", location: "", start_date: "", end_date: "", description: "", type: "Corporate", status: "completed", certificate_notes: "" });
+ setExpForm({ company_name: '', role_title: '', location: '', start_date: '', end_date: '', description: '', type: 'Corporate', status: 'Ongoing', certificate_notes: '' });
  }, 1500);
  } catch (err) {
- console.error("Experience log failed:", err);
- window.erpDialog?.alert("Failed to log experience.");
- } finally { setIsSubmitting(false); }
+ console.error("Exp submit err:", err);
+ alert("Failed to log experience.");
+ setIsSubmitting(false);
+ }
  };
 
  const handlePrintNoc = (req) => {

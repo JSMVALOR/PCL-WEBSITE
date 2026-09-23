@@ -112,7 +112,7 @@ const AchSection = ({ title, items, headStyle, mode }) => {
 const ModernTemplate = (data, config) => {
   const HS = { color: "#d97706", fontSize: "11pt", fontWeight: 800, borderBottom: "1px solid #fde68a", paddingBottom: "4px" };
   return (
-    <div style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif", color: "#1e293b", lineHeight: 1.5 }}>
+    <div style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif", color: "#1e293b", lineHeight: 1.5 }}>
       <div style={{ borderBottom: "4px solid #f59e0b", paddingBottom: "16px", marginBottom: "24px" }}>
         <h1 style={{ fontSize: "28pt", fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.03em", color: "#0f172a", margin: "0 0 8px" }}>
           {data.personal.name}
@@ -272,7 +272,7 @@ const ExecutiveSplitTemplate = (data, config) => {
  pageBreakAfter: "avoid" };
 
  return (
- <div style={{ display: "flex", minHeight: "297mm", width: "100%", background: "#ffffff" }}>
+ <div style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif", display: "flex", minHeight: "297mm", width: "100%", background: "#ffffff" }}>
  <div style={{ width: "72mm", minHeight: "297mm", background: "#0f172a", color: "#e2e8f0", padding: "20mm 14mm", boxSizing: "border-box", flexShrink: 0, display: "flex", flexDirection: "column" }}>
  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", border: "3px solid #1e293b", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
  {data.personal.photo_url ? (
@@ -611,7 +611,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  filename: filename,
  resolution: Resolution.HIGH,
  page: { margin: Margin.NONE, format: 'a4' },
- canvas: { scale: 2, useCORS: true }
+ canvas: { scale: 4, useCORS: true }
  });
  } catch (error) {
  console.error("PDF Export failed", error);
