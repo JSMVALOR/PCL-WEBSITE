@@ -9,98 +9,87 @@ import Assignments from "../Assignments/Assignments";
 import StudentProgressCard from "../StudentProgressCard/StudentProgressCard";
 
 export default function StudentAcademicHub({ isEmbedded = false, }) {
- const [activeCategory, setActiveCategory] = useState("core");
- const [activeTab, setActiveTab] = useState("vault");
+    const [activeTab, setActiveTab] = useState("vault");
 
- const categories = [
- { id: "core", label: "Core Learning", icon: "fa-book-open-reader" },
- { id: "assessments", label: "Assessments", icon: "fa-pen-nib" }
- ];
+    const tabs = [
+        { id: "vault", label: "Course Vault", icon: "fa-book-open", desc: "Access study materials & resources", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", hover: "hover:bg-blue-500/20" },
+        { id: "attendance", label: "Attendance", icon: "fa-user-check", desc: "View detailed check-ins", color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", hover: "hover:bg-emerald-500/20" },
+        { id: "timetable", label: "Timetable", icon: "fa-calendar-days", desc: "Your weekly class schedule", color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", hover: "hover:bg-indigo-500/20" },
+        { id: "assignments", label: "Assignments", icon: "fa-file-lines", desc: "Track pending & submitted work", color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", hover: "hover:bg-amber-500/20" },
+        { id: "examinations", label: "Progress Card", icon: "fa-award", desc: "Academic analytics & grades", color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20", hover: "hover:bg-purple-500/20" }
+    ];
 
- const tabs = {
- core: [
- { id: "vault", label: "Course Vault", icon: "fa-book-open" },
- { id: "attendance", label: "Attendance", icon: "fa-user-check" },
- { id: "timetable", label: "My Timetable", icon: "fa-calendar-days" }
- ],
- assessments: [
- { id: "assignments", label: "Assignments", icon: "fa-file-lines" },
- { id: "examinations", label: "Progress Card", icon: "fa-award" }
- ]
- };
+    return (
+        <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
+            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+                
+                {/* 360-Degree Main Panel */}
+                <div className="flex-1 flex flex-col bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_30px_rgb(0,0,0,0.04)] dark:shadow-none rounded-3xl overflow-hidden relative">
+                    
+                    {/* Header Banner */}
+                    <div className="p-6 lg:p-8 border-b border-black/[0.04] dark:border-white/[0.08] flex flex-col gap-6 relative overflow-hidden shrink-0 bg-white/40 dark:bg-black/10">
+                        {/* Glowing Orb */}
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-themeAccent/10 rounded-full blur-[80px] pointer-events-none"></div>
+                        <div className="absolute -left-20 -bottom-20 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none"></div>
 
- const handleCategoryChange = (categoryId) => {
- setActiveCategory(categoryId);
- setActiveTab(tabs[categoryId][0].id); // Auto-select first tab of new category
- };
+                        <div className="flex justify-between items-start relative z-10">
+                            <div className="flex items-center gap-5">
+                                <div className="w-20 h-20 rounded-2xl bg-white dark:bg-themeElevated border-2 border-black/5 dark:border-white/10 flex items-center justify-center shadow-sm">
+                                    <i className="fa-solid fa-graduation-cap text-themeAccent text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-themeText mb-1 flex items-center gap-3">
+                                        Academic Center 360
+                                        <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center gap-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-themeAccent animate-pulse"></div>
+                                            Active Term
+                                        </span>
+                                    </h1>
+                                    <p className="text-xs font-bold text-themeTextSec tracking-normal flex items-center gap-3">
+                                        <span><i className="fa-solid fa-book-open text-themeAccent/70 mr-1"></i> Your Centralized Learning Hub</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
- return (
- <div className="w-full h-auto xl:h-[calc(100vh-9rem)] xl:min-h-[600px] min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
- <div className="relative z-20 w-full mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
- <div className="flex-1 flex flex-col gap-6 overflow-visible xl:overflow-y-auto custom-scrollbar pb-10 xl:pb-0 h-auto xl:h-full relative xl:pr-2">
- <div className="w-full flex flex-col gap-6 lg:gap-8 animate-fade-in">
- {/* ═══ MASTER HUB HEADER ═══ */}
- <div className={`w-full relative overflow-hidden rounded-[2rem] p-6 lg:p-8 flex flex-col gap-6 bg-white/10 backdrop-blur-[80px] border border-white/20`}>
- 
- 
+                        {/* Quick Navigation Cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 relative z-10 mt-2">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`p-4 rounded-xl flex flex-col gap-2 items-start transition-all text-left group border ${
+                                        activeTab === tab.id
+                                            ? `bg-white dark:bg-themeElevated border-black/10 dark:border-white/20 shadow-md ${tab.color}`
+                                            : `${tab.bg} ${tab.border} ${tab.color} ${tab.hover} opacity-70 hover:opacity-100`
+                                    }`}
+                                >
+                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${activeTab === tab.id ? `${tab.bg} border ${tab.border}` : 'bg-transparent'}`}>
+                                        <i className={`fa-solid ${tab.icon}`}></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[13px] font-black tracking-tight mb-0.5">{tab.label}</h4>
+                                        <p className={`text-[10px] font-medium ${activeTab === tab.id ? 'text-themeTextSec' : 'opacity-70'}`}>{tab.desc}</p>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
- <div className="flex items-center gap-4 lg:gap-5 relative z-10">
- <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-[1rem] bg-gray-50 dark:bg-black/20 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0">
- <i className="fa-solid fa-graduation-cap text-themeText dark:text-white text-2xl lg:text-3xl"></i>
- </div>
- <div>
- <span className="px-2 lg:px-2.5 py-1 bg-white/20 text-themeText dark:text-white border border-white/30 rounded-md text-[8px] lg:text-[12px] font-medium mb-1.5 lg:mb-2 inline-block">Academic Studies</span>
- <h1 className={`${theme.text.display} text-2xl lg:text-3xl tracking-tight text-themeText dark:text-white mb-1`}>Academic Center</h1>
- <p className="text-white/80 text-xs lg:text-sm font-medium tracking-wide">Access course materials, and assignments.</p>
- </div>
- </div>
+                    {/* Main Content Area */}
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 bg-transparent">
+                        <div className="animate-fade-in w-full h-full max-w-7xl mx-auto">
+                            {activeTab === "vault" && <CourseVault isEmbedded={true} />}
+                            {activeTab === "attendance" && <Attendance isEmbedded={true} />}
+                            {activeTab === "timetable" && <Timetable isEmbedded={true} />}
+                            {activeTab === "assignments" && <Assignments isEmbedded={true} />}
+                            {activeTab === "examinations" && <StudentProgressCard isEmbedded={true} />}
+                        </div>
+                    </div>
+                </div>
 
- {/* Dual-Line Navigation System */}
- <div className="flex flex-col gap-3 relative z-10">
- <div className="flex flex-wrap gap-2 w-fit">
- {categories.map((cat) => (
- <button type="button"
- key={cat.id}
- onClick={() => handleCategoryChange(cat.id)}
- className={`px-4 py-2 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center gap-2 ${
- activeCategory === cat.id 
- ? 'bg-white/20 text-themeText dark:text-white border border-white/40 backdrop-blur-md' 
- : 'bg-white/5 text-white/70 hover:bg-white/15 hover:text-themeText dark:text-white border border-transparent'
- }`}
- >
- <i className={`fa-solid ${cat.icon}`}></i> {cat.label}
- </button>
- ))}
- </div>
-
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] rounded-2xl border border-black/10 dark:border-white/20 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
- {tabs[activeCategory].map((t) => (
- <button type="button"
- key={t.id}
- onClick={() => setActiveTab(t.id)}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
- activeTab === t.id 
- ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-black dark:text-white border border-black/5 dark:border-white/40 scale-100' 
- : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
- }`}
- >
- <i className={`fa-solid ${t.icon} ${activeTab === t.id ? 'animate-pulse' : ''}`}></i> {t.label}
- </button>
- ))}
- </div>
- </div>
- </div>
-
- <div className="animate-fade-in">
- {activeTab === "vault" && <CourseVault isEmbedded={true} />}
- {activeTab === "attendance" && <Attendance isEmbedded={true} />}
- {activeTab === "timetable" && <Timetable isEmbedded={true} />}
- {activeTab === "assignments" && <Assignments isEmbedded={true} />}
- {activeTab === "examinations" && <StudentProgressCard isEmbedded={true} />}
- </div>
- </div>
- </div>
- </div>
- </div>
- );
+            </div>
+        </div>
+    );
 }
