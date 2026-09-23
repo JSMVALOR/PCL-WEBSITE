@@ -8,16 +8,7 @@ export const STUDENT_NAV_MEGA = [
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-house" },
       { id: "notices", label: "Notice Board", icon: "fa-solid fa-thumbtack" },
-      { 
-        id: "academics_group", label: "Academics", icon: "fa-solid fa-graduation-cap", 
-        children: [
-          { id: "academic_center", label: "Academic Center", icon: "fa-solid fa-layer-group" },
-          { id: "vault", label: "Course Materials", icon: "fa-solid fa-book" },
-          { id: "timetable", label: "Class Schedule", icon: "fa-solid fa-calendar-days" },
-          { id: "attendance", label: "Attendance Record", icon: "fa-solid fa-clipboard-user" },
-          { id: "assignments", label: "Assignments", icon: "fa-solid fa-file-pen" }
-        ]
-      },
+      { id: "academic_center", label: "Academics", icon: "fa-solid fa-graduation-cap" },
       {
         id: "mentorship_group", label: "Mentorship", icon: "fa-solid fa-handshake",
         children: [
@@ -47,7 +38,7 @@ export const STUDENT_NAV_MEGA = [
 
 const BOTTOM_NAV_LINKS = [
   { id: "dashboard", label: "Home", icon: "fa-solid fa-house" },
-  { id: "vault", label: "Academics", icon: "fa-solid fa-graduation-cap" },
+  { id: "academic_center", label: "Academics", icon: "fa-solid fa-graduation-cap" },
   { id: "internships", label: "Career", icon: "fa-solid fa-briefcase" },
   { id: "fees", label: "Support", icon: "fa-solid fa-building-columns" }
 ];

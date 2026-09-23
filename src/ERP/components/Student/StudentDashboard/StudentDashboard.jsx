@@ -21,7 +21,7 @@ export default function StudentDashboard({ setActiveTab }) {
  { id: 'timetable', icon: 'fa-calendar-days', label: 'Timetable' },
  { id: 'attendance', icon: 'fa-user-check', label: 'Attendance' },
  { id: 'assignments', icon: 'fa-file-pen', label: 'Assignments' },
- { id: 'vault', icon: 'fa-box-archive', label: 'Course Vault' },
+ { id: 'academic_center', icon: 'fa-graduation-cap', label: 'Academic Center' },
  { id: 'leave', icon: 'fa-calendar-minus', label: 'Apply Leave' },
  { id: 'fees', icon: 'fa-wallet', label: 'Pay Fees' },
  { id: 'library', icon: 'fa-book-open', label: 'Library' },
@@ -182,10 +182,10 @@ export default function StudentDashboard({ setActiveTab }) {
                     {/* Metrics */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
                         {[
-                            { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check' },
-                            { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check' },
-                            { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsTotal || 0}`, icon: 'fa-file-lines' },
-                            { label: 'CGPA', val: stats.cgpa.toFixed(2), icon: 'fa-graduation-cap' }
+                            { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check', tab: 'academic_center' },
+                            { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check', tab: 'academic_center' },
+                            { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsTotal || 0}`, icon: 'fa-file-lines', tab: 'academic_center' },
+                            { label: 'CGPA', val: stats.cgpa.toFixed(2), icon: 'fa-graduation-cap', tab: 'academic_center' }
                         ].map((m, i) => (
                             <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group cursor-pointer hover:border-themeAccent/30 hover:bg-white/80 transition-all">
                                 <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec mb-3">
