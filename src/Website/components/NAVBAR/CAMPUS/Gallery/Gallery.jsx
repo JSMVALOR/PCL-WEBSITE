@@ -5,6 +5,7 @@ import Navbar from '../../Navbar.jsx';
 import styles from '../../PROGRAMS/Programs.module.css';
 
 import Masonry from '../../../UI/Masonry/Masonry.jsx';
+import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient'; '../../../UI/Masonry/Masonry.jsx';
 
 // Import all campus images
 import imgClassroom1 from '../../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM.webp';
@@ -34,8 +35,38 @@ const masonryItems = [
 ];
 
 export default function Gallery() {
-  const [viewMode, setViewMode] = useState('masonry'); // 'masonry', 'virtual-tour'
+    const [viewMode, setViewMode] = useState('masonry'); // 'masonry', 'virtual-tour'
   const [selectedImage, setSelectedImage] = useState(null);
+  
+  const [dbImages, setDbImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('gallery_images')
+          .select('*')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+          
+        if (!error && data) {
+          const formatted = data.map((item, index) => ({
+            id: item.id,
+            img: item.image_url,
+            url: "",
+            height: 400 + Math.floor(Math.random() * 300) // Masonry heights
+          }));
+          setDbImages(formatted);
+        }
+      } catch (err) {
+        console.error("Gallery fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchImages();
+  }, []);
 
   return (
     <>
