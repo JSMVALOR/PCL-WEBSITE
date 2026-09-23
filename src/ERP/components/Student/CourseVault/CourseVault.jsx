@@ -43,45 +43,70 @@ export default function CourseVault({ isEmbedded = false }) {
                     return;
                 }
                 
-                // Lookup batch_id (UUID) from academic_batches using string
-                const { data: batchData } = await supabase.from('academic_batches').select('id').eq('name', userSession.academic_batch).single();
+                // Lookup batch_id and program_id from academic_batches
+                const { data: batchData } = await supabase.from('academic_batches').select('id, program_id').eq('name', userSession.academic_batch).single();
                 if (!batchData || !batchData.id) {
                     if (isMounted) setIsLoading(false);
                     return;
                 }
                 const batchId = batchData.id;
+                const programId = batchData.program_id;
 
-                // 2. Fetch assigned cohort_subjects for this student's batch
-                const { data: subjectData, error: subErr } = await supabase
+                // 2. Fetch all master_subjects for this program
+                const { data: allMasterSubjects, error: masterErr } = await supabase
+                    .from('master_subjects')
+                    .select('id, name, code, syllabus, target_semester')
+                    .eq('program_id', programId);
+                
+                if (masterErr) throw masterErr;
+
+                // 3. Fetch assigned cohort_subjects for this student's batch
+                const { data: cohortSubjectsData, error: subErr } = await supabase
                     .from('cohort_subjects')
-                    .select('id, master_subjects(id, name, code, syllabus, target_semester)')
+                    .select('id, subject_id')
                     .eq('batch_id', batchId);
 
                 if (subErr) throw subErr;
-                
-                if (isMounted && subjectData) {
-                    setSubjects(subjectData);
+
+                // Create a unified subjects array. 
+                // Each item needs an `id` (we'll use cohort_subject id if available, else a dummy or master id)
+                // and `master_subjects` object.
+                const unifiedSubjects = (allMasterSubjects || []).map(ms => {
+                    const assignedCohortSubject = (cohortSubjectsData || []).find(cs => cs.subject_id === ms.id);
+                    return {
+                        id: assignedCohortSubject ? assignedCohortSubject.id : `unassigned-${ms.id}`,
+                        master_subjects: ms,
+                        _isAssigned: !!assignedCohortSubject
+                    };
+                });
+
+                if (isMounted) {
+                    setSubjects(unifiedSubjects);
                 }
 
-                if (!subjectData || subjectData.length === 0) {
-                    if (isMounted) setIsLoading(false);
-                    return;
+                if (!cohortSubjectsData || cohortSubjectsData.length === 0) {
+                    // Even if there are no cohort subjects, they can see unassigned ones.
+                    // But if there are no master subjects either, return.
+                    if (!allMasterSubjects || allMasterSubjects.length === 0) {
+                        if (isMounted) setIsLoading(false);
+                        return;
+                    }
                 }
 
-                const subjectIds = subjectData.map(s => s.id);
+                const assignedSubjectIds = cohortSubjectsData.map(s => s.id);
 
-                // 3. Fetch materials from course_resources
+                // 4. Fetch materials from course_resources
                 const { data: resourceData, error: resErr } = await supabase
                     .from('course_resources')
                     .select('id, title, url, type, created_at, cohort_subject_id, profiles!faculty_id(full_name)')
-                    .in('cohort_subject_id', subjectIds)
+                    .in('cohort_subject_id', assignedSubjectIds.length > 0 ? assignedSubjectIds : ['00000000-0000-0000-0000-000000000000'])
                     .order('created_at', { ascending: false });
 
                 if (resErr) throw resErr;
 
                 if (isMounted && resourceData) {
                     const enrichedMaterials = resourceData.map(res => {
-                        const sub = subjectData.find(s => s.id === res.cohort_subject_id);
+                        const sub = unifiedSubjects.find(s => s.id === res.cohort_subject_id);
                         return {
                             ...res,
                             course_name: sub ? sub.master_subjects?.name : 'Unknown Course',
@@ -119,7 +144,7 @@ export default function CourseVault({ isEmbedded = false }) {
 
     const filteredMaterials = activeFilter === "All" ? materials : materials.filter(m => m.type === activeFilter);
 
-    let processedSubjects = subjects.map(s => ({ ...s, _isFaded: false }));
+    let processedSubjects = subjects.map(s => ({ ...s, _isFaded: !s._isAssigned }));
 
     // Semester Filter (Fade instead of hide)
     if (semesterFilter === "current" && userSession?.semester) {
@@ -315,7 +340,7 @@ export default function CourseVault({ isEmbedded = false }) {
                                                 }`}
                                             >
                                                 <i className="fa-solid fa-layer-group"></i> 
-                                                {items.length === 0 ? "No Materials Yet" : `View Materials (${items.length})`}
+                                                {items.length === 0 ? (!sub._isAssigned ? "Course Not Active" : "No Materials Yet") : `View Materials (${items.length})`}
                                             </button>
                                         </div>
                                     </div>
