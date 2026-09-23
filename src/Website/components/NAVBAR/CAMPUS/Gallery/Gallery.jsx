@@ -55,7 +55,7 @@ export default function Gallery() {
             id: item.id,
             img: item.image_url,
             url: "",
-            height: 400 + Math.floor(Math.random() * 300) // Masonry heights
+            height: index % 2 === 0 ? 550 : 400 // Consistent alternating heights
           }));
           setDbImages(formatted);
         }
@@ -110,10 +110,16 @@ export default function Gallery() {
               exit={{ opacity: 0, y: -40 }}
               className="relative z-10 w-full min-h-[800px]"
             >
-              <Masonry 
-                items={masonryItems.map(item => ({ ...item, onImageClick: (i) => setSelectedImage(i.img) }))} 
-                colorShiftOnHover={true}
-              />
+              {loading ? (
+                <div className="flex justify-center items-center h-96">
+                  <div className="animate-spin w-12 h-12 border-4 border-[var(--primary-color)] border-t-transparent rounded-full"></div>
+                </div>
+              ) : (
+                <Masonry 
+                  items={(dbImages.length > 0 ? dbImages : masonryItems).map(item => ({ ...item, onImageClick: (i) => setSelectedImage(i.img) }))} 
+                  colorShiftOnHover={true}
+                />
+              )}
             </motion.div>
           )}
 
