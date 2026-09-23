@@ -369,11 +369,11 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  </button>
  </div>
 
- <div className="bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/5 rounded-2xl overflow-hidden">
+ <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl overflow-hidden">
  <div className="overflow-x-auto">
  <table className="w-full text-left border-collapse">
  <thead>
- <tr className="bg-themeElevated/90 backdrop-blur-2xl border-b border-black/5 dark:border-white/5">
+ <tr className="bg-themeElevated backdrop-blur-md border-b border-black/5 dark:border-white/5">
  <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Title</th>
  <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Author</th>
  <th className="p-4 text-[10px] font-black uppercase tracking-widest text-themeTextSec">Date</th>
