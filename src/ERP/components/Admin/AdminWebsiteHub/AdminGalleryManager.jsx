@@ -142,35 +142,47 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
     // Extract Cropped Image Blob
     const getCroppedImg = async (image, crop, fileName) => {
-        const canvas = document.createElement('canvas');
-        const scaleX = image.naturalWidth / image.width;
-        const scaleY = image.naturalHeight / image.height;
-        canvas.width = crop.width * scaleX;
-        canvas.height = crop.height * scaleY;
-        const ctx = canvas.getContext('2d');
+        try {
+            const canvas = document.createElement('canvas');
+            const scaleX = image.naturalWidth / image.width;
+            const scaleY = image.naturalHeight / image.height;
+            
+            // Validate crop dimensions
+            if (!crop || !crop.width || !crop.height) {
+                console.error("Invalid crop dimensions", crop);
+                return null; // Fallback to original image
+            }
 
-        ctx.drawImage(
-            image,
-            crop.x * scaleX,
-            crop.y * scaleY,
-            crop.width * scaleX,
-            crop.height * scaleY,
-            0,
-            0,
-            crop.width * scaleX,
-            crop.height * scaleY
-        );
+            canvas.width = crop.width * scaleX;
+            canvas.height = crop.height * scaleY;
+            const ctx = canvas.getContext('2d');
 
-        return new Promise((resolve) => {
-            canvas.toBlob((blob) => {
-                if (!blob) {
-                    console.error('Canvas is empty');
-                    return;
-                }
-                blob.name = fileName;
-                resolve(blob);
-            }, 'image/jpeg', 0.95);
-        });
+            ctx.drawImage(
+                image,
+                crop.x * scaleX,
+                crop.y * scaleY,
+                crop.width * scaleX,
+                crop.height * scaleY,
+                0,
+                0,
+                crop.width * scaleX,
+                crop.height * scaleY
+            );
+
+            return new Promise((resolve, reject) => {
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        reject(new Error('Canvas is empty'));
+                        return;
+                    }
+                    blob.name = fileName;
+                    resolve(blob);
+                }, 'image/jpeg', 0.95);
+            });
+        } catch (e) {
+            console.error("Crop error:", e);
+            return null; // fallback
+        }
     };
 
 
@@ -187,8 +199,13 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             
             // If user cropped it, use the cropped blob
             if (completedCrop && completedCrop.width && completedCrop.height && imgRef.current) {
-                uploadBlob = await getCroppedImg(imgRef.current, completedCrop, imageFile.name);
+                const cropped = await getCroppedImg(imgRef.current, completedCrop, imageFile.name);
+                if (cropped) {
+                    uploadBlob = cropped;
+                }
             }
+            
+            const finalTitle = title.trim() || imageFile.name.replace(/\.[^/.]+$/, "");
 
             // 1. Upload to Supabase Storage
             const fileExt = imageFile.name.split('.').pop();
@@ -208,7 +225,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
             // 3. Save to database
             const { error: dbError } = await supabase.from('gallery_images').insert([{
-                title,
+                title: finalTitle,
                 description,
                 image_url: publicUrl,
                 category,
@@ -323,7 +340,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
                             <div className="flex flex-col gap-2 mt-2">
                                 <label className="text-[12px] font-bold text-themeTextSec uppercase tracking-wider">Title</label>
-                                <input required type="text" className="bg-black/5 dark:bg-themeElevated/90 border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Annual Moot Court" />
+                                <input type="text" className="bg-black/5 dark:bg-themeElevated/90 border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Annual Moot Court" />
                             </div>
 
                             <div className="flex flex-col gap-2">
