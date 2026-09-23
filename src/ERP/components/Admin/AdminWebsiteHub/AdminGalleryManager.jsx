@@ -439,15 +439,26 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                                {images.map(img => (
+                                {images.map((img, index) => (
                                     <div key={img.id} className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl overflow-hidden flex flex-col group">
                                         <div className="h-48 w-full relative overflow-hidden bg-black/5 dark:bg-white/5">
                                             <img src={img.image_url} alt={img.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                            <div className="absolute top-3 right-3 flex gap-2">
+                                                                                        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex flex-col gap-1 mr-1">
+                                                    <button onClick={() => handleMove(index, 'up')} disabled={index === 0} className={`w-8 h-8 rounded-full flex items-center justify-center text-white backdrop-blur-md shadow-sm transition-transform hover:scale-110 ${index === 0 ? 'bg-black/20 cursor-not-allowed' : 'bg-black/50 hover:bg-black/70'}`}>
+                                                        <i className="fa-solid fa-arrow-up text-xs"></i>
+                                                    </button>
+                                                    <button onClick={() => handleMove(index, 'down')} disabled={index === images.length - 1} className={`w-8 h-8 rounded-full flex items-center justify-center text-white backdrop-blur-md shadow-sm transition-transform hover:scale-110 ${index === images.length - 1 ? 'bg-black/20 cursor-not-allowed' : 'bg-black/50 hover:bg-black/70'}`}>
+                                                        <i className="fa-solid fa-arrow-down text-xs"></i>
+                                                    </button>
+                                                </div>
+                                                <button onClick={() => setEditingImage(img)} className="w-8 h-8 rounded-full bg-blue-500/80 hover:bg-blue-500 text-white flex items-center justify-center backdrop-blur-md shadow-sm transition-transform hover:scale-110" title="Edit/Crop">
+                                                    <i className="fa-solid fa-crop-simple text-xs"></i>
+                                                </button>
                                                 <button onClick={() => toggleStatus(img.id, img.is_active)} className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border ${img.is_active ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-black/50 text-white border-white/20'}`} title={img.is_active ? 'Visible' : 'Hidden'}>
                                                     <i className={`fa-solid ${img.is_active ? 'fa-eye' : 'fa-eye-slash'} text-xs`}></i>
                                                 </button>
-                                                <button onClick={() => handleDelete(img.id)} className="w-8 h-8 rounded-full bg-rose-500/80 text-white border border-rose-500 flex items-center justify-center backdrop-blur-md hover:bg-rose-600 transition-colors">
+                                                <button onClick={() => handleDelete(img.id)} className="w-8 h-8 rounded-full bg-rose-500/80 text-white border border-rose-500 flex items-center justify-center backdrop-blur-md hover:bg-rose-600 transition-colors" title="Delete">
                                                     <i className="fa-solid fa-trash text-xs"></i>
                                                 </button>
                                             </div>
