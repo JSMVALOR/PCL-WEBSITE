@@ -165,9 +165,14 @@ export default function AdminWhatsAppServer() {
                                 <h2 className="text-lg font-bold text-themeText mb-2">Server Offline</h2>
                                 <p className="text-sm text-themeTextSec">Run `node server.js` inside backend/whatsapp-server.</p>
                             </div>
+                                                ) : status === 'FAILED' ? (
+                            <div className="flex flex-col items-center text-center opacity-75">
+                                <i className="fa-solid fa-triangle-exclamation text-4xl mb-4 text-rose-500"></i>
+                                <h2 className="text-lg font-bold text-themeText mb-2">Engine Crash</h2>
+                                <p className="text-sm text-themeTextSec">The Chromium browser failed to launch. Check the Render logs.</p>
+                            </div>
                         ) : (
-                            <div className="flex flex-col items-center text-center">
-                                <i className="fa-solid fa-circle-notch fa-spin text-4xl text-themeAccent mb-4"></i>
+                            <div className="flex flex-col items-center text-center">                                <i className="fa-solid fa-circle-notch fa-spin text-4xl text-themeAccent mb-4"></i>
                                 <h2 className="text-lg font-bold text-themeText mb-2">Starting Engine</h2>
                                 <p className="text-sm text-themeTextSec">Spinning up Chromium browser instance...</p>
                             </div>
