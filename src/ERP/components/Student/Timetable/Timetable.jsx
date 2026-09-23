@@ -29,7 +29,12 @@ export default function Timetable({ isEmbedded = false }) {
 
  const fetchSchedule = async () => {
         if (!userSession?.academic_batch) return;
-        setLoading(true);
+        const cached = sessionStorage.getItem(`jsmerp_stu_timetable_${userSession.academic_batch}`);
+        if (cached) {
+            setSchedule(JSON.parse(cached));
+            setLoading(false);
+        }
+        
         try {
             const batchStringName = userSession.academic_batch;
 

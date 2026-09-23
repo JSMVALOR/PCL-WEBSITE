@@ -145,13 +145,13 @@ export default function ParentDashboard({ onLogout }) {
         if (!mentor) return;
         setSendingEmail(true);
         try {
-            await fetch('http://localhost:3001/email/send', {
+            await fetch((import.meta.env.VITE_SITE_URL || window.location.origin) + '/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    to: mentor.email,
+                    to_email: 'marvelswaroop118@gmail.com', // [TESTING OVERRIDE]
                     subject: `Message from ${userSession?.name} (Parent of ${studentData.full_name}): ${emailData.subject}`,
-                    html: `<p>Dear ${mentor.full_name},</p><p>${emailData.message.replace(/\n/g, '<br/>')}</p><p>Regards,<br/>${userSession?.name}</p>`
+                    message_body: `<p>Dear ${mentor.full_name},</p><p>${emailData.message.replace(/\n/g, '<br/>')}</p><p>Regards,<br/>${userSession?.name}</p>`
                 })
             });
             setActiveModal(null);

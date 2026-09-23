@@ -51,7 +51,6 @@ export default function WhatsAppAdmin() {
                     const groupName = `PCL Batch: ${batch}`;
                     try {
                         const groupId = await createWhatsAppGroup(groupName, phones);
-                        console.log(`Created group ${groupName} with ID: ${groupId}`);
                         await sendSystemWhatsApp(groupId, `Welcome to the official WhatsApp broadcast group for ${batch}. This group will be used for automated attendance and exam notices.`);
                     } catch (e) {
                         console.error(`Failed to create group for ${batch}`, e);

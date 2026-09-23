@@ -104,19 +104,15 @@ export default function FacultyAllocator() {
             if (existing && existing.faculty_id && facultyId && existing.faculty_id !== facultyId) {
                 // CASE 1: True Reassignment (Swap)
                 const oldName = faculties.find(f => f.id === existing.faculty_id)?.full_name || 'Unknown';
-                console.log(`[EMAIL DISPATCH] To: ${oldName} | Subject: Assignment Revoked - ${master?.name} | Body: Please be informed that your assignment for ${master?.name} (${batch?.name}) has been reassigned to another faculty member.`);
-                console.log(`[EMAIL DISPATCH] To: ${newName} | Subject: New Class Allocation - ${master?.name} | Body: You have been officially allocated to teach ${master?.name} for ${batch?.name}.`);
                 window.erpDialog?.alert(`✅ Reassignment Complete. Automated emails have been dispatched to both ${oldName} and ${newName}.`);
             } 
             else if (existing && existing.faculty_id && !facultyId) {
                 // CASE 2: Unassigned Completely
                 const oldName = faculties.find(f => f.id === existing.faculty_id)?.full_name || 'Unknown';
-                console.log(`[EMAIL DISPATCH] To: ${oldName} | Subject: Assignment Revoked - ${master?.name} | Body: Please be informed that your assignment for ${master?.name} (${batch?.name}) has been revoked.`);
                 window.erpDialog?.alert(`✅ Revocation Confirmed. An automated notification email has been dispatched to ${oldName}.`);
             } 
             else if (facultyId && (!existing || !existing.faculty_id)) {
                 // CASE 3: Brand New Assignment
-                console.log(`[EMAIL DISPATCH] To: ${newName} | Subject: New Class Allocation - ${master?.name} | Body: You have been officially allocated to teach ${master?.name} for ${batch?.name}.`);
                 window.erpDialog?.alert(`Faculty allocation securely recorded. The academic feeds have been seamlessly synchronized.`);
             }
             

@@ -178,7 +178,7 @@ export default function FacultyMentorship() {
 
             try {
                 const studentEmail = selectedMentee.email || `${selectedMentee.erp_id}@prudentia.edu`;
-                await fetch('http://localhost:3001/email/send', {
+                await fetch((import.meta.env.VITE_SITE_URL || window.location.origin) + '/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

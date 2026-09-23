@@ -94,8 +94,6 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  });
  formattedSched.sort((a, b) => parseInt(a.time.replace(':', '')) - parseInt(b.time.replace(':', '')));
  setSchedule(formattedSched);
-    console.log("MAPPED SCHEDULE:", formattedSched);
-    console.log("RAW SCHEDULE:", schedule);
  sessionStorage.setItem(`fac_schedule_${userSession.db_id}`, JSON.stringify(formattedSched));
 
  // 2. Fetch Requests

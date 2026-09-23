@@ -17,9 +17,7 @@ export const generateComponentPDF = async (element, filename = "document.pdf", o
 
     try {
         element.classList.add('pdf-export-mode');
-        console.log('Starting html2canvas...');
         const canvas = await html2canvas(element, mergedOptions);
-        console.log('html2canvas finished!', canvas);
         element.classList.remove('pdf-export-mode');
 
         const imgData = canvas.toDataURL("image/png");
@@ -58,9 +56,7 @@ export const generateComponentPDF = async (element, filename = "document.pdf", o
             const rawPdfBytes = pdf.output('arraybuffer');
             
             // Load it into pdf-lib to encrypt it
-            console.log('Loading pdf-lib...');
         const pdfDoc = await PDFDocument.load(rawPdfBytes);
-        console.log('pdf-lib loaded. Encrypting...');
             const encryptedPdfBytes = await pdfDoc.save({
                 useObjectStreams: false,
                 userPassword: options.password,

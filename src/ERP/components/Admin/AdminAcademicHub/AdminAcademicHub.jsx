@@ -11,7 +11,6 @@ export default function AdminAcademicHub() {
     useEffect(() => {
         const wireDataAsAdmin = async () => {
             if (localStorage.getItem('admin_wired_dataset_v3')) return;
-            console.log("Admin Auto-wiring Dataset...");
             try {
                 // 1. Get LLB Batch
                 const { data: batches } = await supabase.from('academic_batches').select('id').ilike('name', '%LLB (Class of 2029)%').limit(1);

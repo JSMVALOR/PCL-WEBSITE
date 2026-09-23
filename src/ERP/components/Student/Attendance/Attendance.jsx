@@ -11,6 +11,7 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
     const targetUserId = menteeId || userSession?.db_id;
 
  const [attendanceData, setAttendanceData] = useState([]);
+ const [rawRecords, setRawRecords] = useState([]);
  const [overallAttendance, setOverallAttendance] = useState(0);
  const [totalAttended, setTotalAttended] = useState(0);
  const [totalMissed, setTotalMissed] = useState(0);
@@ -83,6 +84,7 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
                 .order('entry_marked_at', { ascending: false });
 
             if (error) throw error;
+            setRawRecords(attData);
             
             // Fetch APPROVED leaves
             const { data: leavesData } = await supabase

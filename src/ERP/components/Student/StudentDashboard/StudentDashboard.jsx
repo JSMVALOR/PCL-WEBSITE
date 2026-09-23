@@ -76,6 +76,15 @@ export default function StudentDashboard({ setActiveTab }) {
  const sid = userSession?.db_id || userSession?.id;
  if (!sid) return;
 
+ // SWR Cache Load
+ const cachedProfile = sessionStorage.getItem(`jsmerp_stu_prof_${sid}`);
+ const cachedStats = sessionStorage.getItem(`jsmerp_stu_stats_${sid}`);
+ if (cachedProfile && cachedStats) {
+    setProfile(JSON.parse(cachedProfile));
+    setStats(JSON.parse(cachedStats));
+    setLoading(false);
+ }
+
  const { data: pData } = await supabase.from('profiles').select('*').eq('id', sid).single();
  if (pData) {
  setProfile(pData);

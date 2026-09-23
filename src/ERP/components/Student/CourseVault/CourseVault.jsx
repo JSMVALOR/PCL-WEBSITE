@@ -38,12 +38,19 @@ export default function CourseVault({ isEmbedded = false }) {
     useEffect(() => {
         let isMounted = true;
         const fetchVaultData = async () => {
+            if (!userSession || !userSession.academic_batch) {
+                if (isMounted) setIsLoading(false);
+                return;
+            }
+            const cachedM = sessionStorage.getItem(`jsmerp_stu_mat_${userSession.academic_batch}`);
+            const cachedS = sessionStorage.getItem(`jsmerp_stu_sub_${userSession.academic_batch}`);
+            if (cachedM && cachedS) {
+                setMaterials(JSON.parse(cachedM));
+                setSubjects(JSON.parse(cachedS));
+                setIsLoading(false);
+            }
             try {
                 // 1. Get batch UUID
-                if (!userSession || !userSession.academic_batch) {
-                    if (isMounted) setIsLoading(false);
-                    return;
-                }
                 
                 // Lookup batch_id and program_id from academic_batches
                 const { data: batchData } = await supabase.from('academic_batches').select('id, program_id, current_semester').eq('name', userSession.academic_batch).single();

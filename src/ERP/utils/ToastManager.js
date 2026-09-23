@@ -10,7 +10,6 @@ export const Toast = {
         if (_addToast) {
             _addToast({ message, type, id: Date.now() + Math.random() });
         } else {
-            console.log("Toast fallback:", message);
         }
     },
     undoable: (message, onExecute, onUndo, duration = 10000) => {

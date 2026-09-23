@@ -268,7 +268,6 @@ export default function FacultyAttendance({ subjectContext }) {
                 const { data } = await supabase.from('class_sessions').select('*').eq('id', missedSlot.session_id).single();
                 currentSession = data;
             } else {
-                console.log("INSERTING:", { schedule_id: missedSlot.sch_id, faculty_id: userSession.db_id, date: missedSlot.date });
                 if (!missedSlot.sch_id || !userSession.db_id || !missedSlot.date) {
                     window.erpDialog?.alert("Missing required fields for insert!");
                     throw new Error("Missing required fields for insert!");
@@ -697,7 +696,6 @@ export default function FacultyAttendance({ subjectContext }) {
                 const facultyId = userSession?.db_id;
                 if (!facultyId) return;
 
-                console.log("Auto-wiring real dataset for Aug 17...");
                 
                 // Get valid subjects for LLB 102 and 103
                 const { data: subjects } = await supabase.from('master_subjects').select('id, code').ilike('code', '%LLB 10%');
