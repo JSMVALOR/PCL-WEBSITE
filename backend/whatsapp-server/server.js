@@ -35,7 +35,7 @@ const initializeWhatsApp = async () => {
         });
 
         const store = new PostgresStore({
-            client: pool
+            pool: pool
         });
 
         // Initialize the RemoteAuth store table if it doesn't exist
