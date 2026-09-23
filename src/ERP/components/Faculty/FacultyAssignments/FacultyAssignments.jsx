@@ -90,13 +90,26 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  const fetchInitialData = async () => {
  if (!userSession?.db_id) return;
  try {
- // 1. Fetch Subjects assigned to this faculty
- const { data: cohortSubs, error: subErr } = await supabase
- .from('cohort_subjects')
- .select('id, master_subjects(id, name, code)')
- .eq('faculty_id', userSession.db_id);
+ // 1. Fetch Subjects assigned to this faculty (direct + schedule)
+ const { data: directSubs } = await supabase.from('cohort_subjects').select('id, master_subjects(id, name, code)').eq('faculty_id', userSession.db_id);
+ const { data: scheduledSubs } = await supabase.from('class_schedule').select('subject_id').eq('faculty_id', userSession.db_id);
+
+ let allSubIds = (directSubs || []).map(s => s.id);
+ if (scheduledSubs && scheduledSubs.length > 0) {
+    allSubIds = [...new Set([...allSubIds, ...scheduledSubs.map(s => s.subject_id)])];
+ }
  
- const subs = (cohortSubs || []).map(cs => cs.master_subjects).filter(Boolean);
+ let finalSubs = directSubs || [];
+ const missingIds = allSubIds.filter(id => !finalSubs.find(s => s.id === id));
+ 
+ if (missingIds.length > 0) {
+    const { data: extraSubs } = await supabase.from('cohort_subjects').select('id, master_subjects(id, name, code)').in('id', missingIds);
+    if (extraSubs) {
+        finalSubs = [...finalSubs, ...extraSubs];
+    }
+ }
+ 
+ const subs = (finalSubs || []).map(cs => cs.master_subjects).filter(Boolean);
  // Remove duplicates
  const uniqueSubs = [];
  const seen = new Set();

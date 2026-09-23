@@ -63,11 +63,30 @@ export default function FacultyAttendance({ subjectContext }) {
  const fetchAllSubjects = async () => {
     if (!userSession?.db_id) return;
     try {
-        const { data: cohortSubs, error: subErr } = await supabase
+        const { data: directSubs, error: subErr } = await supabase
             .from('cohort_subjects')
             .select('id, batch_id, master_subjects(id, name, code)')
             .eq('faculty_id', userSession.db_id);
         if (subErr) throw subErr;
+
+        const { data: scheduledSubs } = await supabase.from('class_schedule').select('subject_id').eq('faculty_id', userSession.db_id);
+
+        let allSubIds = (directSubs || []).map(s => s.id);
+        if (scheduledSubs && scheduledSubs.length > 0) {
+            allSubIds = [...new Set([...allSubIds, ...scheduledSubs.map(s => s.subject_id)])];
+        }
+
+        let finalSubs = directSubs || [];
+        const missingIds = allSubIds.filter(id => !finalSubs.find(s => s.id === id));
+
+        if (missingIds.length > 0) {
+            const { data: extraSubs } = await supabase.from('cohort_subjects').select('id, batch_id, master_subjects(id, name, code)').in('id', missingIds);
+            if (extraSubs) {
+                finalSubs = [...finalSubs, ...extraSubs];
+            }
+        }
+        
+        const cohortSubs = finalSubs;
 
         if (cohortSubs && cohortSubs.length > 0) {
             const { data: rawSessions, error: sesError } = await supabase

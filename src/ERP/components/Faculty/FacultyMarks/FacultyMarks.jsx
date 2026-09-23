@@ -68,9 +68,26 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  const fetchMetadata = async () => {
  if (!userSession?.db_id) return;
  try {
- // 1. Subjects
- const { data: rawSubs } = await supabase.from('cohort_subjects').select('id, batch_id, academic_batches(batch_name), master_subjects(id, name, code)').eq('faculty_id', userSession.db_id);
- const subs = rawSubs ? rawSubs.map(s => ({ id: s.id, master_id: s.master_subjects?.id, name: s.master_subjects?.name || 'Unknown', code: s.master_subjects?.code || 'Unknown', batch_name: s.academic_batches?.batch_name })) : [];
+ // 1. Subjects (merge direct assignment + schedule assignment)
+ const { data: directSubs } = await supabase.from('cohort_subjects').select('id, batch_id, academic_batches(batch_name), master_subjects(id, name, code)').eq('faculty_id', userSession.db_id);
+ const { data: scheduledSubs } = await supabase.from('class_schedule').select('subject_id').eq('faculty_id', userSession.db_id);
+ 
+ let allSubIds = (directSubs || []).map(s => s.id);
+ if (scheduledSubs && scheduledSubs.length > 0) {
+    allSubIds = [...new Set([...allSubIds, ...scheduledSubs.map(s => s.subject_id)])];
+ }
+ 
+ let finalSubs = directSubs || [];
+ const missingIds = allSubIds.filter(id => !finalSubs.find(s => s.id === id));
+ 
+ if (missingIds.length > 0) {
+    const { data: extraSubs } = await supabase.from('cohort_subjects').select('id, batch_id, academic_batches(batch_name), master_subjects(id, name, code)').in('id', missingIds);
+    if (extraSubs) {
+        finalSubs = [...finalSubs, ...extraSubs];
+    }
+ }
+
+ const subs = finalSubs.map(s => ({ id: s.id, master_id: s.master_subjects?.id, name: s.master_subjects?.name || 'Unknown', code: s.master_subjects?.code || 'Unknown', batch_name: s.academic_batches?.batch_name }));
  if (subs) {
  setSubjects(subs);
  sessionStorage.setItem(`fac_marks_subjects_${userSession.db_id}`, JSON.stringify(subs));
