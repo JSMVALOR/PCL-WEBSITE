@@ -44,6 +44,66 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     const [imagePreview, setImagePreview] = useState('');
     const [category, setCategory] = useState('Campus');
     
+    // Edit & Rearrange State
+    const [editingImage, setEditingImage] = useState(null);
+    const [editCrop, setEditCrop] = useState();
+    const [editCompletedCrop, setEditCompletedCrop] = useState(null);
+    const editImgRef = React.useRef(null);
+    const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+    const handleMove = async (index, direction) => {
+        if (direction === 'up' && index === 0) return;
+        if (direction === 'down' && index === images.length - 1) return;
+
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        const currentItem = images[index];
+        const targetItem = images[targetIndex];
+
+        // Swap their created_at timestamps to reorder them
+        const currentCreatedAt = currentItem.created_at;
+        const targetCreatedAt = targetItem.created_at;
+
+        try {
+            await Promise.all([
+                supabase.from('gallery_images').update({ created_at: targetCreatedAt }).eq('id', currentItem.id),
+                supabase.from('gallery_images').update({ created_at: currentCreatedAt }).eq('id', targetItem.id)
+            ]);
+            fetchImages();
+        } catch (e) {
+            console.error("Move error:", e);
+        }
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editCompletedCrop || !editCompletedCrop.width || !editCompletedCrop.height || !editImgRef.current) {
+            setEditingImage(null);
+            return;
+        }
+        setIsSavingEdit(true);
+        try {
+            const croppedBlob = await getCroppedImg(editImgRef.current, editCompletedCrop, `edited-${Date.now()}.jpg`);
+            if (!croppedBlob) throw new Error("Crop failed");
+
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+            const filePath = `public/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage.from('gallery').upload(filePath, croppedBlob, { upsert: false });
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(filePath);
+
+            await supabase.from('gallery_images').update({ image_url: publicUrl }).eq('id', editingImage.id);
+            setEditingImage(null);
+            fetchImages();
+        } catch (error) {
+            console.error("Failed to update crop:", error);
+            alert("Failed to update image. Cross-Origin (CORS) might be blocking the canvas.");
+        } finally {
+            setIsSavingEdit(false);
+        }
+    };
+
+    
     // Cropping State
     const [crop, setCrop] = useState();
     const [completedCrop, setCompletedCrop] = useState(null);
