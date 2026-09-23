@@ -26,7 +26,7 @@ const THEME_COLORS = {
     default: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' }
 };
 
-export default function FacultyMarks({ subjectContext }) {
+export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  const { userSession } = useERP();
  
  // Selection State
@@ -309,11 +309,11 @@ export default function FacultyMarks({ subjectContext }) {
  const highest = gradedCount > 0 ? Math.max(...Object.values(marksData)) : 0;
 
  return (
- <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full max-w-[1800px] mx-auto flex flex-col gap-8 pb-32 xl:pb-8' : 'flex flex-col gap-4'}`}>
+        <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  
  {/* HEADER */}
- {!subjectContext && (
+ {!subjectContext && !isEmbedded && (
  <PageHeader 
  icon="fa-solid fa-file-pen" 
  title="Marks Ledger" 

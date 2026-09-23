@@ -1,39 +1,93 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import PageHeader from "../../shared/PageHeader/PageHeader";
+import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import FacultyCourses from "../FacultyCourses/FacultyCourses";
+import FacultyAttendance from "../FacultyAttendance/FacultyAttendance";
+import FacultyTimetable from "../FacultyTimetable/FacultyTimetable";
+import FacultyAssignments from "../FacultyAssignments/FacultyAssignments";
+import FacultyMarks from "../FacultyMarks/FacultyMarks";
 
-export default function FacultyAcademicHub() {
-    const navigate = useNavigate();
+export default function FacultyAcademicHub({ isEmbedded = false }) {
+    const [activeTab, setActiveTab] = useState("courses");
 
-    const cards = [{"id": "courses", "title": "My Courses", "icon": "fa-book-open", "desc": "Manage course materials and syllabus."}, {"id": "timetable", "title": "Schedule", "icon": "fa-calendar-days", "desc": "View your daily classes and timetable."}, {"id": "attendance", "title": "Attendance", "icon": "fa-user-check", "desc": "Mark real-time student attendance via QR."}, {"id": "assignments", "title": "Assignments", "icon": "fa-file-lines", "desc": "Grade and manage student submissions."}, {"id": "marks", "title": "Internal Marks", "icon": "fa-spell-check", "desc": "Enter internal scores and analytics."}];
+    const tabs = [
+        { id: "courses", label: "My Courses", icon: "fa-book-open", desc: "Manage materials & syllabus", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", hover: "hover:bg-blue-500/20" },
+        { id: "attendance", label: "Attendance", icon: "fa-user-check", desc: "Mark real-time check-ins", color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", hover: "hover:bg-emerald-500/20" },
+        { id: "timetable", label: "Schedule", icon: "fa-calendar-days", desc: "Your daily class roster", color: "text-indigo-500", bg: "bg-indigo-500/10", border: "border-indigo-500/20", hover: "hover:bg-indigo-500/20" },
+        { id: "assignments", label: "Assignments", icon: "fa-file-lines", desc: "Grade student submissions", color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20", hover: "hover:bg-amber-500/20" },
+        { id: "marks", label: "Internal Marks", icon: "fa-spell-check", desc: "Enter scores & analytics", color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20", hover: "hover:bg-purple-500/20" }
+    ];
 
     return (
-        <div className="w-full animate-fade-in selection:bg-[#007AFF]/20 min-h-screen bg-transparent text-themeText dark:text-themeText">
-            <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8">
-                <PageHeader 
-                    icon="fa-solid fa-graduation-cap" 
-                    title="Academic Center" 
-                    subtitle="Manage your courses, schedule, and evaluations from one unified hub." 
-                />
+        <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
+            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+                
+                {/* 360-Degree Main Panel */}
+                <div className="flex-1 flex flex-col bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_30px_rgb(0,0,0,0.04)] dark:shadow-none rounded-3xl overflow-hidden relative">
+                    
+                    {/* Header Banner */}
+                    <div className="p-6 lg:p-8 border-b border-black/[0.04] dark:border-white/[0.08] flex flex-col gap-6 relative overflow-hidden shrink-0 bg-white/40 dark:bg-black/10">
+                        {/* Glowing Orb */}
+                        <div className="absolute -right-20 -top-20 w-64 h-64 bg-themeAccent/10 rounded-full blur-[80px] pointer-events-none"></div>
+                        <div className="absolute -left-20 -bottom-20 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none"></div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                    {cards.map(card => (
-                        <div 
-                            key={card.id}
-                            onClick={() => navigate(`/faculty/${card.id}`)}
-                            className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-6 lg:p-8 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition duration-300 group flex flex-col gap-4 cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
-                        >
-                            <div className="w-12 h-12 rounded-[1rem] bg-[#007AFF]/10 flex items-center justify-center border border-[#007AFF]/20 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                <i className={`fa-solid ${card.icon} text-themeAccent text-xl`}></i>
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold tracking-tight text-themeText dark:text-themeText mb-1">{card.title}</h3>
-                                <p className="text-xs font-medium text-themeTextSec leading-relaxed">{card.desc}</p>
+                        <div className="flex justify-between items-start relative z-10">
+                            <div className="flex items-center gap-5">
+                                <div className="w-20 h-20 rounded-2xl bg-white dark:bg-themeElevated border-2 border-black/5 dark:border-white/10 flex items-center justify-center shadow-sm">
+                                    <i className="fa-solid fa-chalkboard-user text-themeAccent text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-themeText mb-1 flex items-center gap-3">
+                                        Faculty Teaching Hub
+                                        <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center gap-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-themeAccent animate-pulse"></div>
+                                            Active Term
+                                        </span>
+                                    </h1>
+                                    <p className="text-xs font-bold text-themeTextSec tracking-normal flex items-center gap-3">
+                                        <span><i className="fa-solid fa-graduation-cap text-themeAccent/70 mr-1"></i> Your Centralized Teaching Control Center</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    ))}
+
+                        {/* Quick Navigation Cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 relative z-10 mt-2">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`p-4 rounded-xl flex flex-col gap-2 items-start transition-all text-left group border ${
+                                        activeTab === tab.id
+                                            ? `bg-white dark:bg-themeElevated border-black/10 dark:border-white/20 shadow-md ${tab.color}`
+                                            : `${tab.bg} ${tab.border} ${tab.color} ${tab.hover} opacity-70 hover:opacity-100`
+                                    }`}
+                                >
+                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${activeTab === tab.id ? `${tab.bg} border ${tab.border}` : 'bg-transparent'}`}>
+                                        <i className={`fa-solid ${tab.icon}`}></i>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-[13px] font-black tracking-tight mb-0.5">{tab.label}</h4>
+                                        <p className={`text-[10px] font-medium ${activeTab === tab.id ? 'text-themeTextSec' : 'opacity-70'}`}>{tab.desc}</p>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-8 bg-transparent relative">
+                        <div className="animate-fade-in w-full h-full max-w-7xl mx-auto">
+                            {activeTab === "courses" && <FacultyCourses isEmbedded={true} />}
+                            {activeTab === "attendance" && <FacultyAttendance isEmbedded={true} />}
+                            {activeTab === "timetable" && <FacultyTimetable isEmbedded={true} />}
+                            {activeTab === "assignments" && <FacultyAssignments isEmbedded={true} />}
+                            {activeTab === "marks" && <FacultyMarks isEmbedded={true} />}
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
     );

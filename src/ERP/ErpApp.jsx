@@ -185,8 +185,7 @@ export default function App() {
 
       roster: "Class Roster & Attendance",
       marks: "Official Marks Ledger",
-      courses: userSession?.role === 'faculty' ? "My Courses" : "Course Vault",
-      materials: userSession?.role === 'faculty' ? "My Courses" : "Course Vault",
+      teaching_hub: "Faculty Teaching Hub",
       mentorship: "Mentorship & Advising",
       grievances: "Grievance Cell",
       approvals: "Student Approvals",
@@ -293,7 +292,7 @@ export default function App() {
         case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
         
         // Mobile Hubs
-        case 'faculty_academic_center': return <FacultyAcademicHub />;
+        case 'teaching_hub': return <FacultyAcademicHub />;
         case 'faculty_advising_center': return <FacultyAdvisingHub />;
         case 'faculty_admin_center': return <FacultyAdminHub />;
 

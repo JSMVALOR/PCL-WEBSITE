@@ -13,14 +13,7 @@ export const FACULTY_NAV_MEGA = [
   {
     category: "Management",
     links: [
-      { 
-        id: "teaching_group", label: "Teaching Hub", icon: "fa-solid fa-graduation-cap", 
-        children: [
-          { id: "materials", label: "My Courses", icon: "fa-brands fa-google-drive" },
-          { id: "timetable", label: "Class Schedule", icon: "fa-solid fa-calendar-days" },
-          { id: "attendance", label: "Attendance & Roster", icon: "fa-solid fa-clipboard-user" }
-        ] 
-      }
+      { id: "teaching_hub", label: "Teaching Hub", icon: "fa-solid fa-graduation-cap" }
     ]
   },
   {
@@ -41,7 +34,7 @@ export const FACULTY_NAV_MEGA = [
 
 const BOTTOM_NAV_LINKS = [
   { id: "dashboard", label: "Home", icon: "fa-solid fa-house" },
-  { id: "materials", label: "Courses", icon: "fa-solid fa-book-open" },
+  { id: "teaching_hub", label: "Teaching Hub", icon: "fa-solid fa-graduation-cap" },
   { id: "mentorship", label: "Mentorship", icon: "fa-solid fa-people-arrows" },
   { id: "facultyleave", label: "Admin", icon: "fa-solid fa-building-columns" }
 ];

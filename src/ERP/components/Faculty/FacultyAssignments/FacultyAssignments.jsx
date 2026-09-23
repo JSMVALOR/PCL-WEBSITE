@@ -32,7 +32,7 @@ const THEME_COLORS = {
     default: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' }
 };
 
-export default function FacultyAssignments({ subjectContext }) {
+export default function FacultyAssignments({ subjectContext, isEmbedded = false }) {
  const { userSession } = useERP();
  const [assignments, setAssignments] = useState(() => {
  const cached = sessionStorage.getItem(`fac_assignments_${userSession?.db_id}`);
@@ -233,12 +233,12 @@ export default function FacultyAssignments({ subjectContext }) {
  }
  };
 
- return (
- <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full max-w-[1800px] mx-auto flex flex-col gap-8 pb-32 xl:pb-8' : 'flex flex-col gap-4'}`}>
- 
- {/* HEADER */}
- {!subjectContext && (
+    return (
+        <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
+                
+                {/* Header (Hidden if embedded or in subject context) */}
+                {!subjectContext && !isEmbedded && (
  <PageHeader 
  icon="fa-solid fa-file-signature"
  title="Assignment Engine"
