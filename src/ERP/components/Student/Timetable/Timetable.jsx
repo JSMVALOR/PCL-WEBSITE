@@ -107,29 +107,79 @@ export default function Timetable({ isEmbedded = false }) {
  return () => clearInterval(timer);
  }, []);
 
- const exportCalendar = () => {
- const fakeSchedule = schedule.reduce((acc, curr) => {
- acc[curr.day] = acc[curr.day] || [];
- acc[curr.day].push({
- course_code: curr.subject,
- course_name: curr.subject,
- faculty_name: curr.faculty,
- room: curr.room,
- start_time: curr.time,
- end_time: curr.endTime
- });
- return acc;
- }, {});
- const ics = generateCalendarICS(fakeSchedule, userSession?.batch_id || 'Timetable');
- const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `${userSession?.batch_id || 'Timetable'}.ics`;
- document.body.appendChild(a);
- a.click();
- document.body.removeChild(a);
- };
+    const exportCalendar = () => {
+        const header = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//PCL ERP//EN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH"
+        ].join("\r\n");
+
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayCodes = { 'Sunday': 'SU', 'Monday': 'MO', 'Tuesday': 'TU', 'Wednesday': 'WE', 'Thursday': 'TH', 'Friday': 'FR', 'Saturday': 'SA' };
+
+        const getNextDate = (dayName, timeStr) => {
+            const today = new Date();
+            const currentDay = today.getDay();
+            const targetDay = dayNames.indexOf(dayName);
+            let daysToAdd = targetDay - currentDay;
+            if (daysToAdd < 0) daysToAdd += 7;
+            const nextDate = new Date(today);
+            nextDate.setDate(today.getDate() + daysToAdd);
+            const [h, m] = timeStr.split(':');
+            nextDate.setHours(parseInt(h), parseInt(m), 0, 0);
+            return nextDate;
+        };
+
+        const formatIcsDate = (date) => {
+            const pad = (n) => n < 10 ? '0' + n : n;
+            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+        };
+
+        const body = schedule.map(curr => {
+            const uid = Math.random().toString(36).substring(2) + "@jsmerp.com";
+            const dtStamp = formatIcsDate(new Date()) + "Z";
+            const startDate = getNextDate(curr.day, curr.time);
+            const endDate = getNextDate(curr.day, curr.endTime);
+            
+            const dtStart = formatIcsDate(startDate);
+            const dtEnd = formatIcsDate(endDate);
+
+            // RRULE for Saturday vs other days
+            let rrule = `FREQ=WEEKLY;BYDAY=${dayCodes[curr.day]}`;
+            if (curr.day === 'Saturday') {
+                // Classes only on 1st, 3rd, 5th Saturday (2nd and 4th are holidays)
+                rrule = `FREQ=MONTHLY;BYDAY=1SA,3SA,5SA`;
+            }
+
+            return [
+                "BEGIN:VEVENT",
+                `UID:${uid}`,
+                `DTSTAMP:${dtStamp}`,
+                `DTSTART;TZID=Asia/Kolkata:${dtStart}`,
+                `DTEND;TZID=Asia/Kolkata:${dtEnd}`,
+                `RRULE:${rrule}`,
+                `SUMMARY:${curr.subject}`,
+                `DESCRIPTION:Faculty: ${curr.faculty}`,
+                `LOCATION:${curr.room}`,
+                "END:VEVENT"
+            ].join("\r\n");
+        }).join("\r\n");
+
+        const footer = "\r\nEND:VCALENDAR";
+        const icsContent = `${header}\r\n${body}${footer}`;
+
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Timetable_${userSession?.academic_batch || 'Export'}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.erpDialog?.alert("Calendar Exported!", "You can now import this .ics file into Google Calendar or Apple Calendar.");
+    };
 
  const renderTodayTimeline = () => {
  // Fallback to Monday if it's Sunday, just so the demo isn't empty, otherwise use exact today
