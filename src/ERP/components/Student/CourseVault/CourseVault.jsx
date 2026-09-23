@@ -165,19 +165,11 @@ export default function CourseVault({ isEmbedded = false }) {
 
     let processedSubjects = subjects.map(s => ({ ...s, _isFaded: !s._isAssigned }));
 
-    // Semester Filter (Fade instead of hide)
+    // Semester Filter (Hide instead of fade)
     if (semesterFilter === "current" && userSession?.semester) {
-        processedSubjects.forEach(s => {
-            if (s.master_subjects?.target_semester !== parseInt(userSession.semester)) {
-                s._isFaded = true;
-            }
-        });
+        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester === parseInt(userSession.semester));
     } else if (semesterFilter === "previous" && userSession?.semester) {
-        processedSubjects.forEach(s => {
-            if (s.master_subjects?.target_semester >= parseInt(userSession.semester)) {
-                s._isFaded = true;
-            }
-        });
+        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester < parseInt(userSession.semester));
     }
 
     // Search (Hide entirely)
@@ -300,72 +292,98 @@ export default function CourseVault({ isEmbedded = false }) {
                 )}
 
                 {/* CONTENT GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in pb-12">
+                <div className="flex flex-col gap-12 animate-fade-in pb-12">
                     {isLoading ? (
-                        <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 animate-pulse"></div>
                             <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 animate-pulse hidden md:block"></div>
                             <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-white/20 animate-pulse hidden lg:block"></div>
-                        </>
+                        </div>
                     ) : processedSubjects.length === 0 ? (
                         <div className="col-span-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
                             <i className={`fa-brands fa-google-drive text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4`}></i>
                             <h3 className={`font-bold text-xl lg:text-2xl text-themeText dark:text-themeText tracking-tight`}>No Courses Found</h3>
-                            <p className="text-themeTextSec text-xs lg:text-sm mt-2 max-w-sm">You are not assigned to any courses yet.</p>
+                            <p className="text-themeTextSec text-xs lg:text-sm mt-2 max-w-sm">No courses match your current filters.</p>
                         </div>
                     ) : (
-                        processedSubjects.map((sub) => {
-                            const items = materialsBySubject[sub.id] || [];
-                            const masterSubject = sub.master_subjects;
-                            if (!masterSubject) return null;
-                            const hasSyllabus = masterSubject.syllabus && Object.keys(masterSubject.syllabus).length > 0;
-
-                            return (
-                                <div key={sub.id} className={`flex flex-col bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 shadow-sm rounded-[2rem] transition-all hover:shadow-md hover:border-black/10 dark:hover:border-white/20 overflow-hidden ${sub._isFaded ? 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0' : ''}`}>
-                                    
-                                    <div className="flex items-start justify-between gap-4 border-b border-black/5 dark:border-white/10 p-5 bg-black/[0.02] dark:bg-white/[0.02]">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
-                                                <i className="fa-solid fa-folder-open text-amber-500 text-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h3 className="font-bold tracking-tight text-sm text-themeText dark:text-white leading-tight mb-0.5 line-clamp-2">
-                                                    {masterSubject.name}
-                                                </h3>
-                                                <span className="text-[9px] font-black tracking-widest uppercase text-themeTextSec">{masterSubject.code}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        {hasSyllabus && (
-                                            <button 
-                                                onClick={() => setActiveSyllabusSubject(masterSubject)}
-                                                className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-themeTextSec hover:text-themeText dark:hover:text-white transition flex items-center justify-center shrink-0"
-                                                title="View Syllabus"
-                                            >
-                                                <i className="fa-solid fa-book-open text-xs"></i>
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    <div className="p-4 flex-1 flex flex-col">
-                                        <div className="flex-1 flex flex-col items-center justify-center py-8">
-                                            <button 
-                                                onClick={() => items.length > 0 && setActiveMaterialsSubject({ subject: masterSubject, items: items })}
-                                                disabled={items.length === 0}
-                                                className={`px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition shadow-sm flex items-center gap-2 ${
-                                                    items.length === 0 
-                                                    ? 'bg-black/5 dark:bg-white/5 text-themeTextSec cursor-not-allowed opacity-70' 
-                                                    : 'bg-themeAccent hover:bg-themeAccent/90 text-themeText active:scale-[0.98]'
-                                                }`}
-                                            >
-                                                <i className="fa-solid fa-layer-group"></i> 
-                                                {items.length === 0 ? (!sub._isAssigned ? "Course Not Active" : "No Materials Yet") : `View Materials (${items.length})`}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
+                        Object.entries(
+                            processedSubjects.reduce((acc, curr) => {
+                                const sem = curr.master_subjects?.target_semester || 'Other';
+                                if (!acc[sem]) acc[sem] = [];
+                                acc[sem].push(curr);
+                                return acc;
+                            }, {})
+                        )
+                        .sort(([semA], [semB]) => {
+                            if (semA === 'Other') return 1;
+                            if (semB === 'Other') return -1;
+                            return parseInt(semA) - parseInt(semB);
                         })
+                        .map(([sem, semSubjects]) => (
+                            <div key={sem} className="flex flex-col gap-6">
+                                <div className="flex items-center gap-4">
+                                    <h3 className="text-lg font-black tracking-tight text-themeText dark:text-white">
+                                        {sem === 'Other' ? 'Additional Courses' : `Semester ${sem}`}
+                                    </h3>
+                                    <div className="h-px bg-black/10 dark:bg-white/10 flex-1"></div>
+                                </div>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {semSubjects.map((sub) => {
+                                        const items = materialsBySubject[sub.id] || [];
+                                        const masterSubject = sub.master_subjects;
+                                        if (!masterSubject) return null;
+                                        const hasSyllabus = masterSubject.syllabus && Object.keys(masterSubject.syllabus).length > 0;
+
+                                        return (
+                                            <div key={sub.id} className={`flex flex-col bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 shadow-sm rounded-[2rem] transition-all hover:shadow-md hover:border-black/10 dark:hover:border-white/20 overflow-hidden ${sub._isFaded ? 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0' : ''}`}>
+                                                
+                                                <div className="flex items-start justify-between gap-4 border-b border-black/5 dark:border-white/10 p-5 bg-black/[0.02] dark:bg-white/[0.02]">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shrink-0">
+                                                            <i className="fa-solid fa-folder-open text-amber-500 text-lg"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="font-bold tracking-tight text-sm text-themeText dark:text-white leading-tight mb-0.5 line-clamp-2">
+                                                                {masterSubject.name}
+                                                            </h3>
+                                                            <span className="text-[9px] font-black tracking-widest uppercase text-themeTextSec">{masterSubject.code}</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {hasSyllabus && (
+                                                        <button 
+                                                            onClick={() => setActiveSyllabusSubject(masterSubject)}
+                                                            className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-themeTextSec hover:text-themeText dark:hover:text-white transition flex items-center justify-center shrink-0"
+                                                            title="View Syllabus"
+                                                        >
+                                                            <i className="fa-solid fa-book-open text-xs"></i>
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                <div className="p-4 flex-1 flex flex-col">
+                                                    <div className="flex-1 flex flex-col items-center justify-center py-8">
+                                                        <button 
+                                                            onClick={() => items.length > 0 && setActiveMaterialsSubject({ subject: masterSubject, items: items })}
+                                                            disabled={items.length === 0}
+                                                            className={`px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition shadow-sm flex items-center gap-2 ${
+                                                                items.length === 0 
+                                                                ? 'bg-black/5 dark:bg-white/5 text-themeTextSec cursor-not-allowed opacity-70' 
+                                                                : 'bg-themeAccent hover:bg-themeAccent/90 text-themeText active:scale-[0.98]'
+                                                            }`}
+                                                        >
+                                                            <i className="fa-solid fa-layer-group"></i> 
+                                                            {items.length === 0 ? (!sub._isAssigned ? "Course Not Active" : "No Materials Yet") : `View Materials (${items.length})`}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))
                     )}
                 </div>
 
