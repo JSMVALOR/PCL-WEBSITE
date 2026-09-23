@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 import { theme } from '../../../../Shared/theme';
@@ -312,7 +313,7 @@ export default function CourseVault({ isEmbedded = false }) {
                     )}
                 </div>
 
-                {previewUrl && (
+            {previewUrl && createPortal(
                 <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-xl flex items-center justify-center p-4 lg:p-8">
                     <div className="w-full max-w-5xl h-[85vh] bg-themeApp rounded-3xl overflow-hidden flex flex-col relative border border-white/10 shadow-2xl">
                         <div className="flex justify-between items-center px-6 py-4 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
@@ -325,11 +326,12 @@ export default function CourseVault({ isEmbedded = false }) {
                         </div>
                         <iframe src={previewUrl} className="w-full flex-1 border-none bg-white"></iframe>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
             
             
-            {activeMaterialsSubject && (
+            {activeMaterialsSubject && createPortal(
                 <div className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-xl flex items-center justify-center p-4 lg:p-8 animate-fade-in">
                     <div className="w-full max-w-2xl max-h-[80vh] bg-themeApp rounded-3xl overflow-hidden flex flex-col relative border border-white/10 shadow-2xl">
                         <div className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5">
@@ -383,7 +385,8 @@ export default function CourseVault({ isEmbedded = false }) {
                             )}
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {activeSyllabusSubject && (
