@@ -4,10 +4,9 @@ import SidebarFramework from "../../shared/Navigation/SidebarFramework";
 
 export const STUDENT_NAV_MEGA = [
   {
-    category: "Main",
+    category: "Command Center",
     links: [
-      { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-house" },
-      { id: "notices", label: "Notice Board", icon: "fa-solid fa-thumbtack" },
+      { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
       { id: "academic_center", label: "Academics", icon: "fa-solid fa-graduation-cap" },
       {
         id: "mentorship_group", label: "Mentorship", icon: "fa-solid fa-handshake",
@@ -28,8 +27,9 @@ export const STUDENT_NAV_MEGA = [
       {
         id: "support_group", label: "Support & Admin", icon: "fa-solid fa-headset",
         children: [
-          { id: "fees", label: "Fee Management", icon: "fa-solid fa-indian-rupee-sign" },
-          { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
+          { id: "fees", label: "Fee Ledgers", icon: "fa-solid fa-indian-rupee-sign" },
+          { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" },
+          { id: "notices", label: "Notice Board", icon: "fa-solid fa-thumbtack" }
         ]
       }
     ]
