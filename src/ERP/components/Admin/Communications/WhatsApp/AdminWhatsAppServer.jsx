@@ -2,37 +2,61 @@ import React, { useState, useEffect } from 'react';
 import PageHeader from '../../../shared/PageHeader/PageHeader';
 
 export default function AdminWhatsAppServer() {
-    const [status, setStatus] = useState('LOADING'); // LOADING, DISCONNECTED, INITIALIZING, QR_READY, AUTHENTICATED, FAILED
+    const [status, setStatus] = useState('LOADING'); // LOADING, DISCONNECTED, INITIALIZING, QR_READY, AUTHENTICATED, FAILED, WAKING_UP
     const [qrCode, setQrCode] = useState(null);
     const [testNumber, setTestNumber] = useState('');
     const [testMessage, setTestMessage] = useState('');
     const [isSending, setIsSending] = useState(false);
 
+    // Fallback to localhost if not set in .env
+    const SERVER_URL = import.meta.env.VITE_WHATSAPP_SERVER_URL || 'http://localhost:3001';
+
     // Poll server status
     useEffect(() => {
+        let isFetching = false;
         const fetchStatus = async () => {
+            if (isFetching) return;
+            isFetching = true;
+            
             try {
-                const res = await fetch('http://localhost:3001/api/status');
-                if (!res.ok) throw new Error('Server unreachable');
-                const data = await res.json();
-                setStatus(data.status);
-                setQrCode(data.qrCode);
+                // Set a 5 second timeout to detect sleeping Render instance
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                
+                const res = await fetch(`${SERVER_URL}/api/status`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (res.status === 503 || res.status === 502) {
+                    setStatus('WAKING_UP');
+                } else if (!res.ok) {
+                    throw new Error('Server unreachable');
+                } else {
+                    const data = await res.json();
+                    setStatus(data.status);
+                    setQrCode(data.qrCode);
+                }
             } catch (err) {
-                console.error("WhatsApp Server offline:", err);
-                setStatus('DISCONNECTED');
+                if (err.name === 'AbortError') {
+                    setStatus('WAKING_UP');
+                } else {
+                    console.error("WhatsApp Server offline:", err);
+                    setStatus('DISCONNECTED');
+                }
+            } finally {
+                isFetching = false;
             }
         };
 
         fetchStatus();
         const interval = setInterval(fetchStatus, 3000); // Check every 3s
         return () => clearInterval(interval);
-    }, []);
+    }, [SERVER_URL]);
 
     const handleSendTest = async (e) => {
         e.preventDefault();
         setIsSending(true);
         try {
-            const res = await fetch('http://localhost:3001/api/send', {
+            const res = await fetch(`${SERVER_URL}/api/send`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ number: testNumber, message: testMessage })
@@ -54,7 +78,20 @@ export default function AdminWhatsAppServer() {
 
     return (
         <div className="flex flex-col min-h-screen pb-20">
-            <PageHeader title="WhatsApp Automation Engine" subtitle="Scan to securely connect your device and send automated alerts without official API limits." icon="fa-whatsapp" />
+                        <PageHeader title="WhatsApp Automation Engine" subtitle="Scan to securely connect your device and send automated alerts without official API limits." icon="fa-whatsapp" />
+
+            {/* EXPERIMENTAL WARNING BANNER */}
+            <div className="mx-4 md:mx-6 lg:mx-8 mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row gap-4 items-start md:items-center max-w-[1600px] xl:mx-auto">
+                <div className="w-10 h-10 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center flex-shrink-0">
+                    <i className="fa-solid fa-flask text-lg"></i>
+                </div>
+                <div>
+                    <h4 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest mb-1">Experimental Cloud Tier</h4>
+                    <p className="text-xs text-themeTextSec font-medium">
+                        This engine runs on a free cloud environment (Render). It may take <strong>45-60 seconds to wake up</strong> if it has been idle. You must provide the <code>DATABASE_URL</code> in the Render dashboard to ensure the session survives daily restarts.
+                    </p>
+                </div>
+            </div>
 
             <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] w-full mx-auto animate-fade-in flex flex-col gap-6">
                 
@@ -75,8 +112,9 @@ export default function AdminWhatsAppServer() {
                         <div>
                             <h3 className="text-sm font-black uppercase tracking-widest text-themeText">Engine Status</h3>
                             <p className="text-xs font-medium text-themeTextSec mt-1">
-                                {status === 'AUTHENTICATED' ? 'Connected securely via Chromium headless engine.' : 
-                                 status === 'DISCONNECTED' ? 'Local WhatsApp Server is offline. Start the Node.js process on port 3001.' : 
+                                                                {status === 'AUTHENTICATED' ? 'Connected securely via Chromium headless engine.' : 
+                                 status === 'WAKING_UP' ? 'Waking up remote cloud engine (this can take up to 60 seconds)...' :
+                                 status === 'DISCONNECTED' ? 'Server is offline. Ensure it is deployed to Render.' : 
                                  status === 'QR_READY' ? 'Waiting for device authorization scan...' :
                                  'Initializing browser engine...'}
                             </p>
@@ -114,6 +152,12 @@ export default function AdminWhatsAppServer() {
                                 <p className="text-sm text-themeTextSec text-center max-w-sm">
                                     Your WhatsApp account is successfully connected to the headless engine. Automated notifications (like absent alerts) will now be dispatched instantly.
                                 </p>
+                            </div>
+                                                ) : status === 'WAKING_UP' ? (
+                            <div className="flex flex-col items-center text-center">
+                                <i className="fa-solid fa-cloud-arrow-up fa-bounce text-4xl text-themeAccent mb-4"></i>
+                                <h2 className="text-lg font-bold text-themeText mb-2">Waking Up Cloud Server</h2>
+                                <p className="text-sm text-themeTextSec max-w-sm">Render's free tier sleeps after 15 minutes of inactivity. Please wait about 45-60 seconds for the Chromium engine to boot up.</p>
                             </div>
                         ) : status === 'DISCONNECTED' ? (
                             <div className="flex flex-col items-center text-center opacity-50">
