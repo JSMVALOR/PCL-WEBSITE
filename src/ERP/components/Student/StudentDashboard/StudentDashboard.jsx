@@ -55,7 +55,6 @@ export default function StudentDashboard({ setActiveTab }) {
 
  const [profile, setProfile] = useState(null);
  const [mentor, setMentor] = useState(null);
- const [dashboardNotices, setDashboardNotices] = useState([]);
  const [academicCycle, setAcademicCycle] = useState('normal'); // 'normal', 'exams', 'moots', 'internships', 'fees', 'results'
 
  const [stats, setStats] = useState({
@@ -85,9 +84,6 @@ export default function StudentDashboard({ setActiveTab }) {
 
  const { data: mData } = await supabase.from('mentorship').select('faculty_id, profiles!mentorship_faculty_id_fkey(full_name, erp_id, profile_picture_url)').eq('student_id', sid).eq('status', 'active').single();
  if (mData?.profiles) setMentor(mData.profiles);
-
- const { data: nData } = await supabase.from('notices').select('*').order('is_pinned', { ascending: false }).order('created_at', { ascending: false }).limit(5).catch(() => ({ data: [] }));
- if (nData) setDashboardNotices(nData);
 
  // Fetch Attendance
  const { data: attData } = await supabase.from('attendance_records').select('entry_status, exit_status').eq('student_id', sid);
@@ -165,7 +161,7 @@ export default function StudentDashboard({ setActiveTab }) {
                                 <button onClick={() => setActiveTab('notices')} className="text-themeAccent text-xs hover:underline font-bold">View All</button>
                             </div>
                             <div className="flex flex-col gap-3">
-                                {dashboardNotices.length > 0 ? dashboardNotices.map((n, i) => (
+                                {notices.length > 0 ? notices.slice(0, 5).map((n, i) => (
                                     <div key={i} className="p-4 bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
                                         <h4 className="text-sm font-bold text-themeText mb-1">{n.title}</h4>
                                         <p className="text-xs text-themeTextSec truncate">{n.content}</p>
