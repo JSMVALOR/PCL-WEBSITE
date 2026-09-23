@@ -322,7 +322,7 @@ export default function AdminNotices({ isHubView = false }) {
  <PageHeader icon="fa-solid fa-bullhorn" title="Broadcast & Events Center" subtitle="Publish official notices across the ERP and manage the academic calendar." />
  )}
 
- <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/85 backdrop-blur-md rounded-2xl border border-themeBorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
+ <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
  <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-themeText dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-themePanel/85 backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-satellite-dish"></i> Notices
  </button>

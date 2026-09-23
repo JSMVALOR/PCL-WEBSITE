@@ -298,7 +298,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <PageHeader icon="fa-solid fa-scale-balanced" title="Central Approvals Center" subtitle="Manage student profile changes, mentor requests, faculty leaves, and document verifications." />
  
  {/* Tabs */}
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/85 backdrop-blur-md rounded-2xl border border-themeBorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium">
+ <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium">
  <button type="button" 
  onClick={() => setActiveTab('profile_updates')}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'profile_updates' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
@@ -332,12 +332,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'faculty_leaves' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {facultyLeaves.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending leave requests from Faculty.</p>
  </div>
  ) : (
  facultyLeaves.map(req => (
- <div key={req.id} className={`${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={req.id} className={`${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -348,11 +348,11 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
  
  <div className="flex gap-2">
- <span className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.leave_type}</span>
- <span className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.days} Days</span>
+ <span className="bg-themePanel/85 backdrop-blur-2xl border border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.leave_type}</span>
+ <span className="bg-themePanel/85 backdrop-blur-2xl border border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.days} Days</span>
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <p className="text-xs text-themeText italic">"{req.reason}"</p>
  </div>
 
@@ -390,12 +390,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'escalated_grievances' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {grievances.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No escalated grievances require admin attention.</p>
  </div>
  ) : (
  grievances.map(g => (
- <div key={g.id} className={"bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={g.id} className={"bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -409,7 +409,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(g.status)}
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <p className="text-xs text-themeText">"{g.description}"</p>
  </div>
 
@@ -444,12 +444,12 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {activeTab === 'profile_updates' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {profileUpdates.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending profile update requests.</p>
  </div>
  ) : (
  profileUpdates.map(req => (
- <div key={req.id} className={"bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-amber-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={req.id} className={"bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-amber-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -460,7 +460,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(req.status)}
  </div>
  
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <p className="text-[13px] font-medium text-themeTextSec mb-2 border-b border-black/5 dark:border-white/10 pb-1">Requested Changes</p>
  <ul className="text-xs text-themeText flex flex-col gap-1.5">
  {req.requested_changes?.phone && <li><span className="text-themeTextSec">Phone:</span> {req.requested_changes.phone}</li>}

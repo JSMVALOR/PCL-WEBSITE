@@ -124,7 +124,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
 
  <div className="mb-6">
  <p className="text-[13px] font-medium text-themeTextSec mb-2">Reason Provided</p>
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-themeBorder dark:border-white/5Strong">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-black/[0.04] dark:border-white/[0.08]Strong">
  <p className="text-sm text-themeText italic leading-relaxed">"{request.reason}"</p>
  </div>
  </div>
@@ -200,7 +200,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <button type="button" 
  onClick={() => handleAction('Reject')}
  disabled={isProcessing}
- className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-themeText dark:text-white text-rose-500 border border-themeBorder dark:border-white/5Strong rounded-xl text-[14px] font-medium tracking-normal transition"
+ className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-themeText dark:text-white text-rose-500 border border-black/[0.04] dark:border-white/[0.08]Strong rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Reject
  </button>

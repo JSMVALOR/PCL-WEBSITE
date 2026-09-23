@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
-import { sendSystemEmail } from "../../../../lib/EmailService";
+import { sendSystemEmail } from "../../../lib/EmailService";
 
 export default function AdminWebsiteInquiries({ isEmbedded = false }) {
     const [inquiries, setInquiries] = useState([]);

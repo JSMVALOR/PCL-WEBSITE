@@ -50,7 +50,7 @@ export default function LeaveCalendar({}) {
  
  // Blank days before 1st
  for (let i = 0; i < firstDay; i++) {
- days.push(<div key={`blank-${i}`} className="min-h-[100px] border border-themeBorder dark:border-white/5/50 bg-black/5 dark:bg-white/5/30 rounded-xl"></div>);
+ days.push(<div key={`blank-${i}`} className="min-h-[100px] border border-black/[0.04] dark:border-white/[0.08]/50 bg-black/5 dark:bg-white/5/30 rounded-xl"></div>);
  }
 
  // Days of month

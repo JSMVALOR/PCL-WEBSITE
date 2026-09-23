@@ -8,8 +8,7 @@ export const ADMIN_NAV_GROUPS = [
     category: "Command Center",
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
-      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
-      { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" }
+      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" }
     ]
   },
   {
@@ -182,12 +181,17 @@ export const ADMIN_NAV_MEGA = [
         ]
       },
       {
+        id: "comms_group", label: "Communications", icon: "fa-solid fa-tower-broadcast",
+        children: [
+          { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
+          { id: "whatsapp", label: "WhatsApp Server", icon: "fa-brands fa-whatsapp" }
+        ]
+      },
+      {
         id: "it_group", label: "IT & Systems", icon: "fa-solid fa-gears",
         children: [
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" },
           { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
-          { id: "whatsapp", label: "WhatsApp Server", icon: "fa-brands fa-whatsapp" },
-          { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
           { id: "parent-preview", label: "Parent View", icon: "fa-solid fa-user-group" }
         ]
       }

@@ -29,7 +29,7 @@ export default function AdminMentorship({ isEmbedded = false,  isHubView = false
  <PageHeader icon="fa-solid fa-server" title="Mentorship Engine" subtitle="Centralized administration for faculty-student mentor mapping." />
  )}
 
- <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/85 backdrop-blur-md rounded-2xl border border-themeBorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
+ <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
  {tabs.map((tab) => (
  <button type="button"
  key={tab.id}

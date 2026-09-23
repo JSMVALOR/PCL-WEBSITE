@@ -330,7 +330,7 @@ export default function AdminPayroll() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
                 
                 {/* CONFIGURATION PANEL */}
-                <div className="lg:col-span-1 bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl p-6 flex flex-col h-fit">
+                <div className="lg:col-span-1 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl p-6 flex flex-col h-fit">
                     <h2 className="text-xl font-black text-themeText dark:text-white tracking-tight mb-2">Policy Engine</h2>
                     <p className="text-xs font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest mb-6">Automated LOP Criteria</p>
                     
@@ -382,7 +382,7 @@ export default function AdminPayroll() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {faculty.map(f => (
-                                <div key={f.id} className="bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-6 flex flex-col gap-6 relative overflow-hidden group">
+                                <div key={f.id} className="bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-6 relative overflow-hidden group">
                                     {f.isProcessed && (
                                         <div className="absolute top-4 right-4 text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
                                             Paid
@@ -403,7 +403,7 @@ export default function AdminPayroll() {
                                         </div>
                                     </div>
                                     
-                                    <div className="bg-white dark:bg-[#121212] rounded-xl p-4 border border-themeBorder dark:border-white/5">
+                                    <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-xl p-4 border border-black/[0.04] dark:border-white/[0.08]">
                                         <div className="flex flex-col mb-3">
                                             <div className="flex justify-between items-center mb-1">
                                                 <div className="flex items-center gap-2">
@@ -503,9 +503,9 @@ export default function AdminPayroll() {
             {/* PAYMENT & TAX QUESTIONNAIRE MODAL */}
             {showPaymentModal && selectedFac && (
                 <div className="fixed inset-0 z-[9999] bg-gray-50 dark:bg-[#0A0A0A] flex flex-col animate-fade-in overflow-hidden">
-                    <div className="w-full h-full bg-white dark:bg-[#121212] flex flex-col">
+                    <div className="w-full h-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex flex-col">
                         
-                        <div className="px-6 py-6 lg:px-12 lg:py-8 border-b border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] flex justify-between items-center shrink-0">
+                        <div className="px-6 py-6 lg:px-12 lg:py-8 border-b border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-between items-center shrink-0">
                             <div>
                                 <h3 className="text-2xl lg:text-3xl font-black text-themeText dark:text-white">Process Payroll</h3>
                                 <p className="text-xs lg:text-sm font-bold tracking-widest text-themeTextSec dark:text-white/50 uppercase mt-2">Tax & Transaction Questionnaire for {selectedFac.full_name}</p>
@@ -531,11 +531,11 @@ export default function AdminPayroll() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Transaction Date *</label>
-                                        <input type="date" required value={paymentForm.transactionDate} onChange={e => setPaymentForm({...paymentForm, transactionDate: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
+                                        <input type="date" required value={paymentForm.transactionDate} onChange={e => setPaymentForm({...paymentForm, transactionDate: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Payment Mode *</label>
-                                        <select required value={paymentForm.paymentMode} onChange={e => setPaymentForm({...paymentForm, paymentMode: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500 appearance-none">
+                                        <select required value={paymentForm.paymentMode} onChange={e => setPaymentForm({...paymentForm, paymentMode: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500 appearance-none">
                                             <option value="Bank Transfer (NEFT/RTGS)">Bank Transfer</option>
                                             <option value="UPI">UPI</option>
                                             <option value="Cheque">Cheque</option>
@@ -545,7 +545,7 @@ export default function AdminPayroll() {
 
                                 <div>
                                     <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Transaction Ref / ID *</label>
-                                    <input type="text" required placeholder="e.g. UTR123456789" value={paymentForm.transactionId} onChange={e => setPaymentForm({...paymentForm, transactionId: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
+                                    <input type="text" required placeholder="e.g. UTR123456789" value={paymentForm.transactionId} onChange={e => setPaymentForm({...paymentForm, transactionId: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                                 </div>
 
                                 <div className="w-full h-px bg-white/5 my-2"></div>
@@ -555,15 +555,15 @@ export default function AdminPayroll() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Professional Tax (₹)</label>
-                                        <input type="number" required value={paymentForm.professionalTax} onChange={e => setPaymentForm({...paymentForm, professionalTax: Number(e.target.value)})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
+                                        <input type="number" required value={paymentForm.professionalTax} onChange={e => setPaymentForm({...paymentForm, professionalTax: Number(e.target.value)})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                                     </div>
                                     <div>
                                         <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">TDS (%)</label>
-                                        <input type="number" step="0.1" required value={paymentForm.tdsPercentage} onChange={e => setPaymentForm({...paymentForm, tdsPercentage: Number(e.target.value)})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
+                                        <input type="number" step="0.1" required value={paymentForm.tdsPercentage} onChange={e => setPaymentForm({...paymentForm, tdsPercentage: Number(e.target.value)})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                                     </div>
                                 </div>
 
-                                <div className="bg-gray-100 dark:bg-themeApp p-4 rounded-xl border border-themeBorder dark:border-white/5 flex justify-between items-center">
+                                <div className="bg-black/5 dark:bg-themeApp p-4 rounded-xl border border-black/[0.04] dark:border-white/[0.08] flex justify-between items-center">
                                     <div>
                                         <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">TDS Amount</p>
                                         <p className="text-xs font-medium text-themeTextSec dark:text-white/30">Taxable: {formatCurrency(selectedFac.netPay)}</p>
@@ -579,7 +579,7 @@ export default function AdminPayroll() {
                         </div>
                         </div>
 
-                        <div className="p-6 lg:p-8 border-t border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] flex justify-center shrink-0">
+                        <div className="p-6 lg:p-8 border-t border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-center shrink-0">
                             <div className="w-full max-w-3xl flex justify-end gap-4">
                                 <button onClick={() => setShowPaymentModal(false)} className="px-8 py-4 bg-white/5 hover:bg-white/10 rounded-xl text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white text-sm font-black transition-colors">Cancel</button>
                                 <button form="payment-form" type="submit" disabled={isProcessing} className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 rounded-xl text-black text-sm font-black transition-colors disabled:opacity-50 flex items-center gap-2">

@@ -179,7 +179,7 @@ export default function AdminAttendanceIssues() {
                                 </div>
                             ) : (
                                 appeals.map(appeal => (
-                                    <div key={appeal.id} className="bg-white/70 dark:bg-[#121212]/70 backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 flex flex-col gap-4">
+                                    <div key={appeal.id} className="bg-white/70 dark:bg-[#121212]/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-6 flex flex-col gap-4">
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border mb-2 inline-block ${

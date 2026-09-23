@@ -379,7 +379,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  const currentList = getSortedFilteredList();
 
  return (
- <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText dark:text-white" : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText dark:text-white" : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
 
  {/* 1. MASTER HEADER */}
@@ -409,7 +409,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex justify-end mb-4">
  <button type="button"
  onClick={() => setShowProvisionModal(true)}
- className="bg-amber-500 hover:bg-amber-500Muted text-themeText dark:text-white px-6 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex justify-center items-center gap-2 border border-themeBorder dark:border-white/5Accent active:scale-[0.98]"
+ className="bg-amber-500 hover:bg-amber-500Muted text-themeText dark:text-white px-6 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex justify-center items-center gap-2 border border-black/[0.04] dark:border-white/[0.08]Accent active:scale-[0.98]"
  >
  <i className="fa-solid fa-user-plus text-base"></i> Rapid Provisioning
  </button>
@@ -420,19 +420,19 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex flex-col gap-4 lg:gap-6 animate-fade-in">
 
  {/* Top Controls: Tabs, Search, Sort */}
- <div className={`${theme.layout.panel} rounded-2xl p-4 lg:p-5 flex flex-col lg:flex-row justify-between items-center gap-4 border border-themeBorder dark:border-white/5`}>
+ <div className={`${theme.layout.panel} rounded-2xl p-4 lg:p-5 flex flex-col lg:flex-row justify-between items-center gap-4 border border-black/[0.04] dark:border-white/[0.08]`}>
  
  {/* Tabs */}
- <div className="flex p-1.5 bg-themeApp rounded-2xl border border-themeBorder dark:border-white/5 w-full lg:w-auto shrink-0">
+ <div className="flex p-1.5 bg-themeApp rounded-2xl border border-black/[0.04] dark:border-white/[0.08] w-full lg:w-auto shrink-0">
  <button type="button"
  onClick={() => setActiveTab('students')}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'students' ? "bg-gray-100 dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/5" : "text-themeTextSec dark:text-white/50 opacity-70 hover:text-themeText dark:text-white hover:bg-gray-100 dark:bg-themeApp/50 border border-transparent"}`}
+ className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'students' ? "bg-black/5 dark:bg-themeApp text-amber-500 border border-black/[0.04] dark:border-white/[0.08]" : "text-themeTextSec dark:text-white/50 opacity-70 hover:text-themeText dark:text-white hover:bg-black/5 dark:bg-themeApp/50 border border-transparent"}`}
  >
  Students <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec dark:text-white/50">{usersData.students.length}</span>
  </button>
  <button type="button"
  onClick={() => setActiveTab('faculty')}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'faculty' ? "bg-gray-100 dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/5" : "text-themeTextSec dark:text-white/50 opacity-70 hover:text-themeText dark:text-white hover:bg-gray-100 dark:bg-themeApp/50 border border-transparent"}`}
+ className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'faculty' ? "bg-black/5 dark:bg-themeApp text-amber-500 border border-black/[0.04] dark:border-white/[0.08]" : "text-themeTextSec dark:text-white/50 opacity-70 hover:text-themeText dark:text-white hover:bg-black/5 dark:bg-themeApp/50 border border-transparent"}`}
  >
  Faculty <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec dark:text-white/50">{usersData.faculty.length}</span>
  </button>
@@ -448,7 +448,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  placeholder="Search Name, ID, Email..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl pl-10 pr-4 py-3 text-xs lg:text-sm font-bold text-themeText dark:text-white focus:bg-gray-100 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition placeholder:text-neutral-600"
+ className="w-full bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl pl-10 pr-4 py-3 text-xs lg:text-sm font-bold text-themeText dark:text-white focus:bg-black/5 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition placeholder:text-neutral-600"
  />
  </div>
 
@@ -457,7 +457,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <select 
  value={sortBy} 
  onChange={(e) => setSortBy(e.target.value)}
- className="w-full bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold text-themeText dark:text-white focus:bg-gray-100 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none appearance-none cursor-pointer"
+ className="w-full bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold text-themeText dark:text-white focus:bg-black/5 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none appearance-none cursor-pointer"
  >
  <option value="name_asc">Sort: Name (A-Z)</option>
  <option value="name_desc">Sort: Name (Z-A)</option>
@@ -471,7 +471,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </div>
 
  {/* Data Grid / Mobile Cards */}
- <div className={`${theme.layout.panel} rounded-2xl rounded-2xl overflow-hidden border border-themeBorder dark:border-white/5 min-h-[400px]`}>
+ <div className={`${theme.layout.panel} rounded-2xl rounded-2xl overflow-hidden border border-black/[0.04] dark:border-white/[0.08] min-h-[400px]`}>
  
  {/* Desktop Table View */}
  <div className="hidden md:block overflow-x-auto no-scrollbar">
@@ -499,9 +499,9 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <td className="p-4 lg:p-5">
  <div className="flex items-center gap-4 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
  {user.avatar_url ? (
- <img src={user.avatar_url} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-themeBorder dark:border-white/5" />
+ <img src={user.avatar_url} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  ) : (
- <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border border-themeBorder dark:border-white/5 shrink-0 group-hover/profile:shadow-lg transition-shadow ${activeTab === 'students' ? 'bg-gray-100 dark:bg-themeApp text-amber-500' : 'bg-gray-100 dark:bg-themeApp text-blue-400'}`}>
+ <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border border-black/[0.04] dark:border-white/[0.08] shrink-0 group-hover/profile:shadow-lg transition-shadow ${activeTab === 'students' ? 'bg-black/5 dark:bg-themeApp text-amber-500' : 'bg-black/5 dark:bg-themeApp text-blue-400'}`}>
  {user.name.charAt(0)}
  </div>
  )}
@@ -520,15 +520,15 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </td>
  <td className="p-4 lg:p-5 pr-5 lg:pr-6">
  <div className="flex justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
- <button type="button" onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-themeBorder dark:border-white/5 hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec dark:text-white/50 flex items-center justify-center transition-colors" title="Edit Master Details">
+ <button type="button" onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/[0.04] dark:border-white/[0.08] hover:border-emerald-500 hover:text-emerald-400 text-themeTextSec dark:text-white/50 flex items-center justify-center transition-colors" title="Edit Master Details">
  <i className="fa-solid fa-pen text-[10px]"></i>
  </button>
  {(user.role === 'faculty' || user.role === 'admin') && (
- <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-amber-500/10 border border-themeBorder dark:border-white/5Accent/30 hover:bg-amber-500/20 text-amber-500 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-amber-500/10 border border-black/[0.04] dark:border-white/[0.08]Accent/30 hover:bg-amber-500/20 text-amber-500 flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
- <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-themeBorder dark:border-white/5 hover:border-indigo-500 hover:text-amber-500 text-themeTextSec dark:text-white/50 flex items-center justify-center transition-colors" title="Reset Password">
+ <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/[0.04] dark:border-white/[0.08] hover:border-indigo-500 hover:text-amber-500 text-themeTextSec dark:text-white/50 flex items-center justify-center transition-colors" title="Reset Password">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
  <button type="button" onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg bg-themeApp border-themeBorder dark:border-white/5 flex items-center justify-center transition-colors ${user.status === 'Active' ? 'border-themeBorder dark:border-white/5 hover:border-rose-500 hover:text-rose-500 text-themeTextSec dark:text-white/50' : 'border-rose-500/50 bg-rose-500/10 text-rose-500 hover:bg-emerald-500 hover:text-themeText dark:text-white hover:border-emerald-500'}`} title={user.status === 'Active' ? 'Suspend Account' : 'Reactivate'}>
@@ -560,9 +560,9 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-center gap-3 min-w-0 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
  {user.avatar_url ? (
- <img src={user.avatar_url} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-themeBorder dark:border-white/5" />
+ <img src={user.avatar_url} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  ) : (
- <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border border-themeBorder dark:border-white/5 shrink-0 group-hover/profile:shadow-lg transition-shadow ${activeTab === 'students' ? 'bg-gray-100 dark:bg-themeApp text-amber-500' : 'bg-gray-100 dark:bg-themeApp text-blue-400'}`}>
+ <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border border-black/[0.04] dark:border-white/[0.08] shrink-0 group-hover/profile:shadow-lg transition-shadow ${activeTab === 'students' ? 'bg-black/5 dark:bg-themeApp text-amber-500' : 'bg-black/5 dark:bg-themeApp text-blue-400'}`}>
  {user.name.charAt(0)}
  </div>
  )}
@@ -579,7 +579,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </div>
  </div>
  
- <div className="flex items-center gap-2 text-xs font-medium text-amber-500/80 bg-gray-100 dark:bg-themeApp p-2 rounded-lg border border-themeBorder dark:border-white/5 truncate">
+ <div className="flex items-center gap-2 text-xs font-medium text-amber-500/80 bg-black/5 dark:bg-themeApp p-2 rounded-lg border border-black/[0.04] dark:border-white/[0.08] truncate">
  <i className="fa-solid fa-envelope text-themeTextSec dark:text-white/50"></i> {user.email}
  </div>
 
@@ -588,14 +588,14 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  <div className="flex gap-2">
  {(user.role === 'faculty' || user.role === 'admin') && (
- <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-amber-500/10 border border-themeBorder dark:border-white/5Accent/30 hover:bg-amber-500/20 text-amber-500 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-amber-500/10 border border-black/[0.04] dark:border-white/[0.08]Accent/30 hover:bg-amber-500/20 text-amber-500 flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
- <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 text-themeTextSec dark:text-white/50 flex items-center justify-center">
+ <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] text-themeTextSec dark:text-white/50 flex items-center justify-center">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
- <button type="button" onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg border-themeBorder dark:border-white/5 flex items-center justify-center ${user.status === 'Active' ? 'bg-gray-100 dark:bg-themeApp border-themeBorder dark:border-white/5 text-rose-400' : 'bg-rose-500 border-rose-600 text-themeText dark:text-white'}`}>
+ <button type="button" onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg border-themeBorder dark:border-white/5 flex items-center justify-center ${user.status === 'Active' ? 'bg-black/5 dark:bg-themeApp border-themeBorder dark:border-white/5 text-rose-400' : 'bg-rose-500 border-rose-600 text-themeText dark:text-white'}`}>
  <i className={`fa-solid ${user.status === 'Active' ? 'fa-ban' : 'fa-rotate-left'} text-[10px]`}></i>
  </button>
  </div>
@@ -613,17 +613,17 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  {/* 3. PROVISIONING WIZARD MODAL */}
  {showProvisionModal && (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
- <div className="bg-white dark:bg-[#121212] w-full max-w-2xl rounded-2xl rounded-2xl overflow-hidden border border-themeBorder dark:border-white/5 flex flex-col max-h-[90vh]">
+ <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+ <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] w-full max-w-2xl rounded-2xl rounded-2xl overflow-hidden border border-black/[0.04] dark:border-white/[0.08] flex flex-col max-h-[90vh]">
 
  {/* Modal Header */}
- <div className="bg-gray-100 dark:bg-themeApp p-5 lg:p-6 text-themeText dark:text-white relative shrink-0 border-b border-themeBorder dark:border-white/5">
+ <div className="bg-black/5 dark:bg-themeApp p-5 lg:p-6 text-themeText dark:text-white relative shrink-0 border-b border-themeBorder dark:border-white/5">
  <div className="flex justify-between items-start relative z-10">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight tracking-tight mb-1 text-themeText dark:text-white">Provision New Account</h3>
  <p className={`text-[10px] lg:text-xs text-amber-500 font-medium`}>Generate credentials and assign records.</p>
  </div>
- <button type="button" onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-themeBorder dark:border-white/5 text-themeText dark:text-white transition-colors shrink-0">
+ <button type="button" onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-black/[0.04] dark:border-white/[0.08] text-themeText dark:text-white transition-colors shrink-0">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
  </div>
@@ -633,18 +633,18 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="overflow-y-auto p-5 lg:p-6 flex-1 bg-themeApp no-scrollbar">
  {provisionSuccess ? (
  <div className="flex flex-col items-center justify-center py-8 lg:py-10 animate-fade-in text-center">
- <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gray-100 dark:bg-themeApp text-emerald-400 border-themeBorder dark:border-white/5 border-emerald-500/30 rounded-full flex items-center justify-center text-3xl lg:text-4xl mb-4">
+ <div className="w-16 h-16 lg:w-20 lg:h-20 bg-black/5 dark:bg-themeApp text-emerald-400 border-themeBorder dark:border-white/5 border-emerald-500/30 rounded-full flex items-center justify-center text-3xl lg:text-4xl mb-4">
  <i className="fa-solid fa-check"></i>
  </div>
  <h3 className={`font-bold tracking-tight text-xl lg:text-2xl text-themeText dark:text-white mb-1`}>Account Provisioned!</h3>
  <p className={`text-xs lg:text-sm text-themeTextSec mb-6 lg:mb-8`}>Securely share these credentials.</p>
 
- <div className="w-full max-w-sm bg-white dark:bg-[#121212] rounded-2xl p-5 lg:p-6 border border-themeBorder dark:border-white/5 flex flex-col gap-4 relative overflow-hidden text-left">
+ <div className="w-full max-w-sm bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl p-5 lg:p-6 border border-black/[0.04] dark:border-white/[0.08] flex flex-col gap-4 relative overflow-hidden text-left">
  <div className="absolute top-0 left-0 w-full h-1.5 bg-emerald-500"></div>
 
  <div className="border-t border-themeBorder dark:border-white/5 pt-3 lg:pt-4">
  <span className={`text-[9px] lg:text-[13px] font-medium text-themeTextSec mb-2 block`}>Automation Logs</span>
- <div className="bg-themeApp border border-themeBorder dark:border-white/5 rounded-lg p-3 text-left font-mono text-[10px] lg:text-xs h-32 overflow-y-auto">
+ <div className="bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-lg p-3 text-left font-mono text-[10px] lg:text-xs h-32 overflow-y-auto">
  {provisionLogs.map((log, i) => (
  <div key={i} className={`mb-1 ${log.includes('SUCCESS') ? 'text-emerald-400' : log.includes('ERROR') || log.includes('WARNING') ? 'text-rose-400' : 'text-themeTextSec dark:text-white/50'}`}>
  &gt; {log}
@@ -662,9 +662,9 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <form onSubmit={handleProvisionSubmit} className="flex flex-col gap-5 lg:gap-6">
 
  {/* Role Selector */}
- <div className="flex p-1.5 bg-white dark:bg-[#121212] rounded-2xl border border-themeBorder dark:border-white/5 w-full">
- <button type="button" onClick={() => setNewUserRole("student")} className={`flex-1 py-3 rounded-lg text-[9px] lg:text-[13px] font-medium transition ${newUserRole === 'student' ? 'bg-gray-100 dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/5' : 'text-neutral-600 hover:text-themeText dark:text-white'}`}>Student</button>
- <button type="button" onClick={() => setNewUserRole("faculty")} className={`flex-1 py-3 rounded-lg text-[9px] lg:text-[13px] font-medium transition ${newUserRole === 'faculty' ? 'bg-gray-100 dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/5' : 'text-neutral-600 hover:text-themeText dark:text-white'}`}>Faculty</button>
+ <div className="flex p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] w-full">
+ <button type="button" onClick={() => setNewUserRole("student")} className={`flex-1 py-3 rounded-lg text-[9px] lg:text-[13px] font-medium transition ${newUserRole === 'student' ? 'bg-black/5 dark:bg-themeApp text-amber-500 border border-black/[0.04] dark:border-white/[0.08]' : 'text-neutral-600 hover:text-themeText dark:text-white'}`}>Student</button>
+ <button type="button" onClick={() => setNewUserRole("faculty")} className={`flex-1 py-3 rounded-lg text-[9px] lg:text-[13px] font-medium transition ${newUserRole === 'faculty' ? 'bg-black/5 dark:bg-themeApp text-amber-500 border border-black/[0.04] dark:border-white/[0.08]' : 'text-neutral-600 hover:text-themeText dark:text-white'}`}>Faculty</button>
  </div>
 
  <div className="grid grid-cols-1 gap-4 lg:gap-5">
@@ -676,7 +676,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <select
  value={assignment}
  onChange={(e) => setAssignment(e.target.value)}
- className="w-full border border-themeBorder dark:border-white/5 rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-white dark:bg-[#121212] text-themeText dark:text-white focus:bg-gray-100 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition appearance-none cursor-pointer"
+ className="w-full border border-black/[0.04] dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] text-themeText dark:text-white focus:bg-black/5 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition appearance-none cursor-pointer"
  required
  >
  
@@ -703,7 +703,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
                   value={newUserName}
                   onChange={(e) => setNewUserName(e.target.value)}
                   placeholder="e.g. John Doe"
-                  className="w-full border border-themeBorder dark:border-white/5 rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-white dark:bg-[#121212] text-themeText dark:text-white focus:bg-gray-100 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition placeholder:text-neutral-600"
+                  className="w-full border border-black/[0.04] dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] text-themeText dark:text-white focus:bg-black/5 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition placeholder:text-neutral-600"
                   required
                 />
               </div>
@@ -714,7 +714,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
                   value={newUserEmail}
                   onChange={(e) => setNewUserEmail(e.target.value)}
                   placeholder="e.g. john@prudentia.edu"
-                  className="w-full border border-themeBorder dark:border-white/5 rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-white dark:bg-[#121212] text-themeText dark:text-white focus:bg-gray-100 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition placeholder:text-neutral-600"
+                  className="w-full border border-black/[0.04] dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] text-themeText dark:text-white focus:bg-black/5 dark:bg-themeApp focus:border-themeBorder dark:border-white/5Accent outline-none transition placeholder:text-neutral-600"
                   required
                 />
               </div>
@@ -722,7 +722,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  {/* Logs Display during provisioning */}
  {isProvisioning && (
- <div className="bg-themeApp border border-themeBorder dark:border-white/5 rounded-lg p-3 text-left font-mono text-[10px] h-32 overflow-y-auto mt-2">
+ <div className="bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-lg p-3 text-left font-mono text-[10px] h-32 overflow-y-auto mt-2">
  {provisionLogs.map((log, i) => (
  <div key={i} className={`mb-1 ${log.includes('SUCCESS') ? 'text-emerald-400' : log.includes('ERROR') || log.includes('WARNING') ? 'text-rose-400' : 'text-themeTextSec dark:text-white/50'}`}>
  &gt; {log}
@@ -737,8 +737,8 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  {/* Modal Footer */}
  {!provisionSuccess && (
- <div className="p-4 lg:p-5 border-t border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] shrink-0 flex flex-col sm:flex-row gap-3">
- <button type="button" onClick={closeProvisionWizard} className="w-full sm:w-auto px-6 py-3.5 bg-gray-100 dark:bg-themeApp hover:bg-themeBorder text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition-colors border border-themeBorder dark:border-white/5 active:scale-95">Cancel</button>
+ <div className="p-4 lg:p-5 border-t border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shrink-0 flex flex-col sm:flex-row gap-3">
+ <button type="button" onClick={closeProvisionWizard} className="w-full sm:w-auto px-6 py-3.5 bg-black/5 dark:bg-themeApp hover:bg-themeBorder text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition-colors border border-black/[0.04] dark:border-white/[0.08] active:scale-95">Cancel</button>
  <button type="button" onClick={handleProvisionSubmit} disabled={isProvisioning || !newUserName || !newUserEmail || !assignment} className="w-full sm:flex-1 bg-amber-500 hover:bg-amber-500Muted text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 group relative overflow-hidden active:scale-[0.98]">
  {!isProvisioning && newUserName && newUserEmail && assignment && (
  <div className="absolute inset-0 w-full h-full -translate-x-full group-hover:"></div>
@@ -753,14 +753,14 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  {/* 4. ADMIN QUESTIONNAIRE OVERRIDE MODAL */}
  {selectedQuestionnaireUser && (
- <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
- <div className={`w-full max-w-lg bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-2xl overflow-hidden flex flex-col max-h-[90vh]`}>
- <div className="p-6 border-b border-themeBorder dark:border-white/5 flex justify-between items-center bg-gray-100 dark:bg-themeApp">
+ <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+ <div className={`w-full max-w-lg bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl overflow-hidden flex flex-col max-h-[90vh]`}>
+ <div className="p-6 border-b border-themeBorder dark:border-white/5 flex justify-between items-center bg-black/5 dark:bg-themeApp">
  <div>
  <h3 className={`font-bold tracking-tight text-lg text-themeText dark:text-white`}>Edit Questionnaire Data</h3>
  <p className="text-xs text-themeTextSec dark:text-white/50 font-medium mt-1">For: {selectedQuestionnaireUser.name} ({selectedQuestionnaireUser.id})</p>
  </div>
- <button type="button" onClick={() => setSelectedQuestionnaireUser(null)} className="w-8 h-8 rounded-full bg-themeApp text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white flex items-center justify-center border border-themeBorder dark:border-white/5 transition-colors">
+ <button type="button" onClick={() => setSelectedQuestionnaireUser(null)} className="w-8 h-8 rounded-full bg-themeApp text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white flex items-center justify-center border border-black/[0.04] dark:border-white/[0.08] transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -769,108 +769,108 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
     <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Public Display (Website)</label>
-            <select value={facultyProfileData.is_public ? 'true' : 'false'} onChange={e => setFacultyProfileData({...facultyProfileData, is_public: e.target.value === 'true'})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none">
+            <select value={facultyProfileData.is_public ? 'true' : 'false'} onChange={e => setFacultyProfileData({...facultyProfileData, is_public: e.target.value === 'true'})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none">
                 <option value="true">Visible on Website</option>
                 <option value="false">Hidden from Website</option>
             </select>
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Designation</label>
-            <input type="text" value={facultyProfileData.designation || ''} onChange={e => setFacultyProfileData({...facultyProfileData, designation: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={facultyProfileData.designation || ''} onChange={e => setFacultyProfileData({...facultyProfileData, designation: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Biography / About</label>
-            <textarea rows="4" value={facultyProfileData.bio || ''} onChange={e => setFacultyProfileData({...facultyProfileData, bio: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3 text-xs font-medium text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors custom-scrollbar resize-none" placeholder="Detailed bio..."></textarea>
+            <textarea rows="4" value={facultyProfileData.bio || ''} onChange={e => setFacultyProfileData({...facultyProfileData, bio: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3 text-xs font-medium text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors custom-scrollbar resize-none" placeholder="Detailed bio..."></textarea>
         </div>
     </div>
 ) : (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Legal Interest</label>
-            <input type="text" value={qFormData.legalInterest || ''} onChange={e => setQFormData({...qFormData, legalInterest: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.legalInterest || ''} onChange={e => setQFormData({...qFormData, legalInterest: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Blood Group</label>
-            <input type="text" value={qFormData.bloodGroup || ''} onChange={e => setQFormData({...qFormData, bloodGroup: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.bloodGroup || ''} onChange={e => setQFormData({...qFormData, bloodGroup: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Aadhar Number</label>
-            <input type="text" value={qFormData.aadharNumber || ''} onChange={e => setQFormData({...qFormData, aadharNumber: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.aadharNumber || ''} onChange={e => setQFormData({...qFormData, aadharNumber: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Past Legal Gens</label>
-            <input type="text" value={qFormData.pastLegalGenerations || ''} onChange={e => setQFormData({...qFormData, pastLegalGenerations: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.pastLegalGenerations || ''} onChange={e => setQFormData({...qFormData, pastLegalGenerations: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Father's Name</label>
-            <input type="text" value={qFormData.fatherName || ''} onChange={e => setQFormData({...qFormData, fatherName: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.fatherName || ''} onChange={e => setQFormData({...qFormData, fatherName: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Mother's Name</label>
-            <input type="text" value={qFormData.motherName || ''} onChange={e => setQFormData({...qFormData, motherName: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.motherName || ''} onChange={e => setQFormData({...qFormData, motherName: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
     </div>
 )}
 
  <div className="flex flex-col gap-1.5">
  <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Present Address</label>
- <textarea rows="2" value={qFormData.presentAddress || ''} onChange={e => setQFormData({...qFormData, presentAddress: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors resize-none" />
+ <textarea rows="2" value={qFormData.presentAddress || ''} onChange={e => setQFormData({...qFormData, presentAddress: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors resize-none" />
  </div>
 
  <div className="flex flex-col gap-1.5">
  <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Permanent Address</label>
- <textarea rows="2" value={qFormData.permanentAddress || ''} onChange={e => setQFormData({...qFormData, permanentAddress: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors resize-none" />
+ <textarea rows="2" value={qFormData.permanentAddress || ''} onChange={e => setQFormData({...qFormData, permanentAddress: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors resize-none" />
  </div>
 
  {selectedQuestionnaireUser.role === 'faculty' && facultyProfileData ? (
     <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Public Display (Website)</label>
-            <select value={facultyProfileData.is_public ? 'true' : 'false'} onChange={e => setFacultyProfileData({...facultyProfileData, is_public: e.target.value === 'true'})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none">
+            <select value={facultyProfileData.is_public ? 'true' : 'false'} onChange={e => setFacultyProfileData({...facultyProfileData, is_public: e.target.value === 'true'})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none">
                 <option value="true">Visible on Website</option>
                 <option value="false">Hidden from Website</option>
             </select>
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Designation</label>
-            <input type="text" value={facultyProfileData.designation || ''} onChange={e => setFacultyProfileData({...facultyProfileData, designation: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={facultyProfileData.designation || ''} onChange={e => setFacultyProfileData({...facultyProfileData, designation: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Biography / About</label>
-            <textarea rows="4" value={facultyProfileData.bio || ''} onChange={e => setFacultyProfileData({...facultyProfileData, bio: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3 text-xs font-medium text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors custom-scrollbar resize-none" placeholder="Detailed bio..."></textarea>
+            <textarea rows="4" value={facultyProfileData.bio || ''} onChange={e => setFacultyProfileData({...facultyProfileData, bio: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3 text-xs font-medium text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors custom-scrollbar resize-none" placeholder="Detailed bio..."></textarea>
         </div>
     </div>
 ) : (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Legal Interest</label>
-            <input type="text" value={qFormData.legalInterest || ''} onChange={e => setQFormData({...qFormData, legalInterest: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.legalInterest || ''} onChange={e => setQFormData({...qFormData, legalInterest: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Blood Group</label>
-            <input type="text" value={qFormData.bloodGroup || ''} onChange={e => setQFormData({...qFormData, bloodGroup: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.bloodGroup || ''} onChange={e => setQFormData({...qFormData, bloodGroup: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Aadhar Number</label>
-            <input type="text" value={qFormData.aadharNumber || ''} onChange={e => setQFormData({...qFormData, aadharNumber: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.aadharNumber || ''} onChange={e => setQFormData({...qFormData, aadharNumber: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Past Legal Gens</label>
-            <input type="text" value={qFormData.pastLegalGenerations || ''} onChange={e => setQFormData({...qFormData, pastLegalGenerations: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.pastLegalGenerations || ''} onChange={e => setQFormData({...qFormData, pastLegalGenerations: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Father's Name</label>
-            <input type="text" value={qFormData.fatherName || ''} onChange={e => setQFormData({...qFormData, fatherName: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.fatherName || ''} onChange={e => setQFormData({...qFormData, fatherName: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] text-themeTextSec dark:text-white/50 tracking-normal font-bold ml-1">Mother's Name</label>
-            <input type="text" value={qFormData.motherName || ''} onChange={e => setQFormData({...qFormData, motherName: e.target.value})} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
+            <input type="text" value={qFormData.motherName || ''} onChange={e => setQFormData({...qFormData, motherName: e.target.value})} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-3.5 text-xs font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors" />
         </div>
     </div>
 )}
  </div>
- <div className="p-5 border-t border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] flex justify-end gap-3 shrink-0">
- <button type="button" onClick={() => setSelectedQuestionnaireUser(null)} className="px-6 py-3 bg-gray-100 dark:bg-themeApp hover:bg-themeBorder text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white rounded-2xl text-[13px] font-medium transition-colors border border-themeBorder dark:border-white/5">Cancel</button>
+ <div className="p-5 border-t border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-end gap-3 shrink-0">
+ <button type="button" onClick={() => setSelectedQuestionnaireUser(null)} className="px-6 py-3 bg-black/5 dark:bg-themeApp hover:bg-themeBorder text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white rounded-2xl text-[13px] font-medium transition-colors border border-black/[0.04] dark:border-white/[0.08]">Cancel</button>
  <button type="button" onClick={handleSaveQuestionnaire} className="btn-erp">Save Override</button>
  </div>
  </div>
