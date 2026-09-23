@@ -50,19 +50,34 @@ export default function ParentLogin({ onBack, onLoginSuccess }) {
         // For infrastructure, let's assume all parents have a standard password 'password123' for Auth vault, and OTP is 2FA.
         
         try {
+            let userUuid = null;
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: 'password123'
             });
 
             if (error) {
-                // If auth fails, maybe they don't have an auth vault account yet.
-                // We could auto-create it.
                 const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                     email: email,
                     password: 'password123'
                 });
                 if (signUpError) throw signUpError;
+                userUuid = signUpData.user?.id;
+            } else {
+                userUuid = data.user?.id;
+            }
+
+            if (userUuid) {
+                const { data: profileCheck } = await supabase.from('profiles').select('id').eq('id', userUuid).maybeSingle();
+                if (!profileCheck) {
+                    await supabase.from('profiles').insert({
+                        id: userUuid,
+                        email: email,
+                        role: 'parent',
+                        full_name: 'Parent User',
+                        erp_id: 'PAR' + Math.floor(1000 + Math.random() * 9000)
+                    });
+                }
             }
             
             onLoginSuccess();
@@ -116,7 +131,18 @@ export default function ParentLogin({ onBack, onLoginSuccess }) {
                                     const newOtp = [...otp];
                                     newOtp[i] = val;
                                     setOtp(newOtp);
-                                    if (val && i < 3) document.getElementById(`otp-${i+1}`).focus();
+                                    if (val && i < 3) document.getElementById(`otp-${i+1}`)?.focus();
+                                }}
+                                onKeyDown={e => {
+                                    if (e.key === 'Backspace') {
+                                        if (!otp[i] && i > 0) {
+                                            document.getElementById(`otp-${i-1}`)?.focus();
+                                        } else if (otp[i]) {
+                                            const newOtp = [...otp];
+                                            newOtp[i] = '';
+                                            setOtp(newOtp);
+                                        }
+                                    }
                                 }}
                                 className="w-12 h-14 bg-themeElevated/50 border border-black/5 dark:border-white/5 rounded-xl text-center text-xl font-semibold tracking-tight text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none"
                             />
