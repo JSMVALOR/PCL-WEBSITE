@@ -197,13 +197,9 @@ export default function CourseVault({ isEmbedded = false }) {
         return acc;
     }, {});
 
-    // Resource Filter (Fade instead of hide)
+    // Resource Filter (Hide instead of fade)
     if (activeFilter !== "All") {
-        processedSubjects.forEach(s => {
-            if (!materialsBySubject[s.id] || materialsBySubject[s.id].length === 0) {
-                s._isFaded = true;
-            }
-        });
+        processedSubjects = processedSubjects.filter(s => materialsBySubject[s.id] && materialsBySubject[s.id].length > 0);
     }
 
     return (
