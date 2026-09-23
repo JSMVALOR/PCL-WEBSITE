@@ -247,7 +247,7 @@ const SidebarLabel = ({ text }) => (
 );
 
 const SidebarItem = ({ icon, text }) => (
- <p style={{ fontSize: "8pt", color: "#cbd5e1", margin: "0 0 5px", display: "flex", alignItems: "flex-start", gap: "6px", lineHeight: 1.4, wordBreak: "break-word" }}>
+ <p style={{ fontSize: "8pt", color: "#cbd5e1", margin: "0 0 5px", display: "flex", alignItems: "flex-start", gap: "6px", lineHeight: 1.4, wordBreak: "break-all" }}>
  <span style={{ color: "#64748b", fontSize: "7pt", marginTop: "1px", flexShrink: 0 }}>{icon}</span>
  <span>{text}</span>
  </p>
@@ -272,7 +272,7 @@ const ExecutiveSplitTemplate = (data, config) => {
  pageBreakAfter: "avoid" };
 
  return (
- <div>
+ <div style={{ display: "flex", minHeight: "297mm", width: "100%", background: "#ffffff" }}>
  <div style={{ width: "72mm", minHeight: "297mm", background: "#0f172a", color: "#e2e8f0", padding: "20mm 14mm", boxSizing: "border-box", flexShrink: 0, display: "flex", flexDirection: "column" }}>
  <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 14px", border: "3px solid #1e293b", boxShadow: "0 4px 12px rgba(0,0,0,0.3)" }}>
  {data.personal.photo_url ? (
