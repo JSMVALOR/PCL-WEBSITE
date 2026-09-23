@@ -205,6 +205,7 @@ export const ErpProvider = ({ children }) => {
                 email: profile.email || userEmail,
                 role: normalizedRole,
                 academic_batch: profile.academic_batch,
+                semester: profile.semester,
                 questionnaire_completed: profile.questionnaire_completed || false,
                 profile_picture_url: profile.profile_picture_url || null };
 
