@@ -93,6 +93,7 @@ import AdminFees from './components/Admin/AdminFees/AdminFees';
 import AdminMootCourt from './components/Admin/AdminMootCourt/AdminMootCourt';
 import AdminPlacements from './components/Admin/AdminPlacements/AdminPlacements';
 import AdminWebsiteInquiries from './components/Admin/AdminWebsiteHub/AdminWebsiteInquiries';
+import AdminGalleryManager from './components/Admin/AdminWebsiteHub/AdminGalleryManager';
 import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
 import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
 import AdminAttendanceIssues from './components/Admin/AdminAttendanceIssues/AdminAttendanceIssues';
@@ -326,6 +327,7 @@ export default function App() {
         case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />;        case 'academic': return <AdminAcademicHub />;
         case 'clinics': return <AdminClinicsHub />;
         case 'blogs': return <BlogManager />;
+        case 'gallery': return <AdminGalleryManager />;
         case 'careers': return <AdminCareers />;
         case 'notices': return <Notices setActiveTab={setActiveTab} />;
         case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
