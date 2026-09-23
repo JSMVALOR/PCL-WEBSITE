@@ -1,5 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../Navbar.jsx';
 import styles from '../../PROGRAMS/Programs.module.css';
