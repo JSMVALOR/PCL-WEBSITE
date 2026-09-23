@@ -19,6 +19,8 @@ export default function FacultyMentorship() {
     const [meetings, setMeetings] = useState([]);
     const [appeals, setAppeals] = useState([]);
     const [grievances, setGrievances] = useState([]);
+    const [applications, setApplications] = useState([]);
+    const [achievements, setAchievements] = useState([]);
     const [actionLoading, setActionLoading] = useState(null);
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [menteeTab, setMenteeTab] = useState('profile');
@@ -115,6 +117,40 @@ export default function FacultyMentorship() {
                 .eq('assigned_to', facultyId)
                 .order('created_at', { ascending: false });
             if (grievData) setGrievances(grievData);
+
+            // 6. Fetch pending NOC requests (Internships)
+            if (studentIds.length > 0) {
+                const { data: nocs } = await supabase
+                    .from('noc_requests')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .in('student_id', studentIds)
+                    .order('created_at', { ascending: false });
+                
+                if (nocs) {
+                    const mappedNocs = nocs.map(n => {
+                        const student = menteesData.find(stu => stu.id === n.student_id);
+                        return { ...n, student: student || { full_name: 'Unknown Student' } };
+                    });
+                    setApplications(mappedNocs);
+                }
+                
+                // 7. Fetch pending Achievements
+                const { data: achs } = await supabase
+                    .from('student_achievements')
+                    .select('*')
+                    .eq('is_verified', false)
+                    .in('student_id', studentIds)
+                    .order('created_at', { ascending: false });
+                
+                if (achs) {
+                    const mappedAchs = achs.map(a => {
+                        const student = menteesData.find(stu => stu.id === a.student_id);
+                        return { ...a, student: student || { full_name: 'Unknown Student' } };
+                    });
+                    setAchievements(mappedAchs);
+                }
+            }
 
         } catch (error) {
             console.error(error);
@@ -222,6 +258,40 @@ export default function FacultyMentorship() {
 
         } catch (error) {
             console.error(error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleApplicationAction = async (appId, action) => {
+        setActionLoading(appId);
+        try {
+            const newStatus = action === 'approve' ? 'forwarded_to_admin' : 'rejected';
+            await supabase.from('noc_requests').update({ status: newStatus }).eq('id', appId);
+            window.erpDialog?.alert(`Application ${action}d successfully.`);
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            window.erpDialog?.alert("Failed to update application.");
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleAchievementVerify = async (achId, action) => {
+        setActionLoading(achId);
+        try {
+            if (action === 'approve') {
+                await supabase.from('student_achievements').update({ is_verified: true }).eq('id', achId);
+                window.erpDialog?.alert("Achievement verified and added to student CV.");
+            } else {
+                await supabase.from('student_achievements').delete().eq('id', achId);
+                window.erpDialog?.alert("Achievement rejected.");
+            }
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            window.erpDialog?.alert("Failed to verify achievement.");
         } finally {
             setActionLoading(null);
         }
@@ -482,6 +552,55 @@ export default function FacultyMentorship() {
                                                     Mark Completed
                                                 </button>
                                             )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="w-full lg:w-1/3 flex flex-col gap-4">
+                            {/* Applications (Internships/NOCs) */}
+                            {applications.length > 0 && (
+                                <div className="flex flex-col gap-3">
+                                    <h3 className="text-base font-black tracking-tight text-themeText dark:text-white flex items-center gap-2">
+                                        <i className="fa-solid fa-file-signature text-blue-500/70"></i> Pending Applications
+                                        <span className="bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-md text-[10px] font-black ml-auto">{applications.length}</span>
+                                    </h3>
+                                    {applications.map(app => (
+                                        <div key={app.id} className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-4 flex flex-col gap-3">
+                                            <div>
+                                                <h4 className="text-sm font-black text-themeText dark:text-white">{app.student?.full_name}</h4>
+                                                <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">{app.company_name} - {app.role_title}</p>
+                                                <p className="text-[10px] text-themeTextSec mt-1 line-clamp-2">{app.reason}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleApplicationAction(app.id, 'approve')} disabled={actionLoading === app.id} className="flex-1 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">Forward</button>
+                                                <button onClick={() => handleApplicationAction(app.id, 'reject')} disabled={actionLoading === app.id} className="flex-1 py-1.5 bg-white/5 hover:bg-rose-500/10 text-themeTextSec hover:text-rose-500 border border-black/5 dark:border-white/10 hover:border-rose-500/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">Reject</button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Unverified Achievements (Moots/Certificates) */}
+                            {achievements.length > 0 && (
+                                <div className="flex flex-col gap-3 mt-4">
+                                    <h3 className="text-base font-black tracking-tight text-themeText dark:text-white flex items-center gap-2">
+                                        <i className="fa-solid fa-trophy text-amber-500/70"></i> Verify Achievements
+                                        <span className="bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-md text-[10px] font-black ml-auto">{achievements.length}</span>
+                                    </h3>
+                                    {achievements.map(ach => (
+                                        <div key={ach.id} className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-4 flex flex-col gap-3">
+                                            <div>
+                                                <h4 className="text-sm font-black text-themeText dark:text-white">{ach.student?.full_name}</h4>
+                                                <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">{ach.category}</span>
+                                                <p className="text-xs font-bold text-themeText mt-1">{ach.title}</p>
+                                                {ach.role && <p className="text-[10px] text-themeTextSec">Role: {ach.role}</p>}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleAchievementVerify(ach.id, 'approve')} disabled={actionLoading === ach.id} className="flex-1 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">Verify</button>
+                                                <button onClick={() => handleAchievementVerify(ach.id, 'reject')} disabled={actionLoading === ach.id} className="flex-1 py-1.5 bg-white/5 hover:bg-rose-500/10 text-themeTextSec hover:text-rose-500 border border-black/5 dark:border-white/10 hover:border-rose-500/20 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">Reject</button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
