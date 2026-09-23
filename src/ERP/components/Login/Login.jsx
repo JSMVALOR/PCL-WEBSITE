@@ -299,12 +299,12 @@ export default function Login() {
             )}
 
             {/* Tribute Footer */}
-            <div className="mt-8 flex flex-col items-center justify-center text-[9px] uppercase tracking-[0.25em] font-bold text-[var(--text-color)]/50 z-10 gap-2 pointer-events-none drop-shadow-md">
-                <span className="flex items-center gap-3 bg-[var(--card-bg)] px-4 py-2 rounded-md backdrop-blur-sm border border-[var(--text-color)]/10 shadow-sm">
-                    <span className="text-[9px] uppercase tracking-[0.2em] opacity-60">Powered by</span>
-                    <ValorLogo className="scale-[0.6] origin-left -ml-2" />
-                </span>
-                <span className="text-[var(--text-color)]/40 tracking-[0.4em] scale-90">PCL ERP Framework v8.25</span>
+            <div className="mt-8 flex flex-col items-center justify-center z-10 gap-2.5 pointer-events-none drop-shadow-sm pb-4">
+                <div className="flex items-center gap-2.5 opacity-60 hover:opacity-100 transition duration-300">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-color)] translate-y-[1px]">Powered by</span>
+                    <ValorLogo />
+                </div>
+                <span className="text-[var(--text-color)]/30 tracking-[0.4em] text-[8px] font-bold uppercase">PCL ERP Framework v8.25</span>
             </div>
         </div>
     );
