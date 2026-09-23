@@ -102,6 +102,7 @@ import SQLStudio from './components/Admin/AdminDashboard/SQLStudio';
 import AdminHelpdesk from './components/Admin/AdminHelpdesk/AdminHelpdesk';
 import AdminSiteEditor from './components/Admin/AdminSiteEditor/AdminSiteEditor';
 import EventsBoard from './components/notices/EventsBoard';
+import AdminWhatsAppServer from './components/Admin/Communications/WhatsApp/AdminWhatsAppServer';
 import AdminAcademicHub from './components/Admin/AdminAcademicHub/AdminAcademicHub';
 import AdminClinicsHub from './components/Admin/AdminClinicsHub/AdminClinicsHub';
 import BlogManager from './components/Admin/BlogManager/BlogManager';
@@ -330,6 +331,7 @@ export default function App() {
         case 'gallery': return <AdminGalleryManager />;
         case 'careers': return <AdminCareers />;
         case 'notices': return <Notices setActiveTab={setActiveTab} />;
+        case 'whatsapp': return <AdminWhatsAppServer setActiveTab={setActiveTab} />;
         case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
         case 'users': return <UserManagement />;
         case 'coursebuilder': return <AdminCourseBuilder />;
