@@ -113,7 +113,7 @@ export default function FacultyDashboard({ setActiveTab }) {
                         <FacultyActionItems onActionClick={(id) => {
                             if (id === 'mentor') setActiveTab('mentorship');
                             else if (id === 'grade') setActiveTab('assignments');
-                            else if (id === 'leaves') setActiveTab('leave');
+                            else if (id === 'leaves') setActiveTab('approvals');
                         }} />
 
                         {/* Right: Updates Carousel */}

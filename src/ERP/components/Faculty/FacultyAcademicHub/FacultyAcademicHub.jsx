@@ -27,11 +27,11 @@ export default function FacultyAcademicHub() {
                 <div className="relative overflow-hidden rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl p-6 lg:p-8 z-10 flex flex-col gap-6">
                     {/* Background Gradients */}
                     <div className="absolute -right-20 -top-20 w-64 h-64 bg-themeAccent/20 rounded-full blur-[80px] pointer-events-none z-0"></div>
-                    <div className="absolute -left-20 -bottom-20 w-48 h-48 bg-blue-500/10 rounded-full blur-[60px] pointer-events-none z-0"></div>
+                    <div className="absolute -left-20 -bottom-20 w-48 h-48 bg-themeAccent/10 rounded-full blur-[60px] pointer-events-none z-0"></div>
 
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-10">
                         <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-themeAccent to-blue-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-themeAccent/20 relative overflow-hidden group">
+                            <div className="w-16 h-16 rounded-2xl bg-themeAccent/10 border border-themeAccent/20 text-themeAccent flex items-center justify-center text-2xl shadow-sm relative overflow-hidden group">
                                 <div className="absolute inset-0 bg-white/20 group-hover:translate-x-full transition-transform duration-500 skew-x-12 -ml-4"></div>
                                 <i className="fa-solid fa-chalkboard-user relative z-10"></i>
                             </div>

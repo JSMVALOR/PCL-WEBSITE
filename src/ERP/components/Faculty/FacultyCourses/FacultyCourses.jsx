@@ -76,7 +76,15 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
     };
 
  useEffect(() => {
- fetchCourseData();
+    if (userSession?.db_id) {
+        const cachedCourses = sessionStorage.getItem(`fac_courses_${userSession.db_id}`);
+        const cachedResources = sessionStorage.getItem(`fac_course_resources_${userSession.db_id}`);
+        if (cachedCourses && cachedResources) {
+            setCourses(JSON.parse(cachedCourses));
+            setResources(JSON.parse(cachedResources));
+        }
+        fetchCourseData();
+    }
  }, [userSession]);
 
  const fetchCourseData = async () => {

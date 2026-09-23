@@ -11,12 +11,21 @@ export default function FacultyTeachingDashboard({ onNavigate }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchDashboardData();
+        if (userSession?.db_id) {
+            // SWR: Load from cache instantly
+            const cachedStats = sessionStorage.getItem(`jsmerp_faculty_dash_stats_${userSession.db_id}`);
+            const cachedSched = sessionStorage.getItem(`jsmerp_faculty_dash_sched_${userSession.db_id}`);
+            if (cachedStats && cachedSched) {
+                setStats(JSON.parse(cachedStats));
+                setTodaySchedule(JSON.parse(cachedSched));
+                setIsLoading(false);
+            }
+            fetchDashboardData();
+        }
     }, [userSession]);
 
     const fetchDashboardData = async () => {
         if (!userSession?.db_id) return;
-        setIsLoading(true);
         try {
             // 1. Fetch total courses (cohort_subjects + class_schedule)
             const { data: directSubs } = await supabase.from('cohort_subjects').select('id').eq('faculty_id', userSession.db_id);
@@ -42,15 +51,21 @@ export default function FacultyTeachingDashboard({ onNavigate }) {
                 .select('*', { count: 'exact', head: true })
                 .eq('faculty_id', userSession.db_id);
 
-            setStats({
+            const newStats = {
                 courses: allSubIds.length,
                 classesToday: schedData ? schedData.length : 0,
                 activeAssignments: assignCount || 0
-            });
-            setTodaySchedule(schedData || []);
+            };
+            const newSched = schedData || [];
+
+            setStats(newStats);
+            setTodaySchedule(newSched);
+
+            sessionStorage.setItem(`jsmerp_faculty_dash_stats_${userSession.db_id}`, JSON.stringify(newStats));
+            sessionStorage.setItem(`jsmerp_faculty_dash_sched_${userSession.db_id}`, JSON.stringify(newSched));
+            setIsLoading(false);
         } catch (error) {
             console.error("Dashboard error:", error);
-        } finally {
             setIsLoading(false);
         }
     };
