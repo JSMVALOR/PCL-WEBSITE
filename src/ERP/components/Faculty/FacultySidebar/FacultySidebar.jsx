@@ -11,7 +11,12 @@ export const FACULTY_NAV_MEGA = [
       {
         id: "advising_group", label: "Advising & Guidance", icon: "fa-solid fa-people-arrows",
         children: [
-          { id: "mentorship", label: "Mentorship Hub", icon: "fa-solid fa-handshake" },
+          { id: "mentorship", label: "Mentorship Hub", icon: "fa-solid fa-handshake" }
+        ]
+      },
+      {
+        id: "clinics_group", label: "Clinics & Programs", icon: "fa-solid fa-scale-balanced",
+        children: [
           { id: "clinics", label: "Clinics & Societies", icon: "fa-solid fa-scale-balanced" }
         ]
       },

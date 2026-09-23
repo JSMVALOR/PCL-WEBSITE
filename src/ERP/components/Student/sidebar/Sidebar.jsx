@@ -20,8 +20,13 @@ export const STUDENT_NAV_MEGA = [
         id: "career_group", label: "Career & Advising", icon: "fa-solid fa-briefcase",
         children: [
           { id: "internships", label: "Internships", icon: "fa-solid fa-building" },
-          { id: "mootcourt", label: "Moot Courts", icon: "fa-solid fa-scale-balanced" },
           { id: "portfolio", label: "Achievements & CV", icon: "fa-solid fa-trophy" }
+        ]
+      },
+      {
+        id: "clinics_group", label: "Clinics & Programs", icon: "fa-solid fa-scale-balanced",
+        children: [
+          { id: "mootcourt", label: "Moot Courts", icon: "fa-solid fa-scale-balanced" }
         ]
       },
       {

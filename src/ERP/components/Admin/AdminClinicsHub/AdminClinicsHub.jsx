@@ -1,13 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminClinicsHub() {
-    const navigate = useNavigate();
-
-    const cards = [{"id": "mootcourt", "title": "Moot Court Society", "icon": "fa-gavel", "desc": "Manage courtrooms and society members."}, {"id": "legalaid", "title": "Legal Aid", "icon": "fa-hand-holding-hand", "desc": "Manage community legal aid programs."}];
-
     return (
         <div className="w-full animate-fade-in selection:bg-[#007AFF]/20 min-h-screen bg-transparent text-themeText dark:text-themeText">
             <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8">
@@ -16,23 +11,14 @@ export default function AdminClinicsHub() {
                     title="Clinics Hub" 
                     subtitle="Oversight for moot court, placements, and legal aid." 
                 />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
-                    {cards.map(card => (
-                        <div 
-                            key={card.id}
-                            onClick={() => navigate(`/admin/${card.id}`)}
-                            className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-6 lg:p-8 rounded-[1.5rem] hover:-translate-y-1 hover:shadow-lg transition duration-300 group flex flex-col gap-4 cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
-                        >
-                            <div className="w-12 h-12 rounded-[1rem] bg-[#007AFF]/10 flex items-center justify-center border border-[#007AFF]/20 shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                <i className={`fa-solid ${card.icon} text-themeAccent text-xl`}></i>
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-bold tracking-tight text-themeText dark:text-themeText mb-1">{card.title}</h3>
-                                <p className="text-xs font-medium text-themeTextSec leading-relaxed">{card.desc}</p>
-                            </div>
-                        </div>
-                    ))}
+                <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col items-center justify-center text-center min-h-[500px]">
+                    <div className="w-24 h-24 rounded-full bg-amber-500/10 flex items-center justify-center mb-6 border border-amber-500/20">
+                        <i className="fa-solid fa-person-digging text-4xl text-amber-500"></i>
+                    </div>
+                    <h2 className="text-2xl font-black tracking-tight text-themeText mb-3">Module Offline for Upgrades</h2>
+                    <p className="text-sm font-medium text-themeTextSec max-w-md leading-relaxed">
+                        We are currently restructuring the Clinics Hub engine to provide a perfected and more efficient experience. Please check back later.
+                    </p>
                 </div>
             </div>
         </div>

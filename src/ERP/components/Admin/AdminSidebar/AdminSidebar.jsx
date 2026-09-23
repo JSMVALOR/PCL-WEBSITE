@@ -137,6 +137,24 @@ export const ADMIN_NAV_MEGA = [
         ]
       },
       {
+        id: "clinics_group", label: "Clinics & Programs", icon: "fa-solid fa-scale-balanced",
+        sections: [
+          {
+            title: "Student Programs",
+            children: [
+              { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
+              { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
+              { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" }
+            ]
+          }
+        ],
+        children: [
+          { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
+          { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
+          { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" }
+        ]
+      },
+      {
         id: "website_group", label: "Website Sync", icon: "fa-solid fa-globe",
         sections: [
           {
@@ -144,14 +162,6 @@ export const ADMIN_NAV_MEGA = [
             children: [
               { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
               { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" }
-            ]
-          },
-          {
-            title: "Public Programs",
-            children: [
-              { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
-              { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
-              { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" }
             ]
           },
           {
@@ -166,9 +176,6 @@ export const ADMIN_NAV_MEGA = [
           { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
           { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
           { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
-          { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
-          { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
-          { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" },
           { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" }
         ]
       },
