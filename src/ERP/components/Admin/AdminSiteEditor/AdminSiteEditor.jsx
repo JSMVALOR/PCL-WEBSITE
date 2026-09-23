@@ -21,6 +21,32 @@ import LeadershipProfile from '../../../../Website/components/NAVBAR/ABOUT/Leade
 
 // Robust helper to perfectly calculate the DOM height of a CSS-scaled component
 function ScaledPreview({ isFullscreen, children }) {
+    const wrapperRef = React.useRef(null);
+    const [dimensions, setDimensions] = React.useState({ scale: 0.35, height: 1000 });
+
+    React.useEffect(() => {
+        if (isFullscreen || !wrapperRef.current) return;
+        
+        const observer = new ResizeObserver((entries) => {
+            const { width, height } = entries[0].contentRect;
+            if (width === 0 || height === 0) return;
+
+            // Target desktop width
+            const targetWidth = 1440; 
+            
+            // Calculate scale to make 1440px fit exactly in the wrapper's width
+            const newScale = width / targetWidth;
+            
+            // Calculate the inner height needed to exactly fill the wrapper's height after scaling
+            const newHeight = height / newScale;
+
+            setDimensions({ scale: newScale, height: newHeight });
+        });
+
+        observer.observe(wrapperRef.current);
+        return () => observer.disconnect();
+    }, [isFullscreen]);
+
     if (isFullscreen) {
         return (
             <div className="w-full h-full overflow-y-auto custom-scrollbar bg-white dark:bg-black">
@@ -29,32 +55,18 @@ function ScaledPreview({ isFullscreen, children }) {
         );
     }
 
-    // Force a 1440x960 simulated desktop screen, scaled down to fit the panel.
-    // The panel handles overflow, and the simulated screen scrolls internally.
     return (
-        <div className="absolute inset-0 overflow-hidden flex items-start justify-center bg-[#1a1a1c]">
+        <div ref={wrapperRef} className="w-full h-full relative overflow-hidden bg-[#1a1a1c]">
             <div 
-                className="origin-top shadow-2xl bg-white dark:bg-black"
+                className="origin-top-left bg-white dark:bg-themeApp"
                 style={{ 
                     width: '1440px', 
-                    height: '1000px',
-                    transform: 'scale(0.38)', // Base scale for most laptops
+                    height: `${dimensions.height}px`,
+                    transform: `scale(${dimensions.scale})`,
                     overflowY: 'auto',
                     overflowX: 'hidden'
                 }}
             >
-                {/* Apply scale overrides via media queries directly in a style tag for responsiveness */}
-                <style>{`
-                    @media (min-width: 1280px) {
-                        .origin-top { transform: scale(0.35); }
-                    }
-                    @media (min-width: 1536px) {
-                        .origin-top { transform: scale(0.48); }
-                    }
-                    @media (min-width: 1920px) {
-                        .origin-top { transform: scale(0.60); }
-                    }
-                `}</style>
                 {children}
             </div>
         </div>
