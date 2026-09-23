@@ -75,9 +75,11 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     };
 
         const handleOpenEdit = async (img) => {
-        console.log("Opening edit for", img.title);
         try {
-            setEditingImage({ ...img, local_url: img.image_url });
+            const response = await fetch(img.image_url);
+            const blob = await response.blob();
+            const localUrl = URL.createObjectURL(blob);
+            setEditingImage({ ...img, local_url: localUrl });
         } catch (error) {
             console.error("Failed to load image blob:", error);
             alert("Failed to load image for editing.");
@@ -490,6 +492,43 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                     </div>
                 </div>
             </div>
+
+            {/* Edit/Crop Existing Image Modal */}
+            {editingImage && (
+                <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-themeApp w-full max-w-4xl rounded-3xl p-6 shadow-2xl flex flex-col max-h-[90vh]">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-bold text-themeText">Adjust & Crop Image</h3>
+                            <button onClick={() => { if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null); }} className="text-themeTextSec hover:text-themeText">
+                                <i className="fa-solid fa-xmark text-xl"></i>
+                            </button>
+                        </div>
+                        <div className="flex-1 overflow-auto bg-black/5 rounded-2xl flex items-center justify-center p-4 relative">
+                            <ReactCrop crop={editCrop} onChange={c => setEditCrop(c)} onComplete={c => setEditCompletedCrop(c)}>
+                                <img 
+                                    ref={editImgRef}
+                                    src={editingImage.local_url} 
+                                    alt="Editing" 
+                                    className="max-h-[60vh] w-auto object-contain"
+                                    onLoad={(e) => {
+                                        const { width, height } = e.currentTarget;
+                                        const initialCrop = centerCrop(makeAspectCrop({ unit: '%', width: 90 }, 16/9, width, height), width, height);
+                                        setEditCrop(initialCrop);
+                                        setEditCompletedCrop(initialCrop);
+                                    }}
+                                />
+                            </ReactCrop>
+                        </div>
+                        <div className="flex justify-end gap-3 mt-6">
+                            <button onClick={() => { if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null); }} className="px-5 py-2.5 rounded-xl font-bold text-sm text-themeTextSec hover:bg-black/5 transition-colors">Cancel</button>
+                            <button onClick={handleSaveEdit} disabled={isSavingEdit} className="px-5 py-2.5 bg-themeAccent text-white font-bold text-sm rounded-xl hover:bg-themeAccent/90 shadow-lg shadow-themeAccent/20 transition-all flex items-center gap-2">
+                                {isSavingEdit ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-crop-simple"></i>}
+                                {isSavingEdit ? 'Saving...' : 'Save Adjustments'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
