@@ -42,6 +42,21 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
 
     return (
         <div className="fixed top-0 left-0 right-0 z-40 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border-b border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_4px_30px_rgb(0,0,0,0.2)]">
+            {/* Dark Overlay for "Covers Moments" */}
+            <AnimatePresence>
+                {activeDropdown && activeDropdown !== 'profile' && activeDropdown !== 'notifications' && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="fixed top-[72px] inset-x-0 bottom-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-[35]"
+                    style={{ height: '200vh' }}
+                    onMouseEnter={() => setActiveDropdown(null)}
+                />
+                )}
+            </AnimatePresence>
+
             <header className="h-[72px] px-4 lg:px-8 flex items-center justify-between max-w-[2000px] mx-auto gap-4">
                 
                 {/* Left: Branding */}
@@ -93,63 +108,73 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                 )}
                             </button>
 
-                            {/* Dropdown Panel (Only for items with children) */}
+                            
+                            {/* TLH-Style Full Width Mega Dropdown Panel */}
                             {hasChildren && (
                                 <AnimatePresence>
                                     {activeDropdown === navItem.id && (
                                         <motion.div 
-                                            initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 5, scale: 0.98 }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                            className="absolute top-[calc(100%-8px)] left-0 pt-2 z-50 origin-top-left"
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                            className="fixed top-[72px] left-0 w-full bg-white dark:bg-themePanel border-b border-black/[0.04] dark:border-white/[0.08] shadow-2xl z-[50]"
                                         >
-                                            <div className="bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[260px] flex flex-col gap-1.5 relative overflow-hidden">
+                                            <div className="max-w-[1400px] mx-auto px-6 py-10 flex justify-between gap-16">
                                                 
-                                                {/* Top edge highlight */}
-                                                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#007AFF]/30 to-transparent"></div>
+                                                {/* Left Intro Column */}
+                                                <div className="w-[300px] shrink-0">
+                                                    <h3 className="text-2xl font-bold text-themeText mb-3">{navItem.label}</h3>
+                                                    <p className="text-themeTextSec text-[13px] leading-relaxed">
+                                                        Access your primary modules, configure systems, and view operational analytics for {navItem.label.toLowerCase()}.
+                                                    </p>
+                                                </div>
 
-                                                {navItem.children.map(link => {
-                                                    const isActive = activeTab === link.id;
-                                                    const hasNotice = link.id === 'notices' && notices?.length > 0;
-                                                    return (
-                                                        <button type="button"
-                                                            key={link.id}
-                                                            onClick={() => {
-                                                                setActiveTab(link.id);
-window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-                                                                setActiveDropdown(null);
-                                                            }}
-                                                            className={`group/btn relative flex items-center gap-3 p-2.5 rounded-lg transition-all text-left outline-none ${
-                                                                isActive ? 'bg-themeElevated text-themeText' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 hover:text-themeText dark:hover:text-themeText'
-                                                            }`}
-                                                        >
-                                                            {isActive && (
-                                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] bg-[#007AFF] rounded-r-md shadow-[0_0_8px_rgba(0,122,255,0.4)]"></div>
-                                                            )}
-                                                            <div className={`w-8 h-8 rounded-md flex items-center justify-center transition-colors shadow-inner shrink-0 ${
-                                                                isActive ? 'bg-themeAccent/10 text-themeAccent border border-themeAccent/20' : 'bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-themeTextSec group-hover/btn:text-themeAccent group-hover/btn:bg-[#007AFF]/5 group-hover/btn:border-[#007AFF]/10'
-                                                            }`}>
-                                                                <i className={`${link.icon} text-sm drop-shadow-sm`}></i>
-                                                            </div>
-                                                            <div className="flex flex-col min-w-0 flex-1">
-                                                                <span className="text-[12px] font-bold truncate tracking-tight">{link.label}</span>
-                                                            </div>
-                                                            {hasNotice && (
-                                                                <div className="ml-auto flex items-center justify-center min-w-[18px] h-[18px] rounded-md bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[9px] font-black shrink-0">
-                                                                    {notices.length}
+                                                {/* Grid of Links */}
+                                                <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-6">
+                                                    {navItem.children.map(link => {
+                                                        const isActive = activeTab === link.id;
+                                                        const hasNotice = link.id === 'notices' && notices?.length > 0;
+                                                        return (
+                                                            <button type="button"
+                                                                key={link.id}
+                                                                onClick={() => {
+                                                                    setActiveTab(link.id);
+                                                                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                                                                    setActiveDropdown(null);
+                                                                }}
+                                                                className={`group/btn relative flex flex-col gap-2 p-4 rounded-xl transition-all text-left outline-none border border-transparent ${
+                                                                    isActive ? 'bg-themeElevated/50 border-black/5 dark:border-white/5' : 'hover:bg-black/5 dark:hover:bg-white/5 hover:border-black/5 dark:hover:border-white/5'
+                                                                }`}
+                                                            >
+                                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-inner ${
+                                                                    isActive ? 'bg-themeAccent/10 text-themeAccent border border-themeAccent/20' : 'bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-themeTextSec group-hover/btn:text-themeAccent group-hover/btn:bg-[#007AFF]/5 group-hover/btn:border-[#007AFF]/10'
+                                                                }`}>
+                                                                    <i className={`${link.icon || 'fa-solid fa-cube'} text-[12px]`}></i>
                                                                 </div>
-                                                            )}
-                                                        </button>
-                                                    );
-                                                })}
+                                                                
+                                                                <div className="flex flex-col mt-1">
+                                                                    <span className={`text-[13px] font-bold ${isActive ? 'text-themeText' : 'text-themeText group-hover/btn:text-themeAccent'} transition-colors`}>
+                                                                        {link.label}
+                                                                    </span>
+                                                                    <span className="text-[11px] text-themeTextSec font-medium mt-1 opacity-80">Manage {link.label.toLowerCase()}</span>
+                                                                </div>
+
+                                                                {hasNotice && (
+                                                                    <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse"></div>
+                                                                )}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
                             )}
                         </div>
-                    )})}
+                        );
+                    })}
                 </nav>
 
                 {/* Right: Actions */}
