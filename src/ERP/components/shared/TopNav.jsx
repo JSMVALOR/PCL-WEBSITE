@@ -45,7 +45,10 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
             <header className="h-[72px] px-4 lg:px-8 flex items-center justify-between max-w-[2000px] mx-auto gap-4">
                 
                 {/* Left: Branding */}
-                <div className="flex items-center gap-3 lg:gap-4 shrink-0 pr-2 lg:pr-4 xl:pr-10">
+                <div 
+                    className="flex items-center gap-3 lg:gap-4 shrink-0 pr-2 lg:pr-4 xl:pr-10 cursor-pointer hover:opacity-80 transition-opacity" 
+                    onClick={() => setActiveTab('dashboard')}
+                >
                     <div className="w-10 h-10 rounded-xl bg-themeElevated flex items-center justify-center p-2 shadow-inner border border-black/5 dark:border-white/5">
                         <img src={pclLogo} alt="PCL Logo" className="w-full h-full object-contain drop-shadow-sm" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial")) ? { filter: "invert(1) drop-shadow(0px 0px 5px rgba(255,255,255,0.2))" } : { filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))" }} />
                     </div>
