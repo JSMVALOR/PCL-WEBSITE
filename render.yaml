@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: pcl-whatsapp-engine
-    env: docker
-    rootDir: backend/whatsapp-server
-    envVars:
-      - key: DATABASE_URL
-        sync: false

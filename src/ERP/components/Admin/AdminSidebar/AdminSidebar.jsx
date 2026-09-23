@@ -59,7 +59,6 @@ export const ADMIN_NAV_GROUPS = [
     links: [
       { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" },
       { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
-      { id: "whatsapp", label: "WhatsApp Server", icon: "fa-brands fa-whatsapp" },
       { id: "parent-preview", label: "Parent View", icon: "fa-solid fa-user-group" }
     ]
   }
@@ -186,7 +185,6 @@ export const ADMIN_NAV_MEGA = [
         id: "comms_group", label: "Communications", icon: "fa-solid fa-tower-broadcast",
         children: [
           { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
-          { id: "whatsapp", label: "WhatsApp Server", icon: "fa-brands fa-whatsapp" }
         ]
       },
       {
