@@ -7,7 +7,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import CLETracker from "./CLETracker";
 
 // --- CACHE HELPERS ---
-const CK = { exp: 'int_experiences', noc: 'int_nocs', prac: 'int_practical' };
+const CK = { exp: 'int_experiences', noc: 'int_perms', prac: 'int_practical' };
 const readCache = (key, fallback) => {
  try { const d = sessionStorage.getItem(key); return d ? JSON.parse(d) : fallback; }
  catch { return fallback; }
@@ -103,7 +103,7 @@ export default function Internships({ isEmbedded = false }) {
 
  // --- INSTANT STATE FROM CACHE ---
  const [experiences, setExperiences] = useState(() => readCache(CK.exp, []));
- const [nocRequests, setNocRequests] = useState(() => readCache(CK.noc, []));
+ const [permissions, setPermissions] = useState(() => readCache(CK.noc, []));
  const [practicalLogs, setPracticalLogs] = useState(() => readCache(CK.prac, []));
 
  // --- CARD EXPAND STATE ---
@@ -111,7 +111,7 @@ export default function Internships({ isEmbedded = false }) {
 
  // --- MODAL STATES ---
  const [showExpModal, setShowExpModal] = useState(false);
- const [showNocModal, setShowNocModal] = useState(false);
+ const [showPermModal, setShowPermModal] = useState(false);
  const [showPracModal, setShowPracModal] = useState(false);
  const [showDailyLogModal, setShowDailyLogModal] = useState(false);
  const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,11 +120,11 @@ export default function Internships({ isEmbedded = false }) {
 
  // NOC file ref
  
- const [nocUrl, setNocUrl] = useState('');
+ const [permUrl, setPermUrl] = useState('');
 
  // --- FORM STATES ---
  const [expForm, setExpForm] = useState({ company_name: "", role_title: "", location: "", duration: "", description: "", type: "Corporate", status: "completed", certificate_notes: "" });
- const [nocForm, setNocForm] = useState({ company_name: "", start_date: "", end_date: "" });
+ const [permForm, setPermForm] = useState({ company_name: "", start_date: "", end_date: "" });
  const [pracForm, setPracForm] = useState({ title: "", type: "Court Visit", date_logged: "", hours: "", description: "" });
  const [dailyLogForm, setDailyLogForm] = useState({ experience_id: "", date: "", entry: "" });
 
@@ -144,7 +144,7 @@ export default function Internships({ isEmbedded = false }) {
  writeCache(CK.exp, expRes.value.data);
  }
  if (nocRes.status === 'fulfilled' && nocRes.value.data) {
- setNocRequests(nocRes.value.data);
+ setPermissions(nocRes.value.data);
  writeCache(CK.noc, nocRes.value.data);
  }
  if (pracRes.status === 'fulfilled' && pracRes.value.data) {
@@ -235,18 +235,18 @@ export default function Internships({ isEmbedded = false }) {
  printWindow.document.close();
  };
 
- const handleNocSubmit = async (e) => {
+ const handlePermSubmit = async (e) => {
  e.preventDefault();
- if (!nocUrl) { window.erpDialog?.alert("Google Drive Link is required for NOC."); return; }
- if (!nocUrl.includes('drive.google.com')) { window.erpDialog?.alert("Please enter a valid Google Drive link."); return; }
+ if (!permUrl) { window.erpDialog?.alert("Google Drive Link is required."); return; }
+ if (!permUrl.includes('drive.google.com')) { window.erpDialog?.alert("Please enter a valid Google Drive link."); return; }
  setIsSubmitting(true);
  try {
  const studentId = userSession?.db_id || userSession?.id;
  const { error } = await supabase.from('noc_requests').insert({
  student_id: studentId,
- company_name: nocForm.company_name,
- duration: `${nocForm.start_date} to ${nocForm.end_date}`,
- offer_letter_path: nocUrl,
+ company_name: permForm.company_name,
+ duration: `${permForm.start_date} to ${permForm.end_date}`,
+ offer_letter_path: permUrl,
  status: 'pending_mentor',
  mentor_name: "Assigned Mentor",
  hod_name: "Pending"
@@ -254,10 +254,10 @@ export default function Internships({ isEmbedded = false }) {
  if (error) throw error;
  setSubmitSuccess(true);
  fetchAll();
- setTimeout(() => { setShowNocModal(false); setSubmitSuccess(false); setNocUrl(''); setNocForm({ company_name: "", start_date: "", end_date: "" }); }, 50);
+ setTimeout(() => { setShowPermModal(false); setSubmitSuccess(false); setPermUrl(''); setPermForm({ company_name: "", start_date: "", end_date: "" }); }, 50);
  } catch (err) {
- console.error("NOC failed:", err);
- window.erpDialog?.alert("Failed to route NOC request.");
+ console.error("Permission request failed:", err);
+ window.erpDialog?.alert("Failed to route Permission request.");
  } finally { setIsSubmitting(false); }
  };
 
@@ -333,7 +333,6 @@ export default function Internships({ isEmbedded = false }) {
 
  const TABS = [
  { id: 'ledger', label: 'Experience Ledger', icon: 'fa-history' },
- { id: 'noc', label: 'NOC Requests', icon: 'fa-file-signature' },
  { id: 'cle', label: 'CLE Diaries', icon: 'fa-book-open' }
  ];
 
@@ -373,11 +372,45 @@ export default function Internships({ isEmbedded = false }) {
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText dark:text-white flex items-center gap-2`}><i className="fa-solid fa-building text-themeAccent"></i> Corporate & External Internships</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec dark:text-white/50 font-medium mt-1">Verified experiences sync to your digital resume.</p>
  </div>
+ <div className="flex items-center gap-3">
+ <button type="button" onClick={() => setShowPermModal(true)} className="px-5 py-2.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border border-blue-500/20 rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] flex items-center gap-2">
+ <i className="fa-solid fa-paper-plane"></i> Apply Permission
+ </button>
  <button type="button" onClick={() => setShowExpModal(true)} className="px-5 py-2.5 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> Log Experience
  </button>
  </div>
+ </div>
  
+ {permissions.length > 0 && (
+ <div className="flex flex-col gap-4 mb-4 mt-2">
+ <h3 className="text-sm font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest"><i className="fa-solid fa-paper-plane mr-1.5 text-blue-500"></i> Active Applications</h3>
+ <div className="flex flex-col gap-3">
+ {permissions.map(p => (
+ <div key={p.id} className="bg-themePanel dark:bg-white/5 border-themeBorder dark:border-white/5 p-4 rounded-2xl border border-black/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+ <div>
+ <h4 className="text-sm font-bold text-themeText dark:text-white">{p.company_name}</h4>
+ <p className="text-[10px] lg:text-xs text-themeTextSec dark:text-white/50 font-medium">{p.duration}</p>
+ </div>
+ <div className="flex items-center gap-4">
+ <div className="flex items-center gap-2">
+ <div className={`w-2 h-2 rounded-full ${p.status === 'approved_by_mentor' || p.status === 'approved_by_admin' || p.status === 'approved' ? 'bg-emerald-500' : p.status === 'rejected' ? 'bg-rose-500' : 'bg-amber-500 animate-pulse'}`}></div>
+ <span className={`text-[10px] lg:text-xs font-bold uppercase tracking-widest ${p.status === 'approved_by_mentor' || p.status === 'approved_by_admin' || p.status === 'approved' ? 'text-emerald-500' : p.status === 'rejected' ? 'text-rose-500' : 'text-amber-500'}`}>
+ {p.status.replace(/_/g, ' ')}
+ </span>
+ </div>
+ {(p.status === 'approved_by_mentor' || p.status === 'approved_by_admin' || p.status === 'approved') && (
+ <button type="button" onClick={() => handlePrintNoc(p)} className="px-3 py-1.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-lg text-[10px] font-bold hover:bg-emerald-500/20 transition-colors">
+ <i className="fa-solid fa-print"></i> NOC
+ </button>
+ )}
+ </div>
+ </div>
+ ))}
+ </div>
+ </div>
+ )}
+
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
  {experiences.length === 0 ? (
  <div className="w-full py-10 lg:py-12 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
@@ -546,75 +579,7 @@ export default function Internships({ isEmbedded = false }) {
  </div>
  )}
 
- {/* ═══════════════ NOC REQUESTS ═══════════════ */}
- {view === "noc" && (
- <div className="flex flex-col gap-6 lg:gap-8 animate-fade-in">
- <div className="flex justify-between items-center border-themeBorder dark:border-white/5 border-black/10 dark:border-white/20 pb-4 px-2">
- <div>
- <h2 className={`${theme.text.heading} text-xl lg:text-2xl text-themeText dark:text-white tracking-tight`}>Active NOC Requests</h2>
- <p className="text-[10px] lg:text-xs text-themeTextSec dark:text-white/50 font-medium mt-1">Official permissions for internships.</p>
- </div>
- <button type="button" onClick={() => setShowNocModal(true)} className="text-[10px] lg:text-[14px] font-medium text-themePanel bg-themeText tracking-normal flex items-center gap-2 px-5 py-2.5 rounded-[2rem] transition active:scale-[0.98] hover:bg-themeText/90">
- <i className="fa-solid fa-paper-plane"></i> <span className="hidden sm:inline">New Request</span>
- </button>
- </div>
 
- <div className="flex flex-col gap-4 lg:gap-5">
- {nocRequests.length === 0 ? (
- <div className="w-full py-10 lg:py-12 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-file-signature text-4xl lg:text-5xl text-neutral-600/50 mb-4"></i>
- <p className={`${theme.text.muted} font-bold text-xs lg:text-sm`}>No NOC requests found.</p>
- </div>
- ) : (
- nocRequests.map((req) => (
- <div key={req.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-[2rem] flex flex-col lg:flex-row lg:items-center justify-between gap-6 hover:border-themeBorder dark:border-white/5 transition group`}>
- <div className="flex-1">
- <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText dark:text-white mb-2 group-hover:text-themeAccent transition-colors">{req.company_name}</h3>
- <p className={`text-[10px] lg:text-xs font-bold text-themeTextSec dark:text-white/50 mb-3 bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong px-3 py-1.5 rounded-lg w-fit`}><i className="fa-regular fa-calendar mr-1.5 text-themeAccent"></i> {req.duration}</p>
- <p className={`text-[8px] lg:text-[12px] font-medium text-themeTextSec dark:text-white/50 opacity-70`}>Applied: {new Date(req.applied_on).toLocaleDateString('en-GB')}</p>
- </div>
-
- {/* Approval Pipeline */}
- <div className="w-full lg:w-auto bg-gray-100 dark:bg-themeApp/50 border border-black/10 dark:border-white/20 rounded-[2rem] p-4 flex items-center justify-between sm:justify-center gap-3 sm:gap-6 shrink-0">
- <div className="flex flex-col items-center gap-2 w-20 text-center">
- <div className={`w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-[10px] lg:text-xs border-2 transition-colors ${req.status === 'approved' || req.status === 'pending_hod'
- ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
- : 'bg-amber-500/10 border-amber-500 text-amber-400'
- }`}>
- <i className={`fa-solid ${req.status === 'approved' || req.status === 'pending_hod' ? 'fa-check' : 'fa-hourglass-half'}`}></i>
- </div>
- <p className="text-[8px] lg:text-[12px] font-medium text-themeText dark:text-white">Mentor</p>
- </div>
- <div className={`w-8 sm:w-16 lg:w-20 h-0.5 -mt-6 transition-colors duration-500 ${req.status === 'approved' || req.status === 'pending_hod' ? 'bg-emerald-500' : 'bg-themeBorderStrong'}`}></div>
- <div className="flex flex-col items-center gap-2 w-20 text-center">
- <div className={`w-8 h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-[10px] lg:text-xs border-2 transition-colors ${req.status === 'approved'
- ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
- : req.status === 'pending_hod' ? 'bg-amber-500/10 border-amber-500 text-amber-400' : 'bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong border-themeBorder dark:border-white/5 text-neutral-600'
- }`}>
- <i className={`fa-solid ${req.status === 'approved' ? 'fa-check' : req.status === 'pending_hod' ? 'fa-hourglass-half' : 'fa-lock'}`}></i>
- </div>
- <p className={`text-[8px] lg:text-[12px] font-medium ${req.status === 'approved' ? 'text-themeText dark:text-white' : 'text-themeTextSec dark:text-white/50 opacity-70'}`}>HOD</p>
- </div>
- </div>
-
- {/* Download */}
- <div className="w-full lg:w-auto shrink-0 flex items-center justify-center">
- {req.status === 'approved' ? (
- <button type="button" onClick={() => handlePrintNoc(req)} className="w-full lg:w-auto bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-themeBorder dark:border-white/5 border-emerald-500/20 px-6 py-3.5 rounded-[2rem] text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2">
- <i className="fa-solid fa-print text-lg"></i> Print NOC
- </button>
- ) : (
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} disabled className="w-full lg:w-auto bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong text-themeTextSec dark:text-white/50 opacity-50 border border-black/10 dark:border-white/20 px-6 py-3.5 rounded-[2rem] text-[13px] font-medium cursor-not-allowed flex items-center justify-center gap-2">
- <i className="fa-solid fa-lock"></i> Locked
- </button>
- )}
- </div>
- </div>
- ))
- )}
- </div>
- </div>
- )}
 
  {/* ═══════════════ CLE DIARIES ═══════════════ */}
  {view === "cle" && (
@@ -691,25 +656,25 @@ export default function Internships({ isEmbedded = false }) {
  </div>
  )}
 
- {/* B. NOC MODAL */}
- {showNocModal && (
- <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowNocModal(false)}>
+ {/* B. PERMISSION MODAL */}
+ {showPermModal && (
+ <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowPermModal(false)}>
  <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
  <div className="bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong p-5 lg:p-6 border-themeBorder dark:border-white/5 border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
  <div className="absolute top-0 right-0 w-32 h-32 bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
- <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText dark:text-white tracking-tight mb-1">Request NOC</h3>
+ <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText dark:text-white tracking-tight mb-1">Apply for Internship Permission</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Will be routed directly to your assigned mentor.</p>
  </div>
- <button type="button" onClick={() => setShowNocModal(false)} className="w-8 h-8 rounded-full bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowPermModal(false)} className="w-8 h-8 rounded-full bg-white dark:bg-[#121212] border-themeBorder dark:border-white/5 border-themeBorder dark:border-white/5BorderStrong text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
- <form onSubmit={handleNocSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
- <div><label className={LABEL_CLS}>Company / Firm Name</label><input type="text" value={nocForm.company_name} onChange={e => setNocForm({ ...nocForm, company_name: e.target.value })} className={INPUT_CLS} required /></div>
+ <form onSubmit={handlePermSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
+ <div><label className={LABEL_CLS}>Company / Firm Name</label><input type="text" value={permForm.company_name} onChange={e => setPermForm({ ...permForm, company_name: e.target.value })} className={INPUT_CLS} required /></div>
  <div className="grid grid-cols-2 gap-5">
- <div><label className={LABEL_CLS}>Start Date</label><input min="2026-09-14" type="date" value={nocForm.start_date} onChange={e => setNocForm({ ...nocForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
- <div><label className={LABEL_CLS}>End Date</label><input min="2026-09-14" type="date" value={nocForm.end_date} onChange={e => setNocForm({ ...nocForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>Start Date</label><input min="2026-09-14" type="date" value={permForm.start_date} onChange={e => setPermForm({ ...permForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>End Date</label><input min="2026-09-14" type="date" value={permForm.end_date} onChange={e => setPermForm({ ...permForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  </div>
  <div>
  <label className={LABEL_CLS}>Google Drive Link to Offer Letter (Required)</label>
@@ -720,8 +685,8 @@ export default function Internships({ isEmbedded = false }) {
  <input 
  type="url" 
  placeholder="https://drive.google.com/file/d/.../view" 
- value={nocUrl} 
- onChange={e => setNocUrl(e.target.value)} 
+ value={permUrl} 
+ onChange={e => setPermUrl(e.target.value)} 
  className={`${INPUT_CLS} pl-11`} 
  required 
  />
@@ -729,9 +694,9 @@ export default function Internships({ isEmbedded = false }) {
  <p className="text-[9px] text-themeTextSec dark:text-white/50 mt-2"><i className="fa-solid fa-circle-info mr-1"></i> Ensure the link is set to "Anyone with the link can view"</p>
  </div>
  {submitSuccess ? (
- <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/5 border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> NOC Routed to Mentor</div>
+ <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/5 border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Application Routed to Mentor</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Routing to Mentor..." : "Submit NOC Request"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
  )}
  </form>
  </div>

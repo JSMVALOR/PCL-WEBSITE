@@ -15,6 +15,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  // Data
  const [leaves, setLeaves] = useState([]);
  const [grievances, setGrievances] = useState([]);
+ const [internships, setInternships] = useState([]);
  const [allProfiles, setAllProfiles] = useState([]);
 
  // Faculty Grievance Form (Goes to Admin)
@@ -38,6 +39,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
   const [
   { data: leavesData },
   { data: grievancesData },
+  { data: internshipsData },
   { data: profilesData }
   ] = await Promise.all([
   // Fetch leaves from mentees
@@ -54,12 +56,21 @@ export default function FacultyApprovals({ isEmbedded = false }) {
   .eq('assigned_to', userSession.db_id)
   .order('created_at', { ascending: false }),
   
+  // Fetch internships from mentees
+  menteeIds.length > 0
+    ? supabase.from('noc_requests')
+      .select('*')
+      .in('student_id', menteeIds)
+      .order('applied_on', { ascending: false })
+    : Promise.resolve({ data: [] }),
+
   // Fetch profiles for the "Report Grievance" dropdown
   supabase.from('profiles').select('id, full_name, role').neq('id', userSession.db_id).neq('role', 'admin')
   ]);
 
  setLeaves(leavesData || []);
  setGrievances(grievancesData || []);
+ setInternships(internshipsData || []);
  setAllProfiles(profilesData || []);
 
  } catch (error) {
@@ -180,6 +191,20 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  }
  };
 
+ const handleInternshipAction = async (id, action) => {
+ setIsProcessing(true);
+ let newStatus = action === 'approve' ? 'approved_by_mentor' : action === 'forward' ? 'forwarded_to_admin' : 'rejected';
+ try {
+ const { error } = await supabase.from('noc_requests').update({ status: newStatus }).eq('id', id);
+ if (error) throw error;
+ window.erpDialog.alert(`Internship application ${newStatus.replace(/_/g, ' ')}.`);
+ fetchData();
+ } catch(err) {
+ console.error(err);
+ window.erpDialog.alert("Failed to process internship request.");
+ } finally { setIsProcessing(false); }
+ };
+
  const submitFacultyGrievance = async (e) => {
  e.preventDefault();
  setIsProcessing(true);
@@ -240,6 +265,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_grievances' ? 'bg-amber-500 text-neutral-900' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Mentee Grievances
+ </button>
+ <button type="button" 
+ onClick={() => setActiveTab('mentee_internships')}
+ className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_internships' ? 'bg-blue-500 text-white' : 'text-themeTextSec hover:text-themeText'}`}
+ >
+ Mentee Internships
  </button>
  <button type="button" 
  onClick={() => setActiveTab('report_grievance')}
@@ -362,6 +393,52 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  )}
  </div>
  ))
+ )}
+ </div>
+ )}
+
+ {activeTab === 'mentee_internships' && (
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+ {internships.length === 0 ? (
+ <div className={`col-span-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
+ <p className="text-sm font-semibold text-themeTextSec">No active internship applications from mentees.</p>
+ </div>
+ ) : (
+ internships.map(i => {
+ const student = allProfiles.find(p => p.id === i.student_id);
+ return (
+ <div key={i.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+ 
+ <div className="flex justify-between items-start pl-2">
+ <div>
+ <p className="text-xs font-bold text-themeText mb-1">Student: {student?.full_name || 'Unknown'}</p>
+ <p className="text-sm font-black text-themeText">{i.company_name}</p>
+ <p className="text-xs text-themeTextSec">{i.duration}</p>
+ </div>
+ {getStatusBadge(i.status)}
+ </div>
+
+ <div className="bg-themeElevated p-3 rounded-lg border-theme border-themeBorder">
+ <a href={i.offer_letter_path} target="_blank" rel="noreferrer" className="text-xs text-blue-500 hover:underline flex items-center gap-2">
+ <i className="fa-brands fa-google-drive"></i> View Offer Letter / Details
+ </a>
+ </div>
+
+ {i.status === 'pending_mentor' ? (
+ <div className="flex flex-wrap gap-2 mt-auto">
+ <button type="button" onClick={() => handleInternshipAction(i.id, 'approve')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Approve</button>
+ <button type="button" onClick={() => handleInternshipAction(i.id, 'forward')} disabled={isProcessing} className="flex-1 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Fwd to Admin</button>
+ <button type="button" onClick={() => handleInternshipAction(i.id, 'reject')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ </div>
+ ) : (
+ <div className="mt-auto border-t-theme border-themeBorderStrong pt-3">
+ <p className="text-[12px] font-medium text-themeTextSec mb-1">Status Overview</p>
+ <p className="text-xs text-themeText capitalize">{i.status.replace(/_/g, ' ')}</p>
+ </div>
+ )}
+ </div>
+ )})
  )}
  </div>
  )}
