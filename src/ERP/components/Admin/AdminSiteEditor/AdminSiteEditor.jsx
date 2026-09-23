@@ -658,10 +658,10 @@ export default function AdminSiteEditor({ isHubView = false }) {
  )}
 
  {/* Main Split Layout */}
- <div className="flex flex-col xl:flex-row gap-6 items-stretch relative min-h-[700px] flex-1">
+ <div className="flex flex-col xl:flex-row gap-6 items-stretch relative h-[calc(100vh-130px)] min-h-[600px] w-full">
  
      {/* Left Panel: Form Editor */}
-     <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col xl:w-[450px] shrink-0 relative overflow-hidden">
+     <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col h-full xl:w-[450px] shrink-0 relative overflow-hidden">
          
          <div className="p-5 border-b border-black/[0.04] dark:border-white/[0.05] shrink-0 bg-white/40 dark:bg-black/10">
              <label className="block text-[11px] font-black text-themeTextSec uppercase tracking-widest mb-3 pl-1">Page Section</label>
@@ -752,7 +752,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
      </div>
 
      {/* Right Panel: Live Safari/Mac Window Preview */}
-     <div className={`transition-all duration-500 overflow-hidden flex flex-col flex-1 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ${isPreviewFullscreen ? 'fixed inset-4 z-[99999] rounded-[24px] border border-white/10 bg-black' : 'rounded-[24px] border border-black/10 dark:border-white/10 bg-black relative'}`}>
+     <div className={`transition-all duration-500 overflow-hidden flex flex-col h-full flex-1 min-w-0 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ${isPreviewFullscreen ? 'fixed inset-4 z-[99999] rounded-[24px] border border-white/10 bg-black' : 'rounded-[24px] border border-black/10 dark:border-white/10 bg-black relative'}`}>
          
          {/* Mac Window Header */}
          <div className="h-12 bg-gradient-to-b from-[#e5e5e5] to-[#d4d4d4] dark:from-[#2d2d2d] dark:to-[#1c1c1c] w-full flex items-center justify-between px-4 shrink-0 border-b border-black/20 dark:border-black select-none relative z-10">
