@@ -9,6 +9,7 @@ import SyllabusEditorModal from "../../Admin/AdminTimetableBuilder/tabs/componen
 export default function CourseVault({ isEmbedded = false }) {
     const { userSession } = useERP();
     const [materials, setMaterials] = useState([]);
+    const [historicalStats, setHistoricalStats] = useState({});
     const [subjects, setSubjects] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("All");
@@ -135,6 +136,60 @@ export default function CourseVault({ isEmbedded = false }) {
                     });
                     setMaterials(enrichedMaterials);
                 }
+
+                // 5. Fetch Historical Stats (Attendance & Assignments)
+                let subjectStats = {};
+                if (userSession.db_id) {
+                    // Fetch Attendance
+                    const { data: attData } = await supabase
+                        .from('attendance_records')
+                        .select('entry_status, class_sessions!inner(subject_id)')
+                        .eq('student_id', userSession.db_id);
+                    
+                    if (attData) {
+                        attData.forEach(record => {
+                            const sid = record.class_sessions?.subject_id;
+                            if (!sid) return;
+                            if (!subjectStats[sid]) subjectStats[sid] = { present: 0, totalClasses: 0, submissions: 0, totalAssignments: 0 };
+                            subjectStats[sid].totalClasses++;
+                            if (['present', 'late'].includes(record.entry_status)) {
+                                subjectStats[sid].present++;
+                            }
+                        });
+                    }
+
+                    // Fetch Submissions
+                    const { data: subData } = await supabase
+                        .from('assignment_submissions')
+                        .select('assignments!inner(subject_id)')
+                        .eq('student_id', userSession.db_id);
+                    
+                    if (subData) {
+                        subData.forEach(sub => {
+                            const sid = sub.assignments?.subject_id;
+                            if (!sid) return;
+                            if (!subjectStats[sid]) subjectStats[sid] = { present: 0, totalClasses: 0, submissions: 0, totalAssignments: 0 };
+                            subjectStats[sid].submissions++;
+                        });
+                    }
+
+                    // Fetch Total Assignments for these subjects
+                    const { data: assignData } = await supabase
+                        .from('assignments')
+                        .select('id, subject_id')
+                        .in('subject_id', unifiedSubjects.map(s => s.master_subjects?.id).filter(Boolean));
+                    
+                    if (assignData) {
+                        assignData.forEach(a => {
+                            const sid = a.subject_id;
+                            if (!sid) return;
+                            if (!subjectStats[sid]) subjectStats[sid] = { present: 0, totalClasses: 0, submissions: 0, totalAssignments: 0 };
+                            subjectStats[sid].totalAssignments++;
+                        });
+                    }
+
+                    if (isMounted) setHistoricalStats(subjectStats);
+                }
             } catch (error) {
                 console.error("Error fetching Course Vault data:", error);
             } finally {
@@ -166,8 +221,8 @@ export default function CourseVault({ isEmbedded = false }) {
     let processedSubjects = subjects.map(s => ({ ...s, _isFaded: !s._isAssigned }));
 
     // Semester Filter (Hide instead of fade)
-    if (semesterFilter === "current" && userSession?.semester) {
-        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester === parseInt(userSession.semester));
+    if (semesterFilter === "current") {
+        processedSubjects = processedSubjects.filter(s => s._isAssigned);
     } else if (semesterFilter === "previous" && userSession?.semester) {
         processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester < parseInt(userSession.semester));
     }
@@ -359,20 +414,36 @@ export default function CourseVault({ isEmbedded = false }) {
                                                 </div>
 
                                                 <div className="p-4 flex-1 flex flex-col">
-                                                    <div className="flex-1 flex flex-col items-center justify-center py-8">
-                                                        <button 
-                                                            onClick={() => items.length > 0 && setActiveMaterialsSubject({ subject: masterSubject, items: items })}
-                                                            disabled={items.length === 0}
-                                                            className={`px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition shadow-sm flex items-center gap-2 ${
-                                                                items.length === 0 
-                                                                ? 'bg-black/5 dark:bg-white/5 text-themeTextSec cursor-not-allowed opacity-70' 
-                                                                : 'bg-themeAccent hover:bg-themeAccent/90 text-themeText active:scale-[0.98]'
-                                                            }`}
-                                                        >
-                                                            <i className="fa-solid fa-layer-group"></i> 
-                                                            {items.length === 0 ? (!sub._isAssigned ? "Course Not Active" : "No Materials Yet") : `View Materials (${items.length})`}
-                                                        </button>
-                                                    </div>
+                                                    {semesterFilter === "previous" && historicalStats[masterSubject.id] ? (
+                                                        <div className="flex-1 flex flex-col gap-3 py-2">
+                                                            <div className="flex justify-between items-center text-xs font-bold text-themeTextSec border-b border-black/5 dark:border-white/5 pb-2">
+                                                                <span><i className="fa-solid fa-user-check mr-1.5 text-emerald-500"></i> Attendance</span>
+                                                                <span className="text-themeText">{historicalStats[masterSubject.id].totalClasses > 0 ? Math.round((historicalStats[masterSubject.id].present / historicalStats[masterSubject.id].totalClasses) * 100) : 0}%</span>
+                                                            </div>
+                                                            <div className="flex justify-between items-center text-xs font-bold text-themeTextSec border-b border-black/5 dark:border-white/5 pb-2">
+                                                                <span><i className="fa-solid fa-file-lines mr-1.5 text-blue-500"></i> Assignments</span>
+                                                                <span className="text-themeText">{historicalStats[masterSubject.id].submissions} / {historicalStats[masterSubject.id].totalAssignments}</span>
+                                                            </div>
+                                                            <div className="mt-2 text-[10px] text-center text-themeTextSec uppercase tracking-widest font-black">
+                                                                Course Completed
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex-1 flex flex-col items-center justify-center py-8">
+                                                            <button 
+                                                                onClick={() => items.length > 0 && setActiveMaterialsSubject({ subject: masterSubject, items: items })}
+                                                                disabled={items.length === 0}
+                                                                className={`px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition shadow-sm flex items-center gap-2 ${
+                                                                    items.length === 0 
+                                                                    ? 'bg-black/5 dark:bg-white/5 text-themeTextSec cursor-not-allowed opacity-70' 
+                                                                    : 'bg-themeAccent hover:bg-themeAccent/90 text-themeText active:scale-[0.98]'
+                                                                }`}
+                                                            >
+                                                                <i className="fa-solid fa-layer-group"></i> 
+                                                                {items.length === 0 ? (!sub._isAssigned ? "Course Not Active" : "No Materials Yet") : `View Materials (${items.length})`}
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         );
