@@ -5,6 +5,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function AdminApprovals({ isEmbedded = false }) {
  const [facultyLeaves, setFacultyLeaves] = useState([]);
@@ -30,7 +31,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  { data: profileUpdatesData }
  ] = await Promise.all([
  supabase.from('timetable_requests').select('*, faculty:profiles(full_name), subject:master_subjects(name)').order('created_at', { ascending: false }),
- supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role), accused:profiles!grievances_accused_id_fkey(full_name, role)').is('assigned_to', null).order('created_at', { ascending: false }),
+ supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role, contact_email, personal_email), accused:profiles!grievances_accused_id_fkey(full_name, role, contact_email, personal_email)').is('assigned_to', null).order('created_at', { ascending: false }),
  supabase.from('student_documents').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false }),
  supabase.from('profile_update_requests').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false })
  ]);
@@ -90,6 +91,35 @@ export default function AdminApprovals({ isEmbedded = false }) {
         }
     };
 
+ 
+ const handleCallMeeting = async (g) => {
+ const meetingTime = await window.erpDialog.prompt(`Set meeting time for ${g.reporter?.full_name}:`, "e.g., Tomorrow at 10 AM");
+ if (!meetingTime) return;
+
+ setIsProcessing(true);
+ try {
+ const email = g.reporter?.contact_email || g.reporter?.personal_email;
+ 
+ if (email) {
+ await sendSystemEmail('MEETING_CALL', {
+ to_email: email,
+ student_name: g.reporter.full_name,
+ category: g.category,
+ time: meetingTime
+ });
+ }
+
+ await handleGrievanceAction(g.id, 'investigating', `Meeting scheduled for ${meetingTime}`);
+ 
+ window.erpDialog.alert(`Meeting scheduled and email sent to ${g.reporter.full_name}.`);
+ } catch (err) {
+ console.error(err);
+ window.erpDialog.alert("Failed to send meeting email.");
+ } finally {
+ setIsProcessing(false);
+ }
+ };
+
  const handleGrievanceAction = async (grievanceId, newStatus, notes = "") => {
  setIsProcessing(true);
  try {
@@ -105,7 +135,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  if (error) throw error;
 
  // Notify Requester
- const grievanceData = error ? null : (await supabase.from('grievances').select('reporter_id, category').eq('id', grievanceId).single()).data;
+ const grievanceData = error ? null : (await supabase.from('grievances').select('reporter_id, category, reporter:profiles!grievances_reporter_id_fkey(full_name, contact_email, personal_email)').eq('id', grievanceId).single()).data;
  if (grievanceData && grievanceData.reporter_id) {
  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
  await supabase.from('notices').insert([{
@@ -119,6 +149,17 @@ export default function AdminApprovals({ isEmbedded = false }) {
  author_name: 'Admin',
  author_id: null
  }]);
+ 
+ const email = grievanceData.reporter?.contact_email || grievanceData.reporter?.personal_email;
+ if (email) {
+     await sendSystemEmail('GRIEVANCE_UPDATE', {
+         to_email: email,
+         student_name: grievanceData.reporter.full_name,
+         category: grievanceData.category,
+         new_status: newStatus.toUpperCase(),
+         notes: notes || "No specific remarks provided."
+     }).catch(e => console.error("Email failed:", e));
+ }
  }
  window.erpDialog.alert(`Escalated grievance marked as ${newStatus}.`);
  fetchData();
@@ -276,12 +317,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  >
  Escalated Grievances
  </button>
- <button type="button" 
- onClick={() => setActiveTab('document_verification')}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'document_verification' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
- >
- Document Verification
- </button>
+ 
  </div>
 
 
@@ -378,16 +414,21 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
 
  {g.status === 'pending' || g.status === 'investigating' ? (
- <div className="flex flex-wrap gap-2 mt-auto">
+ <div className="flex flex-col gap-2 mt-auto">
  {g.status === 'pending' && (
- <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
+ <div className="flex gap-2">
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="flex-1 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleCallMeeting(g)} disabled={isProcessing} className="flex-1 bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-themeText dark:text-white border border-amber-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Call Meeting</button>
+ </div>
  )}
+ <div className="flex w-full gap-2">
  <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Resolution details:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
  }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
  <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Reason for dismissal:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
  }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
+ </div>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-black/5 dark:border-white/10 pt-3">
@@ -400,49 +441,6 @@ export default function AdminApprovals({ isEmbedded = false }) {
  )}
  </div>
  )}
- {activeTab === 'document_verification' && (
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
- {pendingDocuments.length === 0 ? (
- <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/5 p-8 text-center opacity-60`}>
- <p className="text-sm font-semibold text-themeTextSec">No pending documents require verification.</p>
- </div>
- ) : (
- pendingDocuments.map(doc => (
- <div key={doc.id} className={"bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-blue-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
- <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
- 
- <div className="flex justify-between items-start pl-2">
- <div>
- <p className="text-[15px] font-semibold text-themeText line-clamp-1" title={doc.document_name}>{doc.document_name}</p>
- <p className="text-[10px] font-bold text-themeTextSec mt-0.5">{doc.profiles?.full_name} ({doc.profiles?.erp_id})</p>
- </div>
- {getStatusBadge(doc.status)}
- </div>
-
- <div className="flex gap-2">
- <span className="bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{doc.document_type}</span>
- <span className="bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{doc.file_size_kb} KB</span>
- </div>
-
- <div className="flex flex-wrap gap-2 mt-auto pt-3 border-t-theme border-black/5 dark:border-white/10">
- <button type="button" 
- onClick={() => handleDocumentPreview(doc.file_path)} 
- disabled={isProcessing} 
- className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] hover:opacity-80 text-themeText py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors mb-2"
- >
- Preview Document
- </button>
- <div className="flex w-full gap-2">
- <button type="button" onClick={() => handleDocumentAction(doc.id, 'verified')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Verify</button>
- <button type="button" onClick={() => handleDocumentAction(doc.id, 'rejected')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
- </div>
- </div>
- </div>
- ))
- )}
- </div>
- )}
-
  {activeTab === 'profile_updates' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {profileUpdates.length === 0 ? (

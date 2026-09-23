@@ -804,6 +804,28 @@ const buildEmailHtml = (title, content) => `
 `;
 
 export const HTML_EMAIL_TEMPLATES = {
+    GRIEVANCE_UPDATE: (params) => buildEmailHtml(
+        'Grievance Status Update',
+        `<p>Dear ${params.student_name},</p>
+        <p>There is an update regarding your escalated grievance (<strong>${params.category}</strong>).</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Status</span><span class="data-value" style="color: #007AFF;">${params.new_status}</span></div>
+            <div class="data-row"><span class="data-label">Admin Remarks</span><span class="data-value">${params.notes}</span></div>
+        </div>
+        <p>You can check the full details in your ERP portal.</p>`
+    ),
+
+    MEETING_CALL: (params) => buildEmailHtml(
+        'Mandatory Meeting Call',
+        `<p>Dear ${params.student_name},</p>
+        <p>You are hereby called for a mandatory meeting regarding your escalated grievance (<strong>${params.category}</strong>).</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Time & Date</span><span class="data-value">${params.time}</span></div>
+            <div class="data-row"><span class="data-label">Authority</span><span class="data-value">Disciplinary Committee</span></div>
+        </div>
+        <p>Please be present on time. Failure to attend may result in ex-parte proceedings.</p>`
+    ),
+
     PARENT_LOGIN_OTP: (params) => buildEmailHtml(
         'Parent Portal Verification',
         `<p>Dear Parent,</p>

@@ -2,6 +2,14 @@
 import { HTML_EMAIL_TEMPLATES } from './emailtemplate';
 
 export const EMAIL_TEMPLATES = {
+    GRIEVANCE_UPDATE: (params) => ({
+        subject: `Update: Grievance marked as ${params.new_status}`,
+        message_body: HTML_EMAIL_TEMPLATES.GRIEVANCE_UPDATE(params) }),
+
+    MEETING_CALL: (params) => ({
+        subject: `Mandatory Meeting - Disciplinary Committee`,
+        message_body: HTML_EMAIL_TEMPLATES.MEETING_CALL(params) }),
+
 
     PARENT_LOGIN_OTP: (params) => ({
         subject: `Your Parent Portal Verification Code`,
