@@ -67,15 +67,15 @@ export default function FacultyTeachingDashboard({ onNavigate }) {
     return (
         <div className="w-full flex flex-col gap-6 lg:gap-8 animate-fade-in">
             {/* Top Metrics Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 pt-2">
                 
-                <motion.div whileHover={{ y: -5 }} onClick={() => onNavigate("courses")} className="bg-gradient-to-br from-blue-500/10 to-indigo-500/5 dark:from-blue-500/20 dark:to-indigo-500/5 backdrop-blur-xl border border-blue-500/20 rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-4 cursor-pointer shadow-sm relative overflow-hidden group">
-                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-500"></div>
+                <motion.div whileHover={{ y: -5 }} onClick={() => onNavigate("courses")} className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-4 cursor-pointer shadow-sm relative overflow-hidden group">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-themeAccent/10 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-500"></div>
                     <div className="flex items-center justify-between relative z-10">
-                        <div className="w-12 h-12 rounded-xl bg-blue-500 text-white flex items-center justify-center text-xl shadow-lg shadow-blue-500/30">
+                        <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-xl shadow-sm border border-themeAccent/20">
                             <i className="fa-solid fa-book-open"></i>
                         </div>
-                        <i className="fa-solid fa-arrow-right text-blue-500/50 group-hover:text-blue-500 group-hover:translate-x-1 transition-all"></i>
+                        <i className="fa-solid fa-arrow-right text-themeTextSec/30 group-hover:text-themeAccent group-hover:translate-x-1 transition-all"></i>
                     </div>
                     <div className="relative z-10 mt-2">
                         <h2 className="text-3xl font-black text-themeText dark:text-white tracking-tight">{stats.courses}</h2>
@@ -83,13 +83,13 @@ export default function FacultyTeachingDashboard({ onNavigate }) {
                     </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -5 }} onClick={() => onNavigate("assignments")} className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 dark:from-amber-500/20 dark:to-orange-500/5 backdrop-blur-xl border border-amber-500/20 rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-4 cursor-pointer shadow-sm relative overflow-hidden group">
-                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-amber-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-500"></div>
+                <motion.div whileHover={{ y: -5 }} onClick={() => onNavigate("assignments")} className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-4 cursor-pointer shadow-sm relative overflow-hidden group">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-themeAccent/10 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-500"></div>
                     <div className="flex items-center justify-between relative z-10">
-                        <div className="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-xl shadow-lg shadow-amber-500/30">
+                        <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-xl shadow-sm border border-themeAccent/20">
                             <i className="fa-solid fa-file-signature"></i>
                         </div>
-                        <i className="fa-solid fa-arrow-right text-amber-500/50 group-hover:text-amber-500 group-hover:translate-x-1 transition-all"></i>
+                        <i className="fa-solid fa-arrow-right text-themeTextSec/30 group-hover:text-themeAccent group-hover:translate-x-1 transition-all"></i>
                     </div>
                     <div className="relative z-10 mt-2">
                         <h2 className="text-3xl font-black text-themeText dark:text-white tracking-tight">{stats.activeAssignments}</h2>
@@ -97,13 +97,13 @@ export default function FacultyTeachingDashboard({ onNavigate }) {
                     </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -5 }} onClick={() => onNavigate("attendance")} className="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 dark:from-emerald-500/20 dark:to-teal-500/5 backdrop-blur-xl border border-emerald-500/20 rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-4 cursor-pointer shadow-sm relative overflow-hidden group">
-                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-emerald-500/20 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-500"></div>
+                <motion.div whileHover={{ y: -5 }} onClick={() => onNavigate("attendance")} className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-4 cursor-pointer shadow-sm relative overflow-hidden group">
+                    <div className="absolute -right-8 -top-8 w-32 h-32 bg-themeAccent/10 rounded-full blur-[40px] group-hover:scale-150 transition-transform duration-500"></div>
                     <div className="flex items-center justify-between relative z-10">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xl shadow-lg shadow-emerald-500/30">
+                        <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-xl shadow-sm border border-themeAccent/20">
                             <i className="fa-solid fa-user-check"></i>
                         </div>
-                        <i className="fa-solid fa-arrow-right text-emerald-500/50 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all"></i>
+                        <i className="fa-solid fa-arrow-right text-themeTextSec/30 group-hover:text-themeAccent group-hover:translate-x-1 transition-all"></i>
                     </div>
                     <div className="relative z-10 mt-2">
                         <h2 className="text-3xl font-black text-themeText dark:text-white tracking-tight">{stats.classesToday}</h2>

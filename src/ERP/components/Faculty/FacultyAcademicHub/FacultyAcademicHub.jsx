@@ -64,7 +64,7 @@ export default function FacultyAcademicHub() {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-1 w-full overflow-hidden min-h-[500px]">
+                <div className="flex-1 w-full overflow-visible min-h-[500px]">
                     <div className="w-full h-full animate-fade-in">
                         {activeTab === "overview" && <FacultyTeachingDashboard onNavigate={setActiveTab} />}
                         {activeTab === "courses" && <FacultyCourses isEmbedded={true} />}
