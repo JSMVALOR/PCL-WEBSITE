@@ -39,6 +39,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  // Profile Modal State
  const [selectedProfileUser, setSelectedProfileUser] = useState(null);
+  const [facultyProfileData, setFacultyProfileData] = useState(null);
  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
  // Provisioning Form State
