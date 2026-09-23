@@ -11,6 +11,7 @@ export const STUDENT_NAV_MEGA = [
       { 
         id: "academics_group", label: "Academics", icon: "fa-solid fa-graduation-cap", 
         children: [
+          { id: "academic_center", label: "Academic Center", icon: "fa-solid fa-layer-group" },
           { id: "vault", label: "Course Materials", icon: "fa-solid fa-book" },
           { id: "timetable", label: "Class Schedule", icon: "fa-solid fa-calendar-days" },
           { id: "attendance", label: "Attendance Record", icon: "fa-solid fa-clipboard-user" },
