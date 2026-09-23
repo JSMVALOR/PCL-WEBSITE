@@ -21,7 +21,9 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  const { data, error } = await supabase
  .from('helpdesk_tickets')
         .select('*, profiles(full_name, role, erp_id)')
- .order('created_at', { ascending: false });
+        .neq('category', 'Public Inquiry')
+        .neq('category', 'public_inquiry')
+        .order('created_at', { ascending: false });
 
  if (error) throw error;
  setTickets(data || []);
@@ -69,22 +71,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  }]);
  }
  
- // If it's a public inquiry (no user_id), extract email from description
- let contactEmail = null;
- const emailMatch = ticketData.description.match(/Email: ([a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})/);
- if (emailMatch && emailMatch[1]) {
- contactEmail = emailMatch[1];
- }
  
- if (contactEmail) {
- try {
- await sendSystemEmail('TICKET_REPLY', {
- to_email: contactEmail,
- ticket_id: ticketData.ticket_id,
- admin_reply: updatePayload.admin_reply
- });
- } catch (e) { console.warn("Failed to send email reply", e); }
- }
  }
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
@@ -100,15 +87,15 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  const filteredTickets = activeTab === "all" ? tickets : tickets.filter(t => t.category === activeTab);
 
  return (
- <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-transparent text-themeText dark:text-themeText" : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  {/* Header and Tabs */}
  {!isHubView && (
  <PageHeader icon="fa-solid fa-headset" title="Admin Helpdesk" subtitle="Manage and reply to student tickets and public inquiries." />
  )}
 
- <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/85 backdrop-blur-md rounded-2xl border border-themeBorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
- {['all', 'public_inquiry', 'IT Support', 'Finance', 'Academic', 'Administration'].map(tab => (
+ <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
+ {['all', 'IT Support', 'Finance', 'Academic', 'Administration'].map(tab => (
  <button type="button"
  key={tab}
  onClick={() => setActiveTab(tab)}
@@ -118,7 +105,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
  }`}
  >
- {tab === 'all' ? 'All Tickets' : tab === 'public_inquiry' ? 'Public Inquiries' : tab}
+ {tab === 'all' ? 'All Tickets' : tab}
  </button>
  ))}
  </div>
@@ -136,26 +123,26 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  </div>
  ) : (
  filteredTickets.map(ticket => (
- <div key={ticket.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-themePanel border border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10 transition flex flex-col gap-4`}>
+ <div key={ticket.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] hover:border-black/5 dark:border-white/10 transition flex flex-col gap-4`}>
  <div className="flex justify-between items-start gap-4">
  <div>
  <div className="flex items-center gap-3 mb-2">
  {ticket.ticket_id && (
- <span className="text-[9px] lg:text-[10px] font-bold text-themeTextSec tracking-normal bg-themePanel/85 backdrop-blur-2xl px-2.5 py-1 rounded-md border border-themeBorder dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-bold text-themeTextSec tracking-normal bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md px-2.5 py-1 rounded-md border border-black/[0.04] dark:border-white/[0.08]">
  {ticket.ticket_id}
  </span>
  )}
- <span className="text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border bg-themeElevated/90 backdrop-blur-2xl text-themeAccent border-black/5 dark:border-white/10">
+ <span className="text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md text-themeAccent border-black/5 dark:border-white/10">
  {ticket.category === 'public_inquiry' ? 'Public Inquiry' : ticket.category}
  </span>
- <span className={`text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border ${ticket.status === 'resolved' ? 'bg-themeElevated/90 backdrop-blur-2xl text-emerald-400 border-black/5 dark:border-white/10' : 'bg-themeElevated/90 backdrop-blur-2xl text-amber-500 border-black/5 dark:border-white/10'}`}>
+ <span className={`text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border ${ticket.status === 'resolved' ? 'bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md text-emerald-400 border-black/5 dark:border-white/10' : 'bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md text-amber-500 border-black/5 dark:border-white/10'}`}>
  {ticket.status}
  </span>
  </div>
  <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText mb-2">{ticket.subject}</h3>
                                         {ticket.profiles && (
                                             <div className="flex items-center gap-2 mb-3">
-                                                <div className="w-6 h-6 rounded-full bg-themeElevated flex items-center justify-center border border-themeBorder dark:border-white/5">
+                                                <div className="w-6 h-6 rounded-full bg-themeElevated flex items-center justify-center border border-black/[0.04] dark:border-white/[0.08]">
                                                     <i className="fa-solid fa-user text-[10px] text-themeTextSec"></i>
                                                 </div>
                                                 <span className="text-xs font-bold text-themeText">{ticket.profiles.full_name}</span>
@@ -163,7 +150,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
                                                 <span className="text-[10px] uppercase font-bold tracking-widest text-themeTextSec">{ticket.profiles.erp_id}</span>
                                             </div>
                                         )}
- <div className="text-xs lg:text-sm text-themeTextSec bg-themePanel/85 backdrop-blur-2xl p-4 rounded-lg border border-themeBorder dark:border-white/5 whitespace-pre-wrap font-medium">
+ <div className="text-xs lg:text-sm text-themeTextSec bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-black/[0.04] dark:border-white/[0.08] whitespace-pre-wrap font-medium">
  {ticket.description}
  </div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec mt-3">
@@ -172,9 +159,9 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  </div>
  </div>
  
- <div className="border-t border-themeBorder dark:border-white/5 pt-4 mt-2">
+ <div className="border-t border-black/[0.04] dark:border-white/[0.08] pt-4 mt-2">
  {ticket.status === 'resolved' ? (
- <div className="bg-themePanel/85 backdrop-blur-2xl p-4 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <span className="text-[13px] font-medium text-emerald-400 block mb-1">Admin Reply</span>
  <p className="text-sm font-bold text-themeText">{ticket.admin_reply}</p>
  </div>
@@ -184,20 +171,20 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  value={replyText[ticket.id] || ''}
  onChange={(e) => setReplyText(prev => ({ ...prev, [ticket.id]: e.target.value }))}
  placeholder="Write your reply here..."
- className="flex-1 bg-themePanel/85 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent resize-none min-h-[80px]"
+ className="flex-1 bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent resize-none min-h-[80px]"
  />
  <div className="flex lg:flex-col gap-2 shrink-0">
  <button type="button" 
  onClick={() => handleReply(ticket.id, false)}
  disabled={submittingReply === ticket.id}
- className="flex-1 lg:flex-none px-4 py-2 bg-themeAccent hover:bg-themeAccent/80 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-themeBorder dark:border-white/5"
+ className="flex-1 lg:flex-none px-4 py-2 bg-themeAccent hover:bg-themeAccent/80 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-black/[0.04] dark:border-white/[0.08]"
  >
  Send Reply
  </button>
  <button type="button" 
  onClick={() => handleReply(ticket.id, true)}
  disabled={submittingReply === ticket.id}
- className="flex-1 lg:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-themeBorder dark:border-white/5"
+ className="flex-1 lg:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-black/[0.04] dark:border-white/[0.08]"
  >
  Resolve & Close
  </button>

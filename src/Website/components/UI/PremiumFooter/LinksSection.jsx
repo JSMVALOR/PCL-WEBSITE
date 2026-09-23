@@ -56,6 +56,7 @@ export default function LinksSection() {
             <li><Link to="/contact" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Inquire Admissions</Link></li>
           )}
           <li><Link to="/events" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Events</Link></li>
+          <li><Link to="/login" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium flex items-center gap-2">IT Helpdesk <i className="fa-solid fa-lock text-[10px] text-[var(--accent)]"></i></Link></li>
         </ul>
       </div>
 

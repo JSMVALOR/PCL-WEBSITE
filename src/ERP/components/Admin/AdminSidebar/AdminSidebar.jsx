@@ -168,7 +168,8 @@ export const ADMIN_NAV_MEGA = [
             title: "External Relations",
             children: [
               { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
-              { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" }
+              { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" },
+              { id: "enquiries", label: "Website Enquiries", icon: "fa-solid fa-envelope-open-text" }
             ]
           }
         ],
@@ -176,7 +177,8 @@ export const ADMIN_NAV_MEGA = [
           { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
           { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
           { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
-          { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" }
+          { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" },
+          { id: "enquiries", label: "Website Enquiries", icon: "fa-solid fa-envelope-open-text" }
         ]
       },
       {

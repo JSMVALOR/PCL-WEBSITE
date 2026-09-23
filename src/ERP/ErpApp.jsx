@@ -92,6 +92,7 @@ import AdminNotices from './components/Admin/notices/AdminNotices';
 import AdminFees from './components/Admin/AdminFees/AdminFees';
 import AdminMootCourt from './components/Admin/AdminMootCourt/AdminMootCourt';
 import AdminPlacements from './components/Admin/AdminPlacements/AdminPlacements';
+import AdminWebsiteInquiries from './components/Admin/AdminWebsiteHub/AdminWebsiteInquiries';
 import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
 import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
 import AdminAttendanceIssues from './components/Admin/AdminAttendanceIssues/AdminAttendanceIssues';
@@ -197,6 +198,7 @@ export default function App() {
       adminapprovals: "Central Approvals",      finance: "Finance Ledger",
       adminmootcourt: "Moot Court Society",
       placements: "Placements & Internships",
+      enquiries: "Website Enquiries",
       legalaid: "Legal Aid Clinic",
       admincredentials: "Admin Identity & Security"
     };
@@ -338,6 +340,7 @@ export default function App() {
         case 'adminpayroll': return <AdminPayroll />;
         case 'mootcourt': return <AdminMootCourt />;
         case 'placements': return <AdminPlacements />;
+        case 'enquiries': return <AdminWebsiteInquiries />;
         case 'legalaid': return <AdminLegalAid />;
         case 'adminadmissions': return <AdminAdmissions />;
         case 'attendance_issues': return <AdminAttendanceIssues />;
