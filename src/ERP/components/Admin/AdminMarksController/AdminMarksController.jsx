@@ -200,6 +200,11 @@ export default function AdminMarksController() {
                     </div>
                 )}
 
+                {/* TAB 3: MANUAL OVERRIDE */}
+                {activeTab === "override" && (
+                    <ManualOverrideTab />
+                )}
+
                 {/* TAB 2: CORRECTION TICKETS */}
                 {activeTab === "corrections" && (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -252,3 +257,119 @@ export default function AdminMarksController() {
         </div>
     );
 }
+
+
+const ManualOverrideTab = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [students, setStudents] = useState([]);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [marks, setMarks] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [editMark, setEditMark] = useState(null);
+
+    const searchStudents = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        const { data } = await supabase.from('profiles').select('id, full_name, erp_id, academic_batch').eq('role', 'student').ilike('full_name', `%${searchQuery}%`).limit(10);
+        setStudents(data || []);
+        setLoading(false);
+    };
+
+    const fetchMarks = async (student) => {
+        setSelectedStudent(student);
+        setLoading(true);
+        const { data } = await supabase.from('marks_ledger').select('*, master_subjects(name, code)').eq('student_id', student.id).order('created_at', { ascending: false });
+        setMarks(data || []);
+        setLoading(false);
+    };
+
+    const handleSaveOverride = async () => {
+        if (!editMark || !editMark.id) return;
+        if (!(await window.erpDialog?.confirm(`Override mark to ${editMark.marks_obtained}?`))) return;
+        
+        try {
+            const { error } = await supabase.from('marks_ledger').update({
+                marks_obtained: editMark.marks_obtained,
+                updated_at: new Date().toISOString()
+            }).eq('id', editMark.id);
+            if (error) throw error;
+            window.erpDialog?.alert('Mark overridden successfully.', 'Success');
+            setEditMark(null);
+            fetchMarks(selectedStudent);
+        } catch(e) {
+            window.erpDialog?.alert('Failed to override mark: ' + e.message);
+        }
+    };
+
+    return (
+        <div className="flex flex-col gap-6">
+            <form onSubmit={searchStudents} className="flex gap-2">
+                <input type="text" placeholder="Search student by name..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex-1 bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/10 rounded-xl px-4 py-3 text-sm outline-none" />
+                <button type="submit" className="bg-themeAccent text-white px-6 py-3 rounded-xl font-bold">Search</button>
+            </form>
+
+            {students.length > 0 && !selectedStudent && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {students.map(s => (
+                        <div key={s.id} onClick={() => fetchMarks(s)} className="bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-themeBorder rounded-2xl p-4 cursor-pointer hover:border-themeAccent/50 transition-colors">
+                            <h4 className="font-bold text-sm">{s.full_name}</h4>
+                            <p className="text-xs text-themeTextSec uppercase tracking-widest">{s.erp_id}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {selectedStudent && (
+                <div className="bg-white/70 dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-3xl p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 className="font-bold text-lg">{selectedStudent.full_name}</h3>
+                            <p className="text-xs text-themeTextSec">{selectedStudent.erp_id}</p>
+                        </div>
+                        <button onClick={() => setSelectedStudent(null)} className="text-sm font-bold text-themeAccent bg-themeAccent/10 px-4 py-2 rounded-lg">Back to Search</button>
+                    </div>
+
+                    {loading ? <div className="text-center py-10"><i className="fa-solid fa-spinner fa-spin"></i></div> : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="text-[10px] font-black uppercase tracking-widest text-themeTextSec border-b border-themeBorder">
+                                        <th className="py-3 pr-4">Subject</th>
+                                        <th className="py-3 px-4">Type</th>
+                                        <th className="py-3 px-4">Marks</th>
+                                        <th className="py-3 pl-4 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {marks.map(m => (
+                                        <tr key={m.id} className="border-b border-black/[0.03] dark:border-white/[0.03]">
+                                            <td className="py-3 pr-4 text-sm font-bold">{m.master_subjects?.name}</td>
+                                            <td className="py-3 px-4 text-xs font-bold text-themeTextSec">{m.assessment_type}</td>
+                                            <td className="py-3 px-4">
+                                                {editMark?.id === m.id ? (
+                                                    <input type="number" value={editMark.marks_obtained} onChange={e => setEditMark({...editMark, marks_obtained: Number(e.target.value)})} className="w-20 bg-black/5 dark:bg-white/5 border border-black/10 rounded px-2 py-1 outline-none text-sm font-bold" />
+                                                ) : (
+                                                    <span className="text-sm font-bold">{m.marks_obtained}/{m.max_marks || m.total_marks}</span>
+                                                )}
+                                            </td>
+                                            <td className="py-3 pl-4 text-right">
+                                                {editMark?.id === m.id ? (
+                                                    <div className="flex gap-2 justify-end">
+                                                        <button onClick={handleSaveOverride} className="text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded text-xs font-bold">Save</button>
+                                                        <button onClick={() => setEditMark(null)} className="text-themeTextSec bg-black/5 px-3 py-1 rounded text-xs font-bold">Cancel</button>
+                                                    </div>
+                                                ) : (
+                                                    <button onClick={() => setEditMark(m)} className="text-themeAccent bg-themeAccent/10 hover:bg-themeAccent/20 px-3 py-1 rounded text-xs font-bold transition-colors">Edit</button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};

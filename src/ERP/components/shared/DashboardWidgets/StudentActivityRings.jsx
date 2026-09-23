@@ -43,14 +43,47 @@ export default function StudentActivityRings() {
             assignmentsScore = total > 0 ? Math.round((done / total) * 100) : 0;
 
             // 2. Fetch Personal Attendance
+            // To handle exemptions correctly, we should ideally fetch leave_requests.
+            // But for a quick aggregate ring, we can use the records, but since we don't have dates here easily mapped,
+            // we will fetch leaves and just approximate, OR just rely on the existing records.
+            // Let's actually fetch the student's leaves and sessions if we want perfection.
+            // For now, we'll exclude 'exempted' status if it were stored, but it's computed on the fly.
             const { data: attendance } = await supabase
                 .from('attendance_records')
-                .select('entry_status')
+                .select('entry_status, session:class_sessions(date)')
                 .eq('student_id', sid);
+                
+            const { data: leaves } = await supabase
+                .from('leave_requests')
+                .select('start_date, end_date')
+                .eq('student_id', sid)
+                .eq('status', 'approved');
+
+            const isDateExempt = (dateString) => {
+                if (!leaves || !dateString) return false;
+                const target = new Date(dateString);
+                return leaves.some(l => {
+                    const s = new Date(l.start_date);
+                    const e = new Date(l.end_date);
+                    s.setHours(0,0,0,0);
+                    e.setHours(23,59,59,999);
+                    return target >= s && target <= e;
+                });
+            };
             
             if (attendance && attendance.length > 0) {
-                const present = attendance.filter(a => ['present', 'late'].includes(a.entry_status)).length;
-                attendanceScore = Math.round((present / attendance.length) * 100);
+                let present = 0;
+                let total = 0;
+                attendance.forEach(a => {
+                    const exempt = isDateExempt(a.session?.date);
+                    if (exempt && (a.entry_status === 'absent' || !a.entry_status)) {
+                        // skip total count
+                    } else {
+                        total++;
+                        if (['present', 'late'].includes(a.entry_status)) present++;
+                    }
+                });
+                attendanceScore = total > 0 ? Math.round((present / total) * 100) : 0;
             } else { attendanceScore = 0; }
 
             // 3. Fetch Campus Overall Attendance

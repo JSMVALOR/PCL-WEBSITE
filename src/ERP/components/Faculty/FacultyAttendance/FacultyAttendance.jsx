@@ -420,7 +420,6 @@ export default function FacultyAttendance({ subjectContext }) {
  setAttendanceRecords(recordMap);
  setActiveSession({ ...currentSession, classData });
  setActiveTab("window");
-            if (missedSlot.isMarked) setIsSwipeMode(false);
  
  } catch (error) {
  console.error("Error starting attendance:", error);

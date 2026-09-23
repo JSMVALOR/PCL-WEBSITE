@@ -11,6 +11,9 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
     const [formData, setFormData] = useState({
         linkedInProfile: '',
         legalInterest: '',
+        careerGoal: '',
+        extracurriculars: [],
+        skills: [],
         fatherName: '',
         motherName: '',
         parentOccupation: '',
@@ -22,7 +25,11 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
         sameAsPresentAddress: false,
         aadharNumber: '',
         emergencyContact: '',
-        emergencyPhone: '' // Just the 10 digit number
+        emergencyPhone: '', // Just the 10 digit number
+        highestQualification: '',
+        specialization: '',
+        yearsOfExperience: '',
+        previousInstitution: ''
     });
 
     const handleChange = (e) => {
@@ -51,6 +58,17 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                 newData.permanentAddress = value;
             }
             return newData;
+        });
+    };
+
+    const handleCheckboxChange = (field, val) => {
+        setFormData(prev => {
+            const arr = prev[field] || [];
+            if (arr.includes(val)) {
+                return { ...prev, [field]: arr.filter(i => i !== val) };
+            } else {
+                return { ...prev, [field]: [...arr, val] };
+            }
         });
     };
 
@@ -128,42 +146,115 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                         
                         {/* Section 1: Academic & Professional Details */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Background</h3>
+                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Professional Background</h3>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-semibold text-themeText">Primary Area of Legal Interest *</label>
-                                    <select name="legalInterest" required value={formData.legalInterest} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none">
-                                        <option value="" disabled>Select an area of interest</option>
-                                        <option value="Corporate Law">Corporate Law</option>
-                                        <option value="Criminal Law">Criminal Law</option>
-                                        <option value="Constitutional Law">Constitutional Law</option>
-                                        <option value="Intellectual Property">Intellectual Property</option>
-                                        <option value="Human Rights">Human Rights</option>
-                                        <option value="Undecided">Undecided</option>
-                                    </select>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-semibold text-themeText">LinkedIn Profile URL *</label>
-                                    <input type="url" name="linkedInProfile" required placeholder="https://linkedin.com/in/..." value={formData.linkedInProfile} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-semibold text-themeText">Past generations in legal profession? *</label>
-                                    <select name="pastLegalGenerations" required value={formData.pastLegalGenerations} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
-                                </div>
-                                {formData.pastLegalGenerations === 'Yes' && (
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-sm font-semibold text-themeText">Please Specify Details *</label>
-                                        <input type="text" name="pastLegalGenerationsDetails" required placeholder="e.g., Grandfather was a judge" value={formData.pastLegalGenerationsDetails} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                            {userSession?.role === 'faculty' ? (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Highest Qualification *</label>
+                                            <select name="highestQualification" required value={formData.highestQualification} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none">
+                                                <option value="" disabled>Select highest qualification</option>
+                                                <option value="Ph.D.">Ph.D.</option>
+                                                <option value="LL.M.">LL.M.</option>
+                                                <option value="LL.B.">LL.B.</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Specialization / Area of Expertise *</label>
+                                            <input type="text" name="specialization" required placeholder="e.g., Constitutional Law" value={formData.specialization} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
                                     </div>
-                                )}
-                            </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Years of Experience *</label>
+                                            <input type="number" min="0" name="yearsOfExperience" required placeholder="e.g., 5" value={formData.yearsOfExperience} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                        <div className="flex flex-col gap-2 col-span-2">
+                                            <label className="text-sm font-semibold text-themeText">Previous Institution / Organization *</label>
+                                            <input type="text" name="previousInstitution" required placeholder="e.g., National Law University" value={formData.previousInstitution} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-semibold text-themeText">LinkedIn Profile URL *</label>
+                                        <input type="url" name="linkedInProfile" required placeholder="https://linkedin.com/in/..." value={formData.linkedInProfile} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Primary Area of Legal Interest *</label>
+                                            <select name="legalInterest" required value={formData.legalInterest} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none">
+                                                <option value="" disabled>Select an area of interest</option>
+                                                <option value="Corporate Law">Corporate Law</option>
+                                                <option value="Criminal Law">Criminal Law</option>
+                                                <option value="Constitutional Law">Constitutional Law</option>
+                                                <option value="Intellectual Property">Intellectual Property</option>
+                                                <option value="Human Rights">Human Rights</option>
+                                                <option value="Undecided">Undecided</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">LinkedIn Profile URL *</label>
+                                            <input type="url" name="linkedInProfile" required placeholder="https://linkedin.com/in/..." value={formData.linkedInProfile} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Past generations in legal profession? *</label>
+                                            <select name="pastLegalGenerations" required value={formData.pastLegalGenerations} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none">
+                                                <option value="No">No</option>
+                                                <option value="Yes">Yes</option>
+                                            </select>
+                                        </div>
+                                        {formData.pastLegalGenerations === 'Yes' && (
+                                            <div className="flex flex-col gap-2">
+                                                <label className="text-sm font-semibold text-themeText">Please Specify Details *</label>
+                                                <input type="text" name="pastLegalGenerationsDetails" required placeholder="e.g., Grandfather was a judge" value={formData.pastLegalGenerationsDetails} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-semibold text-themeText">Primary Career Goal *</label>
+                                        <select name="careerGoal" required value={formData.careerGoal} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none">
+                                            <option value="" disabled>Select your goal</option>
+                                            <option value="Independent Practice / Litigation">Independent Practice / Litigation</option>
+                                            <option value="Corporate Counsel / Law Firm">Corporate Counsel / Law Firm</option>
+                                            <option value="Judiciary">Judiciary</option>
+                                            <option value="Civil Services / Government">Civil Services / Government</option>
+                                            <option value="Academia / Research">Academia / Research</option>
+                                            <option value="Undecided">Undecided</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-3 mt-2">
+                                        <label className="text-sm font-semibold text-themeText">Clubs & Co-curricular Interests</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {["Moot Court Society", "Debate Society", "Legal Aid Clinic", "ADR Cell", "Research Centers", "Cultural Club", "Sports"].map(club => (
+                                                <label key={club} className="flex items-center gap-2 bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] px-4 py-2.5 rounded-xl cursor-pointer hover:border-themeAccent/50 transition-colors">
+                                                    <input type="checkbox" checked={formData.extracurriculars.includes(club)} onChange={() => handleCheckboxChange('extracurriculars', club)} className="accent-themeAccent w-4 h-4" />
+                                                    <span className="text-xs font-bold text-themeTextSec">{club}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-3 mt-2">
+                                        <label className="text-sm font-semibold text-themeText">Technical & Practical Skills</label>
+                                        <div className="flex flex-wrap gap-2">
+                                            {["Legal Research & Drafting", "Client Counseling", "Negotiation & Mediation", "AI & Legal Tech", "Public Speaking", "Data Analysis"].map(skill => (
+                                                <label key={skill} className="flex items-center gap-2 bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] px-4 py-2.5 rounded-xl cursor-pointer hover:border-themeAccent/50 transition-colors">
+                                                    <input type="checkbox" checked={formData.skills.includes(skill)} onChange={() => handleCheckboxChange('skills', skill)} className="accent-themeAccent w-4 h-4" />
+                                                    <span className="text-xs font-bold text-themeTextSec">{skill}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         {/* Section 2: Personal & Identity Details */}
@@ -210,23 +301,27 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                         {/* Section 3: Family & Emergency */}
                         <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Family & Emergency Contacts</h3>
+                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">{userSession?.role === 'faculty' ? 'Emergency Contact' : 'Family & Emergency Contacts'}</h3>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-semibold text-themeText">Father's Name *</label>
-                                    <input type="text" name="fatherName" required placeholder="Full Name" value={formData.fatherName} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-sm font-semibold text-themeText">Mother's Name *</label>
-                                    <input type="text" name="motherName" required placeholder="Full Name" value={formData.motherName} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
-                                </div>
-                            </div>
-                            
-                            <div className="flex flex-col gap-2">
-                                <label className="text-sm font-semibold text-themeText">Primary Parent/Guardian Occupation *</label>
-                                <input type="text" name="parentOccupation" required placeholder="e.g. Business, Government Service, Doctor" value={formData.parentOccupation} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
-                            </div>
+                            {userSession?.role !== 'faculty' && (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Father's Name *</label>
+                                            <input type="text" name="fatherName" required placeholder="Full Name" value={formData.fatherName} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Mother's Name *</label>
+                                            <input type="text" name="motherName" required placeholder="Full Name" value={formData.motherName} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-sm font-semibold text-themeText">Primary Parent/Guardian Occupation *</label>
+                                        <input type="text" name="parentOccupation" required placeholder="e.g. Business, Government Service, Doctor" value={formData.parentOccupation} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                    </div>
+                                </>
+                            )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">

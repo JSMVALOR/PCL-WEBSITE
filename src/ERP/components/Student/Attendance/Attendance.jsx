@@ -83,6 +83,25 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
                 .order('entry_marked_at', { ascending: false });
 
             if (error) throw error;
+            
+            // Fetch APPROVED leaves
+            const { data: leavesData } = await supabase
+                .from('leave_requests')
+                .select('start_date, end_date')
+                .eq('student_id', studentId)
+                .eq('status', 'approved');
+
+            const isDateExempt = (dateString) => {
+                if (!leavesData || !dateString) return false;
+                const target = new Date(dateString);
+                return leavesData.some(l => {
+                    const s = new Date(l.start_date);
+                    const e = new Date(l.end_date);
+                    s.setHours(0,0,0,0);
+                    e.setHours(23,59,59,999);
+                    return target >= s && target <= e;
+                });
+            };
 
             // 1b. Fetch all schedules for this batch to find unmarked/unconducted
             const { data: allSchedules } = await supabase.from('class_schedule')
@@ -157,33 +176,32 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
                         subjectMap[subjId].total_classes += 1;
                         totCount += 1;
                         
-                        if (studentRecord) {
-                            if (studentRecord.entry_status === 'present') { subjectMap[subjId].present += 1; attCount += 1; }
-                            else if (studentRecord.entry_status === 'late') { subjectMap[subjId].late += 1; lateCount += 1; attCount += 1; }
-                            else if (studentRecord.entry_status === 'absent') { subjectMap[subjId].absent += 1; missCount += 1; }
-                            else if (studentRecord.entry_status === 'medical') { subjectMap[subjId].medical += 1; medCount += 1; }
-                            else if (studentRecord.entry_status === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
-                            
-                            subjectMap[subjId].records.push({ 
-                                id: studentRecord.id,
-                                date: sessionExists.date,
-                                session_id: sessionExists.id,
-                                start_time: sch.start_time,
-                                status: studentRecord.entry_status,
-                                room: sch.room?.name || 'N/A'
-                            });
-                        } else {
-                            // Faculty started class, but student was completely unmarked (missing record)
-                            subjectMap[subjId].unmarked += 1;
-                            subjectMap[subjId].records.push({ 
-                                id: 'unmarked-' + sessionExists.id,
-                                date: sessionExists.date,
-                                session_id: sessionExists.id,
-                                start_time: sch.start_time,
-                                status: 'unmarked', // We render this as a grey minus
-                                room: sch.room?.name || 'N/A'
-                            });
+                        let mappedStatus = studentRecord ? studentRecord.entry_status : 'unmarked';
+                        const exempt = isDateExempt(sessionExists.date);
+
+                        // If student has an approved leave, override absent or unmarked to 'exempted'
+                        if (exempt && (mappedStatus === 'absent' || mappedStatus === 'unmarked')) {
+                            mappedStatus = 'exempted';
+                            // We don't count exempted classes in the total, so we subtract what we just added above
+                            subjectMap[subjId].total_classes -= 1;
+                            totCount -= 1;
                         }
+
+                        if (mappedStatus === 'present') { subjectMap[subjId].present += 1; attCount += 1; }
+                        else if (mappedStatus === 'late') { subjectMap[subjId].late = (subjectMap[subjId].late || 0) + 1; lateCount += 1; attCount += 1; }
+                        else if (mappedStatus === 'absent') { subjectMap[subjId].absent += 1; missCount += 1; }
+                        else if (mappedStatus === 'medical') { subjectMap[subjId].medical += 1; medCount += 1; }
+                        else if (mappedStatus === 'approved_leave') { subjectMap[subjId].approved += 1; appCount += 1; }
+                        else if (mappedStatus === 'unmarked') { subjectMap[subjId].unmarked += 1; }
+                        
+                        subjectMap[subjId].records.push({ 
+                            id: studentRecord ? studentRecord.id : 'unmarked-' + sessionExists.id,
+                            date: sessionExists.date,
+                            session_id: sessionExists.id,
+                            start_time: sch.start_time,
+                            status: mappedStatus,
+                            room: sch.room?.name || 'N/A'
+                        });
                     } else {
                         // Faculty NEVER started the class. It is 'Not Conducted' / Unmarked completely.
                         // We do not increment total_classes for the student so it doesn't hurt their %.
@@ -343,9 +361,11 @@ const handleScanQR = async (e) => {
  subtitle="Official class participation synced seamlessly." 
  isEmbedded={isEmbedded}
  rightContent={
- <button type="button" onClick={() => setShowScanner(true)} className="btn-erp">
- <i className="fa-solid fa-keyboard text-lg"></i> Enter OTP
- </button>
+ !isEmbedded ? (
+     <button type="button" onClick={() => setShowScanner(true)} className="btn-erp">
+         <i className="fa-solid fa-keyboard text-lg"></i> Enter OTP
+     </button>
+ ) : null
  }
  />
 
@@ -599,11 +619,13 @@ const handleScanQR = async (e) => {
  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110 ${
  rec.status === 'present' ? 'bg-emerald-500/10 text-emerald-500' : rec.status === 'late' ? 'bg-amber-500/10 text-amber-500' :
  rec.status === 'absent' ? 'bg-rose-500/10 text-rose-500' :
+ rec.status === 'exempted' ? 'bg-blue-500/10 text-blue-500' :
  rec.status === 'unmarked' ? 'bg-black/5 dark:bg-white/10 text-themeTextSec dark:text-white/50' :
  'bg-amber-500/10 text-amber-500'
  }`}>
  {rec.status === 'present' ? <i className="fa-solid fa-check text-[11px]"></i> : rec.status === 'late' ? <i className="fa-solid fa-clock text-[11px]"></i> :
  rec.status === 'absent' ? <i className="fa-solid fa-xmark text-[11px]"></i> :
+ rec.status === 'exempted' ? <i className="fa-solid fa-plane-departure text-[11px]"></i> :
  rec.status === 'unmarked' ? <i className="fa-solid fa-minus text-[11px]"></i> :
  <i className="fa-solid fa-suitcase-medical text-[11px]"></i>}
  </div>
@@ -617,6 +639,7 @@ const handleScanQR = async (e) => {
  <p className={`text-[11px] font-black uppercase tracking-widest ${
  rec.status === 'present' ? 'text-emerald-500' : rec.status === 'late' ? 'text-amber-500' :
  rec.status === 'absent' ? 'text-rose-500' :
+ rec.status === 'exempted' ? 'text-blue-500' :
  rec.status === 'unmarked' ? 'text-themeTextSec dark:text-white/50' :
  'text-amber-500'
  }`}>{rec.status.replace('_', ' ')}</p>

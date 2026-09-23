@@ -112,23 +112,43 @@ export default function BirthdayWidget() {
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <motion.div 
+                    initial="hidden" 
+                    animate="visible" 
+                    variants={{
+                        hidden: { opacity: 0 },
+                        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                    }}
+                    className="flex flex-col gap-3"
+                >
                     {birthdays.map((person, idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-3 py-2.5 rounded-xl border border-black/5 dark:border-white/10 group hover:bg-black/5 dark:hover:bg-white/15 transition-colors">
-                            <div className="w-8 h-8 rounded-lg bg-white dark:bg-themeElevated border border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                        <motion.div 
+                            key={person.id || idx} 
+                            variants={{
+                                hidden: { opacity: 0, x: -20 },
+                                visible: { opacity: 1, x: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+                            }}
+                            whileHover={{ scale: 1.02 }}
+                            className="flex items-center gap-3 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] px-3 py-2.5 rounded-xl border border-black/5 dark:border-white/10 group hover:border-[#FF2D55]/30 hover:shadow-[0_4px_12px_rgba(255,45,85,0.1)] transition-all cursor-default"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF2D55]/10 to-[#FF9500]/10 border border-white/20 dark:border-white/5 flex items-center justify-center overflow-hidden shrink-0 relative">
                                 {person.profile_picture_url ? (
                                     <img src={person.profile_picture_url} alt={person.full_name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <i className="fa-solid fa-user text-[10px] text-themeTextSec"></i>
+                                    <i className="fa-solid fa-user text-xs text-[#FF2D55]/60"></i>
                                 )}
+                                <div className="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/10 rounded-xl pointer-events-none"></div>
                             </div>
-                            <div className="flex flex-col text-left pr-2">
-                                <span className="text-[15px] font-medium text-themeText leading-none mb-1 group-hover:text-[#FF2D55] transition-colors">{person.full_name}</span>
-                                <span className="text-[11px] font-medium tracking-normal text-themeTextSec leading-none">{person.role}</span>
+                            <div className="flex flex-col text-left pr-2 flex-1">
+                                <span className="text-[14px] font-semibold text-themeText leading-tight mb-0.5 group-hover:text-[#FF2D55] transition-colors line-clamp-1">{person.full_name}</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec leading-none">{person.role}</span>
                             </div>
-                        </div>
+                            <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all text-[#FF9500] hover:bg-[#FF9500] hover:text-white cursor-pointer" onClick={() => window.erpDialog?.alert(`Sent birthday wishes to ${person.full_name}!`)}>
+                                <i className="fa-solid fa-paper-plane text-[10px]"></i>
+                            </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
         </div>
     );

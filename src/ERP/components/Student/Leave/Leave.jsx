@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { theme } from '../../../../Shared/theme';
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 

@@ -187,12 +187,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
 
  return (
  <div className="flex flex-col relative py-4 animate-fade-in">
- <div className="absolute left-[72px] right-0 h-px bg-themeAccent z-10 flex items-center top-[30%] opacity-50">
- <div className="absolute -left-16 text-[10px] font-black tracking-widest text-themeAccent bg-themeApp pr-2">
- {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
- </div>
- <div className="w-1.5 h-1.5 rounded-full bg-themeAccent -ml-1"></div>
- </div>
+
 
  {todayClasses.map((lec) => {
  const c = SUBJECT_COLORS[lec.color] || SUBJECT_COLORS.gray;

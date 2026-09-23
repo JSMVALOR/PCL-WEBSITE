@@ -32,8 +32,11 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  // Grievance Form
  const [grievanceData, setGrievanceData] = useState({ accusedId: "",
  category: "Academics",
- description: ""
+ description: "",
+ imageUrl: ""
  });
+ const [accusedType, setAccusedType] = useState('faculty');
+ const [searchQuery, setSearchQuery] = useState("");
 
  const fetchData = useCallback(async () => {
  try {
@@ -85,6 +88,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  }, [userSession?.db_id, userSession?.id]);
 
  useEffect(() => {
+ window.scrollTo(0,0);
  fetchData();
  }, [fetchData]);
 
@@ -172,7 +176,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  accused_id: grievanceData.accusedId,
  assigned_to: assignedTo,
  category: grievanceData.category,
- description: grievanceData.description,
+ description: grievanceData.imageUrl ? `${grievanceData.description}\n\nEvidence Link: ${grievanceData.imageUrl}` : grievanceData.description,
  status: 'pending'
  };
 
@@ -196,7 +200,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  const escalationMsg = assignedTo === null ? "It has been escalated directly to the Admin." : "It has been routed to your Faculty Mentor.";
  window.erpDialog.alert(`Grievance submitted successfully. ${escalationMsg}`);
  
- setGrievanceData({ accusedId: "", category: "Academics", description: "" });
+ setGrievanceData({ accusedId: "", category: "Academics", description: "", imageUrl: "" });
  fetchData();
  } catch (error) {
  console.error("Error submitting grievance:", error);
@@ -273,13 +277,35 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <h2 className="text-lg font-semibold tracking-tight text-rose-500 mb-2"><i className="fa-solid fa-triangle-exclamation mr-2"></i> Report Grievance</h2>
  
  <div>
- <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Accused Individual</label>
- <select required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.accusedId} onChange={e => setGrievanceData({ ...grievanceData, accusedId: e.target.value})}>
- <option value="" disabled>Select the individual...</option>
- {allProfiles.map(p => (
- <option key={p.id} value={p.id}>{p.full_name} ({ p.role})</option>
- ))}
- </select>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Accused Type</label>
+ <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-lg mb-3">
+    <button type="button" onClick={() => { setAccusedType('student'); setGrievanceData({...grievanceData, accusedId: ''}); setSearchQuery(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${accusedType === 'student' ? 'bg-white dark:bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}>Student</button>
+    <button type="button" onClick={() => { setAccusedType('faculty'); setGrievanceData({...grievanceData, accusedId: ''}); setSearchQuery(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${accusedType === 'faculty' ? 'bg-white dark:bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}>Faculty</button>
+ </div>
+ 
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Search Individual</label>
+ <input type="text" placeholder="Search by name..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none mb-2" />
+ 
+ <div className="w-full max-h-40 overflow-y-auto bg-black/5 dark:bg-white/5 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg p-2 flex flex-col gap-1">
+ {allProfiles.filter(p => p.role === accusedType && p.full_name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+    <div className="text-xs text-themeTextSec p-2 text-center">No individuals found.</div>
+ ) : (
+    allProfiles.filter(p => p.role === accusedType && p.full_name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => (
+        <button
+            key={p.id}
+            type="button"
+            onClick={() => setGrievanceData({ ...grievanceData, accusedId: p.id })}
+            className={`w-full text-left px-3 py-2 rounded-md text-[13px] font-medium transition-all ${
+                grievanceData.accusedId === p.id 
+                    ? 'bg-rose-500 text-white shadow-sm' 
+                    : 'text-themeText hover:bg-black/5 dark:hover:bg-white/5'
+            }`}
+        >
+            {p.full_name}
+        </button>
+    ))
+ )}
+ </div>
  {mentor && grievanceData.accusedId === mentor.id && (
  <p className="text-[10px] text-rose-500 mt-1.5 font-semibold bg-rose-500/10 p-2 rounded border border-rose-500/20"><i className="fa-solid fa-circle-info mr-1"></i> You are reporting your mentor. This will be escalated directly to the Admin.</p>
  )}
@@ -299,6 +325,11 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Description</label>
  <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details of the incident..." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
+ </div>
+
+ <div>
+ <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Evidence / Image URL (Optional)</label>
+ <input type="url" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" placeholder="https://..." value={grievanceData.imageUrl} onChange={e => setGrievanceData({ ...grievanceData, imageUrl: e.target.value})} />
  </div>
 
  <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">

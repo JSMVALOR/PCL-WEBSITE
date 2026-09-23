@@ -5,12 +5,16 @@ import { STUDENT_NAV_MEGA as STUDENT_SIDEBAR_CONFIG } from '../Student/sidebar/S
 import { FACULTY_NAV_MEGA as FACULTY_SIDEBAR_CONFIG } from '../Faculty/FacultySidebar/FacultySidebar';
 import { ADMIN_NAV_GROUPS as ADMIN_SIDEBAR_CONFIG } from '../Admin/AdminSidebar/AdminSidebar';
 import { useERP } from '../../context/ErpContext';
+import { useNotification } from '../../../Shared/context/NotificationContext';
 import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo.svg';
 import { GlobalSearch } from './LiveHeaderComponents';
+import NotificationsDropdown from './Navigation/NotificationsDropdown';
+import { downloadUserData } from '../../../Shared/utils/DataExport';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TopNav({ userSession, activeTab, setActiveTab, onLogout }) {
-    const { changeNavLayout, notices, activeTheme } = useERP();
+    const { changeNavLayout, notices, activeTheme, unreadNotifications } = useERP();
+    const { addFlag } = useNotification();
     const [activeDropdown, setActiveDropdown] = useState(null);
     const timeoutRef = useRef(null);
 
@@ -110,6 +114,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                                             key={link.id}
                                                             onClick={() => {
                                                                 setActiveTab(link.id);
+window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
                                                                 setActiveDropdown(null);
                                                             }}
                                                             className={`group/btn relative flex items-center gap-3 p-2.5 rounded-lg transition-all text-left outline-none ${
@@ -156,23 +161,29 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                     {/* Layout Switcher */}
 
                     
-                    <button
-                        type="button"
-                        onClick={() => {
-                            Sentry.logger.info('User triggered test error', { action: 'test_error_button_click' });
-                            throw new Error('This is your first error!');
-                        }}
-                        className="px-3 h-9 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all"
-                    >
-                        <i className="fa-solid fa-bomb"></i> Break
-                    </button>
                     
-                    <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group outline-none shadow-sm">
-                        <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
-                        {notices?.length > 0 && (
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-themeBorder"></span>
-                        )}
-                    </button>
+                    
+                    <div 
+                        className="relative h-full flex items-center"
+                        onMouseEnter={() => handleMouseEnter('notifications')}
+                        onMouseLeave={handleMouseLeave}
+                    >
+                        <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group outline-none shadow-sm">
+                            <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
+                            {(notices?.length > 0 || unreadNotifications > 0) && (
+                                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-themeBorder"></span>
+                            )}
+                        </button>
+                        
+                        <AnimatePresence>
+                            {activeDropdown === 'notifications' && (
+                                <NotificationsDropdown 
+                                    onClose={() => setActiveDropdown(null)} 
+                                    setActiveTab={setActiveTab} 
+                                />
+                            )}
+                        </AnimatePresence>
+                    </div>
 
                     <div className="w-px h-5 bg-black/10 dark:bg-white/10 mx-1 hidden sm:block"></div>
 

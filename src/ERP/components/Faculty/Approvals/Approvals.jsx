@@ -1,10 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import SlideCommit from '../../../../Shared/components/ReactBits/SlideCommit/SlideCommit';
+import { sendSystemEmail } from '../../../lib/EmailService';
 import React, { useState, useEffect } from "react";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
-import { Badge } from "../../ui/Badge";
 
 export default function FacultyApprovals({ isEmbedded = false }) {
  const { userSession } = useERP();
@@ -81,6 +81,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  
  if (error) throw error;
 
+
  // Notify the student
  if (leave) {
  await supabase.from('admin_notices').insert({
@@ -90,6 +91,38 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  target_audience: 'person',
  target_id: leave.profiles?.erp_id
  });
+ 
+ // Fire LEAVE_APPROVED or LEAVE_REJECTED emails
+ (async () => {
+    try {
+        const studentId = leave.student_id;
+        const { data: student } = await supabase.from('profiles').select('full_name, email').eq('id', studentId).single();
+        const { data: mapping } = await supabase.from('parent_student_mappings').select('parent_id').eq('student_id', studentId).maybeSingle();
+        let parentEmail = null;
+        if (mapping && mapping.parent_id) {
+            const { data: parent } = await supabase.from('profiles').select('email').eq('id', mapping.parent_id).maybeSingle();
+            parentEmail = parent?.email;
+        }
+
+        const template = newStatus === 'approved' ? 'LEAVE_APPROVED' : 'LEAVE_REJECTED';
+        const params = {
+            student_name: student?.full_name || 'Student',
+            leave_type: leave.leave_type || 'Leave',
+            start_date: leave.start_date,
+            end_date: leave.end_date,
+            reason: remarks || '',
+            approved_by: userSession.name,
+            rejected_by: userSession.name,
+            portal_link: window.location.origin + '/login'
+        };
+
+        if (student?.email) sendSystemEmail(template, { ...params, to_email: student.email }).catch(e=>e);
+        if (parentEmail) sendSystemEmail(template, { ...params, to_email: parentEmail }).catch(e=>e);
+    } catch(e) {
+        console.error('Leave approval email failed', e);
+    }
+ })();
+
 
  // SYNC TO ATTENDANCE ENGINE IF APPROVED
  if (newStatus === 'approved' && leave.student_id) {
@@ -179,14 +212,14 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  switch(status.toLowerCase()) {
  case 'approved':
  case 'resolved':
- return <Badge variant="success">{status}</Badge>;
+ return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">{status}</span>;
  case 'rejected':
  case 'dismissed':
- return <Badge variant="destructive">{status}</Badge>;
+ return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 border border-rose-500/20">{status}</span>;
  case 'investigating':
- return <Badge variant="info">{status}</Badge>;
+ return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-500 border border-blue-500/20">{status}</span>;
  default:
- return <Badge variant="warning">{status}</Badge>;
+ return <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">{status}</span>;
  }
  };
 
@@ -295,7 +328,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  <div className="flex justify-between items-start pl-2">
  <div>
  <div className="flex items-center gap-2 mb-1">
- <Badge variant="warning">{g.category}</Badge>
+ <span className="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">{g.category}</span>
  </div>
  <p className="text-xs font-bold text-themeText mt-2">Reporter: {g.reporter?.full_name}</p>
  <p className="text-xs font-bold text-rose-400">Against: {g.accused?.full_name} ({ g.accused?.role})</p>

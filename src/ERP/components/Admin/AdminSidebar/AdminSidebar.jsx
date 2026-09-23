@@ -8,13 +8,13 @@ export const ADMIN_NAV_GROUPS = [
     category: "Main",
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
-      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
       { id: "notices", label: "Broadcasts", icon: "fa-solid fa-bullhorn" }
     ]
   },
   {
     category: "Administration",
     links: [
+      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
       {
         id: "users_group", label: "People & HR", icon: "fa-solid fa-users",
         children: [
@@ -24,12 +24,7 @@ export const ADMIN_NAV_GROUPS = [
           { id: "faculty_attendance", label: "Faculty Attendance", icon: "fa-solid fa-user-clock" }
         ]
       },
-      {
-                id: "finance_group", label: "Finance & Ledger", icon: "fa-solid fa-indian-rupee-sign",
-        children: [
-          { id: "finance", label: "Institutional Ledger", icon: "fa-solid fa-vault" }
-        ]
-      }
+      { id: "finance", label: "Finance & Ledger", icon: "fa-solid fa-indian-rupee-sign" }
     ]
   },
   {

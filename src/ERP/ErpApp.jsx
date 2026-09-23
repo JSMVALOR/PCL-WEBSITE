@@ -23,6 +23,7 @@ import AdminSidebar from './components/Admin/AdminSidebar/AdminSidebar';
 // ==========================================
 // 2. SHARED PORTAL MODULES
 // ==========================================
+import NotificationsCenter from "./components/shared/NotificationsCenter/NotificationsCenter";
 import Notices from './components/Student/Notices/Notices';
 import Helpdesk from './components/Student/Helpdesk/Helpdesk';
 import Credentials from './components/Student/Credentials/Credentials';
@@ -262,6 +263,7 @@ export default function App() {
       switch (activeTab) {
         case 'dashboard': return <StudentDashboard setActiveTab={setActiveTab} />;
         case 'notices': return <Notices />;
+        case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
         // Compact Hubs
         case 'academic_center': return <StudentAcademicHub />;
         case 'career_center': return <StudentCareerHub />;
@@ -291,6 +293,7 @@ export default function App() {
       switch (activeTab) {
         case 'dashboard': return <FacultyDashboard setActiveTab={setActiveTab} />;
         case 'notices': return <Notices />;
+        case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
         
         // Mobile Hubs
         case 'faculty_academic_center': return <FacultyAcademicHub />;
@@ -327,6 +330,7 @@ export default function App() {
         case 'blogs': return <BlogManager />;
         case 'careers': return <AdminCareers />;
         case 'notices': return <Notices setActiveTab={setActiveTab} />;
+        case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
         case 'users': return <UserManagement />;
         case 'coursebuilder': return <AdminCourseBuilder />;
         case 'timetablebuilder': return <AdminTimetableHQ />;

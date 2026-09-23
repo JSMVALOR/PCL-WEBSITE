@@ -22,7 +22,7 @@ export default function SidebarFramework({
     onLogout,
     customBrandContext
 }) {
-    const { isSidebarCollapsed, toggleSidebar, notices } = useERP();
+    const { isSidebarCollapsed, toggleSidebar, notices, unreadNotifications } = useERP();
     
     // --- Core State ---
     const sidebarWidth = isSidebarCollapsed ? SIDEBAR_MIN_WIDTH : SIDEBAR_DEFAULT_WIDTH;
@@ -83,6 +83,7 @@ export default function SidebarFramework({
         if (!id) return;
         setActiveTab(id);
         setMobileMenuOpen(false);
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     };
 
     const toggleFavorite = (e, id) => {
@@ -285,13 +286,25 @@ export default function SidebarFramework({
                                     <span className="text-[9px] font-black text-themeTextSec tracking-widest uppercase truncate">{userSession?.role || 'Guest'}</span>
                                 </div>
                             </div>
-                            <button 
-                                onClick={(e) => { e.stopPropagation(); onLogout?.(); }}
+                            <div className="flex items-center gap-1 shrink-0">
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); window.erpDialog?.alert("You have " + unreadNotifications + " unread notifications. Check the Top Menu for details."); }}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-themeTextSec hover:text-themeAccent hover:bg-themeAccent/10 transition-colors relative tooltip-trigger"
+                                    title="Notifications"
+                                >
+                                    <i className="fa-regular fa-bell text-[13px]"></i>
+                                    {unreadNotifications > 0 && (
+                                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#FF9500] rounded-full border-[1.5px] border-themePanel"></span>
+                                    )}
+                                </button>
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); onLogout?.(); }}
                                 className="w-8 h-8 rounded-lg flex items-center justify-center text-themeTextSec hover:text-rose-500 hover:bg-rose-500/10 transition-colors shrink-0 tooltip-trigger"
                                 title="Log Out"
                             >
                                 <i className="fa-solid fa-power-off text-[13px]"></i>
                             </button>
+                            </div>
                         </div>
                     ) : (
                         <button 

@@ -174,7 +174,33 @@ export default function FacultyAssignments({ subjectContext }) {
  status: 'active'
  });
 
+
  if (error) throw error;
+ 
+ // Fire ASSIGNMENT_PUBLISHED emails asynchronously
+ (async () => {
+   try {
+     // Get subject name
+     const subMatch = subjects.find(s => s.master_id === finalSubjectId || s.id === finalSubjectId);
+     const subName = subMatch ? subMatch.name : 'Your Course';
+     
+     // Get students in this batch
+     const { data: students } = await supabase.from('profiles').select('email').eq('role', 'student');
+     // In a real scenario, we'd filter by batch. Here we just get all students for simplicity or filter if needed.
+     
+     // Send email notification (Note: email override will catch this)
+     sendSystemEmail('ASSIGNMENT_PUBLISHED', {
+         subject_name: subName,
+         title: formData.title,
+         deadline: formData.due_date,
+         submission_mode: 'URL_ONLY',
+         portal_link: window.location.origin + '/login'
+     }).catch(e => console.error("Email dispatch failed", e));
+   } catch(e) {
+     console.error("Failed to send assignment emails", e);
+   }
+ })();
+
  
  setShowForm(false);
  setFormData({

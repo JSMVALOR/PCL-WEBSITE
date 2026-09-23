@@ -2,6 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { useNotification } from '../../Shared/context/NotificationContext';
 import { supabase } from '../../Shared/lib/supabase/supabaseClient';
 import CryptoJS from 'crypto-js';
 
@@ -30,6 +31,7 @@ export const useERP = () => useContext(ErpContext);
 const VALID_ROLES = ['student', 'faculty', 'admin'];
 
 export const ErpProvider = ({ children }) => {
+    const { addFlag } = useNotification();
     // --- 1. INSTANT BOOT PROTOCOL (ZERO-LATENCY CACHE) ---
     const [userSession, setUserSession] = useState(() => {
         const cachedSession = localStorage.getItem('jsmerp_master_session');
@@ -94,6 +96,8 @@ export const ErpProvider = ({ children }) => {
 
     const [notices, setNotices] = useState([]);
     const [events, setEvents] = useState([]);
+    const [unreadNotifications, setUnreadNotifications] = useState(0);
+    const [universalNotifications, setUniversalNotifications] = useState([]);
 
     // --- 1.5 GLOBAL UI STATE ---
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -365,6 +369,44 @@ export const ErpProvider = ({ children }) => {
                     if (data) setEvents(data);
                 });
 
+            const fetchUniversal = async () => {
+                try {
+                    const userId = userSession.db_id;
+                    const isFaculty = userSession.role === 'faculty';
+                    let allNotifs = [];
+
+                    const { data: targetedNotifs } = await supabase.from('notifications').select('*').eq('recipient_id', userId);
+                    if (targetedNotifs) {
+                        targetedNotifs.forEach(n => allNotifs.push({
+                            id: n.id, type: n.type, title: n.title, message: n.message,
+                            created_at: n.created_at, is_read: n.is_read, action_link: n.action_link, source: 'system'
+                        }));
+                    }
+
+                    const { data: messages } = await supabase.from('mentorship_messages').select('*, sender:profiles!mentorship_messages_sender_id_fkey(full_name)').eq('receiver_id', userId).is('read_at', null);
+                    if (messages) {
+                        messages.forEach(m => allNotifs.push({
+                            id: 'msg_' + m.id, type: 'message', title: `New message from ${m.sender?.full_name || 'User'}`,
+                            message: m.content, created_at: m.created_at, is_read: false, action_link: 'mentorship', source: 'mentorship_messages', original_id: m.id
+                        }));
+                    }
+
+                    const readMeetings = JSON.parse(localStorage.getItem('read_meetings') || '[]');
+                    const { data: meetings } = await supabase.from('mentorship_meetings').select('*').eq(isFaculty ? 'faculty_id' : 'student_id', userId).eq('status', 'scheduled').gte('scheduled_at', new Date().toISOString());
+                    if (meetings) {
+                        meetings.forEach(m => allNotifs.push({
+                            id: 'mtg_' + m.id, type: 'meeting', title: 'Upcoming Mentorship Session',
+                            message: m.topic || 'Mentorship Meeting scheduled', created_at: m.created_at, is_read: readMeetings.includes(m.id), action_link: 'mentorship', source: 'mentorship_meetings', original_id: m.id
+                        }));
+                    }
+
+                    allNotifs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    setUniversalNotifications(allNotifs);
+                    setUnreadNotifications(allNotifs.filter(n => !n.is_read).length);
+                } catch(e) {}
+            };
+            fetchUniversal();
+
             // Request Push Notification Permission
             if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                 Notification.requestPermission();
@@ -388,6 +430,51 @@ export const ErpProvider = ({ children }) => {
                                 window._lastNotifTime = Date.now();
                             }
                         }
+                    }
+                })
+                .subscribe();
+
+            // Realtime Listener for Targeted Notifications Table
+            const targetedNotifsChannel = supabase.channel(`realtime_targeted_notifs_${userSession.db_id}_${Date.now()}`)
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `recipient_id=eq.${userSession.db_id}` }, (payload) => {
+                    const newNotif = payload.new;
+                    
+                    setUnreadNotifications(prev => prev + 1);
+                    // Show Hero Reveal (Toast)
+                    addFlag({
+                        title: newNotif.title,
+                        description: newNotif.message,
+                        type: 'info',
+                        duration: 8000
+                    });
+
+                    // Trigger Native Push
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification(newNotif.title, {
+                            body: newNotif.message,
+                            icon: '/favicon.ico'
+                        });
+                    }
+                })
+                .subscribe();
+
+            // Realtime Listener for Mentorship Messages (Hero Reveal)
+            const chatChannel = supabase.channel(`realtime_chats_${userSession.db_id}_${Date.now()}`)
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mentorship_messages', filter: `receiver_id=eq.${userSession.db_id}` }, (payload) => {
+                    const msg = payload.new;
+                    
+                    addFlag({
+                        title: "New Message",
+                        description: msg.content.length > 60 ? msg.content.substring(0, 60) + '...' : msg.content,
+                        type: 'success',
+                        duration: 8000
+                    });
+
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification("New Message Received", {
+                            body: msg.content,
+                            icon: '/favicon.ico'
+                        });
                     }
                 })
                 .subscribe();
@@ -475,6 +562,10 @@ export const ErpProvider = ({ children }) => {
             logout,
             refreshProfile,
             notices,
+            universalNotifications,
+            setUniversalNotifications,
+            unreadNotifications,
+            setUnreadNotifications,
             addNotice: async (notice) => {
             if (!userSession) return;
             try {
@@ -682,7 +773,7 @@ export const ErpProvider = ({ children }) => {
             if (error) throw error;
         }
         
-    }), [userSession, isAppLoading, isSidebarCollapsed, activeTheme, layoutPreference, navLayout, sidebarMode, notices, events, attendanceCache, globalTimetable, facultyTimetable, showSessionModal, sessionCountdown])}>
+    }), [userSession, isAppLoading, isSidebarCollapsed, activeTheme, layoutPreference, navLayout, sidebarMode, notices, universalNotifications, unreadNotifications, events, attendanceCache, globalTimetable, facultyTimetable, showSessionModal, sessionCountdown])}>
             {children}
 
             {/* Session Timeout Modal */}

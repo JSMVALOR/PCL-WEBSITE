@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../context/ErpContext';
+import { useNotification } from '../../../Shared/context/NotificationContext';
 
 export default function MentorshipChatHub({ receiverId, receiverName, receiverRole, receiverAvatar }) {
     const { userSession } = useERP();
+    const { addFlag } = useNotification();
+    const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -15,7 +18,22 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
     };
 
     useEffect(() => {
-        if (!isOpen || !userSession?.db_id || !receiverId) return;
+        const handleOpen = () => setIsOpen(true);
+        window.addEventListener('openMentorshipChat', handleOpen);
+        return () => window.removeEventListener('openMentorshipChat', handleOpen);
+    }, []);
+
+    // Clear unreads when opened
+    useEffect(() => {
+        if (isOpen) {
+            setUnreadCount(0);
+            setTimeout(scrollToBottom, 100);
+        }
+    }, [isOpen]);
+
+    // Independent Realtime Listener (Always On)
+    useEffect(() => {
+        if (!userSession?.db_id || !receiverId) return;
 
         const fetchMessages = async () => {
             const { data } = await supabase
@@ -24,13 +42,15 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
                 .or(`and(sender_id.eq.${userSession.db_id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${userSession.db_id})`)
                 .order('created_at', { ascending: true });
             
-            if (data) setMessages(data);
-            setTimeout(scrollToBottom, 100);
+            if (data) {
+                setMessages(data);
+                setTimeout(scrollToBottom, 100);
+            }
         };
 
         fetchMessages();
 
-        const channel = supabase.channel(`chat_${userSession.db_id}_${receiverId}`)
+        const channel = supabase.channel(`chat_${userSession.db_id}_${receiverId}_${Date.now()}`)
             .on('postgres_changes', { 
                 event: 'INSERT', 
                 schema: 'public', 
@@ -38,14 +58,30 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
                 filter: `receiver_id=eq.${userSession.db_id}` // Only listen for incoming to me
             }, payload => {
                 if (payload.new.sender_id === receiverId) {
-                    setMessages(prev => [...prev, payload.new]);
+                    setMessages(prev => {
+                        const updated = [...prev, payload.new];
+                        // If chat is closed, trigger a hero reveal push notification!
+                        setIsOpen(currOpen => {
+                            if (!currOpen) {
+                                setUnreadCount(c => c + 1);
+                                addFlag({
+                                    title: `New Message from ${receiverName || 'Mentorship'}`,
+                                    description: payload.new.content.length > 40 ? payload.new.content.substring(0, 40) + '...' : payload.new.content,
+                                    type: 'info',
+                                    duration: 8000
+                                });
+                            }
+                            return currOpen; // Do not mutate isOpen
+                        });
+                        return updated;
+                    });
                     setTimeout(scrollToBottom, 100);
                 }
             })
             .subscribe();
 
         return () => { supabase.removeChannel(channel); };
-    }, [isOpen, userSession?.db_id, receiverId]);
+    }, [userSession?.db_id, receiverId, addFlag, receiverName]);
 
     const handleSend = async (e) => {
         e.preventDefault();
@@ -81,7 +117,11 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
                 className={`fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-16 h-16 rounded-full bg-amber-500 text-black shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40 ${isOpen ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 scale-100'}`}
             >
                 <i className="fa-solid fa-message text-2xl"></i>
-                <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full border-2 border-themeApp hidden"></div>
+                {unreadCount > 0 && (
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full shadow-lg border-2 border-[#121212] flex items-center justify-center text-[10px] font-black text-white animate-bounce">
+                        {unreadCount}
+                    </div>
+                )}
             </button>
 
             {/* Chat Window */}

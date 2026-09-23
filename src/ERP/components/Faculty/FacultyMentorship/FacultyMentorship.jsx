@@ -4,7 +4,11 @@ import { useERP } from "../../../context/ErpContext";
 import MentorshipChatHub from '../../shared/MentorshipChatHub';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import Attendance from "../../Student/Attendance/Attendance";
+import MenteeLeaves from "./MenteeLeaves";
+import MenteeGrievances from "./MenteeGrievances";
+import MenteeReport from "./MenteeReport";
 import MenteeAcademicRecord from "./MenteeAcademicRecord";
+import FacultyStudentProfile360 from "./FacultyStudentProfile360";
 
 export default function FacultyMentorship() {
     const { userSession } = useERP();
@@ -17,7 +21,20 @@ export default function FacultyMentorship() {
     const [grievances, setGrievances] = useState([]);
     const [actionLoading, setActionLoading] = useState(null);
     const [selectedMentee, setSelectedMentee] = useState(null);
-    const [menteeTab, setMenteeTab] = useState('attendance');
+    const [menteeTab, setMenteeTab] = useState('profile');
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [scheduleData, setScheduleData] = useState({ date: '', time: '', topic: '', link: '' });
+
+    useEffect(() => {
+        if (selectedMentee || menteeTab) {
+            const scrollContainer = document.getElementById('jsm-main-scroll-container');
+            if (scrollContainer) {
+                scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+    }, [selectedMentee, menteeTab]);
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -110,6 +127,43 @@ export default function FacultyMentorship() {
         if (facultyId) fetchData();
     }, [facultyId]);
 
+    const handleScheduleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const { error } = await supabase.from('mentorship_meetings').insert([{
+                faculty_id: facultyId,
+                student_id: selectedMentee.id,
+                scheduled_at: `${scheduleData.date}T${scheduleData.time}:00Z`,
+                topic: scheduleData.topic,
+                meeting_link: scheduleData.link || null,
+                status: 'scheduled'
+            }]);
+            if (error) throw error;
+
+            try {
+                const studentEmail = selectedMentee.email || `${selectedMentee.erp_id}@prudentia.edu`;
+                await fetch('http://localhost:3001/email/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: studentEmail,
+                        subject: `Mentorship Meeting Scheduled: ${scheduleData.topic}`,
+                        html: `<p>Dear ${selectedMentee.full_name},</p><p>A mentorship meeting has been scheduled on <strong>${scheduleData.date}</strong> at <strong>${scheduleData.time}</strong>.</p><p>Topic: ${scheduleData.topic}</p><p>Link/Location: ${scheduleData.link || 'TBA'}</p><p>Regards,<br/>Prudentia Mentorship</p>`
+                    })
+                });
+            } catch (emailErr) {
+                console.warn('Failed to send email:', emailErr);
+            }
+
+            setShowScheduleModal(false);
+            setScheduleData({ date: '', time: '', topic: '', link: '' });
+            fetchData();
+        } catch (error) {
+            console.error(error);
+            window.erpDialog?.alert("Failed to schedule meeting.");
+        }
+    };
+
     const handleMeetingStatus = async (meetingId, newStatus) => {
         setActionLoading(meetingId);
         try {
@@ -135,7 +189,7 @@ export default function FacultyMentorship() {
     const handleGrievanceAction = async (grievanceId, newStatus, notes = "") => {
         setActionLoading(grievanceId);
         try {
-            const { error } = await supabase.from('grievances').update({ status: newStatus, resolution_notes: notes, updated_at: new Date() }).eq('id', grievanceId);
+            const { error } = await supabase.from('grievances').update({ status: newStatus, resolution_notes: notes }).eq('id', grievanceId);
             if (error) throw error;
             window.erpDialog?.alert(`Grievance marked as ${newStatus}.`);
             
@@ -226,8 +280,12 @@ export default function FacultyMentorship() {
                         {/* Tab Bar */}
                         <div className="flex p-1.5 bg-black/[0.03] dark:bg-white/5 backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/5 w-fit gap-1">
                             {[
+                                { id: 'profile', label: '360° Profile', icon: 'fa-user-graduate' },
                                 { id: 'attendance', label: 'Attendance', icon: 'fa-clipboard-user' },
                                 { id: 'academic', label: 'Academic Record', icon: 'fa-graduation-cap' },
+                                { id: 'leaves', label: 'Leave Approvals', icon: 'fa-plane-departure' },
+                                { id: 'grievances', label: 'Grievance Record', icon: 'fa-scale-balanced' },
+                                { id: 'report', label: 'Report Mentee', icon: 'fa-triangle-exclamation' },
                             ].map(tab => (
                                 <button key={tab.id} onClick={() => setMenteeTab(tab.id)}
                                     className={`px-5 py-2.5 rounded-xl text-xs font-bold tracking-tight transition-all flex items-center gap-2 ${
@@ -242,11 +300,23 @@ export default function FacultyMentorship() {
 
                         {/* Tab Content */}
                         <div className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm overflow-hidden">
+                            {menteeTab === 'profile' && (
+                                <FacultyStudentProfile360 mentee={selectedMentee} onClose={() => setSelectedMentee(null)} onViewMarks={() => setMenteeTab('academic')} onSchedule={() => setShowScheduleModal(true)} setMenteeTab={setMenteeTab} />
+                            )}
                             {menteeTab === 'attendance' && (
                                 <Attendance menteeId={selectedMentee.id} isEmbedded={true} />
                             )}
                             {menteeTab === 'academic' && (
                                 <MenteeAcademicRecord menteeId={selectedMentee.id} mentorId={facultyId} />
+                            )}
+                            {menteeTab === 'leaves' && (
+                                <MenteeLeaves menteeId={selectedMentee.id} />
+                            )}
+                            {menteeTab === 'grievances' && (
+                                <MenteeGrievances menteeId={selectedMentee.id} />
+                            )}
+                            {menteeTab === 'report' && (
+                                <MenteeReport menteeId={selectedMentee.id} menteeName={selectedMentee.full_name} setMenteeTab={setMenteeTab} />
                             )}
                         </div>
                     </div>
@@ -429,6 +499,44 @@ export default function FacultyMentorship() {
                     />
                 )}
             </div>
+            {showScheduleModal && selectedMentee && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[105] flex items-center justify-center p-4">
+                    <form onSubmit={handleScheduleSubmit} className="bg-white dark:bg-themePanel w-full max-w-md rounded-2xl p-6 border border-black/10 dark:border-white/10 shadow-2xl flex flex-col gap-4">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-bold text-themeText">Schedule Mentorship Session</h3>
+                            <button type="button" onClick={() => setShowScheduleModal(false)} className="text-themeTextSec hover:text-themeText">
+                                <i className="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <p className="text-xs text-themeTextSec mb-2">Scheduling with <span className="font-bold text-amber-500">{selectedMentee.full_name}</span></p>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-xs font-bold text-themeTextSec mb-1 uppercase tracking-widest">Date</label>
+                                <input type="date" required className="w-full bg-themeElevated border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText" value={scheduleData.date} onChange={e => setScheduleData({...scheduleData, date: e.target.value})} />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-themeTextSec mb-1 uppercase tracking-widest">Time</label>
+                                <input type="time" required className="w-full bg-themeElevated border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText" value={scheduleData.time} onChange={e => setScheduleData({...scheduleData, time: e.target.value})} />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-themeTextSec mb-1 uppercase tracking-widest">Topic / Agenda</label>
+                            <input type="text" required placeholder="e.g. Mid-semester check-in" className="w-full bg-themeElevated border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText" value={scheduleData.topic} onChange={e => setScheduleData({...scheduleData, topic: e.target.value})} />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-themeTextSec mb-1 uppercase tracking-widest">Location / Meet Link</label>
+                            <input type="text" placeholder="e.g. Faculty Cabin 4 or Google Meet link" className="w-full bg-themeElevated border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText" value={scheduleData.link} onChange={e => setScheduleData({...scheduleData, link: e.target.value})} />
+                        </div>
+
+                        <button type="submit" className="w-full bg-amber-500 text-black font-bold tracking-tight text-sm py-3 rounded-lg hover:bg-amber-600 transition-colors mt-2">
+                            Confirm Schedule
+                        </button>
+                    </form>
+                </div>
+            )}
         </div>
     );
 }

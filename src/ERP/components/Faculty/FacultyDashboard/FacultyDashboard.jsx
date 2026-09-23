@@ -110,7 +110,11 @@ export default function FacultyDashboard({ setActiveTab }) {
                     <div className="flex flex-col xl:flex-row gap-6 w-full shrink-0 mb-6">
                         
                         {/* Left: Real-time Action Items */}
-                        <FacultyActionItems />
+                        <FacultyActionItems onActionClick={(id) => {
+                            if (id === 'mentor') setActiveTab('mentorship');
+                            else if (id === 'grade') setActiveTab('assignments');
+                            else if (id === 'leaves') setActiveTab('leave');
+                        }} />
 
                         {/* Right: Updates Carousel */}
                         <div className="w-full xl:w-[420px] h-[320px] shrink-0">

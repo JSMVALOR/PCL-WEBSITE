@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../../context/ErpContext';
 
-export default function FacultyActionItems() {
+export default function FacultyActionItems({ onActionClick }) {
     const { userSession } = useERP();
     const [actions, setActions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -108,7 +108,7 @@ export default function FacultyActionItems() {
                     </div>
                 ) : (
                     actions.map((act, i) => (
-                        <div key={i} className="p-4 bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-4 group">
+                        <div key={i} onClick={() => onActionClick && onActionClick(act.id)} className="p-4 bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-colors flex items-center gap-4 group">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${act.bg} ${act.color} group-hover:scale-110 transition-transform`}>
                                 <i className={`fa-solid ${act.icon}`}></i>
                             </div>

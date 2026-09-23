@@ -7,37 +7,37 @@ export const STUDENT_NAV_MEGA = [
     category: "Main",
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-house" },
-      { id: "notices", label: "Notice Board", icon: "fa-solid fa-thumbtack" }
-    ]
-  },
-  {
-    category: "Management",
-    links: [
+      { id: "notices", label: "Notice Board", icon: "fa-solid fa-thumbtack" },
       { 
         id: "academics_group", label: "Academics", icon: "fa-solid fa-graduation-cap", 
         children: [
-          { id: "vault", label: "Course Vault", icon: "fa-solid fa-book" },
-          { id: "attendance", label: "Attendance", icon: "fa-solid fa-clipboard-user" },
-          { id: "assignments", label: "Assignments", icon: "fa-solid fa-file-pen" },
-          { id: "timetable", label: "Timetable", icon: "fa-solid fa-calendar-days" }
+          { id: "vault", label: "Course Materials", icon: "fa-solid fa-book" },
+          { id: "timetable", label: "Class Schedule", icon: "fa-solid fa-calendar-days" },
+          { id: "attendance", label: "Attendance Record", icon: "fa-solid fa-clipboard-user" },
+          { id: "assignments", label: "Assignments", icon: "fa-solid fa-file-pen" }
         ]
       },
       {
-        id: "career_group", label: "Career", icon: "fa-solid fa-briefcase",
+        id: "mentorship_group", label: "Mentorship", icon: "fa-solid fa-handshake",
         children: [
-          { id: "mentorship", label: "Mentorship", icon: "fa-solid fa-people-arrows" },
+          { id: "mentorship", label: "Mentorship Hub", icon: "fa-solid fa-people-arrows" },
+          { id: "leave", label: "Leave Requests", icon: "fa-solid fa-mug-hot" }
+        ]
+      },
+      {
+        id: "career_group", label: "Career & Advising", icon: "fa-solid fa-briefcase",
+        children: [
           { id: "internships", label: "Internships", icon: "fa-solid fa-building" },
-          { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-scale-balanced" },
+          { id: "mootcourt", label: "Moot Courts", icon: "fa-solid fa-scale-balanced" },
           { id: "achievements", label: "Achievements", icon: "fa-solid fa-trophy" },
-          { id: "cvbuilder", label: "CV Builder", icon: "fa-solid fa-file-pdf" }
+          { id: "cvbuilder", label: "Resumes/CV", icon: "fa-solid fa-file-pdf" }
         ]
       },
       {
-        id: "support_group", label: "Support", icon: "fa-solid fa-building-columns",
+        id: "support_group", label: "Support & Admin", icon: "fa-solid fa-headset",
         children: [
-          { id: "fees", label: "Fees", icon: "fa-solid fa-indian-rupee-sign" },
-          { id: "leave", label: "Leave Requests", icon: "fa-solid fa-mug-hot" },
-          { id: "grievances", label: "Grievance Cell", icon: "fa-solid fa-scale-balanced" },
+          { id: "fees", label: "Fee Management", icon: "fa-solid fa-indian-rupee-sign" },
+          { id: "grievances", label: "Grievances", icon: "fa-solid fa-scale-balanced" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
         ]
       }

@@ -23,17 +23,7 @@ export default function Credentials() {
  const [pendingRequest, setPendingRequest] = useState(null);
  const [showEditModal, setShowEditModal] = useState(false);
 
- // One-Time Questionnaire State
- const [showQuestionnaire, setShowQuestionnaire] = useState(false);
- const [qForm, setQForm] = useState({
- preferredLawArea: "Litigation",
- careerGoal: "Not Decided",
- languages: [],
- clubs: [],
- internshipPref: "Any",
- skills: []
- });
-
+ // Removed inline Questionnaire State to unify with the global Onboarding Modal.
  const idCardRef = useRef(null);
  const [isGeneratingID, setIsGeneratingID] = useState(false);
  
@@ -65,11 +55,7 @@ export default function Credentials() {
  if (pError) throw pError;
  setProfileData(pData);
 
- // Check if Questionnaire is needed (assuming empty questionnaire_data means not done)
- const qd = pData.questionnaire_data || {};
- if (!qd.preferredLawArea && userSession?.role === 'student') {
- setShowQuestionnaire(true);
- }
+ // Removed inline questionnaire check; relying on global modal via questionnaire_completed
 
  // Check for pending profile update request
  const { data: requestData } = await supabase
@@ -113,49 +99,6 @@ export default function Credentials() {
  const parts = nameStr.trim().split(" ");
  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
- };
-
- const handleQuestionnaireSubmit = async (e) => {
- e.preventDefault();
- const studentId = userSession?.db_id || userSession?.id;
- 
- try {
- const updatedQData = {
- ...profileData.questionnaire_data,
- preferredLawArea: qForm.preferredLawArea,
- careerGoal: qForm.careerGoal,
- languages: qForm.languages,
- clubs: qForm.clubs,
- internshipPref: qForm.internshipPref,
- skills: qForm.skills,
- completedOn: new Date().toISOString()
- };
-
- const { error } = await supabase
- .from('profiles')
- .update({ questionnaire_data: updatedQData })
- .eq('id', studentId);
-
- if (error) throw error;
- 
- setShowQuestionnaire(false);
- setProfileData(prev => ({ ...prev, questionnaire_data: updatedQData }));
- window.erpDialog?.alert("Onboarding questionnaire completed successfully.", "Record Updated");
- } catch (error) {
- console.error(error);
- window.erpDialog?.alert("Failed to save questionnaire. Please try again.");
- }
- };
-
- const handleCheckboxChange = (field, val) => {
- setQForm(prev => {
- const arr = prev[field];
- if (arr.includes(val)) {
- return { ...prev, [field]: arr.filter(i => i !== val) };
- } else {
- return { ...prev, [field]: [...arr, val] };
- }
- });
  };
 
  if (isLoading) {
@@ -305,75 +248,7 @@ export default function Credentials() {
  </div>
  </div>
 
- {/* If Questionnaire needs to be filled, show it here */}
- {showQuestionnaire && userSession?.role === 'student' && (
- <div className="bg-themeAccent/10 border-2 border-themeAccent/30 rounded-2xl p-6 lg:p-8">
- <div className="flex items-center gap-3 mb-6">
- <div className="w-10 h-10 rounded-full bg-themeAccent/20 flex items-center justify-center text-themeAccent shrink-0">
- <i className="fa-solid fa-clipboard-list"></i>
- </div>
- <div>
- <h3 className="text-lg font-black text-themeAccent tracking-tight mb-0.5">Student Onboarding Questionnaire</h3>
- <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Please complete this one-time survey to finalize your profile.</p>
- </div>
- </div>
-
- <form onSubmit={handleQuestionnaireSubmit} className="flex flex-col gap-6">
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeText">Preferred Area of Law</label>
- <select className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] rounded-lg px-3 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" value={qForm.preferredLawArea} onChange={e => setQForm({...qForm, preferredLawArea: e.target.value})}>
- <option>Litigation</option>
- <option>Corporate Law</option>
- <option>Criminal Law</option>
- <option>Constitutional Law</option>
- <option>Intellectual Property</option>
- <option>Not Decided</option>
- </select>
- </div>
- <div className="flex flex-col gap-2">
- <label className="text-[10px] font-black uppercase tracking-widest text-themeText">Career Goal</label>
- <select className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] rounded-lg px-3 py-2.5 text-xs text-themeText outline-none focus:border-themeAccent" value={qForm.careerGoal} onChange={e => setQForm({...qForm, careerGoal: e.target.value})}>
- <option>Litigation</option>
- <option>Corporate</option>
- <option>Judiciary</option>
- <option>Higher Studies</option>
- <option>Government</option>
- <option>Not Decided</option>
- </select>
- </div>
- </div>
-
- <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeText block mb-2">Clubs & Activities Interest</label>
- <div className="flex flex-wrap gap-2">
- {["Moot Court Society", "ADR Cell", "Legal Aid Clinic", "Debate Society", "NSS", "Sports", "Cultural Club"].map(club => (
- <label key={club} className="flex items-center gap-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-3 py-2 rounded border border-black/10 dark:border-white/20 cursor-pointer hover:border-themeAccent/50">
- <input type="checkbox" checked={qForm.clubs.includes(club)} onChange={() => handleCheckboxChange('clubs', club)} className="accent-themeAccent" />
- <span className="text-xs font-bold text-themeTextSec">{club}</span>
- </label>
- ))}
- </div>
- </div>
-
- <div>
- <label className="text-[10px] font-black uppercase tracking-widest text-themeText block mb-2">Technical Skills</label>
- <div className="flex flex-wrap gap-2">
- {["Legal Research", "Drafting", "Public Speaking", "MS Office", "AI Tools"].map(skill => (
- <label key={skill} className="flex items-center gap-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-3 py-2 rounded border border-black/10 dark:border-white/20 cursor-pointer hover:border-themeAccent/50">
- <input type="checkbox" checked={qForm.skills.includes(skill)} onChange={() => handleCheckboxChange('skills', skill)} className="accent-themeAccent" />
- <span className="text-xs font-bold text-themeTextSec">{skill}</span>
- </label>
- ))}
- </div>
- </div>
-
- <button type="submit" className="btn-erp">
- Submit Questionnaire
- </button>
- </form>
- </div>
- )}
+ {/* Questionnaire removed to avoid duplication with the global modal */}
 
  {/* Information Grid Layout */}
                         {userSession?.role === 'admin' ? (

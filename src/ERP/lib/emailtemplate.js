@@ -1,300 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 
-/**
- * Beautiful HTML Email Templates for PCL ERP
- * Designed with premium typography, deep shadows, and professional academic themes.
- */
-
-const baseStyles = `
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #1a1a1a;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-`;
-
-const containerStyles = `
-    max-width: 600px;
-    margin: 40px auto;
-    background: #ffffff;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    border: 1px solid #eaeaea;
-`;
-
-const headerStyles = `
-    background: #0a0a0a;
-    color: #ffffff;
-    padding: 30px;
-    text-align: center;
-`;
-
-const contentStyles = `
-    padding: 40px 30px;
-    background: #ffffff;
-`;
-
-const footerStyles = `
-    background: #f8f9fa;
-    padding: 20px 30px;
-    text-align: center;
-    font-size: 12px;
-    color: #666666;
-    border-top: 1px solid #eaeaea;
-`;
-
-const buttonStyles = `
-    display: inline-block;
-    padding: 12px 24px;
-    background-color: #0a0a0a;
-    color: #ffffff !important;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    margin-top: 20px;
-    letter-spacing: 0.5px;
-`;
-
-export const HTML_EMAIL_TEMPLATES = {
-
-    PARENT_LOGIN_OTP: (params) => {
-        const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
-        
-        return `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Parent Portal - Verification Code</title>
-        </head>
-        <body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-            
-            <div style="display: none; max-height: 0px; overflow: hidden;">
-                Your verification code is: ${params.otp}
-            </div>
-
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #050505; padding: 40px 20px;">
-                <tr>
-                    <td align="center">
-                        <table width="100%" max-width="500" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #0A0A0A; border: 1px solid #1A1A1A; border-radius: 24px; padding: 40px; margin: 0 auto; text-align: center;">
-                            <tr>
-                                <td>
-                                    <h1 style="color: #FFFFFF; font-size: 24px; font-weight: 800; margin: 0 0 8px 0; letter-spacing: -0.5px;">Parent Portal Access</h1>
-                                    <p style="color: #8E8E93; font-size: 15px; line-height: 1.5; margin: 0 0 32px 0;">Use the verification code below to access your ward's academic records.</p>
-                                    
-                                    <div style="background-color: #1A1A1A; border: 1px solid #2C2C2E; border-radius: 16px; padding: 24px; margin-bottom: 32px;">
-                                        <p style="color: #8E8E93; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0;">Verification Code</p>
-                                        <div style="font-size: 42px; font-weight: 900; color: #EAB308; letter-spacing: 8px; line-height: 1;">${params.otp}</div>
-                                    </div>
-                                    
-                                    <p style="color: #666666; font-size: 13px; line-height: 1.5; margin: 0;">
-                                        Requested at ${timestamp}<br>
-                                        If you did not request this code, you can safely ignore this email.
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="color: #333333; font-size: 12px; margin-top: 32px; font-weight: 500;">
-                            © 2026 PRUDENTIA COLLEGE OF LAW
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-        `;
-    },
-
-
-    PARENT_ABSENT_ALERT: (params) => `
-    <div style="${baseStyles}">
-        <div style="background-color: #f7f9fa; padding: 40px 20px; min-height: 100vh;">
-            <div style="${containerStyles}">
-                <div style="background: #ef4444; color: #ffffff; padding: 30px; text-align: center; border-bottom: 3px solid #dc2626;">
-                    <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 2px;">ATTENDANCE ALERT</h1>
-                </div>
-                <div style="padding: 40px 30px;">
-                    <p style="font-size: 16px; margin-bottom: 24px; color: #4b5563;">Dear Parent/Guardian,</p>
-                    <p style="font-size: 16px; margin-bottom: 24px; color: #4b5563;">
-                        This is an automated notification from the Prudentia College of Law Academic Engine.
-                    </p>
-                    <div style="background: #fee2e2; border-radius: 12px; padding: 24px; margin-bottom: 30px; border: 1px solid #fca5a5;">
-                        <h2 style="margin: 0 0 10px 0; font-size: 20px; color: #991b1b;">Student: ${params.student_name}</h2>
-                        <p style="margin: 0; font-size: 16px; color: #b91c1c;">
-                            <strong>Subject:</strong> ${params.subject}<br/>
-                            <strong>Date:</strong> ${params.date}<br/>
-                            <strong>Status:</strong> <span style="font-weight: 800; text-transform: uppercase;">Marked Absent</span>
-                        </p>
-                    </div>
-                    <p style="font-size: 14px; color: #6b7280; text-align: center; font-style: italic;">
-                        If you believe this is an error or wish to submit a medical leave request, please login to the Parent Portal.
-                    </p>
-                    <div style="text-align: center; margin-top: 30px;">
-                        <a href="${params.portal_link}" style="${buttonStyles}">Access Parent Portal</a>
-                    </div>
-                </div>
-                <div style="${footerStyles}">
-                    <p style="margin: 0; opacity: 0.8;">© 2026 JSM VALOR & Prudentia College of Law</p>
-                    <p style="margin: 5px 0 0 0; font-size: 10px; opacity: 0.6;">This is an automated, headless alert generated by the ERP engine.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    `,
-
-    // 1. CREDENTIALS & ONBOARDING
-    FIRST_CREDENTIALS: (params) => `
-    <div style="${baseStyles} background-color: #f3f4f6; padding: 20px;">
-        <div style="${containerStyles}">
-            <div style="${headerStyles}">
-                <h1 style="margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 900;">WELCOME TO JSM</h1>
-                <p style="margin: 10px 0 0 0; color: #a1a1aa; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Academic Infrastructure</p>
-            </div>
-            <div style="${contentStyles}">
-                <h2 style="font-size: 20px; margin-top: 0;">Hello ${params.name || 'Student'},</h2>
-                <p>Your institutional account has been successfully provisioned. Welcome to our academic community.</p>
-                
-                <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 30px 0; border: 1px solid #eaeaea;">
-                    <p style="margin: 0 0 10px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #666;">Official ERP ID</p>
-                    <p style="margin: 0 0 20px 0; font-size: 24px; font-weight: bold;">${params.erp_id}</p>
-                    
-                    <p style="margin: 0 0 10px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #666;">Temporary Secure Passcode</p>
-                    <p style="margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 2px;">${params.password}</p>
-                </div>
-
-                <p>For security purposes, you will be required to configure a new personal passcode upon your first login.</p>
-                
-                <center>
-                    <a href="${params.login_url}" style="${buttonStyles}">ACCESS SECURE PORTAL</a>
-                </center>
-            </div>
-            <div style="${footerStyles}">
-                &copy; ${new Date().getFullYear()} PCL ERP. Confidential Information.<br/>
-                If you did not expect this email, please contact IT Support immediately.
-            </div>
-        </div>
-    </div>
-    `,
-
-    // 2. BIRTHDAY WISHES
-    HAPPY_BIRTHDAY: (params) => `
-    <div style="${baseStyles} background-color: #fdf2f8; padding: 20px;">
-        <div style="${containerStyles} border: 2px solid #fbcfe8; box-shadow: 0 20px 40px rgba(244,114,182,0.15);">
-            <div style="${headerStyles} background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); padding: 40px 30px;">
-                <h1 style="margin: 0; font-size: 32px; letter-spacing: 2px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">🎉 HAPPY BIRTHDAY! 🎉</h1>
-            </div>
-            <div style="${contentStyles} text-align: center;">
-                <h2 style="font-size: 28px; color: #e11d48; margin-top: 0;">Dear ${params.name},</h2>
-                <p style="font-size: 18px; color: #4c1d95; line-height: 1.8;">
-                    Wishing you a fantastic birthday filled with joy, success, and brilliant new discoveries! <br/><br/>
-                    We are thrilled to have you as part of our academic family and hope this year brings you closer to all your dreams.
-                </p>
-                
-                <div style="font-size: 40px; margin: 30px 0;">🎂 🎈 🎁</div>
-                
-                <p style="font-style: italic; color: #666;">- The JSM Administration & Faculty Team</p>
-            </div>
-        </div>
-    </div>
-    `,
-
-    // 3. PUBLIC ENQUIRIES / SUPPORT
-    SUPPORT_ENQUIRY: (params) => `
-    <div style="${baseStyles} background-color: #f0f9ff; padding: 20px;">
-        <div style="${containerStyles} border-top: 4px solid #0ea5e9;">
-            <div style="${contentStyles}">
-                <h2 style="font-size: 20px; margin-top: 0; color: #0284c7;">We Received Your Enquiry</h2>
-                <p>Hello ${params.name},</p>
-                <p>Thank you for reaching out to us. Our admissions and support team has received your message and is currently reviewing it.</p>
-                
-                <div style="background: #f8fafc; border-left: 4px solid #0ea5e9; padding: 15px 20px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 14px; font-weight: bold; color: #0f172a;">Your Message Reference: #${params.ticket_id || Math.floor(Math.random() * 100000)}</p>
-                    <p style="margin: 10px 0 0 0; font-style: italic; color: #475569;">"${params.message_preview}"</p>
-                </div>
-                
-                <p>We typically respond within 24-48 business hours. If your matter is urgent, please call our toll-free support line.</p>
-            </div>
-            <div style="${footerStyles}">
-                JSM Administrative Admissions Support<br/>
-                info@prudentiacollegeoflaw.com
-            </div>
-        </div>
-    </div>
-    `
-};
-
-export const HTML_EXTRA_TEMPLATES = {
-    APPLICATION_RECEIVED: (params) => `
-    <div style="font-family: 'Inter', sans-serif; background-color: #f3f4f6; padding: 20px;">
-        <div style="max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #eaeaea;">
-            <div style="background: #0a0a0a; color: #ffffff; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 900;">PRUDENTIA COLLEGE OF LAW</h1>
-            </div>
-            <div style="padding: 40px 30px;">
-                <h2 style="font-size: 20px; margin-top: 0;">Application Received</h2>
-                <p>Hello ${params.name},</p>
-                <p>Thank you for submitting your application. We have officially received it and our committee is currently reviewing your profile.</p>
-                
-                <div style="background: #f8f9fa; border-left: 4px solid #FFC107; padding: 15px 20px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 14px; font-weight: bold;">Application Type: ${params.type}</p>
-                    <p style="margin: 0; font-size: 14px; font-weight: bold;">Ticket ID: ${params.ticket_id}</p>
-                </div>
-                
-                <p>If we require any further documentation, we will reach out to you directly on this email.</p>
-            </div>
-        </div>
-    </div>
-    `,
-    TICKET_REPLY: (params) => `
-    <div style="font-family: 'Inter', sans-serif; background-color: #f3f4f6; padding: 20px;">
-        <div style="max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #eaeaea;">
-            <div style="background: #0a0a0a; color: #ffffff; padding: 30px; text-align: center;">
-                <h1 style="margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 900;">PRUDENTIA SUPPORT</h1>
-            </div>
-            <div style="padding: 40px 30px;">
-                <h2 style="font-size: 20px; margin-top: 0;">Update on Ticket #${params.ticket_id}</h2>
-                
-                <div style="background: #f8f9fa; border-left: 4px solid #FFC107; padding: 15px 20px; margin: 20px 0;">
-                    <p style="margin: 0; font-style: italic;">"${params.admin_reply}"</p>
-                </div>
-                
-                <p>If you have any further questions, you can reply directly to this thread or reach out to our administration office.</p>
-            </div>
-        </div>
-    </div>
-    `,
-    ERP_LOGIN_OTP: (params) => {
-        const timestamp = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
-        
-        return `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Prudentia ERP - Verification Code</title>
-        </head>
-        <body style="margin: 0; padding: 0; background-color: #050505; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-            
-            <!-- Hidden preheader for email clients and autofill parsers -->
-            <div style="display: none; max-height: 0px; overflow: hidden;">
-                Your verification code is: ${params.otp}
-            </div>
-
-            <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #050505; padding: 40px 20px;">
-                <tr>
-                    <td align="center">
-                        <table width="100%" max-width="500" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 24px; overflow: hidden; max-width: 500px; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
-                            
-                            <!-- HEADER -->
-                            <tr>
-                                <td align="center" style="padding: 45px 40px; background: linear-gradient(180deg, #111111 0%, #0a0a0a 100%); border-bottom: 1px solid #1f1f1f;">
-                                    <div style="margin-bottom: 20px;">
-                                        <svg width="64" height="64" style="display: block; margin: 0 auto;" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="100%" viewBox="0 0 1024 1024" enable-background="new 0 0 1024 1024" xml:space="preserve">
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+const PCL_LOGO_SVG = `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="1024" height="1024" viewBox="0 0 1024 1024" enable-background="new 0 0 1024 1024" xml:space="preserve">
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M551.999878,502.384857 
 	C459.869415,502.390869 368.238953,502.396484 276.608490,502.402100 
@@ -310,7 +18,7 @@ M551.999878,502.384857
 	C729.098267,502.295715 708.272400,502.401794 687.447327,502.401062 
 	C642.464844,502.399536 597.482422,502.390411 551.999878,502.384857 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M518.000000,558.905518 
 	C443.346497,558.899353 369.192963,558.897888 295.039459,558.882263 
@@ -325,7 +33,7 @@ M518.000000,558.905518
 	C730.295227,558.806213 726.129883,558.913269 721.964600,558.913452 
 	C654.143066,558.916321 586.321533,558.910217 518.000000,558.905518 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M527.612793,398.274597 
 	C518.596008,396.655304 509.981842,396.586700 501.356415,397.968079 
@@ -338,7 +46,7 @@ M527.612793,398.274597
 	C533.153992,346.679108 533.108093,369.829712 533.160767,392.980164 
 	C533.169006,396.603119 532.813965,399.483917 527.612793,398.274597 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M567.654785,635.999878 
 	C567.657776,621.008789 567.867249,606.513306 567.553467,592.029053 
@@ -354,7 +62,7 @@ M567.654785,635.999878
 	C567.648865,831.047180 567.656616,767.752869 567.659729,704.458557 
 	C567.660889,681.805664 567.656555,659.152832 567.654785,635.999878 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M458.946716,809.000000 
 	C458.973053,837.822815 459.021057,866.145569 459.019653,894.468384 
@@ -369,7 +77,7 @@ M458.946716,809.000000
 	C458.915131,617.070862 458.923950,641.561829 458.929443,666.052856 
 	C458.940125,713.535217 458.943695,761.017639 458.946716,809.000000 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M502.204285,585.696472 
 	C509.677917,585.690247 516.688293,585.969421 523.663391,585.594482 
@@ -383,7 +91,7 @@ M502.204285,585.696472
 	C496.091553,680.521179 496.065460,636.550964 496.031494,592.580750 
 	C496.028442,588.640808 496.101257,584.913391 502.204285,585.696472 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M399.593140,318.250488 
 	C386.882935,354.625031 360.376190,373.565002 323.793610,379.198334 
@@ -393,7 +101,7 @@ M399.593140,318.250488
 	C280.417450,313.744202 337.569763,313.728668 394.722046,313.767303 
 	C397.278687,313.769043 401.132324,312.752197 399.593140,318.250488 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M760.644226,371.801636 
 	C726.878113,385.131775 694.411560,383.666504 663.572205,364.654663 
@@ -405,7 +113,7 @@ M760.644226,371.801636
 	C810.111633,313.732971 810.601440,314.373291 808.702637,320.036926 
 	C800.540100,344.383789 784.156921,361.152466 760.644226,371.801636 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M741.753235,857.725098 
 	C771.569153,838.182129 798.952454,816.178101 823.330933,790.659119 
@@ -434,7 +142,7 @@ M741.753235,857.725098
 	C540.793884,953.250305 540.094666,952.710510 539.557861,945.909851 
 	C610.743958,925.770752 679.150391,898.800720 741.753235,857.725098 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M103.209869,253.266663 
 	C110.967728,242.363937 120.076912,233.377228 130.981339,225.463715 
@@ -460,7 +168,7 @@ M103.209869,253.266663
 	C90.191536,337.189575 87.539955,328.831818 86.569412,319.984558 
 	C83.915825,295.795074 89.637642,273.749481 103.209869,253.266663 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M634.701782,436.005402 
 	C640.912048,438.259735 646.746765,440.412750 649.904175,446.371277 
@@ -473,7 +181,7 @@ M634.701782,436.005402
 	C534.104187,431.015320 556.426453,430.694427 578.727356,431.207336 
 	C597.321594,431.634979 616.092773,430.791443 634.701782,436.005402 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M570.000000,566.716797 
 	C620.817627,566.721924 671.135193,566.706909 721.452759,566.774231 
@@ -487,7 +195,7 @@ M570.000000,566.716797
 	C304.744965,566.705566 306.916046,566.724731 309.080872,566.724609 
 	C395.887238,566.718079 482.693634,566.718018 570.000000,566.716797 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M663.259888,253.278503 
 	C664.744019,252.063568 664.673279,250.812057 664.541687,249.409393 
@@ -605,7 +313,7 @@ M663.259888,253.278503
 	C657.408630,269.778931 659.220276,263.346771 660.794250,256.781677 
 	C661.080078,255.589676 662.232788,254.605530 663.259888,253.278503 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M314.228882,291.855621 
 	C312.965271,296.377411 312.123474,300.440582 314.139923,304.601349 
@@ -706,7 +414,7 @@ M314.228882,291.855621
 	C314.616364,263.295074 314.476013,271.868561 313.299072,279.997864 
 	C312.675812,284.303040 315.394135,287.585419 314.228882,291.855621 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M722.085327,948.336548 
 	C694.713989,946.959229 673.589172,933.866333 653.620178,915.304382 
@@ -714,7 +422,7 @@ M722.085327,948.336548
 	C746.208069,908.432800 762.608215,919.694641 775.612549,937.547546 
 	C758.429810,946.051636 740.941406,949.265564 722.085327,948.336548 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M371.464233,915.863708 
 	C334.519409,952.697388 289.009857,956.210022 250.826828,937.302368 
@@ -722,7 +430,7 @@ M371.464233,915.863708
 	C294.213318,898.774048 323.680206,896.925171 354.738007,908.152832 
 	C360.468262,910.224365 366.472260,911.790100 371.464233,915.863708 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M243.318008,800.451721 
 	C236.099335,779.178467 237.487167,758.481079 244.691803,737.925476 
@@ -732,7 +440,7 @@ M243.318008,800.451721
 	C287.798248,850.577759 287.279144,851.507935 286.745819,853.333435 
 	C267.086639,839.565857 251.839264,823.077454 243.318008,800.451721 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M279.154114,870.389771 
 	C259.834137,882.453613 239.453262,889.997742 216.680771,889.157837 
@@ -744,21 +452,21 @@ M279.154114,870.389771
 	C262.983856,857.514282 270.564240,861.372986 277.728668,865.957397 
 	C279.100403,866.835144 282.205048,867.450867 279.154114,870.389771 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M839.556396,849.211792 
 	C850.670105,853.351379 860.886169,858.226868 869.291138,866.335266 
 	C843.577637,894.947693 774.355652,895.977966 744.671326,868.173279 
 	C773.832764,849.278870 804.149475,837.817932 839.556396,849.211792 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M740.117310,785.318237 
 	C746.918030,763.381470 758.540222,745.391907 777.312256,732.259827 
 	C800.166321,764.069519 777.007446,835.837830 738.077881,853.123474 
 	C737.030701,830.319946 733.888916,807.946960 740.117310,785.318237 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M402.921539,107.815048 
 	C413.656403,102.607834 424.395538,98.666359 435.956940,97.267242 
@@ -773,7 +481,7 @@ M402.921539,107.815048
 	C321.038025,121.098946 322.261963,117.992569 326.090668,119.170235 
 	C353.358429,127.557533 378.355835,120.398407 402.921539,107.815048 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M709.399658,813.999878 
 	C711.246338,859.556580 678.469971,891.393677 650.396057,901.301636 
@@ -782,7 +490,7 @@ M709.399658,813.999878
 	C703.314575,791.623352 704.589783,790.390747 707.029846,790.748657 
 	C709.554138,798.007935 709.372253,805.768372 709.399658,813.999878 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M707.003662,122.007401 
 	C708.400146,124.954491 706.681702,126.643013 704.553223,128.231033 
@@ -798,7 +506,7 @@ M707.003662,122.007401
 	C701.624756,118.936516 703.032654,118.324921 705.062012,119.281303 
 	C706.045166,120.394363 706.524414,121.200874 707.003662,122.007401 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M373.076233,890.163330 
 	C372.832916,894.046448 374.812744,897.379272 373.598083,901.861450 
@@ -808,7 +516,7 @@ M373.076233,890.163330
 	C353.257385,813.135315 366.646057,836.890686 370.242157,866.438904 
 	C371.186371,874.197327 372.092194,881.960388 373.076233,890.163330 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M164.826401,774.107300 
 	C177.405151,781.801880 187.711227,791.577087 198.650055,802.550415 
@@ -816,7 +524,7 @@ M164.826401,774.107300
 	C114.301720,802.344482 95.294029,788.443604 79.586807,769.335266 
 	C98.126259,757.280334 133.824997,755.072327 164.826401,774.107300 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M848.192810,808.147095 
 	C841.368469,806.457825 834.793396,805.437256 828.470947,802.802002 
@@ -826,7 +534,7 @@ M848.192810,808.147095
 	C943.140625,766.664307 944.904175,766.967896 945.688232,768.695557 
 	C931.458557,788.756775 896.323730,817.400208 848.192810,808.147095 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M846.396484,696.856079 
 	C854.802307,730.670227 843.259888,758.535217 822.000549,785.392395 
@@ -834,21 +542,21 @@ M846.396484,696.856079
 	C807.916748,700.198059 815.976379,681.137329 830.367493,663.407532 
 	C838.244751,673.826721 843.082031,684.731323 846.396484,696.856079 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M219.180267,727.932129 
 	C218.254913,747.937378 212.695419,766.196472 204.649780,783.991272 
 	C173.513824,763.679016 168.008240,685.417908 196.338455,664.096313 
 	C211.057541,682.723206 219.064301,703.617004 219.180267,727.932129 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M106.237976,718.110107 
 	C68.736382,712.466553 45.237816,690.026306 29.603943,657.464478 
 	C56.157986,642.162292 121.170227,680.469910 132.222702,717.600647 
 	C123.735718,720.216431 115.196434,718.890564 106.237976,718.110107 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M934.744751,714.979797 
 	C917.141296,719.359863 902.498474,720.293152 893.671936,717.364502 
@@ -856,14 +564,14 @@ M934.744751,714.979797
 	C955.770935,656.941345 982.095825,651.830933 996.895386,656.890137 
 	C983.534485,684.156372 964.896484,705.331238 934.744751,714.979797 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M137.135193,614.247986 
 	C143.357498,602.609497 151.596161,592.425842 157.799652,588.604309 
 	C179.284271,609.058899 170.342957,681.912659 143.498978,705.126160 
 	C129.871918,686.078003 119.662827,646.171936 137.135193,614.247986 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M873.754517,693.160217 
 	C863.732361,677.425720 857.372375,660.758362 856.058777,642.419861 
@@ -872,7 +580,7 @@ M873.754517,693.160217
 	C898.777100,603.323364 908.209229,674.261230 882.983337,705.654053 
 	C879.171570,702.119080 876.710632,697.669128 873.754517,693.160217 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M141.042938,412.743286 
 	C143.370316,450.272369 130.680283,480.854279 100.663673,503.646729 
@@ -882,7 +590,7 @@ M141.042938,412.743286
 	C108.690994,429.184662 121.331253,419.315765 136.597351,412.949371 
 	C137.921936,412.397003 139.296921,411.468567 141.042938,412.743286 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M945.292969,501.006744 
 	C945.122864,505.615112 945.696960,509.773132 944.884827,513.599854 
@@ -893,14 +601,14 @@ M945.292969,501.006744
 	C921.407104,428.031677 939.994995,451.811676 944.323181,486.103638 
 	C944.928345,490.898102 945.450439,495.677917 945.292969,501.006744 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M903.497131,518.503174 
 	C932.837097,547.177124 933.383423,587.306763 922.358398,614.606384 
 	C892.841736,601.215088 869.421143,533.462463 884.535034,503.866425 
 	C891.909485,507.210388 897.575867,512.733582 903.497131,518.503174 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M144.245026,512.080444 
 	C147.892746,534.578369 145.948776,555.999512 135.953949,576.195618 
@@ -908,14 +616,14 @@ M144.245026,512.080444
 	C83.917992,585.189026 108.520073,512.869263 142.217514,504.160095 
 	C143.902512,506.341980 143.096344,509.279358 144.245026,512.080444 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M27.107573,584.841980 
 	C17.287535,570.757629 11.146848,555.553650 7.601879,539.112305 
 	C39.286179,533.826477 86.130615,580.242737 90.613144,621.501648 
 	C63.997826,618.368591 43.070446,606.389893 27.107573,584.841980 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M951.267822,618.498718 
 	C946.064880,619.392273 941.438904,621.659729 935.699402,620.639771 
@@ -925,7 +633,7 @@ M951.267822,618.498718
 	C1013.498291,538.544006 1015.689087,538.231018 1017.767578,539.132141 
 	C1014.828308,564.749939 994.247192,606.766113 951.267822,618.498718 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M16.383024,418.547058 
 	C46.087143,434.457855 62.348270,459.064606 66.250954,492.020081 
@@ -934,7 +642,7 @@ M16.383024,418.547058
 	C37.649734,515.489014 1.322049,451.637634 10.471761,416.816254 
 	C12.659422,416.147827 14.251058,417.634644 16.383024,418.547058 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M125.439003,393.474487 
 	C112.676056,403.715942 98.695724,410.548340 82.980217,414.008514 
@@ -944,7 +652,7 @@ M125.439003,393.474487
 	C158.856888,327.421387 160.660736,328.063660 159.792480,332.105988 
 	C154.666626,355.970276 144.840866,377.195038 125.439003,393.474487 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M935.408203,411.732422 
 	C896.645752,398.042328 866.426575,360.850128 867.674622,327.688263 
@@ -952,7 +660,7 @@ M935.408203,411.732422
 	C932.152344,365.392792 939.572266,388.693481 945.246155,413.430878 
 	C941.287598,414.067932 938.591064,412.618805 935.408203,411.732422 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M965.831299,468.008179 
 	C974.479492,443.836060 990.417297,426.976166 1014.651184,415.634094 
@@ -960,7 +668,7 @@ M965.831299,468.008179
 	C994.890991,497.238129 970.752808,516.096375 958.010254,518.834290 
 	C959.055542,501.589172 960.141235,484.684723 965.831299,468.008179 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M471.999939,427.309875 
 	C462.672241,427.308868 453.841705,427.175049 445.018250,427.367218 
@@ -972,7 +680,7 @@ M471.999939,427.309875
 	C586.852173,428.826294 588.267517,427.302063 576.433167,427.312866 
 	C541.788757,427.344513 507.144348,427.315155 471.999939,427.309875 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M509.423401,31.832348 
 	C531.712463,29.718081 546.837097,48.838921 543.780823,67.622902 
@@ -981,7 +689,7 @@ M509.423401,31.832348
 	C481.105042,50.861340 491.091064,36.409374 506.068024,32.609814 
 	C507.036804,32.364044 508.008240,32.128838 509.423401,31.832348 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M38.068363,322.292847 
 	C39.938961,315.371887 41.383270,308.734772 45.428413,301.996979 
@@ -991,7 +699,7 @@ M38.068363,322.292847
 	C45.146942,390.611084 36.494289,371.061432 34.992733,348.395416 
 	C34.416920,339.703552 36.163490,331.170593 38.068363,322.292847 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M991.562744,346.816772 
 	C990.985229,374.083069 979.655823,395.406372 958.907654,412.290588 
@@ -1001,7 +709,7 @@ M991.562744,346.816772
 	C979.152466,304.194489 980.010620,302.825287 982.521179,302.755493 
 	C988.397949,316.560822 991.653015,331.096893 991.562744,346.816772 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M372.000000,584.886780 
 	C379.661713,584.890625 386.824280,584.961121 393.984802,584.870728 
@@ -1014,7 +722,7 @@ M372.000000,584.886780
 	C328.373566,585.704407 330.067841,584.886902 333.526398,584.893372 
 	C346.184204,584.917114 358.842133,584.892883 372.000000,584.886780 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M699.184814,619.016846 
 	C674.515137,619.103333 650.261414,619.103333 624.954346,619.103333 
@@ -1025,7 +733,7 @@ M699.184814,619.016846
 	C695.213867,598.659241 697.240112,606.392029 699.650085,614.079041 
 	C700.135742,615.628296 701.877380,617.348572 699.184814,619.016846 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M707.293945,122.185425 
 	C706.524414,121.200874 706.045166,120.394363 705.390015,119.380966 
@@ -1036,7 +744,7 @@ M707.293945,122.185425
 	C726.356750,128.141281 718.321350,129.262955 712.478027,125.777199 
 	C710.774292,124.760826 709.211609,123.507927 707.293945,122.185425 
 z"/>
-<path fill="#d4af37" opacity="1.000000" stroke="none" 
+<path fill="#000000" opacity="1.000000" stroke="none" 
 	d="
 M298.522583,98.246109 
 	C305.068542,94.821060 311.084290,94.972275 316.466339,99.670235 
@@ -1046,56 +754,207 @@ M298.522583,98.246109
 	C289.881439,115.158882 289.682526,109.453072 293.004883,103.732147 
 	C294.269379,101.554749 296.029388,99.779175 298.522583,98.246109 
 z"/>
-</svg>
-                                    </div>
-                                    <h1 style="margin: 0; color: #ffffff; font-family: Georgia, serif; font-size: 24px; letter-spacing: 4px; text-transform: uppercase; font-weight: normal;">
-                                        Prudentia
-                                    </h1>
-                                    <p style="margin: 10px 0 0 0; color: #d4af37; font-family: 'Courier New', Courier, monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: bold;">
-                                        ERP Access
-                                    </p>
-                                </td>
-                            </tr>
+</svg>`;
 
-                            <!-- MAIN CONTENT -->
-                            <tr>
-                                <td style="padding: 40px 40px;">
-                                    <p style="margin: 0 0 20px 0; color: #a1a1aa; font-size: 14px; line-height: 1.6; text-align: center;">
-                                        You have requested access to the Prudentia ERP Portal. Please use the verification code below to authorize this session.
-                                    </p>
-                                    
-                                    <!-- OTP DISPLAY (Optimized for OS Autofill) -->
-                                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin: 30px 0;">
-                                        <tr>
-                                            <td align="center" style="background-color: #121212; border: 1px solid #222222; border-radius: 16px; padding: 30px 20px;">
-                                                <p style="margin: 0 0 15px 0; color: #666666; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;">Your Verification Code Is</p>
-                                                <div style="font-family: 'Courier New', Courier, monospace; font-size: 42px; font-weight: 800; letter-spacing: 12px; color: #d4af37; text-align: center; margin-left: 12px;">${params.otp}</div>
-                                            </td>
-                                        </tr>
-                                    </table>
+const buildEmailHtml = (title, content) => `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
+        .header { background-color: #0a0a0a; padding: 30px 20px; text-align: center; border-bottom: 3px solid #b59c72; }
+        .logo-container { width: 60px; height: 60px; margin: 0 auto 15px auto; }
+        .logo-container svg { width: 100%; height: 100%; fill: #b59c72; }
+        .header h1 { margin: 0; color: #ffffff; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
+        .header p { margin: 5px 0 0 0; color: #b59c72; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+        .content { padding: 40px 30px; color: #3f3f46; line-height: 1.6; font-size: 15px; }
+        .content h2 { color: #18181b; font-size: 20px; margin-top: 0; margin-bottom: 20px; font-weight: 600; border-bottom: 1px solid #f4f4f5; padding-bottom: 10px; }
+        .footer { background-color: #fafafa; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb; }
+        .footer p { margin: 0; color: #a1a1aa; font-size: 11px; letter-spacing: 0.5px; }
+        .btn { display: inline-block; padding: 12px 24px; background-color: #0a0a0a; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px; margin-top: 20px; border: 1px solid #27272a; }
+        .data-box { background-color: #fafafa; border-left: 3px solid #b59c72; padding: 15px 20px; margin: 20px 0; border-radius: 0 6px 6px 0; }
+        .data-row { margin-bottom: 8px; }
+        .data-label { font-size: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; display: block; }
+        .data-value { font-size: 15px; color: #18181b; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                ${PCL_LOGO_SVG}
+            </div>
+            <h1>PRUDENTIA</h1>
+            <p>College of Law</p>
+        </div>
+        <div class="content">
+            <h2>${title}</h2>
+            ${content}
+        </div>
+        <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Prudentia College of Law &middot; Powered by JSM VALOR</p>
+            <p style="margin-top: 5px;">This is an automated system notification. Please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>
+`;
 
-                                    <p style="margin: 0; color: #555555; font-size: 12px; line-height: 1.6; text-align: center;">
-                                        This code will expire in <strong>10 minutes</strong>.<br/>
-                                        If you did not request this code, you can safely ignore this email.
-                                    </p>
-                                </td>
-                            </tr>
+export const HTML_EMAIL_TEMPLATES = {
+    PARENT_LOGIN_OTP: (params) => buildEmailHtml(
+        'Parent Portal Verification',
+        `<p>Dear Parent,</p>
+        <p>You have requested access to the Prudentia ERP Parent Portal. Please use the verification code below to authorize this session.</p>
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #18181b; border-radius: 8px;">
+            <span style="font-family: monospace; font-size: 32px; letter-spacing: 8px; color: #b59c72; font-weight: bold;">${params.otp}</span>
+        </div>
+        <p style="font-size: 13px; color: #71717a;">This code will expire in 10 minutes. If you did not request this code, you can safely ignore this email.</p>`
+    ),
 
-                            <!-- FOOTER -->
-                            <tr>
-                                <td style="background-color: #0a0a0a; padding: 30px 40px; text-align: center; border-top: 1px solid #1f1f1f;">
-                                    <p style="margin: 0; color: #444444; font-size: 10px; line-height: 1.8; letter-spacing: 1px; text-transform: uppercase;">
-                                        &copy; ${new Date().getFullYear()} Prudentia College of Law
-                                    </p>
-                                </td>
-                            </tr>
+    PARENT_ABSENT_ALERT: (params) => buildEmailHtml(
+        'Attendance Alert',
+        `<p>Dear Parent,</p>
+        <p>This is an automated notification to inform you that <strong>${params.student_name}</strong> has been marked <strong>ABSENT</strong> for the following session:</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Subject</span><span class="data-value">${params.subject}</span></div>
+            <div class="data-row"><span class="data-label">Date</span><span class="data-value">${params.date}</span></div>
+        </div>
+        <p>Please log in to the Parent Portal to view detailed attendance records.</p>
+        ${params.portal_link ? `<a href="${params.portal_link}" class="btn">Access Parent Portal</a>` : ''}`
+    ),
 
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-        `;
-    } };
-Object.assign(HTML_EMAIL_TEMPLATES, HTML_EXTRA_TEMPLATES);
+    ERP_LOGIN_OTP: (params) => buildEmailHtml(
+        'ERP Login Passcode',
+        `<p>Dear User,</p>
+        <p>Please use the verification code below to access your ERP account.</p>
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #18181b; border-radius: 8px;">
+            <span style="font-family: monospace; font-size: 32px; letter-spacing: 8px; color: #b59c72; font-weight: bold;">${params.otp}</span>
+        </div>
+        <p style="font-size: 13px; color: #71717a;">This code will expire in 10 minutes.</p>`
+    ),
+
+    APPLICATION_RECEIVED: (params) => buildEmailHtml(
+        'Application Received',
+        `<p>Dear Applicant,</p>
+        <p>We have successfully received your application. Your reference ticket number is <strong>#${params.ticket_id}</strong>.</p>
+        <p>Our admissions team will review your submission and contact you shortly.</p>`
+    ),
+
+    TICKET_REPLY: (params) => buildEmailHtml(
+        'Ticket Update',
+        `<p>Dear User,</p>
+        <p>There has been an update to your support ticket <strong>#${params.ticket_id}</strong>.</p>
+        <p>Please log in to the portal to view the response.</p>`
+    ),
+
+    SUPPORT_ENQUIRY: (params) => buildEmailHtml(
+        'Support Enquiry Received',
+        `<p>Dear User,</p>
+        <p>We have received your support enquiry (Ticket <strong>#${params.ticket_id}</strong>).</p>
+        <p>Our helpdesk team will respond to you within 24-48 business hours.</p>`
+    ),
+
+    FIRST_CREDENTIALS: (params) => buildEmailHtml(
+        'Welcome to PCL ERP',
+        `<p>Dear ${params.student_name || 'Student'},</p>
+        <p>Welcome to the JSM Academic Infrastructure. Your official ERP credentials have been generated.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Official ERP ID</span><span class="data-value">${params.erp_id}</span></div>
+            <div class="data-row"><span class="data-label">Temporary Password</span><span class="data-value">${params.password}</span></div>
+        </div>
+        <p>Please log in and change your password immediately.</p>
+        ${params.portal_link ? `<a href="${params.portal_link}" class="btn">Login to ERP</a>` : ''}`
+    ),
+
+    HAPPY_BIRTHDAY: (params) => buildEmailHtml(
+        'Happy Birthday!',
+        `<p>Dear ${params.student_name},</p>
+        <p>The entire faculty and administration at Prudentia College of Law wishes you a very Happy Birthday!</p>
+        <p>May this year bring you great success, learning, and wonderful memories.</p>`
+    ),
+
+    LEAVE_APPLIED: (params) => buildEmailHtml(
+        'Leave Application Submitted',
+        `<p>Dear ${params.student_name},</p>
+        <p>Your leave application has been submitted and is currently pending approval.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Leave Type</span><span class="data-value">${params.leave_type}</span></div>
+            <div class="data-row"><span class="data-label">Duration</span><span class="data-value">${params.start_date} to ${params.end_date}</span></div>
+            <div class="data-row"><span class="data-label">Reason</span><span class="data-value">${params.reason}</span></div>
+        </div>
+        <p>You will be notified once a decision has been made.</p>`
+    ),
+
+    LEAVE_APPROVED: (params) => buildEmailHtml(
+        'Leave Application Approved',
+        `<p>Dear ${params.student_name},</p>
+        <p>Your leave application has been <strong>APPROVED</strong> by ${params.approved_by || 'Administration'}.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Leave Type</span><span class="data-value">${params.leave_type}</span></div>
+            <div class="data-row"><span class="data-label">Duration</span><span class="data-value">${params.start_date} to ${params.end_date}</span></div>
+        </div>
+        <p>Your attendance for the affected sessions will be automatically exempted.</p>`
+    ),
+
+    LEAVE_REJECTED: (params) => buildEmailHtml(
+        'Leave Application Rejected',
+        `<p>Dear ${params.student_name},</p>
+        <p>Your leave application has been <strong>REJECTED</strong> by ${params.rejected_by || 'Administration'}.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Leave Type</span><span class="data-value">${params.leave_type}</span></div>
+            <div class="data-row"><span class="data-label">Duration</span><span class="data-value">${params.start_date} to ${params.end_date}</span></div>
+            ${params.reason ? `<div class="data-row"><span class="data-label">Reason for Rejection</span><span class="data-value">${params.reason}</span></div>` : ''}
+        </div>
+        <p>Please contact your mentor if you have any questions.</p>`
+    ),
+
+    DEBARMENT_NOTICE: (params) => buildEmailHtml(
+        'CRITICAL: Attendance Debarment Notice',
+        `<p>Dear ${params.student_name},</p>
+        <p>This is an official notice from the Administration. Due to severe attendance shortage, you have been <strong>DEBARRED</strong> from the upcoming examinations.</p>
+        <div class="data-box" style="border-left-color: #ef4444;">
+            <div class="data-row"><span class="data-label">Subject</span><span class="data-value">${params.subject_name || 'Overall Semester'}</span></div>
+            <div class="data-row"><span class="data-label">Your Attendance</span><span class="data-value" style="color: #ef4444; font-weight: bold;">${params.attendance_percentage}%</span></div>
+            <div class="data-row"><span class="data-label">Required Minimum</span><span class="data-value">${params.threshold}%</span></div>
+        </div>
+        <p>Please contact the Academic Office immediately.</p>`
+    ),
+
+    SHORTAGE_WARNING: (params) => buildEmailHtml(
+        'WARNING: Attendance Shortage',
+        `<p>Dear ${params.student_name},</p>
+        <p>This is an official warning regarding your attendance. You are currently falling below the required minimum attendance threshold.</p>
+        <div class="data-box" style="border-left-color: #f59e0b;">
+            <div class="data-row"><span class="data-label">Subject</span><span class="data-value">${params.subject_name || 'Overall Semester'}</span></div>
+            <div class="data-row"><span class="data-label">Your Attendance</span><span class="data-value" style="color: #f59e0b; font-weight: bold;">${params.attendance_percentage}%</span></div>
+            <div class="data-row"><span class="data-label">Required Minimum</span><span class="data-value">${params.threshold}%</span></div>
+        </div>
+        <p>Failure to improve your attendance may result in debarment from examinations.</p>`
+    ),
+    
+    PAYROLL_DISBURSAL: (params) => buildEmailHtml(
+        `Official Payslip - ${params.month} ${params.year}`,
+        `<p>Dear <strong>${params.faculty_name}</strong>,</p>
+        <p>Your salary for the month of <strong>${params.month} ${params.year}</strong> has been successfully processed and disbursed via <strong>${params.payment_mode}</strong>.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Net Disbursal Amount</span><span class="data-value" style="font-size: 24px; font-weight: 800;">₹ ${Number(params.final_net_pay).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
+        </div>
+        <p>Please find attached your official, system-generated payslip. For your security, this document is mathematically encrypted. <strong>The password to open this file is your official ERP ID (${params.erp_id}).</strong></p>`
+    ),
+    
+    ASSIGNMENT_PUBLISHED: (params) => buildEmailHtml(
+        'New Academic Assignment',
+        `<p>A new assignment has been published for your batch.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Subject</span><span class="data-value">${params.subject_name}</span></div>
+            <div class="data-row"><span class="data-label">Title</span><span class="data-value">${params.title}</span></div>
+            <div class="data-row"><span class="data-label">Deadline</span><span class="data-value">${new Date(params.deadline).toLocaleString()}</span></div>
+            <div class="data-row"><span class="data-label">Submission Mode</span><span class="data-value">${params.submission_mode === 'URL_ONLY' ? 'Online Link Required' : 'Physical Offline Submission'}</span></div>
+        </div>
+        <p>Log in to the Student Portal to view full details and submit.</p>
+        ${params.portal_link ? `<a href="${params.portal_link}" class="btn">View Assignment</a>` : ''}`
+    )
+};
