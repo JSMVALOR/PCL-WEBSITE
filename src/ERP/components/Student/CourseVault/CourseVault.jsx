@@ -11,6 +11,7 @@ export default function CourseVault({ isEmbedded = false }) {
     const [materials, setMaterials] = useState([]);
     const [historicalStats, setHistoricalStats] = useState({});
     const [subjects, setSubjects] = useState([]);
+    const [currentSemester, setCurrentSemester] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [activeFilter, setActiveFilter] = useState("All");
     const [semesterFilter, setSemesterFilter] = useState("current"); // all, current, previous
@@ -45,13 +46,16 @@ export default function CourseVault({ isEmbedded = false }) {
                 }
                 
                 // Lookup batch_id and program_id from academic_batches
-                const { data: batchData } = await supabase.from('academic_batches').select('id, program_id').eq('name', userSession.academic_batch).single();
+                const { data: batchData } = await supabase.from('academic_batches').select('id, program_id, current_semester').eq('name', userSession.academic_batch).single();
                 if (!batchData || !batchData.id) {
                     if (isMounted) setIsLoading(false);
                     return;
                 }
                 const batchId = batchData.id;
                 const programId = batchData.program_id;
+                if (isMounted && batchData.current_semester) {
+                    setCurrentSemester(batchData.current_semester);
+                }
 
                 // 2. Fetch all master_subjects for this program (if programId exists)
                 let allMasterSubjects = [];
@@ -223,8 +227,9 @@ export default function CourseVault({ isEmbedded = false }) {
     // Semester Filter (Hide instead of fade)
     if (semesterFilter === "current") {
         processedSubjects = processedSubjects.filter(s => s._isAssigned);
-    } else if (semesterFilter === "previous" && userSession?.semester) {
-        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester < parseInt(userSession.semester));
+    } else if (semesterFilter === "previous") {
+        // If current semester is 1, previous is empty. Otherwise, show strictly less than current semester.
+        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester < currentSemester);
     }
 
     // Search (Hide entirely)
