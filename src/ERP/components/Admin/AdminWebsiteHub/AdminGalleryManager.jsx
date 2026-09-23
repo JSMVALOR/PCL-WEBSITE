@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+
 // Legacy imports for auto-sync
 import imgClassroom1 from '../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM.webp';
 import imgClassroom2 from '../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM2.webp';
@@ -40,6 +43,12 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const [category, setCategory] = useState('Campus');
+    
+    // Cropping State
+    const [crop, setCrop] = useState();
+    const [completedCrop, setCompletedCrop] = useState(null);
+    const imgRef = React.useRef(null);
+
 
     useEffect(() => {
         fetchImages();
@@ -116,8 +125,54 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
         if (file) {
             setImageFile(file);
             setImagePreview(URL.createObjectURL(file));
+            setCrop(undefined); // Reset crop on new image
+            setCompletedCrop(null);
         }
     };
+
+    const onImageLoad = (e) => {
+        const { width, height } = e.currentTarget;
+        const crop = centerCrop(
+            makeAspectCrop({ unit: '%', width: 90 }, 16 / 9, width, height),
+            width,
+            height
+        );
+        setCrop(crop);
+    };
+
+    // Extract Cropped Image Blob
+    const getCroppedImg = async (image, crop, fileName) => {
+        const canvas = document.createElement('canvas');
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = crop.width * scaleX;
+        canvas.height = crop.height * scaleY;
+        const ctx = canvas.getContext('2d');
+
+        ctx.drawImage(
+            image,
+            crop.x * scaleX,
+            crop.y * scaleY,
+            crop.width * scaleX,
+            crop.height * scaleY,
+            0,
+            0,
+            crop.width * scaleX,
+            crop.height * scaleY
+        );
+
+        return new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    console.error('Canvas is empty');
+                    return;
+                }
+                blob.name = fileName;
+                resolve(blob);
+            }, 'image/jpeg', 0.95);
+        });
+    };
+
 
     const handleAddImage = async (e) => {
         e.preventDefault();
@@ -128,6 +183,13 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
         setIsSaving(true);
         try {
+            let uploadBlob = imageFile;
+            
+            // If user cropped it, use the cropped blob
+            if (completedCrop && completedCrop.width && completedCrop.height && imgRef.current) {
+                uploadBlob = await getCroppedImg(imgRef.current, completedCrop, imageFile.name);
+            }
+
             // 1. Upload to Supabase Storage
             const fileExt = imageFile.name.split('.').pop();
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
@@ -135,7 +197,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
             const { error: uploadError } = await supabase.storage
                 .from('gallery')
-                .upload(filePath, imageFile, { upsert: false });
+                .upload(filePath, uploadBlob, { upsert: false });
 
             if (uploadError) throw uploadError;
 
@@ -242,11 +304,20 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                             </div>
                             
                             {imagePreview && (
-                                <div className="mt-2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 h-32 w-full relative group">
-                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-white text-xs font-bold">Preview</span>
-                                    </div>
+                                <div className="mt-2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 w-full relative bg-black/5 flex justify-center">
+                                    <ReactCrop
+                                        crop={crop}
+                                        onChange={(c) => setCrop(c)}
+                                        onComplete={(c) => setCompletedCrop(c)}
+                                    >
+                                        <img 
+                                            ref={imgRef}
+                                            src={imagePreview} 
+                                            alt="Crop Preview" 
+                                            onLoad={onImageLoad}
+                                            className="max-h-[400px] w-auto object-contain" 
+                                        />
+                                    </ReactCrop>
                                 </div>
                             )}
 
