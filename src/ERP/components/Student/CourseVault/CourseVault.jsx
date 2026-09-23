@@ -119,6 +119,7 @@ export default function CourseVault({ isEmbedded = false }) {
     const filteredMaterials = activeFilter === "All" ? materials : materials.filter(m => m.type === activeFilter);
 
     let processedSubjects = [...subjects];
+
     // Semester Filter
     if (semesterFilter === "current" && userSession?.semester) {
         processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester === parseInt(userSession.semester));
@@ -144,12 +145,17 @@ export default function CourseVault({ isEmbedded = false }) {
         processedSubjects.sort((a, b) => (a.master_subjects?.code || "").localeCompare(b.master_subjects?.code || ""));
     }
 
-    // Group materials by subject ID so we can render empty states properly
+    // Group materials by subject ID
     const materialsBySubject = filteredMaterials.reduce((acc, curr) => {
         if (!acc[curr.cohort_subject_id]) acc[curr.cohort_subject_id] = [];
         acc[curr.cohort_subject_id].push(curr);
         return acc;
     }, {});
+
+    // Hide subjects if a specific resource filter is selected AND the subject has no matching resources
+    if (activeFilter !== "All") {
+        processedSubjects = processedSubjects.filter(sub => materialsBySubject[sub.id] && materialsBySubject[sub.id].length > 0);
+    }
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
@@ -287,8 +293,13 @@ export default function CourseVault({ isEmbedded = false }) {
                                     <div className="p-4 flex-1 flex flex-col">
                                         <div className="flex-1 flex flex-col items-center justify-center py-8">
                                             <button 
-                                                onClick={() => setActiveMaterialsSubject({ subject: masterSubject, items: items })}
-                                                className="px-6 py-3 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-themeText font-bold text-xs tracking-wide transition active:scale-[0.98] shadow-sm flex items-center gap-2"
+                                                onClick={() => items.length > 0 && setActiveMaterialsSubject({ subject: masterSubject, items: items })}
+                                                disabled={items.length === 0}
+                                                className={`px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition shadow-sm flex items-center gap-2 ${
+                                                    items.length === 0 
+                                                    ? 'bg-black/5 dark:bg-white/5 text-themeTextSec cursor-not-allowed opacity-70' 
+                                                    : 'bg-themeAccent hover:bg-themeAccent/90 text-themeText active:scale-[0.98]'
+                                                }`}
                                             >
                                                 <i className="fa-solid fa-layer-group"></i> 
                                                 {items.length === 0 ? "No Materials Yet" : `View Materials (${items.length})`}
