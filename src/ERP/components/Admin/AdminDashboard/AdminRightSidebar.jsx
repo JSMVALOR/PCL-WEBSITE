@@ -8,10 +8,10 @@ export default function AdminRightSidebar({ setActiveTab }) {
  const { userSession, notices } = useERP();
 
  const quickActions = [
- { label: 'Student', icon: 'fa-user-graduate', tab: 'users' },
- { label: 'Faculty', icon: 'fa-chalkboard-user', tab: 'faculty' },
- { label: 'Notice', icon: 'fa-bullhorn', tab: 'notices' },
- { label: 'Event', icon: 'fa-calendar-plus', tab: 'events' }
+ { label: 'Users', icon: 'fa-user-gear', tab: 'users' },
+ { label: 'Admissions', icon: 'fa-id-card-clip', tab: 'adminadmissions' },
+ { label: 'Approvals', icon: 'fa-shield-halved', tab: 'adminapprovals' },
+ { label: 'Notice', icon: 'fa-bullhorn', tab: 'notices' }
  ];
 
  return (

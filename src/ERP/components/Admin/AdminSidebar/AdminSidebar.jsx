@@ -5,49 +5,52 @@ import { useERP } from "../../../context/ErpContext";
 
 export const ADMIN_NAV_GROUPS = [
   {
-    category: "Main",
+    category: "Command Center",
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
-      { id: "notices", label: "Broadcasts", icon: "fa-solid fa-bullhorn" }
-    ]
-  },
-  {
-    category: "Administration",
-    links: [
       { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
-      {
-        id: "users_group", label: "People & HR", icon: "fa-solid fa-users",
-        children: [
-          { id: "users", label: "User Management", icon: "fa-solid fa-user-gear" },
-          { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
-          { id: "leavemanagement", label: "Leave Management", icon: "fa-solid fa-mug-hot" },
-          { id: "faculty_attendance", label: "Faculty Attendance", icon: "fa-solid fa-user-clock" }
-        ]
-      },
-      { id: "finance", label: "Finance & Ledger", icon: "fa-solid fa-indian-rupee-sign" }
+      { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" }
     ]
   },
   {
-    category: "Academics",
+    category: "Academics & Operations",
     links: [
+      { id: "academic", label: "Academic Hub", icon: "fa-solid fa-chart-pie" },
+      { id: "timetablebuilder", label: "Timetable Engine", icon: "fa-solid fa-calendar-days" },
+      { id: "coursebuilder", label: "Course Builder", icon: "fa-solid fa-book-open" },
+      { id: "markscontroller", label: "Marks & Ledger", icon: "fa-solid fa-file-signature" },
+      { id: "attendance_issues", label: "Attendance Control", icon: "fa-solid fa-clipboard-question" },
+      { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+    ]
+  },
+  {
+    category: "HR & Finance",
+    links: [
+      { id: "users", label: "User Management", icon: "fa-solid fa-user-gear" },
+      { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
+      { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" },
       {
-        id: "academic_group", label: "Academic Control", icon: "fa-solid fa-graduation-cap",
+        id: "staff_ops", label: "Staff Operations", icon: "fa-solid fa-users",
         children: [
-          { id: "academic", label: "Academic Hub", icon: "fa-solid fa-chart-pie" },
-          { id: "attendance_issues", label: "Attendance Issues", icon: "fa-solid fa-clipboard-question" },
-          { id: "coursebuilder", label: "Course Builder", icon: "fa-solid fa-book-open" },
-          { id: "markscontroller", label: "Marks Dispatcher", icon: "fa-solid fa-file-signature" },
-          { id: "timetablebuilder", label: "Timetable Engine", icon: "fa-solid fa-calendar-days" },
-          { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+          { id: "leavemanagement", label: "Leave Approvals", icon: "fa-solid fa-mug-hot" },
+          { id: "faculty_attendance", label: "Faculty Tracking", icon: "fa-solid fa-user-clock" }
         ]
-      },
+      }
+    ]
+  },
+  {
+    category: "Website Sync & Public",
+    links: [
+      { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
+      { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
+      { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
       {
-        id: "clinics_group", label: "Clinical Programs", icon: "fa-solid fa-scale-balanced",
+        id: "clinics_group", label: "Clinical & Extracurricular", icon: "fa-solid fa-scale-balanced",
         children: [
           { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
           { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
           { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" },
-          { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" }
+          { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" }
         ]
       }
     ]
@@ -55,31 +58,18 @@ export const ADMIN_NAV_GROUPS = [
   {
     category: "IT & Systems",
     links: [
-      {
-        id: "web_group", label: "Website Control", icon: "fa-solid fa-globe",
-        children: [
-          { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
-          { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
-          { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" }
-        ]
-      },
-      {
-        id: "sys_group", label: "System Config", icon: "fa-solid fa-gears",
-        children: [
-          { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
-          { id: "whatsapp", label: "WhatsApp API", icon: "fa-brands fa-whatsapp" },
-          { id: "parent-preview", label: "Parent Portal", icon: "fa-solid fa-user-group" },
-          { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
-        ]
-      }
+      { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" },
+      { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
+      { id: "whatsapp", label: "WhatsApp Server", icon: "fa-brands fa-whatsapp" },
+      { id: "parent-preview", label: "Parent View", icon: "fa-solid fa-user-group" }
     ]
   }
 ];
 
 const BOTTOM_NAV_LINKS = [
   { id: "dashboard", label: "Home", icon: "fa-solid fa-server" },
-  { id: "users", label: "Users", icon: "fa-solid fa-users" },
-  { id: "finance", label: "Finance", icon: "fa-solid fa-indian-rupee-sign" },
+  { id: "academic", label: "Academics", icon: "fa-solid fa-graduation-cap" },
+  { id: "users", label: "HR", icon: "fa-solid fa-users" },
   { id: "siteeditor", label: "Website", icon: "fa-solid fa-globe" }
 ];
 
