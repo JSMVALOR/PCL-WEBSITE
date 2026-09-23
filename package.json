@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"node backend/email-service/server.js\"",
-    "build": "vite build",
+    "build": "node scripts/fix-hugeicons.cjs && vite build",
     "lint": "oxlint -A react-hooks/exhaustive-deps",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node scripts/fix-hugeicons.cjs"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.1",
