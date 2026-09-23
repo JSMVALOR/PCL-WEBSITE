@@ -65,7 +65,7 @@ export default function CourseVault({ isEmbedded = false }) {
                 // 3. Fetch assigned cohort_subjects for this student's batch
                 const { data: cohortSubjectsData, error: subErr } = await supabase
                     .from('cohort_subjects')
-                    .select('id, subject_id, master_subjects(id, name, code, syllabus, target_semester)')
+                    .select('id, master_subject_id, master_subjects(id, name, code, syllabus, target_semester)')
                     .eq('batch_id', batchId);
 
                 if (subErr) throw subErr;
