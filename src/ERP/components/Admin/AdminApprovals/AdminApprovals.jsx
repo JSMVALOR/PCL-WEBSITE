@@ -31,7 +31,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  { data: profileUpdatesData }
  ] = await Promise.all([
  supabase.from('timetable_requests').select('*, faculty:profiles(full_name), subject:master_subjects(name)').order('created_at', { ascending: false }),
- supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role, contact_email, personal_email), accused:profiles!grievances_accused_id_fkey(full_name, role, contact_email, personal_email)').is('assigned_to', null).order('created_at', { ascending: false }),
+ supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role, email), accused:profiles!grievances_accused_id_fkey(full_name, role, email)').is('assigned_to', null).order('created_at', { ascending: false }),
  supabase.from('student_documents').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false }),
  supabase.from('profile_update_requests').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false })
  ]);
@@ -98,7 +98,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  setIsProcessing(true);
  try {
- const email = g.reporter?.contact_email || g.reporter?.personal_email;
+ const email = g.reporter?.email;
  
  if (email) {
  await sendSystemEmail('MEETING_CALL', {
@@ -135,7 +135,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  if (error) throw error;
 
  // Notify Requester
- const grievanceData = error ? null : (await supabase.from('grievances').select('reporter_id, category, reporter:profiles!grievances_reporter_id_fkey(full_name, contact_email, personal_email)').eq('id', grievanceId).single()).data;
+ const grievanceData = error ? null : (await supabase.from('grievances').select('reporter_id, category, reporter:profiles!grievances_reporter_id_fkey(full_name, email)').eq('id', grievanceId).single()).data;
  if (grievanceData && grievanceData.reporter_id) {
  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
  await supabase.from('notices').insert([{
@@ -150,7 +150,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  author_id: null
  }]);
  
- const email = grievanceData.reporter?.contact_email || grievanceData.reporter?.personal_email;
+ const email = grievanceData.reporter?.email;
  if (email) {
      await sendSystemEmail('GRIEVANCE_UPDATE', {
          to_email: email,
