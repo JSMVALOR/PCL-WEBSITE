@@ -143,43 +143,45 @@ export default function CLETracker() {
  </div>
 
  {showModal && (
- <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)}>
- <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-themePanel border-theme border-themeBorderStrong p-5 lg:p-6 border-b-theme border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel border-theme border-themeBorderStrong rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-md animate-fade-in" onClick={() => setShowModal(false)}>
+ <div className="bg-themeApp w-full max-w-lg rounded-t-[2rem] sm:rounded-3xl overflow-hidden shadow-2xl border border-black/10 dark:border-white/10 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+ <div className="p-5 lg:p-6 border-b border-black/5 dark:border-white/5 bg-black/5 dark:bg-white/5 relative overflow-hidden shrink-0">
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Log CLE Diary</h3>
- <p className={`text-[10px] lg:text-xs text-rose-400 font-bold tracking-normal`}><i className="fa-solid fa-book-medical mr-1"></i> Mandatory Clinical Journal</p>
+ <p className={`text-[10px] lg:text-xs text-rose-500 font-bold tracking-normal`}><i className="fa-solid fa-book-medical mr-1"></i> Mandatory Clinical Journal</p>
  </div>
- <button type="button" onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-themePanel border-theme border-themeBorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 text-themeTextSec hover:text-themeText hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
  <div className="grid grid-cols-2 gap-5">
  <div>
- <label className="block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1">Week Number</label>
- <input type="number" required min="1" max="52" value={form.week_number} onChange={e => setForm({...form, week_number: e.target.value})} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition" />
+ <label className="block text-[10px] uppercase font-black text-themeTextSec tracking-widest mb-2 ml-1">Week Number</label>
+ <input type="number" required min="1" max="52" value={form.week_number} onChange={e => setForm({...form, week_number: e.target.value})} className="w-full bg-transparent border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition" placeholder="e.g. 1" />
  </div>
  <div>
- <label className="block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1">Hours Logged</label>
- <input type="number" required min="1" value={form.hours_logged} onChange={e => setForm({...form, hours_logged: e.target.value})} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition" />
+ <label className="block text-[10px] uppercase font-black text-themeTextSec tracking-widest mb-2 ml-1">Hours Logged</label>
+ <input type="number" required min="1" max="100" value={form.hours_logged} onChange={e => setForm({...form, hours_logged: e.target.value})} className="w-full bg-transparent border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition" placeholder="e.g. 8" />
  </div>
  </div>
  <div>
- <label className="block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1">Case Title / Topic</label>
- <input type="text" required value={form.case_title} onChange={e => setForm({...form, case_title: e.target.value})} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition" />
+ <label className="block text-[10px] uppercase font-black text-themeTextSec tracking-widest mb-2 ml-1">Case Title / Topic</label>
+ <input type="text" required maxLength="150" value={form.case_title} onChange={e => setForm({...form, case_title: e.target.value})} className="w-full bg-transparent border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition" placeholder="Enter the main title of the case or topic" />
+ <p className="text-[9px] text-themeTextSec mt-1.5 text-right">{form.case_title.length}/150</p>
  </div>
  <div>
- <label className="block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1">Court / Forum Name</label>
- <input type="text" required value={form.court_name} onChange={e => setForm({...form, court_name: e.target.value})} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition" />
+ <label className="block text-[10px] uppercase font-black text-themeTextSec tracking-widest mb-2 ml-1">Court / Forum Name</label>
+ <input type="text" required maxLength="100" value={form.court_name} onChange={e => setForm({...form, court_name: e.target.value})} className="w-full bg-transparent border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition" placeholder="e.g. High Court of Delhi" />
+ <p className="text-[9px] text-themeTextSec mt-1.5 text-right">{form.court_name.length}/100</p>
  </div>
  <div>
- <label className="block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1">Learning Outcome</label>
- <textarea required rows="3" value={form.learning_outcome} onChange={e => setForm({...form, learning_outcome: e.target.value})} className="w-full bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeAccent transition resize-none"></textarea>
+ <label className="block text-[10px] uppercase font-black text-themeTextSec tracking-widest mb-2 ml-1">Learning Outcome</label>
+ <textarea required rows="4" maxLength="500" value={form.learning_outcome} onChange={e => setForm({...form, learning_outcome: e.target.value})} className="w-full bg-transparent border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent focus:ring-1 focus:ring-themeAccent transition resize-none" placeholder="Briefly describe what you learned or observed..."></textarea>
+ <p className="text-[9px] text-themeTextSec mt-1.5 text-right">{form.learning_outcome.length}/500</p>
  </div>
  
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-rose-500 hover:bg-rose-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 mt-2">
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeAccent hover:bg-themeAccent/90 text-white rounded-xl text-sm font-black tracking-wide transition active:scale-[0.98] disabled:opacity-50 mt-2 shadow-lg shadow-themeAccent/20">
  {isSubmitting ? "Submitting..." : "Submit Case Diary"}
  </button>
  </form>
