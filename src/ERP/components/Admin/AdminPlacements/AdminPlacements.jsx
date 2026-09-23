@@ -105,7 +105,7 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  };
 
  return (
- <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeAccent text-white shadow-lg shadow-themeAccent/20" : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-transparent text-themeText dark:text-themeText" : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  {!isHubView && (
  <PageHeader icon="fa-solid fa-briefcase" title="Placements & Internships" subtitle="Manage firm recruitment, tracks, and student placements." rightContent={
@@ -121,13 +121,13 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  )}
 
  <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-black/[0.04] dark:border-white/[0.08]BorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
- <button type="button" onClick={() => setActiveTab('drives')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'drives' ? 'bg-themeAccent text-themeText border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('drives')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'drives' ? 'bg-themeAccent text-white shadow-[0_4px_12px_rgba(var(--accent-rgb),0.25)] border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-building"></i> Placement Drives
  </button>
- <button type="button" onClick={() => setActiveTab('applications')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'applications' ? 'bg-indigo-500 text-themeText border border-indigo-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('applications')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'applications' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)] border border-indigo-500 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-file-contract"></i> Applications
  </button>
- <button type="button" onClick={() => setActiveTab('inquiries')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'inquiries' ? 'bg-emerald-500 text-themeText border border-emerald-400 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('inquiries')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'inquiries' ? 'bg-emerald-500 text-white shadow-[0_4px_12px_rgba(16,185,129,0.25)] border border-emerald-500 scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-handshake"></i> Company Inquiries
  {inquiries.filter(i => i.status === 'pending').length > 0 && (
  <span className="ml-1 w-2 h-2 rounded-full bg-red-500"></span>
