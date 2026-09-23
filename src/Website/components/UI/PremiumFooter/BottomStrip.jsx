@@ -35,7 +35,10 @@ export default function BottomStrip() {
           <span className="hidden md:inline mx-2 text-black/20 dark:text-white/20">|</span> 
           <span className="inline-flex items-center gap-2 mt-1 md:mt-0 align-middle">
           <span className="text-[var(--text-secondary)]">Powered by</span>
-          <ValorLogo className="scale-[0.5] origin-left -ml-1 -my-4" />
+          <a href="https://jsmvalor.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center">
+            <span className="text-black dark:text-white font-bold tracking-widest text-sm">JSM </span>
+            <span className="text-black dark:text-white font-black tracking-tight ml-1 text-sm">VALOR<span className="text-red-500">.</span></span>
+          </a>
           </span>
         </div>
 

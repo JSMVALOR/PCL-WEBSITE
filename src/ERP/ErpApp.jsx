@@ -401,9 +401,12 @@ export default function App() {
                   <a href="/terms" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Terms of Service</a>
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <span className="opacity-50">&copy; {new Date().getFullYear()}</span>
-                    <ValorLogo className="scale-[0.5] origin-left -ml-1 -mr-6" />
+                    <a href="https://jsmvalor.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center ml-1 mr-1">
+                      <span className="text-black dark:text-white font-bold tracking-widest text-xs">JSM </span>
+                      <span className="text-black dark:text-white font-black tracking-tight ml-[2px] text-xs">VALOR<span className="text-red-500">.</span></span>
+                    </a>
                     <span className="opacity-50">Data Processor.</span>
                   </div>
                 </div>

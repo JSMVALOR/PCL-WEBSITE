@@ -299,12 +299,15 @@ export default function Login() {
             )}
 
             {/* Tribute Footer */}
-            <div className="mt-8 flex flex-col items-center justify-center z-10 gap-2.5 pointer-events-none drop-shadow-sm pb-4">
+            <div className="mt-8 flex flex-col items-center justify-center z-10 gap-2.5 drop-shadow-sm pb-4">
                 <div className="flex items-center gap-2.5 opacity-60 hover:opacity-100 transition duration-300">
                     <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-color)] translate-y-[1px]">Powered by</span>
-                    <ValorLogo />
+                    <a href="https://jsmvalor.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center">
+                        <span className="text-black dark:text-white font-bold tracking-widest text-sm">JSM </span>
+                        <span className="text-black dark:text-white font-black tracking-tight ml-1 text-sm">VALOR<span className="text-red-500">.</span></span>
+                    </a>
                 </div>
-                <span className="text-[var(--text-color)]/30 tracking-[0.4em] text-[8px] font-bold uppercase">PCL ERP Framework v8.25</span>
+                <span className="text-[var(--text-color)]/30 tracking-[0.4em] text-[8px] font-bold uppercase pointer-events-none">PCL ERP Framework v8.25</span>
             </div>
         </div>
     );
