@@ -5,7 +5,7 @@ import Navbar from '../../Navbar.jsx';
 import styles from '../../PROGRAMS/Programs.module.css';
 
 import Masonry from '../../../UI/Masonry/Masonry.jsx';
-import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient'; '../../../UI/Masonry/Masonry.jsx';
+import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 
 // Import all campus images
 import imgClassroom1 from '../../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM.webp';

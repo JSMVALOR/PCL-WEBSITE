@@ -97,6 +97,7 @@ import AdminGalleryManager from './components/Admin/AdminWebsiteHub/AdminGallery
 import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
 import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
 import AdminAttendanceIssues from './components/Admin/AdminAttendanceIssues/AdminAttendanceIssues';
+import AdminPayroll from './components/Admin/AdminPayroll/AdminPayroll';
 
 import SQLStudio from './components/Admin/AdminDashboard/SQLStudio';
 import AdminHelpdesk from './components/Admin/AdminHelpdesk/AdminHelpdesk';

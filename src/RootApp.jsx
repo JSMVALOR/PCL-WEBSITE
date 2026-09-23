@@ -26,8 +26,10 @@ const ErpWrapper = () => {
 
 const RootApp = () => {
   React.useEffect(() => {
-    setupPushNotifications(null);
-    CapacitorUpdater.notifyAppReady();
+    if (Capacitor.isNativePlatform()) {
+      setupPushNotifications(null);
+      CapacitorUpdater.notifyAppReady();
+    }
   }, []);
 
   const location = useLocation();

@@ -1,8 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { Client, RemoteAuth } = require('whatsapp-web.js');
-const { PostgresStore } = require('wwebjs-postgres');
-const { Pool } = require('pg');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 
 const app = express();
@@ -13,102 +11,70 @@ let currentStatus = 'INITIALIZING';
 let qrCodeData = null;
 let client = null;
 
-// The user must provide DATABASE_URL in their cloud environment (Render)
-const DB_URL = process.env.DATABASE_URL;
-
-const initializeWhatsApp = async () => {
+const initializeWhatsApp = () => {
     console.log("Initializing WhatsApp Client...");
     currentStatus = 'INITIALIZING';
     qrCodeData = null;
 
-    if (!DB_URL) {
-        console.error("FATAL: DATABASE_URL is not set. Cannot use RemoteAuth without a Postgres database.");
+    client = new Client({
+        authStrategy: new LocalAuth({ dataPath: './.wwebjs_auth' }),
+        puppeteer: {
+            headless: true,
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+            args: [
+                '--no-sandbox', 
+                '--disable-setuid-sandbox', 
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process', 
+                '--disable-gpu'
+            ]
+        }
+    });
+
+    client.on('qr', async (qr) => {
+        console.log("QR Code received! Waiting for scan...");
+        try {
+            qrCodeData = await qrcode.toDataURL(qr);
+            currentStatus = 'QR_READY';
+        } catch (err) {
+            console.error("Failed to generate QR Code data URL", err);
+        }
+    });
+
+    client.on('ready', () => {
+        console.log('WhatsApp Client is ready!');
+        currentStatus = 'AUTHENTICATED';
+        qrCodeData = null;
+    });
+
+    client.on('authenticated', () => {
+        console.log('WhatsApp Authenticated!');
+    });
+
+    client.on('auth_failure', msg => {
+        console.error('WhatsApp Authentication failure:', msg);
         currentStatus = 'FAILED';
-        return;
-    }
+        qrCodeData = null;
+    });
 
-    try {
-        console.log("Connecting to Postgres Store for RemoteAuth...");
-        const pool = new Pool({
-            connectionString: DB_URL,
-            ssl: { rejectUnauthorized: false } // Required for Supabase pooling
-        });
+    client.on('disconnected', (reason) => {
+        console.log('WhatsApp Client was disconnected:', reason);
+        currentStatus = 'DISCONNECTED';
+        qrCodeData = null;
+        
+        // Auto-reinitialize after a brief delay
+        setTimeout(() => {
+            initializeWhatsApp();
+        }, 5000);
+    });
 
-        const store = new PostgresStore({
-            pool: pool
-        });
-
-        // Initialize the RemoteAuth store table if it doesn't exist
-        await store.extract({ session: 'whatsapp_remote_session' }).catch(() => {});
-
-        client = new Client({
-            authStrategy: new RemoteAuth({
-                store: store,
-                backupSyncIntervalMs: 300000 // Backup session every 5 mins
-            }),
-            puppeteer: {
-                headless: true,
-                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-                args: [
-                    '--no-sandbox', 
-                    '--disable-setuid-sandbox', 
-                    '--disable-dev-shm-usage',
-                    '--disable-accelerated-2d-canvas',
-                    '--no-first-run',
-                    '--no-zygote',
-                    '--single-process', 
-                    '--disable-gpu'
-                ]
-            }
-        });
-
-        client.on('qr', async (qr) => {
-            console.log("QR Code received! Waiting for scan...");
-            try {
-                qrCodeData = await qrcode.toDataURL(qr);
-                currentStatus = 'QR_READY';
-            } catch (err) {
-                console.error("Failed to generate QR Code data URL", err);
-            }
-        });
-
-        client.on('remote_session_saved', () => {
-            console.log("Remote session successfully saved to Supabase Postgres.");
-        });
-
-        client.on('ready', () => {
-            console.log('WhatsApp Client is ready!');
-            currentStatus = 'AUTHENTICATED';
-            qrCodeData = null;
-        });
-
-        client.on('authenticated', () => {
-            console.log('WhatsApp Authenticated!');
-        });
-
-        client.on('auth_failure', msg => {
-            console.error('WhatsApp Authentication failure:', msg);
-            currentStatus = 'FAILED';
-            qrCodeData = null;
-        });
-
-        client.on('disconnected', (reason) => {
-            console.log('WhatsApp Client was disconnected:', reason);
-            currentStatus = 'DISCONNECTED';
-            qrCodeData = null;
-            
-            // Auto-reinitialize after a brief delay
-            setTimeout(() => {
-                initializeWhatsApp();
-            }, 5000);
-        });
-
-        await client.initialize();
-
-    } catch (err) {
+    client.initialize().catch(err => {
         console.error("Initialization failed:", err);
         currentStatus = 'FAILED';
-    }
+    });
 };
 
 // Start WhatsApp
