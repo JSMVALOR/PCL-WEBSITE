@@ -20,35 +20,41 @@ import Contact from '../../../../Website/components/NAVBAR/CONTACT/Contact';
 import LeadershipProfile from '../../../../Website/components/NAVBAR/ABOUT/LeadershipProfile/LeadershipProfile';
 
 // Robust helper to perfectly calculate the DOM height of a CSS-scaled component
-function ScaledPreview({ scale = 0.35, children }) {
-    const containerRef = React.useRef(null);
-    const [height, setHeight] = React.useState('auto');
+function ScaledPreview({ isFullscreen, children }) {
+    if (isFullscreen) {
+        return (
+            <div className="w-full h-full overflow-y-auto custom-scrollbar bg-white dark:bg-black">
+                {children}
+            </div>
+        );
+    }
 
-    React.useEffect(() => {
-        if (!containerRef.current) return;
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (let entry of entries) {
-                setHeight((entry.contentRect.height * scale) + 'px');
-            }
-        });
-        resizeObserver.observe(containerRef.current);
-        return () => resizeObserver.disconnect();
-    }, [scale]);
-
+    // Force a 1440x960 simulated desktop screen, scaled down to fit the panel.
+    // The panel handles overflow, and the simulated screen scrolls internally.
     return (
-        <div style={{ height, position: 'relative', overflow: 'hidden' }}>
+        <div className="absolute inset-0 overflow-hidden flex items-start justify-center bg-[#1a1a1c]">
             <div 
-                ref={containerRef}
+                className="origin-top shadow-2xl bg-white dark:bg-black"
                 style={{ 
-                    width: `${100 / scale}%`, 
-                    transform: `scale(${scale})`, 
-                    transformOrigin: 'top left',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    pointerEvents: 'auto'
+                    width: '1440px', 
+                    height: '1000px',
+                    transform: 'scale(0.38)', // Base scale for most laptops
+                    overflowY: 'auto',
+                    overflowX: 'hidden'
                 }}
             >
+                {/* Apply scale overrides via media queries directly in a style tag for responsiveness */}
+                <style>{`
+                    @media (min-width: 1280px) {
+                        .origin-top { transform: scale(0.35); }
+                    }
+                    @media (min-width: 1536px) {
+                        .origin-top { transform: scale(0.48); }
+                    }
+                    @media (min-width: 1920px) {
+                        .origin-top { transform: scale(0.60); }
+                    }
+                `}</style>
                 {children}
             </div>
         </div>
@@ -643,7 +649,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="flex flex-col xl:flex-row gap-6 items-stretch relative min-h-[700px] flex-1">
  
      {/* Left Panel: Form Editor */}
-     <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] rounded-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col xl:w-[450px] shrink-0 relative overflow-hidden">
+     <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col xl:w-[450px] shrink-0 relative overflow-hidden">
          
          <div className="p-5 border-b border-black/[0.04] dark:border-white/[0.05] shrink-0 bg-white/40 dark:bg-black/10">
              <label className="block text-[11px] font-black text-themeTextSec uppercase tracking-widest mb-3 pl-1">Page Section</label>
@@ -679,7 +685,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              <select
                                  value={contentData[field.key] || ""}
                                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                                 className="w-full bg-white dark:bg-[#1a1a1c] border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none appearance-none shadow-sm"
+                                 className="w-full bg-white dark:bg-black/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none appearance-none shadow-sm"
                              >
                                  <option value="" disabled>Select an option...</option>
                                  {field.options?.map(opt => (
@@ -697,7 +703,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              placeholder={field.placeholder || ""}
                              maxLength={field.maxLength || 800}
                              rows="4"
-                             className="w-full bg-white dark:bg-[#1a1a1c] border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none resize-y shadow-sm placeholder:text-themeTextSec/40 leading-relaxed"
+                             className="w-full bg-white dark:bg-black/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none resize-y shadow-sm placeholder:text-themeTextSec/40 leading-relaxed"
                          ></textarea>
                      ) : (
                          <input
@@ -706,7 +712,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              onChange={(e) => handleFieldChange(field.key, e.target.value)}
                              placeholder={field.placeholder || ""}
                              maxLength={field.maxLength || 80}
-                             className="w-full bg-white dark:bg-[#1a1a1c] border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"
+                             className="w-full bg-white dark:bg-black/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"
                          />
                      )}
                  </div>
@@ -769,9 +775,9 @@ export default function AdminSiteEditor({ isHubView = false }) {
          </div>
          
          {/* Preview Area Container */}
-         <div className="w-full relative overflow-hidden bg-[#f5f5f7] dark:bg-[#000000] flex-1 flex flex-col">
+         <div className="w-full h-full relative overflow-hidden bg-[#f5f5f7] dark:bg-[#0a0a0c] flex-1 flex flex-col">
              {/* The Scaled Preview wraps the exact Website Render */}
-             <ScaledPreview scale={isPreviewFullscreen ? 1 : 0.35}>
+             <ScaledPreview isFullscreen={isPreviewFullscreen}>
                  <div className="w-full min-h-screen bg-[var(--bg-color)]">
                      <SiteProvider>
                          <PreviewContext.Provider value={getPreviewProviderValue()}>
