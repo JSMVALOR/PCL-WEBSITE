@@ -403,7 +403,7 @@ export default function App() {
                 <div>
                   <div className="flex items-center gap-1">
                     <span className="opacity-50">&copy; {new Date().getFullYear()}</span>
-                    <a href="https://jsmvalor.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center ml-1 mr-1">
+                    <a href="https://jsmvalor.in" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center ml-1 mr-1">
                       <span className="text-black dark:text-white font-bold tracking-widest text-xs">JSM </span>
                       <span className="text-black dark:text-white font-black tracking-tight ml-[2px] text-xs">VALOR<span className="text-red-500">.</span></span>
                     </a>
