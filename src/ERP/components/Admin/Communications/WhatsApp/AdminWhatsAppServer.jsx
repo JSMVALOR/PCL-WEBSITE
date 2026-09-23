@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PageHeader } from '../../../shared/UIComponents';
+import PageHeader from '../../../shared/PageHeader/PageHeader';
 
 export default function AdminWhatsAppServer() {
     const [status, setStatus] = useState('LOADING'); // LOADING, DISCONNECTED, INITIALIZING, QR_READY, AUTHENTICATED, FAILED
