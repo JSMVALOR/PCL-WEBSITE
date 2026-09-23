@@ -630,12 +630,10 @@ export default function Internships({ isEmbedded = false }) {
  <div><label className={LABEL_CLS}>Company / Firm</label><input type="text" value={expForm.company_name} onChange={e => setExpForm({ ...expForm, company_name: e.target.value })} className={INPUT_CLS} required /></div>
  <div><label className={LABEL_CLS}>Role Title</label><input type="text" value={expForm.role_title} onChange={e => setExpForm({ ...expForm, role_title: e.target.value })} className={INPUT_CLS} placeholder="e.g. Legal Intern" required /></div>
  </div>
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
- <div><label className={LABEL_CLS}>Location</label><input type="text" value={expForm.location} onChange={e => setExpForm({ ...expForm, location: e.target.value })} className={INPUT_CLS} placeholder="e.g. New Delhi" required /></div>
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
- <div><label className={LABEL_CLS}>Start Date</label><input type="date" value={expForm.start_date} onChange={e => setExpForm({ ...expForm, start_date: e.target.value })} className={INPUT_CLS} required /></div>
- <div><label className={LABEL_CLS}>End Date</label><input type="date" value={expForm.end_date} onChange={e => setExpForm({ ...expForm, end_date: e.target.value })} className={INPUT_CLS} required /></div>
- </div>
+ <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+ <div className="sm:col-span-1"><label className={LABEL_CLS}>Location</label><input type="text" value={expForm.location} onChange={e => setExpForm({ ...expForm, location: e.target.value })} className={INPUT_CLS} placeholder="e.g. New Delhi" required /></div>
+ <div className="sm:col-span-1"><label className={LABEL_CLS}>Start Date</label><input type="date" value={expForm.start_date} onChange={e => setExpForm({ ...expForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:light] dark:[color-scheme:dark]`} required /></div>
+ <div className="sm:col-span-1"><label className={LABEL_CLS}>End Date</label><input type="date" value={expForm.end_date} onChange={e => setExpForm({ ...expForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:light] dark:[color-scheme:dark]`} required /></div>
  </div>
  {(expForm.start_date && expForm.end_date) && (
  <p className="text-xs text-blue-500 font-medium -mt-2 tracking-normal text-right"><i className="fa-solid fa-calculator mr-1"></i>Duration: {calculateWeeks(expForm.start_date, expForm.end_date)} Weeks</p>
@@ -700,8 +698,8 @@ export default function Internships({ isEmbedded = false }) {
  <form onSubmit={handlePermSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
  <div><label className={LABEL_CLS}>Company / Firm Name</label><input type="text" value={permForm.company_name} onChange={e => setPermForm({ ...permForm, company_name: e.target.value })} className={INPUT_CLS} required /></div>
  <div className="grid grid-cols-2 gap-5">
- <div><label className={LABEL_CLS}>Start Date</label><input min="2026-09-14" type="date" value={permForm.start_date} onChange={e => setPermForm({ ...permForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
- <div><label className={LABEL_CLS}>End Date</label><input min="2026-09-14" type="date" value={permForm.end_date} onChange={e => setPermForm({ ...permForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>Start Date</label><input min="2026-09-14" type="date" value={permForm.start_date} onChange={e => setPermForm({ ...permForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:light] dark:[color-scheme:dark]`} required /></div>
+ <div><label className={LABEL_CLS}>End Date</label><input min="2026-09-14" type="date" value={permForm.end_date} onChange={e => setPermForm({ ...permForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:light] dark:[color-scheme:dark]`} required /></div>
  </div>
  {(permForm.start_date && permForm.end_date) && (
  <p className="text-xs text-blue-500 font-medium -mt-2 tracking-normal text-right"><i className="fa-solid fa-calculator mr-1"></i>Duration: {calculateWeeks(permForm.start_date, permForm.end_date)} Weeks</p>
