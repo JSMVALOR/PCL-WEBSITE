@@ -125,7 +125,7 @@ export default function StudentDashboard({ setActiveTab }) {
             <div className="relative z-20 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
                 
                 {/* LEFT SIDEBAR */}
-                <div className="w-full xl:w-[280px] flex flex-col shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2 lg:pr-4">
+                <div className="w-full xl:w-[280px] flex flex-col shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2 lg:pr-4 sticky top-24 xl:top-0 z-30 self-start xl:self-auto">
                     <DirectorySidebarWidget role="student" />
                 </div>
 
