@@ -117,13 +117,15 @@ export default function Internships({ isEmbedded = false }) {
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [submitSuccess, setSubmitSuccess] = useState(false);
  const [shareExpOnSubmit, setShareExpOnSubmit] = useState(true);
+ const [showLinkedInDraftModal, setShowLinkedInDraftModal] = useState(false);
+ const [linkedInDraftText, setLinkedInDraftText] = useState('');
 
  // NOC file ref
  
  const [permUrl, setPermUrl] = useState('');
 
  // --- FORM STATES ---
- const [expForm, setExpForm] = useState({ company_name: "", role_title: "", location: "", duration: "", description: "", type: "Corporate", status: "completed", certificate_notes: "" });
+ const [expForm, setExpForm] = useState({ company_name: "", role_title: "", location: "", start_date: "", end_date: "", description: "", type: "Corporate", status: "completed", certificate_notes: "" });
  const [permForm, setPermForm] = useState({ company_name: "", start_date: "", end_date: "" });
  const [pracForm, setPracForm] = useState({ title: "", type: "Court Visit", date_logged: "", hours: "", description: "" });
  const [dailyLogForm, setDailyLogForm] = useState({ experience_id: "", date: "", entry: "" });
@@ -155,18 +157,37 @@ export default function Internships({ isEmbedded = false }) {
 
  useEffect(() => { fetchAll(); }, [fetchAll]);
 
+ const calculateWeeks = (start, end) => {
+ if (!start || !end) return 0;
+ const s = new Date(start);
+ const e = new Date(end);
+ if (s > e) return 0;
+ return Math.round((e - s) / (1000 * 60 * 60 * 24 * 7));
+ };
+
+ const generateLinkedInDraft = (exp) => {
+ const durationStr = `${calculateWeeks(exp.start_date, exp.end_date)} Weeks`;
+ return `I'm thrilled to share my latest experience as a ${exp.role_title} at ${exp.company_name}!\n\nOver the course of ${durationStr}, I had the opportunity to dive deep into the legal industry.\n\nKey takeaways:\n${exp.description}\n\n#PCLUniversity #LawSchool #Internship #${exp.type.replace(/\s+/g, '')} #LegalExperience`;
+ };
+
  // --- SUBMISSION HANDLERS ---
  const handleExpSubmit = async (e) => {
  e.preventDefault();
  setIsSubmitting(true);
  try {
  const studentId = userSession?.db_id || userSession?.id;
+ 
+ const weeks = calculateWeeks(expForm.start_date, expForm.end_date);
+ const shortStart = new Date(expForm.start_date).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+ const shortEnd = new Date(expForm.end_date).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+ const durationStr = `${weeks} Weeks (${shortStart} - ${shortEnd})`;
+
  const { error } = await supabase.from('student_experiences').insert({
  student_id: studentId,
  company_name: expForm.company_name,
  role_title: expForm.role_title,
  location: expForm.location,
- duration: expForm.duration,
+ duration: durationStr,
  description: expForm.description,
  type: expForm.type,
  status: expForm.status,
@@ -178,15 +199,15 @@ export default function Internships({ isEmbedded = false }) {
  fetchAll();
  
  if (shareExpOnSubmit) {
- shareToLinkedIn(null, expForm);
+ setLinkedInDraftText(generateLinkedInDraft(expForm));
+ setShowLinkedInDraftModal(true);
  }
 
  setTimeout(() => {
  setShowExpModal(false);
  setSubmitSuccess(false);
- setShareExpOnSubmit(true);
- setExpForm({ company_name: "", role_title: "", location: "", duration: "", description: "", type: "Corporate", status: "completed", certificate_notes: "" });
- }, 2000);
+ setExpForm({ company_name: "", role_title: "", location: "", start_date: "", end_date: "", description: "", type: "Corporate", status: "completed", certificate_notes: "" });
+ }, 1500);
  } catch (err) {
  console.error("Experience log failed:", err);
  window.erpDialog?.alert("Failed to log experience.");
@@ -313,7 +334,7 @@ export default function Internships({ isEmbedded = false }) {
 
  const shareToLinkedIn = (e, item) => {
  if (e) e.stopPropagation();
- const text = `I'm thrilled to share my latest experience: ${item.role_title} at ${item.company_name}!\n\nType: ${item.type}\nDuration: ${item.duration}\n\n#PCLUniversity #LawSchool #Experience`;
+ const text = item.draft || `I'm thrilled to share my latest experience: ${item.role_title} at ${item.company_name}!\n\nType: ${item.type}\nDuration: ${item.duration}\n\n#PCLUniversity #LawSchool #Experience`;
  const url = `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
  window.open(url, '_blank', 'width=800,height=600');
  };
@@ -611,8 +632,14 @@ export default function Internships({ isEmbedded = false }) {
  </div>
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
  <div><label className={LABEL_CLS}>Location</label><input type="text" value={expForm.location} onChange={e => setExpForm({ ...expForm, location: e.target.value })} className={INPUT_CLS} placeholder="e.g. New Delhi" required /></div>
- <div><label className={LABEL_CLS}>Duration</label><input type="text" value={expForm.duration} onChange={e => setExpForm({ ...expForm, duration: e.target.value })} className={INPUT_CLS} placeholder="e.g. Jun 2025 - Jul 2025" required /></div>
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+ <div><label className={LABEL_CLS}>Start Date</label><input type="date" value={expForm.start_date} onChange={e => setExpForm({ ...expForm, start_date: e.target.value })} className={INPUT_CLS} required /></div>
+ <div><label className={LABEL_CLS}>End Date</label><input type="date" value={expForm.end_date} onChange={e => setExpForm({ ...expForm, end_date: e.target.value })} className={INPUT_CLS} required /></div>
  </div>
+ </div>
+ {(expForm.start_date && expForm.end_date) && (
+ <p className="text-xs text-blue-500 font-medium -mt-2 tracking-normal text-right"><i className="fa-solid fa-calculator mr-1"></i>Duration: {calculateWeeks(expForm.start_date, expForm.end_date)} Weeks</p>
+ )}
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
  <div>
  <label className={LABEL_CLS}>Type</label>
@@ -676,6 +703,9 @@ export default function Internships({ isEmbedded = false }) {
  <div><label className={LABEL_CLS}>Start Date</label><input min="2026-09-14" type="date" value={permForm.start_date} onChange={e => setPermForm({ ...permForm, start_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  <div><label className={LABEL_CLS}>End Date</label><input min="2026-09-14" type="date" value={permForm.end_date} onChange={e => setPermForm({ ...permForm, end_date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  </div>
+ {(permForm.start_date && permForm.end_date) && (
+ <p className="text-xs text-blue-500 font-medium -mt-2 tracking-normal text-right"><i className="fa-solid fa-calculator mr-1"></i>Duration: {calculateWeeks(permForm.start_date, permForm.end_date)} Weeks</p>
+ )}
  <div>
  <label className={LABEL_CLS}>Google Drive Link to Offer Letter (Required)</label>
  <div className="relative">
@@ -769,6 +799,41 @@ export default function Internships({ isEmbedded = false }) {
  </div>
  </div>
  )}
+
+ {/* E. LINKEDIN DRAFT MODAL */}
+ {showLinkedInDraftModal && (
+ <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowLinkedInDraftModal(false)}>
+ <div className="bg-transparent w-full max-w-lg rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20" onClick={(e) => e.stopPropagation()}>
+ <div className="bg-white dark:bg-[#121212] p-5 lg:p-6 border-b border-black/10 dark:border-white/20 relative overflow-hidden">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none blur-2xl"></div>
+ <div className="relative z-10 flex justify-between items-start">
+ <div>
+ <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText dark:text-white tracking-tight mb-1"><i className="fa-brands fa-linkedin text-blue-500 mr-2"></i>Draft LinkedIn Post</h3>
+ <p className="text-[10px] lg:text-xs text-themeTextSec">Review and copy your post before heading to LinkedIn.</p>
+ </div>
+ <button type="button" onClick={() => setShowLinkedInDraftModal(false)} className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 text-themeTextSec hover:text-themeText dark:text-white flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ </div>
+ </div>
+ <div className="p-5 lg:p-6 flex flex-col gap-5 bg-white dark:bg-[#1a1a1a]">
+ <textarea 
+ rows="8" 
+ className="w-full bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 rounded-xl p-4 text-sm text-themeText dark:text-white/90 focus:border-blue-500 outline-none resize-none custom-scrollbar leading-relaxed"
+ value={linkedInDraftText}
+ onChange={(e) => setLinkedInDraftText(e.target.value)}
+ ></textarea>
+ <div className="flex gap-3">
+ <button type="button" onClick={() => setShowLinkedInDraftModal(false)} className="flex-1 py-4 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-themeText dark:text-white rounded-[2rem] text-[13px] font-medium tracking-normal transition">Cancel</button>
+ <button type="button" onClick={() => {
+ navigator.clipboard.writeText(linkedInDraftText);
+ window.open(`https://www.linkedin.com/feed/?shareActive=true`, '_blank', 'width=800,height=600');
+ setShowLinkedInDraftModal(false);
+ }} className="flex-[2] py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[13px] font-medium tracking-normal transition shadow-lg shadow-blue-500/20"><i className="fa-regular fa-copy mr-2"></i>Copy & Post to LinkedIn</button>
+ </div>
+ </div>
+ </div>
+ </div>
+ )}
+
  </div>
  </div>
  );
