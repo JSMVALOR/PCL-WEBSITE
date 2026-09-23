@@ -74,9 +74,21 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
         }
     };
 
+    const handleOpenEdit = async (img) => {
+        try {
+            const response = await fetch(img.image_url);
+            const blob = await response.blob();
+            const localUrl = URL.createObjectURL(blob);
+            setEditingImage({ ...img, local_url: localUrl });
+        } catch (error) {
+            console.error("Failed to load image blob:", error);
+            alert("Failed to load image for editing. Network issue.");
+        }
+    };
+
     const handleSaveEdit = async () => {
         if (!editCompletedCrop || !editCompletedCrop.width || !editCompletedCrop.height || !editImgRef.current) {
-            setEditingImage(null);
+            if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null);
             return;
         }
         setIsSavingEdit(true);
@@ -93,7 +105,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const { data: { publicUrl } } = supabase.storage.from('gallery').getPublicUrl(filePath);
 
             await supabase.from('gallery_images').update({ image_url: publicUrl }).eq('id', editingImage.id);
-            setEditingImage(null);
+            if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null);
             fetchImages();
         } catch (error) {
             console.error("Failed to update crop:", error);
@@ -198,6 +210,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             height
         );
         setCrop(crop);
+        setCompletedCrop(crop);
     };
 
     // Extract Cropped Image Blob
@@ -452,7 +465,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                                                         <i className="fa-solid fa-arrow-down text-xs"></i>
                                                     </button>
                                                 </div>
-                                                <button onClick={() => setEditingImage(img)} className="w-8 h-8 rounded-full bg-blue-500/80 hover:bg-blue-500 text-white flex items-center justify-center backdrop-blur-md shadow-sm transition-transform hover:scale-110" title="Edit/Crop">
+                                                <button onClick={() => handleOpenEdit(img)} className="w-8 h-8 rounded-full bg-blue-500/80 hover:bg-blue-500 text-white flex items-center justify-center backdrop-blur-md shadow-sm transition-transform hover:scale-110" title="Edit/Crop">
                                                     <i className="fa-solid fa-crop-simple text-xs"></i>
                                                 </button>
                                                 <button onClick={() => toggleStatus(img.id, img.is_active)} className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border ${img.is_active ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-black/50 text-white border-white/20'}`} title={img.is_active ? 'Visible' : 'Hidden'}>
