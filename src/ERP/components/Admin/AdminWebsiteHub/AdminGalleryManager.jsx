@@ -46,7 +46,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     const handleAddImage = async (e) => {
         e.preventDefault();
         if (!imageFile) {
-            window.erpDialog?.alert("Please select an image file to upload.");
+            alert("Please select an image file to upload.");
             return;
         }
 
@@ -92,7 +92,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             fetchImages();
         } catch (error) {
             console.error("Failed to upload image:", error);
-            window.erpDialog?.alert("Failed to upload image. Make sure your storage bucket 'gallery' is created and public.");
+            alert("Failed to upload image. Make sure your storage bucket 'gallery' is created and public.");
         } finally {
             setIsSaving(false);
         }
