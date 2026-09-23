@@ -21,7 +21,8 @@ export const STUDENT_NAV_MEGA = [
         id: "mentorship_group", label: "Mentorship", icon: "fa-solid fa-handshake",
         children: [
           { id: "mentorship", label: "Mentorship Hub", icon: "fa-solid fa-people-arrows" },
-          { id: "leave", label: "Leave Requests", icon: "fa-solid fa-mug-hot" }
+          { id: "leave", label: "Leave Requests", icon: "fa-solid fa-mug-hot" },
+          { id: "grievances", label: "Grievances", icon: "fa-solid fa-scale-balanced" }
         ]
       },
       {
@@ -37,7 +38,6 @@ export const STUDENT_NAV_MEGA = [
         id: "support_group", label: "Support & Admin", icon: "fa-solid fa-headset",
         children: [
           { id: "fees", label: "Fee Management", icon: "fa-solid fa-indian-rupee-sign" },
-          { id: "grievances", label: "Grievances", icon: "fa-solid fa-scale-balanced" },
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" }
         ]
       }
