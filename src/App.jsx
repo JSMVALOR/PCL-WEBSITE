@@ -29,6 +29,7 @@ import FacilityDetail from './Website/components/NAVBAR/CAMPUS/FACILITIES/Facili
 import Library from './Website/components/NAVBAR/CAMPUS/LIBRARY/Library';
 import MootCourt from './Website/components/NAVBAR/CAMPUS/MOOT_COURT/MootCourt';
 import LegalAid from './Website/components/NAVBAR/CAMPUS/LEGAL_AID/LegalAid';
+import AcademicCalendar from './Website/components/NAVBAR/ACADEMICS/AcademicCalendar';
 import Contact from './Website/components/NAVBAR/CONTACT/Contact';
 import EventsPage from './Website/components/NAVBAR/EVENTS/EventsPage';
 import EventDetail from './Website/components/NAVBAR/EVENTS/EventDetail';
@@ -77,6 +78,7 @@ function App() {
         <Route path="/careers" element={<><SEO title="Careers" description="Join the faculty or administrative team at Prudentia College of Law." /><Navbar /><Careers /></>} />
         <Route path="/careers/placement" element={<><SEO title="Placement Cell" description="Dedicated placement cell ensuring outstanding career opportunities for our students." /><Navbar /><PlacementCell /></>} />
 
+        <Route path="/academic-calendar" element={<AcademicCalendar />} />
         <Route path="/events" element={<><SEO title="Events" description="Stay updated with the latest events and academic conferences at Prudentia College of Law." /><Navbar /><EventsPage /></>} />
         <Route path="/events/:id" element={<><Navbar /><EventDetail /></>} />
         <Route path="/blogs" element={<><SEO title="Legal Blogs" description="Read insightful articles and legal analysis from our faculty and students." /><Navbar /><BlogsPage /></>} />

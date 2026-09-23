@@ -28,15 +28,23 @@ export default function AdminAcademicCalendar({ isHubView }) {
  fetchEvents();
  }, []);
 
+ const [pdfUrl, setPdfUrl] = useState('');
+ const [savingPdf, setSavingPdf] = useState(false);
+
  const fetchEvents = async () => {
  try {
  setLoading(true);
  const { data, error } = await supabase
  .from('academic_events')
  .select('*')
- .order('date', { ascending: true });
+ .order('start_date', { ascending: true });
  
  if (error) throw error;
+      const { data: settingData } = await supabase.from('system_settings').select('value').eq('key', 'academic_calendar_pdf').single();
+      if (settingData?.value?.url) {
+          setPdfUrl(settingData.value.url);
+      }
+      
  setEvents(data || []);
  } catch (error) {
  console.error("Error fetching academic events:", error);
@@ -76,7 +84,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  .from('academic_events')
  .update({
  title: formData.title,
- date: formData.date,
+ date: formData.start_date,
  description: formData.description,
  event_type: formData.event_type,
  is_active: formData.is_active,
@@ -84,6 +92,11 @@ export default function AdminAcademicCalendar({ isHubView }) {
  })
  .eq('id', formData.id);
  if (error) throw error;
+      const { data: settingData } = await supabase.from('system_settings').select('value').eq('key', 'academic_calendar_pdf').single();
+      if (settingData?.value?.url) {
+          setPdfUrl(settingData.value.url);
+      }
+      
  alert("Event updated successfully!");
  } else {
  // Insert
@@ -91,17 +104,22 @@ export default function AdminAcademicCalendar({ isHubView }) {
  .from('academic_events')
  .insert([{
  title: formData.title,
- date: formData.date,
+ date: formData.start_date,
  description: formData.description,
  event_type: formData.event_type,
  is_active: formData.is_active,
  image_url: finalImageUrl
  }]);
  if (error) throw error;
+      const { data: settingData } = await supabase.from('system_settings').select('value').eq('key', 'academic_calendar_pdf').single();
+      if (settingData?.value?.url) {
+          setPdfUrl(settingData.value.url);
+      }
+      
  alert("Event added successfully!");
  }
  
- setFormData({ id: null, title: '', date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
+ setFormData({ id: null, title: '', start_date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
  
  setIsEditing(false);
  fetchEvents();
@@ -117,7 +135,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  setFormData({
  id: event.id,
  title: event.title,
- date: event.date,
+ date: event.start_date,
  description: event.description,
  event_type: event.event_type,
  is_active: event.is_active,
@@ -130,8 +148,13 @@ export default function AdminAcademicCalendar({ isHubView }) {
  const handleDelete = async (id) => {
  
  try {
- const { error } = await supabase.from('academic_events').delete().eq('id', id);
+ const { error } = await supabase.from('academic_calendar').delete().eq('id', id);
  if (error) throw error;
+      const { data: settingData } = await supabase.from('system_settings').select('value').eq('key', 'academic_calendar_pdf').single();
+      if (settingData?.value?.url) {
+          setPdfUrl(settingData.value.url);
+      }
+      
  alert("Event deleted.");
  fetchEvents();
  } catch (error) {
@@ -149,6 +172,26 @@ export default function AdminAcademicCalendar({ isHubView }) {
  }
  };
 
+ 
+ const handleSavePdf = async (e) => {
+    e.preventDefault();
+    setSavingPdf(true);
+    try {
+        const { error } = await supabase.from('system_settings').upsert({
+            key: 'academic_calendar_pdf',
+            value: { url: pdfUrl },
+            description: 'URL for the downloadable Academic Calendar PDF'
+        });
+        if (error) throw error;
+        window.erpDialog?.alert("PDF URL updated successfully!");
+    } catch (err) {
+        console.error(err);
+        window.erpDialog?.alert("Failed to update PDF URL.");
+    } finally {
+        setSavingPdf(false);
+    }
+ };
+ 
  return (
  <div className={`flex flex-col gap-6 ${isHubView ? '' : 'p-6'}`}>
  {!isHubView && (
@@ -158,10 +201,29 @@ export default function AdminAcademicCalendar({ isHubView }) {
  </div>
  )}
  
- <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+ 
+                {/* PDF Form Column */}
+                <div className="lg:col-span-3 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 rounded-2xl border border-black/[0.04] dark:border-white/[0.08] mb-6 flex flex-col md:flex-row gap-4 items-end">
+                    <div className="flex-1 w-full">
+                        <label className="block text-xs font-bold text-themeTextSec uppercase tracking-wider mb-2">Global Calendar PDF (URL)</label>
+                        <input 
+                            type="url" 
+                            value={pdfUrl}
+                            onChange={(e) => setPdfUrl(e.target.value)}
+                            className="w-full bg-black/5 dark:bg-themeElevated/90 border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText focus:border-themeAccent outline-none"
+                            placeholder="https://example.com/calendar.pdf"
+                        />
+                    </div>
+                    <button onClick={handleSavePdf} disabled={savingPdf} className="px-6 py-3 bg-themeAccent hover:bg-themeAccent/90 text-white font-black text-sm rounded-xl transition-colors shadow-lg shadow-themeAccent/20">
+                        {savingPdf ? 'Saving...' : 'Save PDF'}
+                    </button>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
  
  {/* Form Column */}
- <div className="lg:col-span-1 bg-gray-100 dark:bg-themeApp p-6 rounded-2xl border border-themeBorder dark:border-white/5 h-fit">
+ <div className="lg:col-span-1 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 rounded-2xl border border-black/[0.04] dark:border-white/[0.08] h-fit">
  <h3 className={`font-bold tracking-tight text-xl text-themeText dark:text-white mb-4`}>
  {isEditing ? 'Edit Event' : 'Add New Event'}
  </h3>
@@ -174,7 +236,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  required
  value={formData.title}
  onChange={handleInputChange}
- className="w-full animate-fade-in bg-themeBg border border-themeBorder dark:border-white/5 rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors"
+ className="w-full animate-fade-in bg-themeBg border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition-colors"
  placeholder="e.g. Fall Semester Begins"
  />
  </div>
@@ -183,11 +245,11 @@ export default function AdminAcademicCalendar({ isHubView }) {
  <label className="block text-xs font-bold text-white/70 uppercase tracking-wider mb-2">Date</label>
  <input min="2026-09-14" 
  type="date" 
- name="date"
+ name="start_date"
  required
- value={formData.date}
+ value={formData.start_date}
  onChange={handleInputChange}
- className="w-full animate-fade-in bg-themeBg border border-themeBorder dark:border-white/5 rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors"
+ className="w-full animate-fade-in bg-themeBg border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition-colors"
  />
  </div>
 
@@ -197,7 +259,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  name="event_type"
  value={formData.event_type}
  onChange={handleInputChange}
- className="w-full animate-fade-in bg-themeBg border border-themeBorder dark:border-white/5 rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors"
+ className="w-full animate-fade-in bg-themeBg border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition-colors"
  >
  <option value="Academic">Academic (Term start, Registration, etc)</option>
  <option value="Holiday">Holiday (College Closed)</option>
@@ -213,7 +275,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  required
  value={formData.description}
  onChange={handleInputChange}
- className="w-full animate-fade-in bg-themeBg border border-themeBorder dark:border-white/5 rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-themeBorder dark:border-white/5Accent transition-colors min-h-[100px]"
+ className="w-full animate-fade-in bg-themeBg border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-2.5 text-themeText dark:text-white focus:outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition-colors min-h-[100px]"
  placeholder="Details about the event..."
  />
  </div>
@@ -225,16 +287,16 @@ export default function AdminAcademicCalendar({ isHubView }) {
  placeholder="https://drive.google.com/file/d/.../view"
  value={formData.image_url}
  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
- className="w-full animate-fade-in bg-themeBg border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-themeText dark:text-white focus:outline-none focus:border-themeBorder dark:border-white/5Accent focus:ring-1 focus:ring-themeAccent transition text-sm"
+ className="w-full animate-fade-in bg-themeBg border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-3 text-themeText dark:text-white focus:outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent focus:ring-1 focus:ring-themeAccent transition text-sm"
  />
  <p className="text-[10px] text-themeTextSec dark:text-white/50 mt-1">Make sure the link is set to "Anyone with the link can view"</p>
  
  {formData.image_url && (
- <div className="mt-3 text-xs text-white/60 flex items-center gap-2 bg-gray-100 dark:bg-themeApp p-2 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="mt-3 text-xs text-white/60 flex items-center gap-2 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-2 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <img 
  src={formData.image_url.includes('drive.google.com/file/d/') ? `https://drive.google.com/uc?export=view&id=${formData.image_url.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1]}` : formData.image_url} 
  alt="Event Preview" 
- className="w-12 h-12 object-cover rounded-md border border-themeBorder dark:border-white/5 bg-themeBg"
+ className="w-12 h-12 object-cover rounded-md border border-black/[0.04] dark:border-white/[0.08] bg-themeBg"
  onError={(e) => { e.target.style.display = 'none'; }}
  />
  <span>Image Preview (will be hidden if invalid)</span>
@@ -249,7 +311,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  name="is_active"
  checked={formData.is_active}
  onChange={handleInputChange}
- className="w-4 h-4 rounded border-themeBorder dark:border-white/5 bg-themeBg text-themeAccent focus:ring-themeAccent"
+ className="w-4 h-4 rounded border-black/[0.04] dark:border-white/[0.08] bg-themeBg text-themeAccent focus:ring-themeAccent"
  />
  <label htmlFor="is_active" className="text-sm text-white/80 cursor-pointer">Visible to Public</label>
  </div>
@@ -267,10 +329,10 @@ export default function AdminAcademicCalendar({ isHubView }) {
  type="button" 
  onClick={() => {
  setIsEditing(false);
- setFormData({ id: null, title: '', date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
+ setFormData({ id: null, title: '', start_date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
  
  }}
- className="px-4 py-3 bg-themeBg border border-themeBorder dark:border-white/5 text-themeText dark:text-white hover:bg-themeBorder/50 rounded-lg transition-colors"
+ className="px-4 py-3 bg-themeBg border border-black/[0.04] dark:border-white/[0.08] text-themeText dark:text-white hover:bg-themeBorder/50 rounded-lg transition-colors"
  >
  Cancel
  </button>
@@ -280,7 +342,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  </div>
 
  {/* List Column */}
- <div className="lg:col-span-2 bg-gray-100 dark:bg-themeApp p-6 rounded-2xl border border-themeBorder dark:border-white/5">
+ <div className="lg:col-span-2 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] p-6 rounded-2xl border border-black/[0.04] dark:border-white/[0.08]">
  <h3 className={`font-bold tracking-tight text-xl text-themeText dark:text-white mb-4`}>All Events</h3>
  
  {loading ? (
@@ -295,7 +357,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  ) : (
  <div className="flex flex-col gap-3">
  {events.map((event) => (
- <div key={event.id} className={`flex items-start justify-between p-4 rounded-xl border border-themeBorder dark:border-white/5 bg-themeBg transition hover:border-themeBorder dark:border-white/5Accent/50 ${!event.is_active ? 'opacity-60' : ''}`}>
+ <div key={event.id} className={`flex items-start justify-between p-4 rounded-xl border border-black/[0.04] dark:border-white/[0.08] bg-themeBg transition hover:border-black/[0.04] dark:border-white/[0.08]Accent/50 ${!event.is_active ? 'opacity-60' : ''}`}>
  <div className="flex flex-col gap-1">
  <div className="flex items-center gap-3">
  <span className="text-themeText dark:text-white font-bold text-lg">{event.title}</span>
@@ -308,14 +370,14 @@ export default function AdminAcademicCalendar({ isHubView }) {
  </div>
  <div className="text-themeAccent font-medium text-sm">
  <i className="fa-regular fa-calendar mr-2"></i>
- {new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
+ {new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' })}
  </div>
  <p className="text-white/70 text-sm mt-1">{event.description}</p>
  </div>
  <div className="flex gap-4 items-center">
  {event.image_url && (
  <div className="hidden sm:block">
- <img src={event.image_url} alt={event.title} className="w-16 h-16 object-cover rounded-lg border border-themeBorder dark:border-white/5" />
+ <img src={event.image_url} alt={event.title} className="w-16 h-16 object-cover rounded-lg border border-black/[0.04] dark:border-white/[0.08]" />
  </div>
  )}
  <div className="flex flex-col gap-2">
