@@ -85,30 +85,77 @@ export default function StudentDashboard({ setActiveTab }) {
  const { data: mData } = await supabase.from('mentorship').select('faculty_id, profiles!mentorship_faculty_id_fkey(full_name, erp_id, profile_picture_url)').eq('student_id', sid).eq('status', 'active').single();
  if (mData?.profiles) setMentor(mData.profiles);
 
- // Fetch Attendance
- const { data: attData } = await supabase.from('attendance_records').select('entry_status, exit_status').eq('student_id', sid);
- if (attData && attData.length > 0) {
- const present = attData.filter(a => ['present', 'late'].includes(a.entry_status)).length;
- const total = attData.length;
- setStats(prev => ({ ...prev, attendance: total === 0 ? 100 : Math.round((present / total) * 100) }));
- } else {
- setStats(prev => ({ ...prev, attendance: 100 }));
- }
+            // Fetch CGPA from analytics
+            const { data: analyticsData } = await supabase
+                .from('student_semester_analytics')
+                .select('cgpa')
+                .eq('student_id', sid)
+                .order('declared_on', { ascending: false })
+                .limit(1)
+                .single();
+                
+            setStats(prev => ({ ...prev, cgpa: analyticsData?.cgpa || 0.00 }));
 
- // Fetch Assignments: total from assignments table, submitted from submissions table
- const batchName = pData?.academic_batch || userSession?.academic_batch || '';
- const batchId = userSession?.batch_id;
- 
- let totalQuery = supabase.from('assignments').select('id', { count: 'exact', head: true }).eq('status', 'active');
- if (batchId) totalQuery = totalQuery.eq('batch_id', batchId);
- else if (batchName) totalQuery = totalQuery.eq('batch', batchName);
- const { count: totalAssignments } = await totalQuery;
+            // Fetch Attendance with exemption logic (sync with Rings)
+            const { data: attendance } = await supabase
+                .from('attendance_records')
+                .select('entry_status, session:class_sessions(date)')
+                .eq('student_id', sid);
+                
+            const { data: leaves } = await supabase
+                .from('leave_requests')
+                .select('start_date, end_date')
+                .eq('student_id', sid)
+                .eq('status', 'approved');
 
- const { data: asgData } = await supabase.from('assignment_submissions').select('status').eq('student_id', sid);
- const submitted = asgData ? asgData.length : 0;
- const totalAvailable = totalAssignments || 0;
- const pending = Math.max(0, totalAvailable - submitted);
- setStats(prev => ({ ...prev, assignmentsSubmitted: submitted, assignmentsPending: pending, assignmentsTotal: totalAvailable }));
+            const isDateExempt = (dateString) => {
+                if (!leaves || !dateString) return false;
+                const target = new Date(dateString);
+                return leaves.some(l => {
+                    const s = new Date(l.start_date);
+                    const e = new Date(l.end_date);
+                    s.setHours(0,0,0,0);
+                    e.setHours(23,59,59,999);
+                    return target >= s && target <= e;
+                });
+            };
+
+            if (attendance && attendance.length > 0) {
+                let present = 0;
+                let total = 0;
+                attendance.forEach(a => {
+                    const exempt = isDateExempt(a.session?.date);
+                    if (exempt && (a.entry_status === 'absent' || !a.entry_status)) {
+                        // skip total count
+                    } else {
+                        total++;
+                        if (['present', 'late'].includes(a.entry_status)) present++;
+                    }
+                });
+                const attendanceScore = total > 0 ? Math.round((present / total) * 100) : 0;
+                setStats(prev => ({ ...prev, attendance: attendanceScore }));
+            } else {
+                setStats(prev => ({ ...prev, attendance: 0 }));
+            }
+
+            // Fetch Assignments: total from assignments table, submitted from submissions table
+            const batchName = pData?.academic_batch || userSession?.academic_batch || '';
+            const batchId = userSession?.batch_id;
+            
+            let totalQuery = supabase.from('assignments').select('id', { count: 'exact', head: true }).eq('status', 'active');
+            if (batchId) totalQuery = totalQuery.eq('batch_id', batchId);
+            else if (batchName) totalQuery = totalQuery.eq('batch', batchName);
+            const { count: totalAssignments } = await totalQuery;
+
+            const { count: submittedCount } = await supabase
+                .from('assignment_submissions')
+                .select('id', { count: 'exact', head: true })
+                .eq('student_id', sid);
+
+            const submitted = submittedCount || 0;
+            const totalAvailable = totalAssignments || 0;
+            const pending = Math.max(0, totalAvailable - submitted);
+            setStats(prev => ({ ...prev, assignmentsSubmitted: submitted, assignmentsPending: pending, assignmentsTotal: totalAvailable }));
  };
  fetchData();
  }, [userSession]);
