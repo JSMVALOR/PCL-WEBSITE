@@ -26,7 +26,23 @@ export default function ParentDashboard({ onLogout }) {
 
     const fetchStudentData = async () => {
         try {
-            setLoading(true);
+            // SWR Caching - Instant Load
+            const cacheKey = `parent_dashboard_${userSession.id}`;
+            const cachedData = sessionStorage.getItem(cacheKey);
+            if (cachedData) {
+                const parsed = JSON.parse(cachedData);
+                setStudentData(parsed.student);
+                setAttendance(parsed.attendance);
+                setLeaves(parsed.leaves);
+                setMarks(parsed.marks);
+                setFees(parsed.fees);
+                setAssignments(parsed.assignments);
+                setMentor(parsed.mentor);
+                setLoading(false);
+            } else {
+                setLoading(true);
+            }
+
             const { data: mapping } = await supabase.from('parent_student_mappings').select('student_id').eq('parent_id', userSession.db_id || userSession.id).maybeSingle();
             
             let student = null;
@@ -39,84 +55,75 @@ export default function ParentDashboard({ onLogout }) {
             }
 
             if (student) {
-                setStudentData(student);
-                
-                // 1. Attendance (with exempt logic)
-                const { data: att } = await supabase.from('attendance_records').select('*, class_sessions(id, date, class_schedule(master_subjects(name, code)))').eq('student_id', student.id).order('marked_at', { ascending: false });
-                
-                // 2. Leaves
-                const { data: lvs } = await supabase.from('leave_requests').select('*').eq('student_id', student.id).order('created_at', { ascending: false });
-                setLeaves(lvs || []);
-                
-                const isDateExempt = (dateString) => {
-                    if (!lvs || !dateString) return false;
-                    const target = new Date(dateString);
-                    return lvs.some(l => {
-                        if (l.status !== 'approved') return false;
-                        const s = new Date(l.start_date);
-                        const e = new Date(l.end_date);
-                        s.setHours(0,0,0,0);
-                        e.setHours(23,59,59,999);
-                        return target >= s && target <= e;
-                    });
-                };
-                
-                const formattedAtt = (att || []).map(a => {
-                    let st = a.entry_status || a.status;
-                    if (isDateExempt(a.class_sessions?.date) && (st === 'absent' || !st)) {
-                        st = 'exempted';
-                    }
-                    return {
-                        ...a,
-                        status: st,
-                        class_sessions: {
-                            date: a.class_sessions?.date,
-                            subject: a.class_sessions?.class_schedule?.master_subjects?.name || 'General'
+                // Parallel fetching for performance
+                const [
+                    { data: att },
+                    { data: lvs },
+                    { data: mrk },
+                    { data: f },
+                    { data: asm },
+                    { data: mData }
+                ] = await Promise.all([
+                    supabase.from('attendance_records').select('*, class_sessions(id, date, class_schedule(master_subjects(name, code)))').eq('student_id', student.id).order('marked_at', { ascending: false }),
+                    supabase.from('leave_requests').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
+                    supabase.from('marks_ledger').select('*, master_subjects(name, code)').eq('student_id', student.id),
+                    supabase.from('fee_ledger').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
+                    supabase.from('assignment_submissions').select('*, assignments(*)').eq('student_id', student.id),
+                    supabase.from('mentorship').select('faculty_id, profiles!mentorship_faculty_id_fkey(full_name, email, phone)').eq('student_id', student.id).maybeSingle()
+                ]);
+
+                const leavesList = lvs || [];
+                let processedAtt = [];
+                if (att) {
+                    processedAtt = att.map(r => {
+                        let finalStatus = r.status;
+                        if (r.status === 'absent' && lvs) {
+                            const date = r.class_sessions?.date;
+                            const hasApprovedLeave = lvs.some(l => l.status === 'approved' && l.start_date <= date && l.end_date >= date);
+                            if (hasApprovedLeave) finalStatus = 'exempt';
                         }
-                    };
-                });
-                setAttendance(formattedAtt);
+                        return { ...r, status: finalStatus };
+                    });
+                }
 
-                // 3. Marks
-                const { data: mrk } = await supabase.from('marks_ledger').select('*, master_subjects(name)').eq('student_id', student.id);
-                setMarks(mrk || []);
-
-                // 4. Fees
-                const { data: fee } = await supabase.from('fee_invoices').select('*').eq('student_id', student.id).order('due_date', { ascending: false });
-                setFees(fee || []);
+                const marksList = mrk || [];
+                const feesList = f || [];
                 
-                // 5. Assignments Detailed
-                const batchStr = student.batch || student.academic_batch;
-                if (batchStr) {
-                    const { data: allAssignments } = await supabase.from('assignments').select('*').eq('batch', batchStr);
-                    const { data: allSubmissions } = await supabase.from('assignment_submissions').select('assignment_id, status').eq('student_id', student.id);
-                    
-                    const mappedAssignments = (allAssignments || []).map(a => {
-                        const sub = (allSubmissions || []).find(s => s.assignment_id === a.id);
-                        return {
-                            ...a,
-                            submission_status: sub ? sub.status : 'missing'
-                        };
-                    });
-
-                    setAssignments({ 
-                        total: allAssignments?.length || 0, 
-                        completed: allSubmissions?.length || 0,
-                        list: mappedAssignments
-                    });
+                let asmData = { total: 0, completed: 0, list: [] };
+                if (asm) {
+                    const completed = asm.filter(a => a.status === 'Graded' || a.status === 'Submitted').length;
+                    asmData = { total: asm.length || 0, completed, list: asm };
                 }
 
-                // 6. Mentor
-                const { data: mData } = await supabase.from('mentorship').select('faculty:profiles!mentorship_faculty_id_fkey(full_name, email, phone)').eq('student_id', student.id).maybeSingle();
-                if (mData && mData.faculty) {
-                    setMentor(mData.faculty);
+                let mentorObj = null;
+                if (mData && mData.profiles) {
+                    mentorObj = mData.profiles;
                 }
+
+                // Update state
+                setStudentData(student);
+                setAttendance(processedAtt);
+                setLeaves(leavesList);
+                setMarks(marksList);
+                setFees(feesList);
+                setAssignments(asmData);
+                setMentor(mentorObj);
+
+                // Update cache
+                sessionStorage.setItem(cacheKey, JSON.stringify({
+                    student,
+                    attendance: processedAtt,
+                    leaves: leavesList,
+                    marks: marksList,
+                    fees: feesList,
+                    assignments: asmData,
+                    mentor: mentorObj
+                }));
             }
-        } catch (error) {
-            console.error("Error fetching parent data", error);
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            console.error("Parent dashboard error", err);
         }
+        setLoading(false);
     };
 
     useEffect(() => {

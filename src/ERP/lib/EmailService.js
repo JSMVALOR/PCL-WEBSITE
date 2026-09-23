@@ -84,7 +84,7 @@ export const sendSystemEmail = async (templateKey, params) => {
             headers: {
                 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                to_email: 'marvelswaroop118@gmail.com', // [TESTING OVERRIDE] Forces all emails to go here
+                to_email: import.meta.env.VITE_EMAIL_OVERRIDE || params.to_email,
                 subject: subject,
                 message_body: message_body,
                 attachments: params.attachment ? [{
