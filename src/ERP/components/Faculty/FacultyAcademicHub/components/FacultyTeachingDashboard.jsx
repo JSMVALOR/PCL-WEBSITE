@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
-import { useERP } from "../../../context/ErpContext";
-import { supabase } from "../../../../supabaseClient";
+import { useERP } from "../../../../context/ErpContext";
+import { supabase } from "../../../../../supabaseClient";
 import { motion } from "framer-motion";
 
 export default function FacultyTeachingDashboard({ onNavigate }) {
