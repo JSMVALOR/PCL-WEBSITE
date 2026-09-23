@@ -74,15 +74,13 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
         }
     };
 
-    const handleOpenEdit = async (img) => {
+        const handleOpenEdit = async (img) => {
+        console.log("Opening edit for", img.title);
         try {
-            const response = await fetch(img.image_url);
-            const blob = await response.blob();
-            const localUrl = URL.createObjectURL(blob);
-            setEditingImage({ ...img, local_url: localUrl });
+            setEditingImage({ ...img, local_url: img.image_url });
         } catch (error) {
             console.error("Failed to load image blob:", error);
-            alert("Failed to load image for editing. Network issue.");
+            alert("Failed to load image for editing.");
         }
     };
 
