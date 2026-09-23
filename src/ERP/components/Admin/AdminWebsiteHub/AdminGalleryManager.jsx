@@ -10,7 +10,8 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     // Form state
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
     const [category, setCategory] = useState('Campus');
 
     useEffect(() => {
@@ -34,33 +35,64 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
         }
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleAddImage = async (e) => {
         e.preventDefault();
-        if (!imageUrl) {
-            window.erpDialog?.alert("Please provide an image URL.");
+        if (!imageFile) {
+            window.erpDialog?.alert("Please select an image file to upload.");
             return;
         }
 
         setIsSaving(true);
         try {
-            const { error } = await supabase.from('gallery_images').insert([{
+            // 1. Upload to Supabase Storage
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const filePath = `public/${fileName}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('gallery')
+                .upload(filePath, imageFile, { upsert: false });
+
+            if (uploadError) throw uploadError;
+
+            // 2. Get Public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('gallery')
+                .getPublicUrl(filePath);
+
+            // 3. Save to database
+            const { error: dbError } = await supabase.from('gallery_images').insert([{
                 title,
                 description,
-                image_url: imageUrl,
+                image_url: publicUrl,
                 category,
                 is_active: true
             }]);
 
-            if (error) throw error;
+            if (dbError) throw dbError;
 
             setTitle('');
             setDescription('');
-            setImageUrl('');
+            setImageFile(null);
+            setImagePreview('');
             setCategory('Campus');
+            
+            // Reset file input
+            const fileInput = document.getElementById('gallery_image_input');
+            if (fileInput) fileInput.value = '';
+            
             fetchImages();
         } catch (error) {
-            console.error("Failed to add image:", error);
-            window.erpDialog?.alert("Failed to save image.");
+            console.error("Failed to upload image:", error);
+            window.erpDialog?.alert("Failed to upload image. Make sure your storage bucket 'gallery' is created and public.");
         } finally {
             setIsSaving(false);
         }
@@ -109,20 +141,27 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                     <div className="lg:col-span-4 h-fit bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl p-6 lg:p-8">
                         <h2 className="text-lg font-semibold tracking-tight text-themeText mb-6">Add New Image</h2>
                         
-                        <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-600 dark:text-amber-400 text-xs font-medium leading-relaxed">
-                            <i className="fa-solid fa-triangle-exclamation mr-2"></i>
-                            <strong>Vercel Runtime Constraint:</strong> To prevent exceeding database storage quotas, please upload your image to a free external CDN (like <a href="https://imgbb.com" target="_blank" className="underline font-bold">ImgBB</a>) and paste the Direct Image URL below.
-                        </div>
-
                         <form onSubmit={handleAddImage} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2">
-                                <label className="text-[12px] font-bold text-themeTextSec uppercase tracking-wider">Direct Image URL</label>
-                                <input required type="url" className="bg-black/5 dark:bg-themeElevated/90 border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://i.ibb.co/..." />
+                                <label className="text-[12px] font-bold text-themeTextSec uppercase tracking-wider">Select Image File</label>
+                                <input 
+                                    required 
+                                    id="gallery_image_input"
+                                    type="file" 
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="block w-full text-sm text-themeTextSec
+                                        file:mr-4 file:py-3 file:px-6
+                                        file:rounded-xl file:border-0
+                                        file:text-sm file:font-bold
+                                        file:bg-themeAccent/10 file:text-themeAccent
+                                        hover:file:bg-themeAccent/20 file:transition-colors cursor-pointer border border-black/[0.04] dark:border-white/[0.08] bg-black/5 dark:bg-themeElevated/90 rounded-xl"
+                                />
                             </div>
                             
-                            {imageUrl && (
+                            {imagePreview && (
                                 <div className="mt-2 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 h-32 w-full relative group">
-                                    <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" onError={(e) => { e.target.style.display='none' }} />
+                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <span className="text-white text-xs font-bold">Preview</span>
                                     </div>
