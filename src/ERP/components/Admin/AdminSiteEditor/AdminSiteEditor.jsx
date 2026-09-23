@@ -49,14 +49,14 @@ function ScaledPreview({ isFullscreen, children }) {
 
     if (isFullscreen) {
         return (
-            <div className="w-full h-full overflow-y-auto custom-scrollbar bg-white dark:bg-black">
+            <div className="w-full h-full overflow-y-auto custom-scrollbar bg-themePanel">
                 {children}
             </div>
         );
     }
 
     return (
-        <div ref={wrapperRef} className="w-full h-full relative overflow-hidden bg-[#1a1a1c]">
+        <div ref={wrapperRef} className="w-full h-full relative overflow-hidden bg-themeElevated">
             <div 
                 className="origin-top-left bg-white dark:bg-themeApp"
                 style={{ 
@@ -604,7 +604,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                          {item.label} <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 group-hover/nav:rotate-180`}></i>
                      </button>
                      {/* Dropdown Menu */}
-                     <div className="absolute top-[calc(100%+8px)] left-0 min-w-[200px] bg-white dark:bg-[#1c1c1e] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 z-50 overflow-hidden flex flex-col p-1.5 shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] translate-y-2 group-hover/nav:translate-y-0">
+                     <div className="absolute top-[calc(100%+8px)] left-0 min-w-[200px] bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] rounded-2xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 z-50 overflow-hidden flex flex-col p-1.5 shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] translate-y-2 group-hover/nav:translate-y-0">
                          {item.children.map(child => (
                              <button type="button" 
                                  key={child.path}
@@ -641,7 +641,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
 
  {/* Click Tracking Insights */}
  {topClicks.length > 0 && (
-     <div className="bg-[#1c1c1e] border border-emerald-500/20 rounded-2xl p-5 flex flex-col relative overflow-hidden shrink-0 shadow-lg">
+     <div className="bg-themePanel border border-emerald-500/20 rounded-2xl p-5 flex flex-col relative overflow-hidden shrink-0 shadow-lg">
          <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
          <h2 className="text-[12px] font-black text-emerald-400 tracking-widest uppercase mb-4 flex items-center gap-2 relative z-10">
              <i className="fa-solid fa-crosshairs"></i> Exact Click Tracking Insights
@@ -697,7 +697,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              <select
                                  value={contentData[field.key] || ""}
                                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                                 className="w-full bg-white dark:bg-black/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none appearance-none shadow-sm"
+                                 className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none appearance-none shadow-sm"
                              >
                                  <option value="" disabled>Select an option...</option>
                                  {field.options?.map(opt => (
@@ -715,7 +715,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              placeholder={field.placeholder || ""}
                              maxLength={field.maxLength || 800}
                              rows="4"
-                             className="w-full bg-white dark:bg-black/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none resize-y shadow-sm placeholder:text-themeTextSec/40 leading-relaxed"
+                             className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none resize-y shadow-sm placeholder:text-themeTextSec/40 leading-relaxed"
                          ></textarea>
                      ) : (
                          <input
@@ -724,7 +724,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              onChange={(e) => handleFieldChange(field.key, e.target.value)}
                              placeholder={field.placeholder || ""}
                              maxLength={field.maxLength || 80}
-                             className="w-full bg-white dark:bg-black/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"
+                             className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"
                          />
                      )}
                  </div>
@@ -787,7 +787,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
          </div>
          
          {/* Preview Area Container */}
-         <div className="w-full h-full relative overflow-hidden bg-[#f5f5f7] dark:bg-[#0a0a0c] flex-1 flex flex-col">
+         <div className="w-full h-full relative overflow-hidden bg-themePanel dark:bg-themePanel flex-1 flex flex-col">
              {/* The Scaled Preview wraps the exact Website Render */}
              <ScaledPreview isFullscreen={isPreviewFullscreen}>
                  <div className="w-full min-h-screen bg-[var(--bg-color)]">

@@ -59,7 +59,7 @@ export default function Home({ isPreview = false }) {
   return (
     <div 
       ref={containerRef}
-      className={`fixed inset-0 w-full h-full bg-[var(--bg-color)] ${!isPreview ? 'overflow-y-auto snap-y snap-mandatory scroll-smooth' : 'overflow-hidden'}`}
+      className={`fixed inset-0 w-full h-full bg-[var(--bg-color)] ${'overflow-y-auto snap-y snap-mandatory scroll-smooth'}`}
     >
        {/* Pagination */}
        <div className="hidden md:flex fixed right-2 lg:right-4 top-1/2 -translate-y-1/2 z-[99999] flex-col gap-2">
@@ -74,22 +74,22 @@ export default function Home({ isPreview = false }) {
 
       {/* Track */}
       <div className="w-full flex flex-col">
-        <div ref={el => slidesRef.current[0] = el} data-index="0" className="w-full h-[100dvh] snap-start shrink-0 relative">
+        <div ref={el => slidesRef.current[0] = el} id="hero" data-index="0" className="w-full h-[100dvh] snap-start shrink-0 relative">
           <Hero windowWidth={windowWidth} />
         </div>
-        <div ref={el => slidesRef.current[1] = el} data-index="1" className="w-full h-[100dvh] snap-start shrink-0 relative">
+        <div ref={el => slidesRef.current[1] = el} id="about_snippet" data-index="1" className="w-full h-[100dvh] snap-start shrink-0 relative">
           <Philosophy />
         </div>
-        <div ref={el => slidesRef.current[2] = el} data-index="2" className="w-full h-[100dvh] snap-start shrink-0 relative">
+        <div ref={el => slidesRef.current[2] = el} id="academics_snippet" data-index="2" className="w-full h-[100dvh] snap-start shrink-0 relative">
           <Academics windowWidth={windowWidth} />
         </div>
-        <div ref={el => slidesRef.current[3] = el} data-index="3" className="w-full h-[100dvh] snap-start shrink-0 relative">
+        <div ref={el => slidesRef.current[3] = el} id="advantages_snippet" data-index="3" className="w-full h-[100dvh] snap-start shrink-0 relative">
           <Advantages windowWidth={windowWidth} />
         </div>
-        <div ref={el => slidesRef.current[4] = el} data-index="4" className="w-full h-[100dvh] snap-start shrink-0 relative">
+        <div ref={el => slidesRef.current[4] = el} id="events_snippet" data-index="4" className="w-full h-[100dvh] snap-start shrink-0 relative">
           <EventsPreview />
         </div>
-        <div ref={el => slidesRef.current[5] = el} data-index="5" className="w-full h-[100dvh] snap-start shrink-0 relative">
+        <div ref={el => slidesRef.current[5] = el} id="contact_snippet" data-index="5" className="w-full h-[100dvh] snap-start shrink-0 relative">
           <HomeContact />
         </div>
       </div>
