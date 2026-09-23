@@ -119,16 +119,24 @@ export default function CourseVault({ isEmbedded = false }) {
 
     const filteredMaterials = activeFilter === "All" ? materials : materials.filter(m => m.type === activeFilter);
 
-    let processedSubjects = [...subjects];
+    let processedSubjects = subjects.map(s => ({ ...s, _isFaded: false }));
 
-    // Semester Filter
+    // Semester Filter (Fade instead of hide)
     if (semesterFilter === "current" && userSession?.semester) {
-        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester === parseInt(userSession.semester));
+        processedSubjects.forEach(s => {
+            if (s.master_subjects?.target_semester !== parseInt(userSession.semester)) {
+                s._isFaded = true;
+            }
+        });
     } else if (semesterFilter === "previous" && userSession?.semester) {
-        processedSubjects = processedSubjects.filter(s => s.master_subjects?.target_semester < parseInt(userSession.semester));
+        processedSubjects.forEach(s => {
+            if (s.master_subjects?.target_semester >= parseInt(userSession.semester)) {
+                s._isFaded = true;
+            }
+        });
     }
 
-    // Search
+    // Search (Hide entirely)
     if (searchQuery) {
         const q = searchQuery.toLowerCase();
         processedSubjects = processedSubjects.filter(s => 
@@ -153,9 +161,13 @@ export default function CourseVault({ isEmbedded = false }) {
         return acc;
     }, {});
 
-    // Hide subjects if a specific resource filter is selected AND the subject has no matching resources
+    // Resource Filter (Fade instead of hide)
     if (activeFilter !== "All") {
-        processedSubjects = processedSubjects.filter(sub => materialsBySubject[sub.id] && materialsBySubject[sub.id].length > 0);
+        processedSubjects.forEach(s => {
+            if (!materialsBySubject[s.id] || materialsBySubject[s.id].length === 0) {
+                s._isFaded = true;
+            }
+        });
     }
 
     return (
@@ -265,7 +277,7 @@ export default function CourseVault({ isEmbedded = false }) {
                             const hasSyllabus = masterSubject.syllabus && Object.keys(masterSubject.syllabus).length > 0;
 
                             return (
-                                <div key={sub.id} className="flex flex-col bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 shadow-sm rounded-[2rem] transition-all hover:shadow-md hover:border-black/10 dark:hover:border-white/20 overflow-hidden">
+                                <div key={sub.id} className={`flex flex-col bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 shadow-sm rounded-[2rem] transition-all hover:shadow-md hover:border-black/10 dark:hover:border-white/20 overflow-hidden ${sub._isFaded ? 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0' : ''}`}>
                                     
                                     <div className="flex items-start justify-between gap-4 border-b border-black/5 dark:border-white/10 p-5 bg-black/[0.02] dark:bg-white/[0.02]">
                                         <div className="flex items-center gap-3">
