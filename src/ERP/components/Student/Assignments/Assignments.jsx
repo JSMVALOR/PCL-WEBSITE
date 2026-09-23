@@ -284,9 +284,28 @@ export default function Assignments({ isEmbedded = false }) {
  </span>
  </div>
 
- <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight leading-tight mb-4">
+ <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight leading-tight mb-2">
  {task.title}
  </h3>
+
+ {task.description && (
+ <p className="text-xs text-themeTextSec opacity-80 leading-relaxed mb-4 line-clamp-2">{task.description}</p>
+ )}
+
+ {sub.submission_text && (
+ <div className="mt-2 mb-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4">
+ <p className="text-[10px] uppercase tracking-widest font-black text-themeTextSec mb-2"><i className="fa-solid fa-file-lines mr-1.5 text-indigo-500"></i> Your Submission</p>
+ <p className="text-xs text-themeText leading-relaxed line-clamp-3 font-serif italic">"{sub.submission_text}"</p>
+ </div>
+ )}
+
+ {sub.file_url && (
+ <div className="mt-2 mb-4">
+ <a href={sub.file_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 rounded-lg text-[10px] uppercase font-black tracking-widest hover:bg-indigo-500/20 transition-colors">
+ <i className="fa-solid fa-paperclip"></i> Attached File
+ </a>
+ </div>
+ )}
 
  {sub.status === 'Graded' && (
  <div className="mt-2 mb-4 bg-emerald-500/5 border-theme border-emerald-500/20 rounded-xl p-4 flex justify-between items-center">
