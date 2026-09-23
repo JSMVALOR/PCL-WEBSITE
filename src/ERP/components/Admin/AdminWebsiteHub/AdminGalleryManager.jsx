@@ -1,6 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+// Legacy imports for auto-sync
+import imgClassroom1 from '../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM.webp';
+import imgClassroom2 from '../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM2.webp';
+import imgClassroom3 from '../../../../Shared/Assets/CAMPUS/PCL_CLASSROOM3.webp';
+import imgLegalAid from '../../../../Shared/Assets/CAMPUS/PCL_LEGAL_AID_CELL.webp';
+import imgLibrary from '../../../../Shared/Assets/CAMPUS/pcl_library.webp';
+import imgLobby from '../../../../Shared/Assets/CAMPUS/PCL_LOBBY.webp';
+import imgOutside from '../../../../Shared/Assets/CAMPUS/PCL_OUTSIDE.webp';
+import imgCampus from '../../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
+import imgMoot1 from '../../../../Shared/Assets/CAMPUS/moot1.png';
+import imgMoot2 from '../../../../Shared/Assets/CAMPUS/moot2.png';
+import imgJustice from '../../../../Shared/Assets/CAMPUS/pcl_justice.webp';
+
+const LEGACY_IMAGES = [
+    { src: imgCampus, title: "PCL Campus", category: "Campus" },
+    { src: imgLibrary, title: "PCL Library", category: "Campus" },
+    { src: imgMoot1, title: "Moot Court 1", category: "Competitions" },
+    { src: imgLobby, title: "PCL Lobby", category: "Campus" },
+    { src: imgClassroom1, title: "Classroom 1", category: "Academics" },
+    { src: imgLegalAid, title: "Legal Aid Cell", category: "Campus" },
+    { src: imgJustice, title: "Justice Statue", category: "Campus" },
+    { src: imgMoot2, title: "Moot Court 2", category: "Competitions" },
+    { src: imgOutside, title: "Campus Exterior", category: "Campus" },
+    { src: imgClassroom2, title: "Classroom 2", category: "Academics" },
+    { src: imgClassroom3, title: "Classroom 3", category: "Academics" }
+];
+
 
 export default function AdminGalleryManager({ isEmbedded = false }) {
     const [images, setImages] = useState([]);
@@ -32,6 +59,55 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             console.error('Error fetching gallery:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+        const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleAutoSync = async () => {
+        if (!window.confirm("This will automatically upload all 11 original images to Supabase. Proceed?")) return;
+        setIsSyncing(true);
+        try {
+            for (const img of LEGACY_IMAGES) {
+                // Fetch the bundled image as a blob
+                const response = await fetch(img.src);
+                const blob = await response.blob();
+                
+                const fileExt = img.src.split('.').pop().split('?')[0] || 'webp';
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+                const filePath = `public/${fileName}`;
+
+                // Upload to storage
+                const { error: uploadError } = await supabase.storage
+                    .from('gallery')
+                    .upload(filePath, blob, { upsert: false });
+                
+                if (uploadError) {
+                    console.error("Upload error for", img.title, uploadError);
+                    continue;
+                }
+
+                // Get URL
+                const { data: { publicUrl } } = supabase.storage
+                    .from('gallery')
+                    .getPublicUrl(filePath);
+
+                // Insert into DB
+                await supabase.from('gallery_images').insert([{
+                    title: img.title,
+                    description: "Auto-migrated legacy image",
+                    image_url: publicUrl,
+                    category: img.category,
+                    is_active: true
+                }]);
+            }
+            alert("Auto-Sync Complete!");
+            fetchImages();
+        } catch (error) {
+            console.error("Sync failed:", error);
+            alert("Sync failed: " + error.message);
+        } finally {
+            setIsSyncing(false);
         }
     };
 
@@ -139,7 +215,13 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
                     {/* Add Form */}
                     <div className="lg:col-span-4 h-fit bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl p-6 lg:p-8">
-                        <h2 className="text-lg font-semibold tracking-tight text-themeText mb-6">Add New Image</h2>
+                                                <h2 className="text-lg font-semibold tracking-tight text-themeText mb-6 flex justify-between items-center">
+                            Add New Image
+                            <button onClick={handleAutoSync} disabled={isSyncing} className="text-xs px-3 py-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20 flex items-center gap-2">
+                                {isSyncing ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-rotate"></i>}
+                                {isSyncing ? 'Syncing...' : 'Auto-Sync Legacy Images'}
+                            </button>
+                        </h2>
                         
                         <form onSubmit={handleAddImage} className="flex flex-col gap-4">
                             <div className="flex flex-col gap-2">
