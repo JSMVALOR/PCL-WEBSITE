@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import LuxuryPayslipTemplate from '../../../DocumentTemplates/LuxuryPayslipTemplate';
 import { generateComponentPDF } from '../../../DocumentTemplates/pdfEngine';
 import { generateNativePayslip } from '../../../DocumentTemplates/NativePayslipEngine';
@@ -501,8 +502,8 @@ export default function AdminPayroll() {
             </div>
 
             {/* PAYMENT & TAX QUESTIONNAIRE MODAL */}
-            {showPaymentModal && selectedFac && (
-                <div className="fixed inset-0 z-[9999] bg-gray-50 dark:bg-[#0A0A0A] flex flex-col animate-fade-in overflow-hidden">
+            {showPaymentModal && selectedFac && createPortal(
+                <div className="fixed inset-0 z-[99999] bg-gray-50 dark:bg-[#0A0A0A] flex flex-col animate-fade-in overflow-hidden">
                     <div className="w-full h-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex flex-col">
                         
                         <div className="px-6 py-6 lg:px-12 lg:py-8 border-b border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-between items-center shrink-0">
@@ -589,7 +590,7 @@ export default function AdminPayroll() {
                         </div>
                     </div>
                 </div>
-            )}
+            , document.body)}
 
             {/* ULTRA LUXURY PAYSLIP TEMPLATE */}
             {currentPayload && selectedFac && (
