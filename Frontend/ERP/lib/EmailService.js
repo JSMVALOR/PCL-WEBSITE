@@ -85,7 +85,7 @@ export const sendSystemEmail = async (templateKey, params) => {
         const { subject, message_body } = templateBuilder(params);
 
         // Vercel Serverless Function Endpoint
-        const emailEndpoint = (import.meta.env.VITE_SITE_URL || window.location.origin) + '/api/send-email';
+        const emailEndpoint = '/api/send-email';
 
         const response = await fetch(emailEndpoint, {
             method: 'POST',
