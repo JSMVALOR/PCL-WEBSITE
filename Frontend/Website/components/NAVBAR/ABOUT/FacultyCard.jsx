@@ -38,17 +38,17 @@ export default function FacultyCard({ faculty, onClick }) {
         {/* Content */}
         <div className="relative z-10 flex justify-between items-end">
           <div className="flex-1 pr-4">
-            <h3 className="text-xl md:text-2xl font-bold text-white font-serif mb-1 group-hover:text-black transition-colors duration-300">
+            <h3 className="text-[15px] md:text-2xl font-bold text-white font-serif mb-1 group-hover:text-black transition-colors duration-300 leading-tight">
               {faculty.full_name}
             </h3>
-            <p className="text-xs md:text-sm font-medium text-[var(--text-muted)] group-hover:text-black/80 transition-colors duration-300 uppercase tracking-widest">
+            <p className="text-[9px] md:text-sm font-bold text-[var(--primary-color)] group-hover:text-black/80 transition-colors duration-300 uppercase tracking-[0.15em] md:tracking-widest">
               {designation}
             </p>
           </div>
           
           {/* Arrow */}
-          <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-black/40 group-hover:bg-black group-hover:border-transparent transition-all rounded-sm border border-white/10">
-            <i className="fa-solid fa-arrow-right text-white transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+          <div className="w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center bg-black/40 group-hover:bg-black group-hover:border-transparent transition-all rounded-sm border border-white/10">
+            <i className="fa-solid fa-arrow-right text-[10px] md:text-sm text-white transform -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
           </div>
         </div>
       </div>
