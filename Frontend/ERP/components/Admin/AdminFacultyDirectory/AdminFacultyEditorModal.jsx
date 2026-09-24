@@ -78,7 +78,8 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  phone: data.faculty_profiles?.phone || '',
  linkedin_url: data.faculty_profiles?.linkedin_url || '',
  scholar_url: data.faculty_profiles?.scholar_url || '',
- image_url: data.faculty_profiles?.image_url || ''
+ image_url: data.faculty_profiles?.image_url || '',
+ is_public: data.faculty_profiles?.is_public ?? true
  });
  } catch (err) {
  console.error("Failed to load faculty:", err);
@@ -89,8 +90,8 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  };
 
  const handleInputChange = (e) => {
- const { name, value } = e.target;
- setFormData(prev => ({ ...prev, [name]: value }));
+ const { name, value, type, checked } = e.target;
+ setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
  };
 
  const onSelectFile = (e) => {
@@ -210,7 +211,8 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  phone: formData.phone,
  linkedin_url: formData.linkedin_url,
  scholar_url: formData.scholar_url,
- image_url: finalImageUrl
+ image_url: finalImageUrl,
+ is_public: formData.is_public
  });
 
  if (fProfileError) throw fProfileError;
@@ -248,7 +250,19 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  </div>
  <div>
  <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">Edit Faculty Profile</h3>
- <p className="text-[13px] font-medium text-themeTextSec mt-1">Manage public identity and details</p>
+ <div className="flex items-center gap-4 mt-1">
+   <p className="text-[13px] font-medium text-themeTextSec">Manage public identity and details</p>
+   <label className="flex items-center gap-2 cursor-pointer bg-themeElevated/50 px-3 py-1 rounded-full border border-black/5 dark:border-white/10">
+     <input 
+       type="checkbox" 
+       name="is_public" 
+       checked={formData.is_public} 
+       onChange={handleInputChange}
+       className="w-4 h-4 rounded text-themeAccent bg-transparent border-themeBorder focus:ring-themeAccent focus:ring-offset-themePanel"
+     />
+     <span className="text-[12px] font-bold text-themeText">Show on Public Website</span>
+   </label>
+ </div>
  </div>
  </div>
  <button type="button" onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-black/40 hover:bg-black/10 dark:hover:bg-white/10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
