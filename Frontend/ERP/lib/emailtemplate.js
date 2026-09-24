@@ -964,7 +964,7 @@ export const HTML_EMAIL_TEMPLATES = {
         <div class="data-box">
             <div class="data-row"><span class="data-label">Net Disbursal Amount</span><span class="data-value" style="font-size: 24px; font-weight: 800;">₹ ${Number(params.final_net_pay).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span></div>
         </div>
-        <p>Please find attached your official, system-generated payslip. For your security, this document is mathematically encrypted. <strong>The password to open this file is your official ERP ID (${params.erp_id}).</strong></p>`
+        <p>Please find attached your official, system-generated payslip.</p>`
     ),
     
     ASSIGNMENT_PUBLISHED: (params) => buildEmailHtml(

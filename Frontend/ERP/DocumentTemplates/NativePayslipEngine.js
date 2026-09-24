@@ -171,13 +171,8 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     // Extract raw ArrayBuffer from jsPDF
     const rawPdfBytes = doc.output('arraybuffer');
     
-    // Encrypt with pdf-lib
-    const pdfDoc = await PDFDocument.load(rawPdfBytes);
-    const encryptedPdfBytes = await pdfDoc.save({
-        useObjectStreams: false,
-        userPassword: erpId,
-        ownerPassword: erpId + "_admin"
-    });
+    // Return raw PDF bytes (Unlocked as requested)
+    const encryptedPdfBytes = rawPdfBytes;
 
     // Convert back to Base64 String for return
     const bytes = new Uint8Array(encryptedPdfBytes);

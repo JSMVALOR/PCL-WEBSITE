@@ -190,8 +190,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         const base64Pdf = await generateComponentPDF(luxuryInvoiceRef.current, `Invoice_${txn.id}.pdf`, {
             format: 'a4',
             orientation: 'portrait',
-            returnBase64: true,
-            password: txn.profiles?.erp_id || 'DEFAULT_PASS'
+            returnBase64: true
         });
         
         await sendSystemEmail('APPLICATION_RECEIVED', {
