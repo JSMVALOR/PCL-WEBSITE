@@ -331,7 +331,6 @@ export default function App() {
         case 'gallery': return <AdminGalleryManager />;
         case 'careers': return <AdminCareers />;
         case 'notices': return <Notices setActiveTab={setActiveTab} />;
-        case 'whatsapp': return <AdminWhatsAppServer setActiveTab={setActiveTab} />;
         case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
         case 'users': return <UserManagement />;
         case 'coursebuilder': return <AdminCourseBuilder />;
