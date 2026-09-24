@@ -23,7 +23,7 @@ export default function FacultyCard({ faculty, onClick }) {
       />
       
       {/* Text Container */}
-      <div className="relative z-10 w-full bg-black/95 dark:bg-white/5 border-t-[3px] border-[var(--primary-color)] p-5 md:p-6 overflow-hidden mt-auto">
+      <div className="relative z-10 w-full bg-black/80 backdrop-blur-md border-t-[3px] border-[var(--primary-color)] p-3 md:p-6 overflow-hidden mt-auto">
         
         {/* The Green Fill (expands on hover only inside the text container) */}
         <motion.div 
