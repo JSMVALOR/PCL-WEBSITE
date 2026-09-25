@@ -45,11 +45,11 @@ export default function Assignments({ isEmbedded = false }) {
 
  let assignQuery = supabase
  .from('assignments')
- .select('*, profiles!faculty_id(full_name), is_offline')
+ .select('*, profiles!faculty_id(full_name)')
  .order('due_date', { ascending: true });
  
  if (actualBatchId) {
- assignQuery = assignQuery.eq('batch_id', actualBatchId);
+ assignQuery = assignQuery.or(`batch_id.eq.${actualBatchId},batch.eq."${batchName}"`);
  } else {
  assignQuery = assignQuery.eq('batch', batchName);
  }
@@ -106,7 +106,7 @@ export default function Assignments({ isEmbedded = false }) {
  e.preventDefault();
  if (!submissionText.trim() || !selectedTask) return;
  
- if (!selectedTask.is_offline) {
+ if (selectedTask.submission_type !== 'offline') {
     const currentWords = submissionText.trim().split(/\s+/).filter(Boolean).length;
     if(selectedTask.word_limit && currentWords > selectedTask.word_limit) {
     setSubmitError(`Word limit exceeded! You wrote ${currentWords} words, but the limit is ${selectedTask.word_limit}.`);
@@ -124,7 +124,7 @@ export default function Assignments({ isEmbedded = false }) {
  .insert({
  assignment_id: selectedTask.id,
  student_id: studentId,
- submission_text: selectedTask.is_offline ? 'Submitted Offline' : submissionText,
+ submission_text: selectedTask.submission_type === 'offline' ? 'Submitted Offline' : submissionText,
  status: 'Pending Review'
  });
  if (error) throw error;
@@ -390,7 +390,7 @@ export default function Assignments({ isEmbedded = false }) {
  </button>
  <button 
  type="submit" 
- disabled={isSubmitting || (!selectedTask.is_offline && (isOverLimit || !submissionText.trim()))}
+ disabled={isSubmitting || (selectedTask.submission_type !== 'offline' && (isOverLimit || !submissionText.trim()))}
  className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-themeText dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2 disabled:cursor-not-allowed"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting...</> : <><i className="fa-solid fa-paper-plane"></i> Submit Final</>}
