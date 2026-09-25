@@ -6,13 +6,13 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     // 1. Create a new A4 PDF
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     
-    // --- BRAND COLORS ---
-    const gold = [181, 156, 114]; 
+    // --- BRAND COLORS (White & Red Theme) ---
+    const primaryRed = [185, 28, 28]; // PCL Red
     const dark = [28, 28, 30]; 
     const gray = [100, 100, 100];
     
     // --- OUTER LUXURY BORDER ---
-    doc.setDrawColor(...gold);
+    doc.setDrawColor(...primaryRed);
     doc.setLineWidth(0.8);
     doc.rect(10, 10, 190, 277);
     doc.setLineWidth(0.2);
@@ -20,7 +20,7 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
 
     // --- LOGO / HEADER ---
     doc.setFont("times", "bold");
-    doc.setTextColor(...gold);
+    doc.setTextColor(...primaryRed);
     doc.setFontSize(28);
     doc.text("PRUDENTIA COLLEGE OF LAW", 105, 28, { align: 'center' });
     
@@ -38,51 +38,55 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     doc.setFontSize(10);
     doc.text(`For the month of ${payload.month} ${payload.year}`.toUpperCase(), 105, 54, { align: 'center' });
 
-    doc.setDrawColor(...gold);
+    doc.setDrawColor(...primaryRed);
     doc.setLineWidth(0.5);
     doc.line(20, 60, 190, 60);
 
-    // --- EMPLOYEE DETAILS ---
+    // --- EMPLOYEE DETAILS (Enclosed in Boundaries) ---
+    doc.setDrawColor(...primaryRed);
+    doc.setFillColor(252, 245, 245);
+    doc.roundedRect(20, 65, 170, 28, 3, 3, 'FD');
+
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...dark);
-    doc.setFontSize(10);
-    doc.text("Employee Name:", 20, 70);
-    doc.text("Employee ID:", 20, 78);
-    doc.text("Department:", 20, 86);
+    doc.setFontSize(9);
+    doc.text("Employee Name:", 25, 73);
+    doc.text("Employee ID:", 25, 81);
+    doc.text("Department:", 25, 89);
     
     doc.setFont("helvetica", "normal");
-    doc.text(facultyName, 55, 70);
-    doc.text(erpId, 55, 78);
-    doc.text(department || "Faculty of Law", 55, 86);
+    doc.text(facultyName, 55, 73);
+    doc.text(erpId, 55, 81);
+    doc.text(department || "Faculty of Law", 55, 89);
 
     // Payment Meta
     doc.setFont("helvetica", "bold");
-    doc.text("Payment Date:", 120, 70);
-    doc.text("Payment Mode:", 120, 78);
-    doc.text("Disbursing Bank:", 120, 86);
+    doc.text("Payment Date:", 120, 73);
+    doc.text("Payment Mode:", 120, 81);
+    doc.text("Transaction ID:", 120, 89);
     
     doc.setFont("helvetica", "normal");
-    doc.text(payload.payment_date, 155, 70);
-    doc.text(payload.payment_mode, 155, 78);
-    doc.text("ICICI (024305013005)", 155, 86);
+    doc.text(payload.payment_date || "N/A", 150, 73);
+    doc.text(payload.payment_mode || "Bank Transfer", 150, 81);
+    doc.text(payload.transaction_id || "N/A", 150, 89);
 
     // --- LOP DETAILS ---
     doc.setDrawColor(200, 200, 200);
     doc.setFillColor(250, 250, 250);
-    doc.rect(20, 95, 170, 15, 'FD');
+    doc.rect(20, 98, 170, 15, 'FD');
     
     doc.setFont("helvetica", "bold");
     doc.setTextColor(...dark);
-    doc.text(`Leave Without Pay (LOP) Days:`, 25, 104);
+    doc.text(`Leave Without Pay (LOP) Days:`, 25, 107);
     doc.setFont("helvetica", "normal");
-    doc.text(`${payload.lop_days || 0}`, 85, 104);
+    doc.text(`${payload.lop_days || 0}`, 85, 107);
     
     if (payload.lop_waived_days > 0) {
         doc.setFont("helvetica", "bold");
         doc.setTextColor(5, 150, 105); // Emerald
-        doc.text(`Waived By Admin:`, 110, 104);
+        doc.text(`Waived By Admin:`, 110, 107);
         doc.setFont("helvetica", "normal");
-        doc.text(`${payload.lop_waived_days} Days`, 145, 104);
+        doc.text(`${payload.lop_waived_days} Days`, 145, 107);
     }
 
     // --- EARNINGS & DEDUCTIONS TABLES ---
@@ -100,8 +104,14 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     if (payload.lop_waived_amount > 0) {
         deductionsData.push([{ content: "LOP Waiver Credit", styles: { textColor: [5, 150, 105], fillColor: [236, 253, 245] } }, { content: `- ${Number(payload.lop_waived_amount).toFixed(2)}`, styles: { textColor: [5, 150, 105], fillColor: [236, 253, 245] } }]);
     }
+    if (payload.professional_tax > 0) {
+        deductionsData.push(["Professional Tax", Number(payload.professional_tax).toFixed(2)]);
+    }
+    if (payload.tds_amount > 0) {
+        deductionsData.push([`TDS (${payload.tds_percentage}%)`, Number(payload.tds_amount).toFixed(2)]);
+    }
     
-    const totalDeductions = payload.deductions;
+    const totalDeductions = (Number(payload.deductions) || 0) + (Number(payload.professional_tax) || 0) + (Number(payload.tds_amount) || 0);
     deductionsData.push([{ content: "Total Deductions (B)", styles: { fontStyle: 'bold' } }, { content: Number(totalDeductions).toFixed(2), styles: { fontStyle: 'bold', textColor: [225, 29, 72] } }]);
 
     // Render AutoTables
@@ -111,10 +121,10 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
         tableWidth: 80,
         head: [['Earnings Component', 'Amount (Rs)']],
         body: earningsData,
-        headStyles: { fillColor: dark, textColor: [255, 255, 255] },
-        alternateRowStyles: { fillColor: [246, 244, 240] },
+        headStyles: { fillColor: primaryRed, textColor: [255, 255, 255] },
+        alternateRowStyles: { fillColor: [252, 245, 245] },
         theme: 'grid',
-        styles: { fontSize: 9 }
+        styles: { fontSize: 9, lineColor: [220, 220, 220] }
     });
 
     autoTable(doc, {
@@ -123,17 +133,17 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
         tableWidth: 80,
         head: [['Deductions Component', 'Amount (Rs)']],
         body: deductionsData,
-        headStyles: { fillColor: dark, textColor: [255, 255, 255] },
-        alternateRowStyles: { fillColor: [246, 244, 240] },
+        headStyles: { fillColor: primaryRed, textColor: [255, 255, 255] },
+        alternateRowStyles: { fillColor: [252, 245, 245] },
         theme: 'grid',
-        styles: { fontSize: 9 }
+        styles: { fontSize: 9, lineColor: [220, 220, 220] }
     });
 
     // --- NET PAY BOX ---
     const finalY = doc.lastAutoTable.finalY + 20;
     
-    doc.setDrawColor(...gold);
-    doc.setFillColor(...dark);
+    doc.setDrawColor(...primaryRed);
+    doc.setFillColor(...primaryRed);
     doc.roundedRect(20, finalY, 170, 35, 3, 3, 'FD');
     
     doc.setFont("times", "bold");
@@ -143,13 +153,13 @@ export const generateNativePayslip = async (payload, facultyName, erpId, departm
     
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.setTextColor(150, 150, 150);
-    doc.text(`Transferred via ${payload.payment_mode}`, 30, finalY + 22);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`Transferred via ${payload.payment_mode || 'Bank Transfer'}`, 30, finalY + 22);
 
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(...gold);
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(26);
-    doc.text(`Rs. ${Number(payload.final_net_pay).toLocaleString('en-IN', {minimumFractionDigits: 2})}`, 180, finalY + 20, { align: 'right' });
+    doc.text(`Rs. ${Number(payload.final_net_pay || payload.net_pay - (payload.professional_tax || 0) - (payload.tds_amount || 0)).toLocaleString('en-IN', {minimumFractionDigits: 2})}`, 180, finalY + 20, { align: 'right' });
 
     // --- SIGNATURES ---
     doc.setFont("helvetica", "bold");

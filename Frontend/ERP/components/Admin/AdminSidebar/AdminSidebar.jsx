@@ -5,29 +5,34 @@ import { useERP } from "../../../context/ErpContext";
 
 export const ADMIN_NAV_GROUPS = [
   {
-    category: "Command Center",
+    category: "Main Hub",
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
-      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" }
+      { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
+      { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" }
     ]
   },
   {
-    category: "Academics & Operations",
+    category: "Academics & Students",
     links: [
       { id: "academic", label: "Academic Hub", icon: "fa-solid fa-chart-pie" },
-      { id: "timetablebuilder", label: "Timetable Engine", icon: "fa-solid fa-calendar-days" },
       { id: "coursebuilder", label: "Course Builder", icon: "fa-solid fa-book-open" },
+      { id: "timetablebuilder", label: "Timetable Engine", icon: "fa-solid fa-calendar-days" },
       { id: "markscontroller", label: "Marks & Ledger", icon: "fa-solid fa-file-signature" },
-      { id: "attendance_issues", label: "Attendance Control", icon: "fa-solid fa-clipboard-question" },
-      { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+      {
+        id: "student_ops", label: "Student Tracking", icon: "fa-solid fa-user-graduate",
+        children: [
+          { id: "attendance_issues", label: "Attendance Control", icon: "fa-solid fa-clipboard-question" },
+          { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+        ]
+      }
     ]
   },
   {
-    category: "HR & Finance",
+    category: "HR & Operations",
     links: [
       { id: "users", label: "User Management", icon: "fa-solid fa-user-gear" },
       { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
-      { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" },
       {
         id: "staff_ops", label: "Staff Operations", icon: "fa-solid fa-users",
         children: [
@@ -39,27 +44,31 @@ export const ADMIN_NAV_GROUPS = [
     ]
   },
   {
-    category: "Website Sync & Public",
+    category: "Programs & Public Site",
     links: [
-      { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
-      { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
-      { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
       {
         id: "clinics_group", label: "Clinical & Extracurricular", icon: "fa-solid fa-scale-balanced",
         children: [
           { id: "clinics", label: "Clinics Hub", icon: "fa-solid fa-chart-pie" },
           { id: "mootcourt", label: "Moot Court", icon: "fa-solid fa-gavel" },
-          { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" },
+          { id: "legalaid", label: "Legal Aid", icon: "fa-solid fa-hand-holding-hand" }
+        ]
+      },
+      {
+        id: "website_group", label: "Website Manager", icon: "fa-solid fa-globe",
+        children: [
+          { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
+          { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
+          { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
           { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" }
         ]
       }
     ]
   },
   {
-    category: "IT & Systems",
+    category: "IT & Support",
     links: [
       { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" },
-      { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
       { id: "parent-preview", label: "Parent View", icon: "fa-solid fa-user-group" }
     ]
   }
@@ -189,7 +198,6 @@ export const ADMIN_NAV_MEGA = [
         id: "it_group", label: "IT & Systems", icon: "fa-solid fa-gears",
         children: [
           { id: "helpdesk", label: "IT Helpdesk", icon: "fa-solid fa-laptop-medical" },
-          { id: "sql", label: "SQL Studio", icon: "fa-solid fa-terminal" },
           { id: "parent-preview", label: "Parent View", icon: "fa-solid fa-user-group" }
         ]
       }

@@ -233,10 +233,7 @@ export default function AdminPayroll() {
     
     const handleConfirmPayment = async (e) => {
         e.preventDefault();
-        const confirmed = await window.erpDialog?.confirm(
-            "Are you sure you want to finalize this payroll disbursal? This action will generate the encrypted PDF and cannot be undone.", 
-            "Finalize Disbursal"
-        );
+        const confirmed = window.confirm("Are you sure you want to finalize this payroll disbursal? This action will generate the encrypted PDF and cannot be undone.");
         if (!confirmed) return;
         
         setIsProcessing(true);
