@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import FacultyBroadcastForm from "./FacultyBroadcastForm";
+import EventsBoard from "../../notices/EventsBoard";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function Notices({ setActiveTab }) {
@@ -420,14 +421,7 @@ export default function Notices({ setActiveTab }) {
                             </div>
                         )}
 
-                        {(userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'events' && (
-                            <button type="button" 
-                                onClick={() => setActiveTab && setActiveTab('events')} 
-                                className="px-5 py-2 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF]/20 rounded-xl text-[12px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
-                            >
-                                <i className="fa-solid fa-calendar-plus"></i> Manage Events
-                            </button>
-                        )}
+ 
                         {(userSession?.role === 'faculty' || userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'broadcasts' && (
                             <button type="button" 
                                 onClick={() => setIsBroadcasting(true)} 
@@ -476,7 +470,7 @@ export default function Notices({ setActiveTab }) {
                             <AnimatePresence mode="wait">
                                 {activeMainTab === "events" ? (
                                     <motion.div key="events" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
-                                        {renderEventsFeed()}
+                                        <EventsBoard />
                                     </motion.div>
                                 ) : isBroadcasting ? (
                                     <motion.div key="broadcast" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="bg-white/5 backdrop-blur-3xl border border-black/5 dark:border-white/10 rounded-3xl md:rounded-[2rem] p-0 sm:p-4 md:p-8 overflow-hidden">

@@ -85,7 +85,7 @@ export default function Helpdesk({ isEmbedded = false }) {
                 notice_id: noticeId,
                 title: 'New Support Ticket',
                 category: 'System Alert',
-                target_audience: 'admin',
+                target_audience: ['admin'],
                 priority: 'normal',
                 content: `A new support ticket (${ticketForm.subject}) has been raised under ${ticketForm.category}.`,
                 author_name: userSession?.name || 'System',

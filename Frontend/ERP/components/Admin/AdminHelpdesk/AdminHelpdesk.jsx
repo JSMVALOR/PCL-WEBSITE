@@ -62,7 +62,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  notice_id: noticeId,
  title: isClosing ? 'Support Ticket Resolved' : 'Support Ticket Replied',
  category: 'System Alert',
- target_audience: 'student',
+ target_audience: ['student'],
  target_user_id: ticketData.user_id,
  priority: 'normal',
  content: `Your support ticket (${ticketData.ticket_id}) has been ${isClosing ? 'resolved' : 'replied to'} by the Admin.`,

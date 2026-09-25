@@ -17,7 +17,7 @@ export default function LeaveRequests({ onReviewRequest }) {
             const { data: leaves } = await supabase
                 .from('faculty_leaves')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('applied_on', { ascending: false });
             
             const { data: profiles } = await supabase
                 .from('profiles')
@@ -94,7 +94,7 @@ export default function LeaveRequests({ onReviewRequest }) {
                                     <div className="flex flex-wrap gap-4">
                                         <div className="flex items-center gap-1.5 text-[11px] font-medium text-themeText">
                                             <i className="fa-solid fa-calendar-day text-themeTextSec"></i>
-                                            {new Date(req.start_date).toLocaleDateString()} - {new Date(req.end_date).toLocaleDateString()}
+                                            {new Date(req.from_date).toLocaleDateString()} - {new Date(req.to_date).toLocaleDateString()}
                                         </div>
                                         <div className="flex items-center gap-1.5 text-[11px] font-medium text-themeText">
                                             <i className="fa-solid fa-comment-dots text-themeTextSec"></i>

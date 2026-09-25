@@ -9,6 +9,7 @@ import MenteeGrievances from "./MenteeGrievances";
 import MenteeReport from "./MenteeReport";
 import MenteeAcademicRecord from "./MenteeAcademicRecord";
 import FacultyStudentProfile360 from "./FacultyStudentProfile360";
+import MenteeInternships from "./MenteeInternships";
 
 export default function FacultyMentorship() {
     const { userSession } = useERP();
@@ -178,7 +179,7 @@ export default function FacultyMentorship() {
 
             try {
                 const studentEmail = selectedMentee.email || `${selectedMentee.erp_id}@prudentia.edu`;
-                await fetch((import.meta.env.VITE_SITE_URL || window.location.origin) + '/api/send-email', {
+                await fetch('/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -356,6 +357,7 @@ export default function FacultyMentorship() {
                                 { id: 'attendance', label: 'Attendance', icon: 'fa-clipboard-user' },
                                 { id: 'academic', label: 'Academic Record', icon: 'fa-graduation-cap' },
                                 { id: 'leaves', label: 'Leave Approvals', icon: 'fa-plane-departure' },
+                                { id: 'internships', label: 'Internships', icon: 'fa-briefcase' },
                                 { id: 'grievances', label: 'Grievance Record', icon: 'fa-scale-balanced' },
                                 { id: 'report', label: 'Report Mentee', icon: 'fa-triangle-exclamation' },
                             ].map(tab => (
@@ -383,6 +385,9 @@ export default function FacultyMentorship() {
                             )}
                             {menteeTab === 'leaves' && (
                                 <MenteeLeaves menteeId={selectedMentee.id} />
+                            )}
+                            {menteeTab === 'internships' && (
+                                <MenteeInternships menteeId={selectedMentee.id} />
                             )}
                             {menteeTab === 'grievances' && (
                                 <MenteeGrievances menteeId={selectedMentee.id} />

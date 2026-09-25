@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   // CORS Headers
-  const allowedOrigin = process.env.VITE_SITE_URL || 'http://localhost:5173';
+  const allowedOrigin = req.headers.origin || '*';
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,POST');

@@ -374,6 +374,28 @@ const handleScanQR = async (e) => {
  
  setScanStatus("scanning");
  try {
+     // 1. Geofencing Check
+     if (!navigator.geolocation) {
+         throw new Error("Geolocation is not supported by your browser.");
+     }
+
+     const position = await new Promise((resolve, reject) => {
+         navigator.geolocation.getCurrentPosition(resolve, (err) => {
+             reject(new Error("Please enable location services to mark attendance."));
+         }, {
+             enableHighAccuracy: true,
+             timeout: 10000,
+             maximumAge: 0
+         });
+     });
+
+     const { latitude, longitude } = position.coords;
+     const distance = getDistanceFromLatLonInM(latitude, longitude, CAMPUS_LAT, CAMPUS_LNG);
+
+     if (distance > ALLOWED_RADIUS_METERS) {
+         throw new Error(`Geofence failed: You are ${Math.round(distance)}m away. Must be within ${ALLOWED_RADIUS_METERS}m of campus.`);
+     }
+
  // Find session with this token that hasn't expired
  const { data: sessions, error: sesError } = await supabase
  .from('class_sessions')
@@ -413,7 +435,8 @@ const handleScanQR = async (e) => {
  } catch (error) {
  console.error(error);
  setScanStatus("error");
- setTimeout(() => setScanStatus("idle"), 50);
+ window.erpDialog?.alert(error.message || "Failed to mark attendance.");
+ setTimeout(() => setScanStatus("idle"), 2000);
  }
  };
 

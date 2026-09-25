@@ -383,6 +383,30 @@ export default function FacultyAttendance({ subjectContext }) {
  
  if (insertError) throw insertError;
  currentSession = newSession;
+
+ // AUTO-MARK FACULTY PRESENCE
+ try {
+     const { data: existingPresence } = await supabase
+         .from('faculty_daily_presence')
+         .select('id, clock_in')
+         .eq('faculty_id', userSession.db_id)
+         .eq('date', todayDate)
+         .maybeSingle();
+         
+     if (!existingPresence) {
+         const now = new Date();
+         const nowStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0') + ':' + now.getSeconds().toString().padStart(2, '0');
+         await supabase.from('faculty_daily_presence').insert({
+             faculty_id: userSession.db_id,
+             date: todayDate,
+             clock_in: nowStr,
+             status: 'present',
+             source: 'class_auto'
+         });
+     }
+ } catch (err) {
+     console.warn("Failed to auto-mark faculty presence:", err);
+ }
  }
 
  // Fetch Enrolled Students based on batch or elective

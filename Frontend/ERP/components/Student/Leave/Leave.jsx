@@ -231,7 +231,7 @@ export default function Leave({ isEmbedded = false, }) {
  notice_id: noticeId,
  title: 'New Leave Request',
  category: 'System Alert',
- target_audience: 'admin',
+ target_audience: ['admin'],
  priority: 'normal',
  content: `A new leave request (${leaveType}) has been submitted for ${diffDays} days.`,
  author_name: userSession?.name || 'System',

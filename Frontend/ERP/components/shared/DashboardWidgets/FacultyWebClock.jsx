@@ -24,7 +24,7 @@ export default function FacultyWebClock() {
             if (!userSession?.db_id) return;
             const todayStr = format(new Date(), 'yyyy-MM-dd');
             const { data } = await supabase
-                .from('faculty_attendance_log')
+                .from('faculty_daily_presence')
                 .select('*')
                 .eq('faculty_id', userSession.db_id)
                 .eq('date', todayStr)
@@ -56,7 +56,7 @@ export default function FacultyWebClock() {
                 late_minutes: lateMins
             };
 
-            const { data, error } = await supabase.from('faculty_attendance_log').insert([payload]).select().single();
+            const { data, error } = await supabase.from('faculty_daily_presence').insert([payload]).select().single();
             
             if (error) {
                 // If table doesn't exist, we'll just mock it for UI purposes until DB is synced
@@ -86,7 +86,7 @@ export default function FacultyWebClock() {
             };
 
             const { data, error } = await supabase
-                .from('faculty_attendance_log')
+                .from('faculty_daily_presence')
                 .update(payload)
                 .eq('id', attendanceRecord.id)
                 .select()

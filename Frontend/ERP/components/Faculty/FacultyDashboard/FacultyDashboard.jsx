@@ -5,6 +5,7 @@ import UpdatesCarousel from "../../shared/UpdatesCarousel/UpdatesCarousel";
 import { DashboardGreetingBanner } from "../../shared/DashboardWidgets";
 import FacultyActionItems from "../../shared/DashboardWidgets/FacultyActionItems";
 import DashboardWorkSchedule from "../../shared/DashboardWidgets/DashboardWorkSchedule";
+import FacultyWebClock from "../../shared/DashboardWidgets/FacultyWebClock";
 
 import OrganizationDirectory from '../../shared/OrganizationDirectory/OrganizationDirectory';
 import { useERP } from "../../../context/ErpContext";
@@ -86,7 +87,10 @@ export default function FacultyDashboard({ setActiveTab }) {
                     
                     <DashboardGreetingBanner role="faculty" />
                     
-                    <DashboardWorkSchedule role="faculty" />
+                    <div className="flex flex-col xl:flex-row gap-6 lg:gap-8 shrink-0">
+                        <div className="flex-[2] min-w-0"><DashboardWorkSchedule role="faculty" /></div>
+                        <div className="flex-1 min-w-0"><FacultyWebClock /></div>
+                    </div>
 
                     {/* Quick Stats Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">

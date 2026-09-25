@@ -212,7 +212,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
         notice_id: noticeId,
         title: 'Action Required: Complete Profile Questionnaire',
         category: 'System Alert',
-        target_audience: 'person',
+        target_audience: ['person'],
         target_id: selectedQuestionnaireUser.db_id,
         priority: 'high',
         content: `Your profile questionnaire is missing critical information. Please complete it immediately to ensure your records are up to date.`,
@@ -333,15 +333,13 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
       // Dispatch Email
       try {
-        await sendSystemEmail('ONBOARDING', {
-          to_email: newUserEmail,
-          erp_id: generatedId,
-          password: generatedPassword,
-          name: newUserName
+        const { error: resetError } = await provisionClient.auth.resetPasswordForEmail(newUserEmail, {
+          redirectTo: window.location.origin
         });
-        setProvisionLogs(prev => [...prev, `[EMAIL SUCCESS] Credentials securely dispatched to ${newUserEmail}`]);
+        if (resetError) throw resetError;
+        setProvisionLogs(prev => [...prev, `[EMAIL SUCCESS] Supabase Setup Link securely dispatched to ${newUserEmail}`]);
       } catch (emailErr) {
-         setProvisionLogs(prev => [...prev, `[WARNING] Email failed: ${emailErr.message}. Manual share required: ${generatedPassword}`]);
+         setProvisionLogs(prev => [...prev, `[WARNING] Link dispatch failed: ${emailErr.message}. Manual share required: ${generatedPassword}`]);
       }
 
       setIsProvisioning(false);

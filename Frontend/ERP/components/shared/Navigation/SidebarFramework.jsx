@@ -30,8 +30,9 @@ export default function SidebarFramework({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     
     const handleLogout = async () => {
-        const confirmed = await Dialog.confirm("Are you sure you want to securely sign out?", "End Session");
-        if (confirmed) {
+        if (window.triggerManualLogout) {
+            window.triggerManualLogout();
+        } else {
             onLogout();
         }
     };

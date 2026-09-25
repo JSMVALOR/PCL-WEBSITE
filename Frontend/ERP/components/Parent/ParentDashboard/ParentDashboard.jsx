@@ -152,7 +152,7 @@ export default function ParentDashboard({ onLogout }) {
         if (!mentor) return;
         setSendingEmail(true);
         try {
-            await fetch((import.meta.env.VITE_SITE_URL || window.location.origin) + '/api/send-email', {
+            await fetch('/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -17,18 +17,29 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-app.post('/email/send', async (req, res) => {
+// Emulate the Vercel API endpoint for local development
+app.post('/api/send-email', async (req, res) => {
     try {
-        const { to, subject, html } = req.body;
+        const { to_email, subject, message_body, attachments } = req.body;
         
-        await transporter.sendMail({
-            from: `"Prudentia ERP" <${process.env.SMTP_USER}>`,
-            to,
-            subject,
-            html
-        });
+        if (!to_email || !subject || !message_body) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        const mailOptions = {
+            from: `"Prudentia College of Law" <${process.env.EMAIL_USER}>`,
+            to: to_email,
+            subject: subject,
+            html: message_body
+        };
+
+        if (attachments && Array.isArray(attachments)) {
+            mailOptions.attachments = attachments;
+        }
+
+        await transporter.sendMail(mailOptions);
         
-        res.json({ success: true, message: 'Email sent successfully' });
+        res.status(200).json({ success: true, message: 'Email sent successfully' });
     } catch (error) {
         console.error('Email send failed:', error);
         res.status(500).json({ success: false, error: error.message });

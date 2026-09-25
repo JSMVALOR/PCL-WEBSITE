@@ -46,7 +46,13 @@ export default defineConfig({
   ],
   server: {
     allowedHosts: true,
-    port: 10001
+    port: 10001,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')

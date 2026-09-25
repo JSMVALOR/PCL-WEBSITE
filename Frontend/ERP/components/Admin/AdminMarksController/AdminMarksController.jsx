@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import { generateBeautifulExcel } from '../../../../Shared/utils/ExcelExport';
 
 export default function AdminMarksController() {
     const { userSession } = useERP();
@@ -91,7 +92,7 @@ export default function AdminMarksController() {
             // Fetch all marks for this specific submission lock
             const { data: marks, error } = await supabase
                 .from('marks_ledger')
-                .select('marks_obtained, student:profiles!marks_ledger_student_id_fkey(full_name, erp_id)')
+                .select('marks_obtained, max_marks, student:profiles!marks_ledger_student_id_fkey(full_name, erp_id)')
                 .eq('subject_id', sub.subject_id)
                 .eq('assessment_type', sub.assessment_type)
                 .order('student_id', { ascending: true }); // Need a join sort, but JS sort is fine
@@ -105,33 +106,57 @@ export default function AdminMarksController() {
             // Sort by roll number
             const sortedMarks = marks.sort((a, b) => (a.student.erp_id || '').localeCompare(b.student.erp_id || ''));
 
-            // Build CSV
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += `OSMANIA UNIVERSITY INTERNAL ASSESSMENT EXPORT\n`;
-            csvContent += `Subject:,${(sub.master_subjects?.name || sub.master_subjects?.name || "")} (${(sub.master_subjects?.code || sub.subjects?.code || "")})\n`;
-            csvContent += `Batch:,${sub.batch}\n`;
-            csvContent += `Assessment:,${sub.assessment_type}\n`;
-            csvContent += `Faculty:,${sub.profiles.full_name}\n`;
-            csvContent += `Submitted At:,${new Date(sub.submitted_at).toLocaleDateString()}\n\n`;
+            // Prepare Data for Excel
+            const title = "OSMANIA UNIVERSITY INTERNAL ASSESSMENT EXPORT";
             
-            csvContent += "Roll Number,Registration No,Student Name,Marks Obtained,Max Marks\n";
-            
-            // Note: Max marks could be dynamic, but for OU usually 20 or 30. Hardcoding 20 or allowing input is possible, we just output what we have.
-            sortedMarks.forEach(m => {
-                const row = `"${m.student.erp_id}","${m.student.erp_id}","${m.student.full_name}","${m.marks_obtained}","20"`;
-                csvContent += row + "\n";
-            });
+            const metaData = [
+                { label: "Subject:", value: `${sub.master_subjects?.name || sub.subjects?.name || ""} (${sub.master_subjects?.code || sub.subjects?.code || ""})` },
+                { label: "Batch:", value: sub.batch },
+                { label: "Assessment:", value: sub.assessment_type },
+                { label: "Faculty:", value: sub.profiles.full_name },
+                { label: "Submitted At:", value: new Date(sub.submitted_at).toLocaleDateString() }
+            ];
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `OU_Export_${sub.batch}_${sub.assessment_type}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const columns = ["Roll Number", "Registration No", "Student Name", "Marks Obtained", "Max Marks"];
+            
+            const dataRows = sortedMarks.map(m => [
+                m.student.erp_id || "N/A",
+                m.student.erp_id || "N/A",
+                m.student.full_name || "N/A",
+                m.marks_obtained,
+                m.max_marks || 20 // Uses the db-stored max marks (default 20 fallback)
+            ]);
+
+            const filename = `OU_Export_${sub.batch}_${sub.assessment_type}`;
+
+            await generateBeautifulExcel(title, metaData, columns, dataRows, filename);
+            
         } catch (e) {
             console.error("Export Error:", e);
             window.erpDialog?.alert("Failed to export OU sheet.");
+        }
+    };
+
+    const handleEditMaxMarks = async (sub) => {
+        const val = await window.erpDialog?.prompt(`Enter the maximum marks for ${sub.master_subjects?.name} (${sub.assessment_type}):`, "Set Max Marks", "20");
+        if (val) {
+            const newMax = Number(val);
+            if (isNaN(newMax) || newMax <= 0) {
+                window.erpDialog?.alert("Invalid max marks value.");
+                return;
+            }
+            try {
+                const { error } = await supabase
+                    .from('marks_ledger')
+                    .update({ max_marks: newMax })
+                    .eq('subject_id', sub.subject_id)
+                    .eq('assessment_type', sub.assessment_type);
+                if (error) throw error;
+                window.erpDialog?.alert(`Max marks successfully updated to ${newMax} for all students in this assessment.`, "Success");
+            } catch(e) {
+                console.error(e);
+                window.erpDialog?.alert("Failed to update max marks.");
+            }
         }
     };
 
@@ -189,9 +214,14 @@ export default function AdminMarksController() {
                                             <span className="px-3 py-1 bg-red-500/10 text-red-500 font-black text-[10px] uppercase tracking-widest rounded-md border border-red-500/20"><i className="fa-solid fa-lock"></i> Locked</span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button onClick={() => exportToCSV(sub)} className="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-black rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2 ml-auto border border-emerald-500/20 hover:border-emerald-500">
-                                                <i className="fa-solid fa-file-csv text-sm"></i> Download CSV
-                                            </button>
+                                            <div className="flex flex-col items-end gap-2 ml-auto w-fit">
+                                                <button onClick={() => exportToCSV(sub)} className="px-4 py-2 w-full justify-center bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-black rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2 border border-emerald-500/20 hover:border-emerald-500">
+                                                    <i className="fa-solid fa-file-csv text-sm"></i> Download CSV
+                                                </button>
+                                                <button onClick={() => handleEditMaxMarks(sub)} className="px-4 py-2 w-full justify-center bg-blue-500/10 hover:bg-blue-500 text-blue-500 hover:text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2 border border-blue-500/20 hover:border-blue-500">
+                                                    <i className="fa-solid fa-sliders text-sm"></i> Set Max Marks
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
@@ -290,6 +320,7 @@ const ManualOverrideTab = () => {
         try {
             const { error } = await supabase.from('marks_ledger').update({
                 marks_obtained: editMark.marks_obtained,
+                max_marks: editMark.max_marks,
                 updated_at: new Date().toISOString()
             }).eq('id', editMark.id);
             if (error) throw error;
@@ -347,7 +378,11 @@ const ManualOverrideTab = () => {
                                             <td className="py-3 px-4 text-xs font-bold text-themeTextSec">{m.assessment_type}</td>
                                             <td className="py-3 px-4">
                                                 {editMark?.id === m.id ? (
-                                                    <input type="number" value={editMark.marks_obtained} onChange={e => setEditMark({...editMark, marks_obtained: Number(e.target.value)})} className="w-20 bg-black/5 dark:bg-white/5 border border-black/10 rounded px-2 py-1 outline-none text-sm font-bold" />
+                                                    <div className="flex gap-2 items-center">
+                                                        <input type="number" value={editMark.marks_obtained} onChange={e => setEditMark({...editMark, marks_obtained: Number(e.target.value)})} className="w-16 bg-black/5 dark:bg-white/5 border border-black/10 rounded px-2 py-1 outline-none text-sm font-bold text-center" title="Marks Obtained" />
+                                                        <span className="text-themeTextSec">/</span>
+                                                        <input type="number" value={editMark.max_marks || editMark.total_marks || 20} onChange={e => setEditMark({...editMark, max_marks: Number(e.target.value)})} className="w-16 bg-black/5 dark:bg-white/5 border border-black/10 rounded px-2 py-1 outline-none text-sm font-bold text-center" title="Max Marks" />
+                                                    </div>
                                                 ) : (
                                                     <span className="text-sm font-bold">{m.marks_obtained}/{m.max_marks || m.total_marks}</span>
                                                 )}

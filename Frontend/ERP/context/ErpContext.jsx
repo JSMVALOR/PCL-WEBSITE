@@ -44,55 +44,7 @@ export const ErpProvider = ({ children }) => {
         return !decryptSession(cachedSession);
     });
 
-    // --- SESSION TIMEOUT LOGIC ---
-    const [showSessionModal, setShowSessionModal] = useState(false);
-    const [sessionCountdown, setSessionCountdown] = useState(60);
-    
-    useEffect(() => {
-        if (!userSession) return;
-
-        let lastActivity = Date.now();
-        let intervalId;
-
-        const updateActivity = () => {
-            // Only update activity if we aren't showing the warning modal
-            // If the modal is shown, they MUST click "Continue Session" to reset it.
-            if (!showSessionModal) {
-                lastActivity = Date.now();
-            }
-        };
-
-        const checkSession = () => {
-            const now = Date.now();
-            const idleTime = now - lastActivity;
-            const SESSION_TIMEOUT_MS = 20 * 60 * 1000; // 20 minutes
-            const WARNING_TIME_MS = 60 * 1000; // 60 seconds
-
-            if (idleTime >= SESSION_TIMEOUT_MS) {
-                logout();
-            } else if (idleTime >= SESSION_TIMEOUT_MS - WARNING_TIME_MS) {
-                if (!showSessionModal) {
-                    setShowSessionModal(true);
-                }
-                setSessionCountdown(Math.max(0, Math.ceil((SESSION_TIMEOUT_MS - idleTime) / 1000)));
-            }
-        };
-
-        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-        events.forEach(e => document.addEventListener(e, updateActivity, { passive: true }));
-
-        intervalId = setInterval(checkSession, 1000);
-
-        return () => {
-            events.forEach(e => document.removeEventListener(e, updateActivity));
-            clearInterval(intervalId);
-        };
-    }, [userSession, showSessionModal]);
-
-    const continueSession = () => {
-        setShowSessionModal(false);
-        setSessionCountdown(60);
-    };
+    // Session Timeout Logic moved to SessionTimeoutGuard.jsx
 
     const [notices, setNotices] = useState([]);
     const [events, setEvents] = useState([]);
@@ -320,10 +272,13 @@ export const ErpProvider = ({ children }) => {
 
     // --- 5. LOGOUT ACTION ---
     const logout = async () => {
-        await supabase.auth.signOut();
-        localStorage.removeItem('jsmerp_master_session'); // Hard purge cache
-        sessionStorage.removeItem('jsmerp_timer_start'); // Clear session timer
-        localStorage.removeItem('erp_otp_verified'); // Clear OTP state
+        setUserSession(null);
+        try { await supabase.auth.signOut(); } catch (e) { console.warn(e); }
+        localStorage.removeItem('jsmerp_master_session'); 
+        sessionStorage.removeItem('jsmerp_timer_start'); 
+        localStorage.removeItem('erp_otp_verified'); 
+        sessionStorage.removeItem('jsmerp_session');
+        window.location.href = '/login';
     };
 
     // --- 6. GLOBAL NOTICES & PUSH NOTIFICATIONS ---
@@ -775,37 +730,9 @@ export const ErpProvider = ({ children }) => {
             if (error) throw error;
         }
         
-    }), [userSession, isAppLoading, isSidebarCollapsed, activeTheme, layoutPreference, navLayout, sidebarMode, notices, universalNotifications, unreadNotifications, events, attendanceCache, globalTimetable, facultyTimetable, showSessionModal, sessionCountdown])}>
+    }), [userSession, isAppLoading, isSidebarCollapsed, activeTheme, layoutPreference, navLayout, sidebarMode, notices, universalNotifications, unreadNotifications, events, attendanceCache, globalTimetable, facultyTimetable])}>
             {children}
 
-            {/* Session Timeout Modal */}
-            {showSessionModal && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in font-sans">
-                    <div className="bg-themePanel w-full max-w-sm rounded-[2rem] border border-themeBorder shadow-2xl p-8 text-center flex flex-col items-center">
-                        <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-6 border border-rose-500/20">
-                            <i className="fa-solid fa-clock text-3xl text-rose-500 animate-pulse"></i>
-                        </div>
-                        <h2 className="text-2xl font-black text-themeText tracking-tight mb-2">Session Expiring</h2>
-                        <p className="text-sm font-medium text-themeTextSec leading-relaxed mb-6">
-                            For your security, you will be logged out in <span className="text-rose-500 font-bold">{sessionCountdown} seconds</span> due to inactivity.
-                        </p>
-                        <div className="flex w-full gap-3">
-                            <button type="button"
-                                onClick={logout}
-                                className="flex-1 py-3 rounded-xl bg-themeElevated hover:bg-themeBorder text-themeTextSec hover:text-themeText text-xs font-black uppercase tracking-wider transition-colors border border-themeBorderStrong"
-                            >
-                                Log Out
-                            </button>
-                            <button type="button"
-                                onClick={continueSession}
-                                className="flex-1 py-3 rounded-xl bg-themeAccent hover:bg-themeAccentMuted text-white text-xs font-black uppercase tracking-wider transition shadow-lg active:scale-95 border border-themeAccent"
-                            >
-                                Continue
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </ErpContext.Provider>
     );
 };

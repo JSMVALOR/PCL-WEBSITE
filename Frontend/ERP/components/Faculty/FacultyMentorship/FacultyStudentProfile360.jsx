@@ -2,6 +2,7 @@
 import SlideCommit from '../../../../Shared/components/ReactBits/SlideCommit/SlideCommit';
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { generateBeautifulExcel } from '../../../../Shared/utils/ExcelExport';
 
 export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, onViewMarks }) {
  const [achievements, setAchievements] = useState(() => {
@@ -27,32 +28,31 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
      setAttendance(mentee.attendance_percentage + "%");
  }
  fetchAnalytics();
- }
  }, [mentee]);
 
- const exportLeavesToCSV = () => {
+ const exportLeavesToCSV = async () => {
     if (!leaves.length) {
         window.erpDialog?.alert("No leaves to export.");
         return;
     }
-    const headers = ["ID", "Category", "Reason", "From Date", "To Date", "Status", "Requested At"];
+    const title = "STUDENT LEAVE HISTORY";
+    const metaData = [
+        { label: "Student Name:", value: mentee.full_name },
+        { label: "Student ID:", value: mentee.erp_id || "N/A" },
+        { label: "Generated On:", value: new Date().toLocaleDateString() }
+    ];
+    const columns = ["ID", "Category", "Reason", "From Date", "To Date", "Status", "Requested At"];
     const rows = leaves.map(l => [
         l.id,
         l.category || "General",
-        `"${(l.reason || "").replace(/"/g, '""')}"`,
+        l.reason || "",
         l.from_date,
         l.to_date,
         l.status,
         new Date(l.created_at).toLocaleString()
     ]);
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Leaves_${mentee.full_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    
+    await generateBeautifulExcel(title, metaData, columns, rows, `Leaves_${mentee.full_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}`);
  };
 
  const fetchLeaves = async () => {

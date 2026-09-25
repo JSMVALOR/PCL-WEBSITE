@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { generateBeautifulExcel } from '../../../../Shared/utils/ExcelExport';
 
 export default function MentorshipReports({}) {
  const [isGenerating, setIsGenerating] = useState(false);
@@ -12,66 +13,59 @@ export default function MentorshipReports({}) {
  setLoadingReport(reportName);
  
  try {
- let csvContent = "data:text/csv;charset=utf-8,";
+            let columns = [];
+            let dataRows = [];
+            let metaData = [{ label: "Generated On:", value: new Date().toLocaleDateString() }];
  
- if (reportName === "Faculty Workload Report") {
- const { data: faculty } = await supabase.from('profiles').select('id, full_name, department').eq('role', 'faculty');
- const { data: mappings } = await supabase.from('mentorship').select('faculty_id');
- 
- const loadMap = {};
- mappings?.forEach(m => loadMap[m.faculty_id] = (loadMap[m.faculty_id] || 0) + 1);
- 
- csvContent += "Faculty Name,Department,Mentees Assigned\n";
- faculty?.forEach(f => {
- csvContent += `"${f.full_name}","${f.department || 'Law'}",${loadMap[f.id] || 0}\n`;
- });
-
- } else if (reportName === "Student Allocation Report") {
- const { data: mappings } = await supabase.from('mentorship').select('faculty_id, student_id, profiles!mentorship_student_id_fkey(full_name, erp_id, programme, semester)');
- const { data: faculty } = await supabase.from('profiles').select('id, full_name').eq('role', 'faculty');
- 
- const facMap = {};
- faculty?.forEach(f => facMap[f.id] = f.full_name);
- 
- csvContent += "Student Name,ERP ID,Programme,Semester,Assigned Mentor\n";
- mappings?.forEach(m => {
- csvContent += `"${m.profiles.full_name}","${m.profiles.erp_id || ''}","${m.profiles.programme || ''}","${m.profiles.semester || ''}","${facMap[m.faculty_id] || 'Unknown'}"\n`;
- });
-
- } else if (reportName === "Unassigned Students Report") {
- const { data: students } = await supabase.from('profiles').select('id, full_name, erp_id, programme, semester').eq('role', 'student');
- const { data: mappings } = await supabase.from('mentorship').select('student_id');
- 
- const assignedIds = new Set(mappings?.map(m => m.student_id));
- 
- csvContent += "Student Name,ERP ID,Programme,Semester\n";
- students?.forEach(s => {
- if (!assignedIds.has(s.id)) {
- csvContent += `"${s.full_name}","${s.erp_id || ''}","${s.programme || ''}","${s.semester || ''}"\n`;
- }
- });
-
- } else if (reportName === "Programme Wise Distribution") {
- const { data: mappings } = await supabase.from('mentorship').select('profiles!mentorship_student_id_fkey(programme)');
- const progMap = {};
- mappings?.forEach(m => {
- const p = m.profiles.programme || 'Unknown';
- progMap[p] = (progMap[p] || 0) + 1;
- });
- 
- csvContent += "Programme,Mentees Assigned\n";
- Object.keys(progMap).forEach(p => {
- csvContent += `"${p}",${progMap[p]}\n`;
- });
- }
-
- const encodedUri = encodeURI(csvContent);
- const link = document.createElement("a");
- link.setAttribute("href", encodedUri);
- link.setAttribute("download", `${reportName.replace(/\s+/g, '_').toLowerCase()}.csv`);
- document.body.appendChild(link);
- link.click();
- document.body.removeChild(link);
+            if (reportName === "Faculty Workload Report") {
+                const { data: faculty } = await supabase.from('profiles').select('id, full_name, department').eq('role', 'faculty');
+                const { data: mappings } = await supabase.from('mentorship').select('faculty_id');
+                
+                const loadMap = {};
+                mappings?.forEach(m => loadMap[m.faculty_id] = (loadMap[m.faculty_id] || 0) + 1);
+                
+                columns = ["Faculty Name", "Department", "Mentees Assigned"];
+                faculty?.forEach(f => {
+                    dataRows.push([f.full_name, f.department || 'Law', loadMap[f.id] || 0]);
+                });
+            } else if (reportName === "Student Allocation Report") {
+                const { data: mappings } = await supabase.from('mentorship').select('faculty_id, student_id, profiles!mentorship_student_id_fkey(full_name, erp_id, programme, semester)');
+                const { data: faculty } = await supabase.from('profiles').select('id, full_name').eq('role', 'faculty');
+                
+                const facMap = {};
+                faculty?.forEach(f => facMap[f.id] = f.full_name);
+                
+                columns = ["Student Name", "ERP ID", "Programme", "Semester", "Assigned Mentor"];
+                mappings?.forEach(m => {
+                    dataRows.push([m.profiles.full_name, m.profiles.erp_id || '', m.profiles.programme || '', m.profiles.semester || '', facMap[m.faculty_id] || 'Unknown']);
+                });
+            } else if (reportName === "Unassigned Students Report") {
+                const { data: students } = await supabase.from('profiles').select('id, full_name, erp_id, programme, semester').eq('role', 'student');
+                const { data: mappings } = await supabase.from('mentorship').select('student_id');
+                
+                const assignedIds = new Set(mappings?.map(m => m.student_id));
+                
+                columns = ["Student Name", "ERP ID", "Programme", "Semester"];
+                students?.forEach(s => {
+                    if (!assignedIds.has(s.id)) {
+                        dataRows.push([s.full_name, s.erp_id || '', s.programme || '', s.semester || '']);
+                    }
+                });
+            } else if (reportName === "Programme Wise Distribution") {
+                const { data: mappings } = await supabase.from('mentorship').select('profiles!mentorship_student_id_fkey(programme)');
+                const progMap = {};
+                mappings?.forEach(m => {
+                    const p = m.profiles.programme || 'Unknown';
+                    progMap[p] = (progMap[p] || 0) + 1;
+                });
+                
+                columns = ["Programme", "Mentees Assigned"];
+                Object.keys(progMap).forEach(p => {
+                    dataRows.push([p, progMap[p]]);
+                });
+            }
+           
+            await generateBeautifulExcel(reportName.toUpperCase(), metaData, columns, dataRows, reportName.replace(/\s+/g, '_').toLowerCase());
 
  await supabase.from('audit_logs').insert({ action: `Exported ${reportName}`, table_name: 'mentorship' });
 

@@ -140,3 +140,45 @@ DROP POLICY IF EXISTS "Enable insert for students" ON public.assignment_submissi
 CREATE POLICY "Enable insert for students" ON public.assignment_submissions FOR INSERT WITH CHECK (auth.uid() = student_id OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid()));
 DROP POLICY IF EXISTS "Enable update for faculty and students" ON public.assignment_submissions;
 CREATE POLICY "Enable update for faculty and students" ON public.assignment_submissions FOR UPDATE USING (true);
+ALTER TABLE public.faculty_payroll ADD COLUMN IF NOT EXISTS lop_waived_days integer DEFAULT 0;
+ALTER TABLE public.faculty_payroll ADD COLUMN IF NOT EXISTS lop_waived_amount numeric DEFAULT 0;
+ALTER TABLE public.faculty_payroll ADD COLUMN IF NOT EXISTS lop_waiver_reason text;
+ALTER TABLE public.faculty_payroll ADD COLUMN IF NOT EXISTS salary_structure jsonb;
+ALTER TABLE public.faculty_payroll ADD COLUMN IF NOT EXISTS gross_lop_amount numeric DEFAULT 0;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS questionnaire_completed BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS questionnaire_data JSONB;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS force_password_change BOOLEAN DEFAULT FALSE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS dob DATE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS gender TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS nationality TEXT DEFAULT 'Indian';
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS blood_group TEXT;
+-- Enable RLS on profiles if not already enabled
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- Allow users to update their own profile
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+CREATE POLICY "Users can update own profile" 
+ON public.profiles 
+FOR UPDATE 
+USING (auth.uid() = id);
+
+-- Ensure users can read their own profile (and others if necessary, or just their own)
+DROP POLICY IF EXISTS "Enable read access for all" ON public.profiles;
+CREATE POLICY "Enable read access for all" 
+ON public.profiles 
+FOR SELECT 
+USING (true);
+
+-- Fix for Blog Submission from public website (RLS violations)
+ALTER TABLE public.admin_notices ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Allow public insert to admin_notices" ON public.admin_notices;
+CREATE POLICY "Allow public insert to admin_notices" ON public.admin_notices FOR INSERT TO anon, authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public select on admin_notices" ON public.admin_notices;
+CREATE POLICY "Allow public select on admin_notices" ON public.admin_notices FOR SELECT TO anon, authenticated USING (true);
+
+ALTER TABLE public.notices ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow public insert to notices" ON public.notices;
+CREATE POLICY "Allow public insert to notices" ON public.notices FOR INSERT TO anon, authenticated WITH CHECK (true);

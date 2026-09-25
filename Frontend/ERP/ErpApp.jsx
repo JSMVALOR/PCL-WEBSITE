@@ -34,6 +34,7 @@ import ToastContainer from './components/shared/ToastContainer';
 import './utils/ToastManager';
 import CredentialVerification from './components/Public/CredentialVerification';
 import GlobalSearch from './components/shared/GlobalSearch';
+import ErrorBoundary from './components/shared/ErrorBoundary';
 
 // ==========================================
 // 3. STUDENT PORTAL MODULES
@@ -353,7 +354,7 @@ export default function App() {
         case 'helpdesk': return <AdminHelpdesk />;
                 case 'siteeditor': return <AdminSiteEditor />;
         case 'parent-preview': return <ParentDashboard onLogout={logout} />;
-        case 'events': return <EventsBoard />;
+
         case 'credentials': return <Credentials />;
         default: return <ModuleUnderConstruction tabName={activeTab} role="Admin" />;
       }
@@ -398,7 +399,9 @@ export default function App() {
                 <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
 
                 <div className="flex-1 p-4 pt-[calc(1rem+env(safe-area-inset-top))] lg:p-6 lg:pt-6 flex flex-col relative z-10">
-                  {renderContent()}
+                  <ErrorBoundary>
+                    {renderContent()}
+                  </ErrorBoundary>
                 </div>
 
               {/* ERP Footer with Privacy & Terms */}

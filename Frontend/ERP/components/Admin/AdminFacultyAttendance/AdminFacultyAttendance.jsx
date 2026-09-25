@@ -40,9 +40,9 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
 
             const facultyWithSessions = new Set((sessions || []).map(s => s.faculty_id));
 
-            // 3. Get manual admin overrides from faculty_attendance_log
-            const { data: logs } = await supabase
-                .from('faculty_attendance_log')
+            // 3. Get manual admin overrides from faculty_daily_presence
+            const { data: logs, error: logsError } = await supabase
+                .from('faculty_daily_presence')
                 .select('*')
                 .eq('date', selectedDate);
 
@@ -91,7 +91,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             setActionLoading(facultyId);
             setAuditModal({ isOpen: false, facultyId: null, newStatus: '', previousStatus: '' });
             
-            // Upsert into faculty_attendance_log
+            // Upsert into faculty_daily_presence
             const payload = {
                 faculty_id: facultyId,
                 date: selectedDate,
@@ -101,16 +101,16 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             };
 
             const { error } = await supabase
-                .from('faculty_attendance_log')
+                .from('faculty_daily_presence')
                 .upsert(payload, { onConflict: 'faculty_id,date' });
 
             if (error) {
                 // If the constraint isn't set up, fallback to simple insert/update manually
-                const { data: existing } = await supabase.from('faculty_attendance_log').select('id').eq('faculty_id', facultyId).eq('date', selectedDate).maybeSingle();
+                const { data: existing } = await supabase.from('faculty_daily_presence').select('id').eq('faculty_id', facultyId).eq('date', selectedDate).maybeSingle();
                 if (existing) {
-                    await supabase.from('faculty_attendance_log').update({ status }).eq('id', existing.id);
+                    await supabase.from('faculty_daily_presence').update({ status }).eq('id', existing.id);
                 } else {
-                    await supabase.from('faculty_attendance_log').insert([payload]);
+                    await supabase.from('faculty_daily_presence').insert([payload]);
                 }
             }
 

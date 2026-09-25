@@ -48,10 +48,10 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  notice_id: noticeId,
  title: `Leave Request ${actionType === 'Reject' ? 'Rejected' : 'Approved'}`,
  category: 'System Alert',
- target_audience: 'person',
+ target_audience: ['person'],
  target_id: request.faculty_id,
  priority: 'high',
- content: `Your leave request from ${new Date(request.start_date).toLocaleDateString()} to ${new Date(request.end_date).toLocaleDateString()} has been ${actionType === 'Reject' ? 'Rejected' : 'Approved'}.`,
+ content: `Your leave request from ${new Date(request.from_date).toLocaleDateString()} to ${new Date(request.to_date).toLocaleDateString()} has been ${actionType === 'Reject' ? 'Rejected' : 'Approved'}.`,
  author_name: 'Admin',
  author_id: null
  }]);
@@ -116,7 +116,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <div className="text-right">
  <p className="text-[13px] font-medium text-themeTextSec">Duration</p>
  <p className="text-sm font-bold text-themeText mt-1">
- {new Date(request.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - {new Date(request.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+ {new Date(request.from_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - {new Date(request.to_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
  </p>
  <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-0.5">{request.days} Days</p>
  </div>

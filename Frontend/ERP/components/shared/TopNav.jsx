@@ -297,9 +297,10 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                         </button>
                                         
                                         <button type="button" 
-                                            onClick={async () => {
-                                                const confirmed = await window.erpDialog?.confirm("Are you sure you want to securely sign out?", "End Session");
-                                                if (confirmed) {
+                                            onClick={() => {
+                                                if (window.triggerManualLogout) {
+                                                    window.triggerManualLogout();
+                                                } else {
                                                     onLogout();
                                                 }
                                             }}

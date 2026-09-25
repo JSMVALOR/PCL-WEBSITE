@@ -23,11 +23,12 @@ export default function BlogDetail() {
         setBlog(data);
         
         // Fetch ERP Profile if author is from ERP
-        if (data.author_id && !data.author_id.startsWith('GUEST:')) {
+        const erpId = data.author_erp_id || data.author_id;
+        if (erpId && !erpId.startsWith('GUEST:')) {
           const { data: profileData } = await supabase
             .from('profiles')
             .select('full_name, avatar_url, role, programme, department, academic_batch')
-            .eq('erp_id', data.author_id)
+            .eq('erp_id', erpId)
             .single();
             
           if (profileData) {
@@ -98,9 +99,9 @@ export default function BlogDetail() {
               </h1>
               
               {/* Mobile Author Info (Hidden on Desktop) */}
-              <div className="flex lg:hidden items-center gap-4 text-[var(--text-muted)] border-y border-[var(--card-border)] py-4 my-6">
+              <div className="flex lg:hidden items-center gap-4 text-[var(--text-muted)] bg-[var(--card-bg)] border border-[var(--card-border)] p-4 rounded-2xl my-8 shadow-lg">
                 {authorProfile && (
-                  <div className="w-10 h-10 rounded-full overflow-hidden border border-[var(--primary-color)]/30 shrink-0">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--primary-color)]/30 shrink-0 shadow-[0_0_10px_var(--primary-glow)]">
                     <img decoding="async" loading="lazy" 
                       src={authorProfile.avatar_url || `https://ui-avatars.com/api/?name=${blog.author_name || 'Admin'}&background=random`} 
                       alt={blog.author_name}
@@ -108,9 +109,17 @@ export default function BlogDetail() {
                     />
                   </div>
                 )}
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1">
                   <span className="text-sm font-bold text-[var(--text-color)]">{authorProfile?.full_name || blog.author_name || 'Admin'}</span>
-                  <span className="text-[10px] uppercase tracking-widest">{pubDate.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  {authorProfile && (
+                    <div className="flex items-center gap-2 mt-1 mb-1">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-[var(--primary-color)]">{authorProfile.role}</span>
+                      <span className="text-[8px] font-bold uppercase tracking-widest opacity-60">• {authorProfile.role === 'student' ? authorProfile.programme : authorProfile.department}</span>
+                    </div>
+                  )}
+                  <span className="text-[10px] uppercase tracking-widest opacity-50 flex items-center gap-1">
+                    <Calendar size={10} /> {pubDate.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
                 </div>
               </div>
             </div>

@@ -158,17 +158,15 @@ export default function AdminFacultyDirectory({ isEmbedded = false,  isHubView =
  if (facultyProfileError) throw facultyProfileError;
 
  // 6. Send Email
- setProvisionLogs(prev => [...prev, `[EMAIL] Dispatching secure welcome letter and credentials via EmailJS...`]);
+ setProvisionLogs(prev => [...prev, `[EMAIL] Dispatching secure setup link via Supabase...`]);
  try {
- await sendSystemEmail('ONBOARDING', {
- to_email: formData.email,
- erp_id: generatedId,
- password: generatedPassword,
- login_url: window.location.origin
+ const { error: resetError } = await provisionClient.auth.resetPasswordForEmail(formData.email, {
+ redirectTo: window.location.origin
  });
- setProvisionLogs(prev => [...prev, `[SUCCESS] Welcome letter successfully dispatched to ${formData.email}!`]);
+ if (resetError) throw resetError;
+ setProvisionLogs(prev => [...prev, `[SUCCESS] Setup link successfully dispatched to ${formData.email}!`]);
  } catch (emailErr) {
- setProvisionLogs(prev => [...prev, `[WARNING] Email dispatch failed. Credentials: ID=${generatedId}, PW=${generatedPassword}`]);
+ setProvisionLogs(prev => [...prev, `[WARNING] Link dispatch failed: ${emailErr.message}. Credentials: ID=${generatedId}, PW=${generatedPassword}`]);
  }
 
  setProvisionLogs(prev => [...prev, `[SYSTEM] Pipeline complete! Faculty account provisioned.`]);

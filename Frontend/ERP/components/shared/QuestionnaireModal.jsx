@@ -241,9 +241,25 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                                             <input type="text" name="previousInstitution" required placeholder="e.g., National Law University" value={formData.previousInstitution} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-sm font-semibold text-themeText">LinkedIn Profile URL *</label>
-                                        <input type="url" name="linkedInProfile" required placeholder="https://linkedin.com/in/..." value={formData.linkedInProfile} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Core Teaching Subjects *</label>
+                                            <input type="text" name="teachingSubjects" required placeholder="e.g., Criminal Law, Torts" value={formData.teachingSubjects || ''} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Research Interests</label>
+                                            <input type="text" name="researchInterests" placeholder="e.g., Cyber Law, Human Rights" value={formData.researchInterests || ''} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">Number of Publications</label>
+                                            <input type="number" min="0" name="publicationsCount" placeholder="e.g., 10" value={formData.publicationsCount || ''} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-sm font-semibold text-themeText">LinkedIn Profile URL *</label>
+                                            <input type="url" name="linkedInProfile" required placeholder="https://linkedin.com/in/..." value={formData.linkedInProfile} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
+                                        </div>
                                     </div>
                                 </>
                             ) : (

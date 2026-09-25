@@ -476,10 +476,13 @@ export default function Internships({ isEmbedded = false }) {
  <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-black/[0.04] dark:border-white/[0.08] ${getTypeTheme(log.type)}`}>
  {log.type}
  </span>
+ {log.approval_status === 'approved' && <span className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] lg:text-[12px] font-bold border border-emerald-500/20"><i className="fa-solid fa-badge-check"></i> Approved</span>}
+ {log.approval_status === 'escalated_to_admin' && <span className="px-2 py-1 rounded-md bg-amber-500/10 text-amber-500 text-[8px] lg:text-[12px] font-bold border border-amber-500/20"><i className="fa-solid fa-clock"></i> Escalated</span>}
+ {log.approval_status === 'rejected' && <span className="px-2 py-1 rounded-md bg-rose-500/10 text-rose-500 text-[8px] lg:text-[12px] font-bold border border-rose-500/20"><i className="fa-solid fa-xmark"></i> Rejected</span>}
+ {(!log.approval_status || log.approval_status === 'pending') && <span className="px-2 py-1 rounded-md bg-indigo-500/10 text-indigo-500 text-[8px] lg:text-[12px] font-bold border border-indigo-500/20"><i className="fa-solid fa-spinner fa-spin"></i> Pending Mentor</span>}
  </div>
  <div className="flex items-center gap-3">
- {log.is_verified && <i className="fa-solid fa-badge-check text-emerald-400" title="Verified"></i>}
- <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+ <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/10 dark:border-white/20 text-themeTextSec transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
  <i className="fa-solid fa-chevron-down text-[10px]"></i>
  </div>
  </div>

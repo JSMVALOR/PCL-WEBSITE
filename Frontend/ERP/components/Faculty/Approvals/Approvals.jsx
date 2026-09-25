@@ -99,7 +99,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  title: `Leave Request ${newStatus.toUpperCase()}`,
  content: `Your leave request for ${new Date(leave.created_at).toLocaleDateString()} has been ${newStatus}. ${remarks ? `Remarks: ${remarks}` : ''}`,
  author_id: userSession.db_id,
- target_audience: 'person',
+ target_audience: ['person'],
  target_id: leave.profiles?.erp_id
  });
  

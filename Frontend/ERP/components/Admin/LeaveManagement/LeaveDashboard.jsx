@@ -20,7 +20,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  setIsLoading(true);
  try {
  // For now, using mock counts if table is empty, but hitting the real table
- const { data: leaves } = await supabase.from('faculty_leaves').select('id, status, start_date, end_date');
+ const { data: leaves } = await supabase.from('faculty_leaves').select('id, status, from_date, to_date');
  
  if (!leaves || leaves.length === 0) {
  // Return dummy data only if table is entirely empty to show the UI works
@@ -52,13 +52,13 @@ export default function LeaveDashboard({ setActiveTab }) {
 
  // Approved this month
  if (l.status === 'Approved') {
- const startDate = new Date(l.start_date);
+ const startDate = new Date(l.from_date);
  if (startDate.getMonth() === currentMonth && startDate.getFullYear() === currentYear) {
  approvedThisMonth++;
  }
 
  // On Leave Today
- if (l.start_date <= today && l.end_date >= today) {
+ if (l.from_date <= today && l.to_date >= today) {
  onLeaveToday++;
  }
 

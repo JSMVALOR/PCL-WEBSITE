@@ -20,10 +20,10 @@ export default function LeaveCalendar({}) {
  
  const { data } = await supabase
  .from('faculty_leaves')
- .select('id, start_date, end_date, leave_type')
+ .select('id, from_date, to_date, leave_type')
  .eq('status', 'Approved')
- .gte('end_date', startOfMonth)
- .lte('start_date', endOfMonth);
+ .gte('to_date', startOfMonth)
+ .lte('from_date', endOfMonth);
 
  setLeaves(data || []);
  } catch (error) {
@@ -59,7 +59,7 @@ export default function LeaveCalendar({}) {
  
  // Check if any leaves fall on this day
  const leavesOnDay = leaves.filter(l => {
- return dateStr >= l.start_date && dateStr <= l.end_date;
+ return dateStr >= l.from_date && dateStr <= l.to_date;
  });
 
  const isToday = new Date().toISOString().split('T')[0] === dateStr;

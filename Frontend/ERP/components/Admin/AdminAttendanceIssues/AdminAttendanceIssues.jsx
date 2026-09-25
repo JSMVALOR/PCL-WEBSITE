@@ -72,7 +72,9 @@ export default function AdminAttendanceIssues() {
                     ...s,
                     attendance_percentage: percentage
                 };
-            }).sort((a, b) => a.attendance_percentage - b.attendance_percentage);
+            })
+            .filter(s => s.attendance_percentage < debarThreshold)
+            .sort((a, b) => a.attendance_percentage - b.attendance_percentage);
 
             setStudents(processed);
         } catch(e) {
@@ -85,7 +87,7 @@ export default function AdminAttendanceIssues() {
     useEffect(() => {
         if (activeTab === 'appeals') fetchAppeals();
         else fetchDebarmentData();
-    }, [activeTab, debarBatch]);
+    }, [activeTab, debarBatch, debarThreshold]);
 
     const handleAction = async (appeal, action) => {
         if(!appeal.session_id || !appeal.student_id) return window.erpDialog?.alert("Invalid payload. Missing session/student ID.");

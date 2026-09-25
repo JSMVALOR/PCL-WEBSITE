@@ -195,18 +195,16 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  }
 
  // 5. Send Welcome Email
- addLog(`[EMAIL] Dispatching secure welcome letter and credentials via EmailJS...`);
+ addLog(`[EMAIL] Dispatching secure setup link via Supabase...`);
  try {
- await sendSystemEmail('ONBOARDING', {
- to_email: app.email,
- erp_id: generatedId,
- password: generatedPassword,
- login_url: window.location.origin
+ const { error: resetError } = await provisionClient.auth.resetPasswordForEmail(app.email, {
+ redirectTo: window.location.origin
  });
- addLog(`[SUCCESS] Welcome letter successfully dispatched to ${app.email}!`);
+ if (resetError) throw resetError;
+ addLog(`[SUCCESS] Setup link successfully dispatched to ${app.email}!`);
  } catch (emailErr) {
- console.error("EmailJS Error:", emailErr);
- addLog(`[WARNING] Email dispatch failed: ${emailErr.message}. The account was created successfully, but credentials must be provided manually.`);
+ console.error("Supabase Email Error:", emailErr);
+ addLog(`[WARNING] Link dispatch failed: ${emailErr.message}. The account was created successfully, but credentials must be provided manually.`);
  }
 
  setProvisionStatus("success");
