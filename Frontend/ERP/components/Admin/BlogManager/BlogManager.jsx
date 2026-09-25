@@ -159,7 +159,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  notice_id: noticeId,
  title: 'Blog Published!',
  category: 'System Alert',
- target_audience: 'person',
+ target_audience: ['person'],
  target_id: authorId,
  priority: 'high',
  content: `Congratulations! Your blog post titled "${formData.title}" has been approved and published on the Prudentia website.`,
@@ -168,6 +168,8 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  }]);
  }
  window.erpDialog?.alert("Blog approved and author notified via ERP.");
+ setCurrentBlog(prev => ({ ...prev, is_public: true }));
+ setFormData(prev => ({ ...prev, is_public: true }));
  setIsEditing(false);
  fetchBlogs();
  } catch (error) {
@@ -195,7 +197,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  notice_id: noticeId,
  title: currentBlog?.is_public ? 'Blog Removed' : 'Blog Submission Update',
  category: 'System Alert',
- target_audience: 'person',
+ target_audience: ['person'],
  target_id: authorId,
  priority: 'normal',
  content: content,
@@ -277,13 +279,6 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  </>
  )}
  
- <a href={generateWhatsAppLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-themeText dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
- <i className="fa-brands fa-whatsapp text-sm"></i> Approve
- </a>
- <a href={generateWhatsAppLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-themeText dark:text-white border border-[#25D366]/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
- <i className="fa-brands fa-whatsapp text-sm"></i> Reject
- </a>
- <div className="w-[1px] h-6 bg-themeBorderStrong mx-2"></div>
  <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Approve
  </a>

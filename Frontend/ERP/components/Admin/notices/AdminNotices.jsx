@@ -11,6 +11,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import TargetAudienceSelector from "../../shared/TargetAudienceSelector";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import AcademicCalendarGrid from "./AcademicCalendarGrid";
+import EventsBoard from "../../notices/EventsBoard";
 
 export default function AdminNotices({ isHubView = false }) {
  const { userSession } = useERP();
@@ -66,7 +67,7 @@ export default function AdminNotices({ isHubView = false }) {
  const fetchEvents = async () => {
  try {
  const { data, error } = await supabase
- .from('academic_events')
+ .from('academic_calendar')
  .select('*')
  .limit(300)
  .order('start_date', { ascending: true });
@@ -123,7 +124,7 @@ export default function AdminNotices({ isHubView = false }) {
  e.preventDefault();
  setIsScheduling(true);
  try {
- const { error } = await supabase.from('academic_events').insert([{
+ const { error } = await supabase.from('academic_calendar').insert([{
         title: eventTitle,
         start_date: eventStartDate,
         end_date: eventEndDate || eventStartDate,
@@ -165,7 +166,7 @@ export default function AdminNotices({ isHubView = false }) {
 
  const handleDeleteEvent = async (id) => {
  
- await supabase.from('academic_events').delete().eq('id', id);
+ await supabase.from('academic_calendar').delete().eq('id', id);
  fetchEvents();
  };
 
@@ -259,7 +260,7 @@ export default function AdminNotices({ isHubView = false }) {
  <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
  <div className="flex gap-4 mt-2 pt-3 border-t border-themeBorder dark:border-white/5">
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-regular fa-clock mr-1"></i> {new Date(n.created_at).toLocaleString()}</span>
- <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {n.target_audience.join(', ')}</span>
+ <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {Array.isArray(n.target_audience) && n.target_audience.join ? n.target_audience.join(', ') : typeof n.target_audience === 'string' ? n.target_audience : 'Unknown'}</span>
  {n.requires_acknowledgement && <span className="text-[10px] font-bold text-emerald-500"><i className="fa-solid fa-signature mr-1"></i> Requires Signature</span>}
  </div>
  </div>
@@ -382,7 +383,7 @@ export default function AdminNotices({ isHubView = false }) {
 
  </div>
 
- {activeTab === 'broadcast' ? renderBroadcastTab() : activeTab === 'events' ? renderEventsTab() : <AcademicCalendarGrid />}
+ {activeTab === 'broadcast' ? renderBroadcastTab() : activeTab === 'events' ? <EventsBoard /> : <AcademicCalendarGrid />}
  
  </div>
  </div>

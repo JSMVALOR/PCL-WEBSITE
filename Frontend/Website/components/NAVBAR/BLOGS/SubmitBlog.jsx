@@ -76,7 +76,7 @@ export default function SubmitBlog() {
                 notice_id: adminNoticeId,
                 title: 'New Blog Submission',
                 category: 'System Alert',
-                target_audience: 'admin',
+                target_audience: `["admin"]`,
                 priority: 'normal',
                 content: `A new blog post titled "${formData.title}" has been submitted by ${authorName}. Please review it in the Blog Manager.`,
                 author_name: 'System',
