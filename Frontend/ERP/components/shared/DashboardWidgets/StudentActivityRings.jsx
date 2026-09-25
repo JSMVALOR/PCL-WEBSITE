@@ -102,9 +102,9 @@ export default function StudentActivityRings() {
 
             if (isMounted) {
                 setData([
-                    { name: 'Campus Avg', value: campusAvgScore, fill: '#FF9F0A' },
-                    { name: 'Attendance', value: attendanceScore, fill: '#34C759' }, 
-                    { name: 'Assignments', value: assignmentsScore, fill: '#007AFF' }, 
+                    { name: 'Campus Avg', value: campusAvgScore === 0 ? 0.1 : campusAvgScore, fill: '#FF9F0A' },
+                    { name: 'Attendance', value: attendanceScore === 0 ? 0.1 : attendanceScore, fill: '#34C759' }, 
+                    { name: 'Assignments', value: assignmentsScore === 0 ? 0.1 : assignmentsScore, fill: '#007AFF' }, 
                 ]);
                 setLoading(false);
             }
@@ -170,7 +170,7 @@ export default function StudentActivityRings() {
             {[...data].reverse().map((entry, index) => (
                 <div key={index} className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md border border-black/5 dark:border-white/5">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.fill }}></div>
-                    <span className="text-[12px] font-medium text-themeTextSec">{entry.name} <span className="text-themeText ml-0.5">{entry.value}%</span></span>
+                    <span className="text-[12px] font-medium text-themeTextSec">{entry.name} <span className="text-themeText ml-0.5">{entry.value === 0.1 ? 0 : entry.value}%</span></span>
                 </div>
             ))}
         </div>
