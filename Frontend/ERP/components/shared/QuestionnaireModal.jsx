@@ -9,6 +9,11 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
     const [isLoading, setIsLoading] = useState(false);
     
     const [formData, setFormData] = useState({
+        dob: '',
+        gender: '',
+        nationality: 'Indian',
+        phone: '',
+        personalEmail: '',
         linkedInProfile: '',
         legalInterest: '',
         careerGoal: '',
@@ -25,6 +30,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
         sameAsPresentAddress: false,
         aadharNumber: '',
         emergencyContact: '',
+        emergencyRelation: '',
         emergencyPhone: '', // Just the 10 digit number
         highestQualification: '',
         specialization: '',
@@ -94,7 +100,11 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
         // Prefix +91 for the final saved data
         const finalData = {
             ...formData,
-            emergencyPhone: `+91 ${formData.emergencyPhone}`
+            emergencyPhone: `+91 ${formData.emergencyPhone}`,
+            personalEmail: formData.personalEmail,
+            currentAddress: formData.presentAddress,
+            emergencyName: formData.emergencyContact,
+            emergencyRelation: formData.emergencyRelation
         };
 
         try {
@@ -102,7 +112,12 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                 .from('profiles')
                 .update({
                     questionnaire_completed: true,
-                    questionnaire_data: finalData
+                    questionnaire_data: finalData,
+                    dob: formData.dob || null,
+                    gender: formData.gender || null,
+                    nationality: formData.nationality || 'Indian',
+                    phone: formData.phone || null,
+                    blood_group: formData.bloodGroup || null
                 })
                 .eq('id', userSession.db_id);
 
@@ -144,6 +159,46 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
                     <form id="questionnaire-form" onSubmit={handleSubmit} className="flex flex-col gap-10 bg-themePanel/85 backdrop-blur-2xl p-8 lg:p-12 rounded-[2.5rem] border border-black/5 dark:border-white/5 shadow-2xl">
                         
+                        {/* Section 0: Personal & Contact Information */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Personal & Contact Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Date of Birth</label>
+                                    <input type="date" name="dob" required value={formData.dob} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Gender</label>
+                                    <select name="gender" required value={formData.gender} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Nationality</label>
+                                    <input type="text" name="nationality" required value={formData.nationality} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" placeholder="Indian" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Mobile Number</label>
+                                    <input type="tel" name="phone" required minLength={10} maxLength={10} value={formData.phone} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" placeholder="10-digit mobile number" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Personal Email</label>
+                                    <input type="email" name="personalEmail" required value={formData.personalEmail} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" placeholder="Personal Email ID" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Emergency Contact Name</label>
+                                    <input type="text" name="emergencyContact" required value={formData.emergencyContact} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" placeholder="Full Name" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Emergency Contact Relation</label>
+                                    <input type="text" name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" placeholder="e.g. Father, Mother, Guardian" />
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Section 1: Academic & Professional Details */}
                         <div className="flex flex-col gap-4">
                             <h3 className="text-sm font-bold tracking-normal text-themeAccent border-b-theme border-black/10 dark:border-white/20 pb-2">Academic & Professional Background</h3>
