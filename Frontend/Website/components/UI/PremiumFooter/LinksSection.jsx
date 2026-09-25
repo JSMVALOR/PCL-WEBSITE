@@ -10,9 +10,9 @@ export default function LinksSection() {
   const isAdmissionsOpen = siteContext?.isAdmissionsOpen;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-y-6 gap-x-4 lg:gap-8 xl:gap-12 mb-8 md:mb-16 relative z-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-y-12 gap-x-8 lg:gap-12 xl:gap-16 mb-12 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-16">
       {/* Brand & Identity */}
-      <div className="flex flex-col col-span-2 lg:col-span-1">
+      <div className="flex flex-col col-span-1 sm:col-span-2 lg:col-span-5 pr-0 lg:pr-12">
         <Link to="/" className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 group w-fit">
           <img decoding="async" loading="lazy" 
             src={logo} 
@@ -35,7 +35,7 @@ export default function LinksSection() {
       </div>
 
       {/* Navigation */}
-      <div className="flex flex-col col-span-1">
+      <div className="flex flex-col col-span-1 lg:col-span-2">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Navigation</h4>
         <ul className="flex flex-col gap-2 md:gap-4">
           <li><Link to="/" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Home</Link></li>
@@ -47,7 +47,7 @@ export default function LinksSection() {
       </div>
 
       {/* Resources */}
-      <div className="flex flex-col col-span-1">
+      <div className="flex flex-col col-span-1 lg:col-span-2">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Resources</h4>
         <ul className="flex flex-col gap-2 md:gap-4">
           {isAdmissionsOpen ? (
@@ -62,9 +62,9 @@ export default function LinksSection() {
       </div>
 
       {/* Social & Contact */}
-      <div className="flex flex-col items-center lg:items-start text-center lg:text-left col-span-2 lg:col-span-1 mt-2 md:mt-0">
+      <div className="flex flex-col items-start text-left col-span-1 sm:col-span-2 lg:col-span-3 mt-4 lg:mt-0">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Connect</h4>
-        <ul className="flex flex-col items-center lg:items-start gap-2 md:gap-4 mb-4 md:mb-6">
+        <ul className="flex flex-col items-start gap-2 md:gap-4 mb-6 md:mb-8">
           <li><a href="mailto:info@prudentiacollegeoflaw.com" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium break-all">info@prudentiacollegeoflaw.com</a></li>
           <li><a href="tel:+918599000777" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">+91 8599000777</a></li>
           <li><span className="text-[var(--text-muted)] text-xs md:text-sm font-medium">Hyderabad, India</span></li>

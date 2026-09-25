@@ -31,13 +31,13 @@ const StaggeredMenu = ({ items = [], socialItems = [], displaySocials = true, sh
 
   // Framer Motion Variants
   const menuVariants = {
-    closed: { x: '100%', transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-    open: { x: '0%', transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], staggerChildren: 0.1, delayChildren: 0.1 } }
+    closed: { x: '100%', transition: { duration: 0.4, ease: 'easeInOut' } },
+    open: { x: '0%', transition: { duration: 0.4, ease: 'easeOut', staggerChildren: 0.05, delayChildren: 0.1 } }
   };
 
   const itemVariants = {
-    closed: { opacity: 0, x: 20 },
-    open: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+    closed: { opacity: 0, x: 10 },
+    open: { opacity: 1, x: 0, transition: { duration: 0.3, ease: 'easeOut' } }
   };
 
   const submenuVariants = {
