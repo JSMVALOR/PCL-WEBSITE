@@ -92,7 +92,7 @@ export default function StudentCareerHub() {
  <div className="animate-fade-in">
  {activeTab === "mootcourt" && <MootCourt />}
  {activeTab === "internships" && <Internships />}
- {activeTab === "achievements" && <Achievements />}
+ {activeTab === "achievements" && <Achievements onNavigateToCV={() => setActiveTab('cvbuilder')} />}
  {activeTab === "cvbuilder" && <CVBuilder />}
  </div>
  </div>

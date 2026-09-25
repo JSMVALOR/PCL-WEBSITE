@@ -56,7 +56,7 @@ export default function Portfolio() {
                             transition={{ duration: 0.2 }}
                             className="w-full h-full"
                         >
-                            {activeTab === 'achievements' && <Achievements isEmbedded={true} />}
+                            {activeTab === 'achievements' && <Achievements isEmbedded={true} onNavigateToCV={() => setActiveTab('cvbuilder')} />}
                             {activeTab === 'cvbuilder' && <CVBuilder isEmbedded={true} />}
                         </motion.div>
                     </AnimatePresence>

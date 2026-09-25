@@ -5,7 +5,7 @@ import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function Achievements({ isEmbedded = false, }) {
+export default function Achievements({ isEmbedded = false, onNavigateToCV }) {
  const { userSession } = useERP();
 
  // --- STATE ---
@@ -205,7 +205,7 @@ export default function Achievements({ isEmbedded = false, }) {
  </div>
  <span className="text-xs font-bold text-themeTextSec dark:text-white/60 tracking-normal">Awards</span>
  </div>
- <div className="bg-gradient-to-br from-amber-400 to-amber-600 text-black border border-amber-500/30 shadow-xl shadow-amber-500/20 p-5 rounded-[2rem] flex flex-col col-span-2 lg:col-span-1 justify-between relative overflow-hidden group cursor-pointer">
+ <div onClick={() => { if(onNavigateToCV) onNavigateToCV(); }} className="bg-gradient-to-br from-amber-400 to-amber-600 text-black border border-amber-500/30 shadow-xl shadow-amber-500/20 p-5 rounded-[2rem] flex flex-col col-span-2 lg:col-span-1 justify-between relative overflow-hidden group cursor-pointer">
  <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/30 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
  <div>
  <div className="flex items-end gap-1 mb-1">
@@ -240,7 +240,7 @@ export default function Achievements({ isEmbedded = false, }) {
  <button type="button" 
  key={cat}
  onClick={() => setActiveCategory(cat)}
- className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-colors border ${activeCategory === cat ? 'bg-themeText text-themeText dark:text-white border-themeBorder dark:border-white/5Text' : 'bg-themePanel border border-black/5 dark:border-white/10 text-themeTextSec border-themeBorder dark:border-white/5 hover:border-gray-400'}`}
+ className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 border ${activeCategory === cat ? 'bg-themeText text-themeApp dark:text-themeApp shadow-md scale-[1.02] border-transparent' : 'bg-themePanel border-black/10 dark:border-white/10 text-themeTextSec hover:text-themeText hover:bg-black/5 dark:hover:bg-white/5'}`}
  >
  {cat}
  </button>
