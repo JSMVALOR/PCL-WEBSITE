@@ -28,6 +28,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
      setAttendance(mentee.attendance_percentage + "%");
  }
  fetchAnalytics();
+ }
  }, [mentee]);
 
  const exportLeavesToCSV = async () => {
@@ -64,7 +65,9 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
             .order('created_at', { ascending: false });
         if (error) throw error;
         if (data) setLeaves(data);
-    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+    } catch (e) {
+        console.error("Failed to fetch leaves:", e);
+    }
  };
 
  const fetchAnalytics = async () => {
@@ -80,7 +83,10 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
             if (error) throw error;
             setLeaves(leaves.map(l => l.id === leaveId ? { ...l, status: newStatus } : l));
             window.erpDialog?.alert(`Leave has been ${newStatus}.`);
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch(e) {
+            console.error(e);
+            window.erpDialog?.alert('Failed to update leave.');
+        }
     };
 
  const fetchAchievements = async () => {
@@ -95,7 +101,9 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  setAchievements(data);
  sessionStorage.setItem(`profile360_achievements_${mentee.id}`, JSON.stringify(data));
  }
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) {
+ console.error("Failed to fetch achievements:", err);
+ }
  };
 
  const handleVerifySubmit = async () => {
@@ -117,7 +125,10 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  setShowVerifyModal(false);
  setRemarks("");
  setVerifyingId(null);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) {
+ console.error(err);
+ window.erpDialog?.alert("Failed to update achievement status.");
+ }
  };
 
  const openVerifyModal = (id, type) => {

@@ -68,7 +68,9 @@ export default function MentorshipDashboard({ setActiveTab }) {
  setStats(newStats);
  sessionStorage.setItem('jsmerp_mentorship_dash_stats', JSON.stringify(newStats));
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }));
+ } catch (error) {
+ console.error("Error fetching mentorship dashboard data:", error);
+ if (isMounted) setStats(prev => ({ ...prev, loading: false }));
  }
  };
 

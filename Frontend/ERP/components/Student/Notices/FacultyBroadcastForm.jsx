@@ -48,7 +48,9 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  setTargetAudience([]);
  
  if (onNoticePublished) onNoticePublished();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }`);
+ } catch (err) {
+ console.error("Failed to publish notice:", err);
+ window.erpDialog?.alert(`Failed to publish notice: ${err?.message || JSON.stringify(err)}`);
  } finally {
  setIsPublishing(false);
  }
@@ -61,7 +63,9 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  <h2 className="text-xl lg:text-2xl font-black tracking-tight text-themeText dark:text-white mb-1">{userSession?.role === "admin" ? "Administrative Broadcast" : "Faculty Broadcast"}</h2>
  <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50">Send official notices directly to assigned batches or students.</p>
  </div>
- <button aria-label="Action button" type="button" onClick={onCancel} className="w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-black/10 transition-colors shrink-0"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={onCancel} className="w-8 h-8 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-black/10 transition-colors shrink-0">
+ <i className="fa-solid fa-xmark"></i>
+ </button>
  </div>
 
  <div className="p-4 md:p-6 lg:p-8 flex-1 overflow-y-auto custom-scrollbar">

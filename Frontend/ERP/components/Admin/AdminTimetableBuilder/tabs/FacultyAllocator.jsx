@@ -120,7 +120,9 @@ export default function FacultyAllocator() {
             const { data: freshData } = await supabase.from('cohort_subjects').select('*').eq('batch_id', selectedBatchId);
             setCohortSubjects(freshData || []);
             
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }`);
+        } catch (err) {
+            console.error("Assignment Error:", err);
+            window.erpDialog?.alert(`Failed to assign faculty: ${err.message}`);
         }
     };
 

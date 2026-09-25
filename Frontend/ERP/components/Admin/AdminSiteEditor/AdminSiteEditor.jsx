@@ -447,7 +447,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  if (data && !error) {
  setTopClicks(data.map(d => ({ text: d.element_text, count: d.click_count })));
  }
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (e) {}
  };
  fetchInteractions();
  }, []);
@@ -487,7 +487,10 @@ export default function AdminSiteEditor({ isHubView = false }) {
  [`${selectedPage}::${selectedSection}`]: fetchedData
  }));
  }
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) {
+ console.error("Failed to load section content:", err);
+ setFetchError(true);
+ } finally {
  setLoading(false);
  }
  };
@@ -511,7 +514,10 @@ export default function AdminSiteEditor({ isHubView = false }) {
  } else {
  window.erpDialog?.alert("Saved successfully!");
  }
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }`);
+ } catch (err) {
+ console.error("Save error:", err);
+ if (window.erpDialog) {
+ window.erpDialog.alert(`Failed to save content. Ensure database schema is updated. ${err.message}`);
  } else {
  window.erpDialog?.alert("Failed to save content.");
  }

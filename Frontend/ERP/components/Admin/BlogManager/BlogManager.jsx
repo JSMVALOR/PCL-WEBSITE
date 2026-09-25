@@ -40,7 +40,10 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
 
  if (error) throw error;
  setBlogs(data || []);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) {
+ console.error("Failed to fetch blogs:", error);
+ window.erpDialog?.alert("Failed to load blogs. Please check your connection.");
+ } finally {
  setIsLoading(false);
  }
  };
@@ -117,7 +120,11 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
 
  setIsEditing(false);
  fetchBlogs();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) {
+ console.error("Save failed:", error);
+ window.erpDialog?.alert("Could not save to database.");
+ setIsEditing(false);
+ }
  };
 
  const handleReject = async () => {
@@ -132,7 +139,9 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  }
  setIsEditing(false);
  fetchBlogs();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } the post.`);
+ } catch (error) {
+ console.error("Reject failed.", error);
+ window.erpDialog?.alert(`Could not ${actionText} the post.`);
  setIsEditing(false);
  }
  };
@@ -163,7 +172,10 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  setFormData(prev => ({ ...prev, is_public: true }));
  setIsEditing(false);
  fetchBlogs();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) {
+ console.error("Approve failed", error);
+ window.erpDialog?.alert("Failed to approve the blog.");
+ }
  };
 
  const handleRejectERP = async () => {
@@ -196,7 +208,9 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  window.erpDialog?.alert(`Blog ${actionVerb}ed and author notified via ERP.`);
  setIsEditing(false);
  fetchBlogs();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } the blog.`);
+ } catch (error) {
+ console.error("Reject failed", error);
+ window.erpDialog?.alert(`Failed to ${actionVerb} the blog.`);
  }
  };
 
@@ -224,7 +238,10 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
         });
         if (!response.ok) throw new Error("API Route failed");
         window.erpDialog?.alert(`Automated ${type} email sent successfully to ${authorContact.email}!`);
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+    } catch (err) {
+        console.error("Email send failed:", err);
+        window.erpDialog?.alert("Failed to send automated email. Check Vercel server logs.");
+    }
 };
 
  

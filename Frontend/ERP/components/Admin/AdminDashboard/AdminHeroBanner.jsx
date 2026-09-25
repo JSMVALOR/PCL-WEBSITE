@@ -30,7 +30,7 @@ export default function AdminHeroBanner({}) {
  lastLog: "System Synchronized"
  });
  }
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }));
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  }
  };
 

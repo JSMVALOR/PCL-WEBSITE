@@ -78,7 +78,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
              .eq('batch', selectedBatch)
              .eq('assessment_type', currentAssessmentTitle);
          setIsLocked(data && data.length > 0);
-     } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+     } catch (e) {
+         console.error(e);
+     }
  };
 
  useEffect(() => {
@@ -100,7 +102,10 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
          if (error) throw error;
          window.erpDialog?.alert("Marks locked successfully!");
          setIsLocked(true);
-     } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+     } catch (e) {
+         console.error(e);
+         window.erpDialog?.alert("Failed to lock marks.");
+     } finally {
          setIsSaving(false);
      }
  };
@@ -170,7 +175,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
                  setSelectedBatch(subjectContext.batches[0]);
              }
          }
-     } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+     } catch (error) {
+         console.error(error);
+     }
  };
 
   useEffect(() => {
@@ -275,7 +282,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
          setMarksData(newMarksData);
          setExistingLedgerIds(newLedgerIds);
 
-     } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+     } catch (error) {
+         console.error(error);
+     }
  };
 
  const handleMarkChange = (studentId, value) => {
@@ -355,7 +364,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
                      }).eq('assignment_id', row.assignment_id).eq('student_id', row.student_id);
                  }
              }
-         } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+         } catch(e) {
+             console.error("Failed to sync assignment submissions", e);
+         }
 
          if (error) throw error;
          
@@ -377,7 +388,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
          setIsLocked(true);
          window.erpDialog?.alert("Grades submitted and roster locked successfully!");
          fetchStudentsAndMarks(); 
-     } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }`, "Action Failed", true);
+     } catch (error) {
+         console.error("Save Error:", error);
+         window.erpDialog?.alert(`Failed to save and lock marks. Error: ${error.message || error.details || JSON.stringify(error)}`, "Action Failed", true);
      } finally {
          setIsSaving(false);
      }
@@ -408,7 +421,7 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
                     <div className="flex gap-3">
                         {!isLocked ? (
                             <>
-                                <button type="button" onClick={handleSaveAndLock} disabled={isSaving || gradedCount === 0} className="px-6 py-2.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-white text-[13px] font-bold transition active:scale-[0.98] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <button type="button" onClick={handleSaveAndLock} disabled={isSaving || gradedCount === 0} className="px-6 py-2.5 rounded-xl bg-themeAccent hover:bg-themeAccent/90 text-white text-[13px] font-bold transition active:scale-[0.98] flex items-center gap-2 disabled:opacity-50">
                                     {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-lock"></i>} Submit & Lock Grades
                                 </button>
                             </>
@@ -445,7 +458,10 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
                                                 window.erpDialog?.alert("Correction requests submitted to Admin!");
                                                 setEditMode(false);
                                                 setStagedMarks({});
-                                            } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+                                            } catch (e) {
+                                                console.error(e);
+                                                window.erpDialog?.alert("Failed to submit corrections.");
+                                            } finally {
                                                 setIsSaving(false);
                                             }
                                         }} disabled={isSaving} className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-[13px] font-bold flex items-center gap-2 transition-colors">
