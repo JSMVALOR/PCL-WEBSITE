@@ -227,18 +227,20 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
         : `Hello ${formData.author_name},<br><br>Thank you for your submission titled "<b>${formData.title}</b>". After review, our editorial team has decided not to move forward with publishing it at this time.<br><br>We appreciate your effort and encourage you to submit future works.<br><br>Best regards,<br>PCL Editorial Team`;
     
     try {
-        const { data, error } = await supabase.functions.invoke('send-email', {
-            body: {
+        const response = await fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
                 to_email: authorContact.email,
                 subject: subject,
                 message_body: textBody
-            }
+            })
         });
-        if (error) throw error;
+        if (!response.ok) throw new Error("API Route failed");
         window.erpDialog?.alert(`Automated ${type} email sent successfully to ${authorContact.email}!`);
     } catch (err) {
         console.error("Email send failed:", err);
-        window.erpDialog?.alert("Failed to send automated email. Ensure Supabase edge functions are configured.");
+        window.erpDialog?.alert("Failed to send automated email. Check Vercel server logs.");
     }
 };
 
