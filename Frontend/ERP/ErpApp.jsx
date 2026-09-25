@@ -28,6 +28,7 @@ import Notices from './components/Student/Notices/Notices';
 import Helpdesk from './components/Student/Helpdesk/Helpdesk';
 import Credentials from './components/Student/Credentials/Credentials';
 import QuestionnaireModal from './components/shared/QuestionnaireModal';
+import ForcePasswordChangeModal from './components/shared/ForcePasswordChangeModal';
 import DialogContainer from './components/shared/DialogContainer';
 import ToastContainer from './components/shared/ToastContainer';
 import './utils/ToastManager';
@@ -425,9 +426,14 @@ export default function App() {
   };
 
   const handleQuestionnaireComplete = (data) => {
-    // Update local session so it dismisses
-    const updatedSession = { ...userSession, questionnaire_completed: true };
+    // Clear the cache so it fetches fresh from DB on reload
+    localStorage.removeItem('jsmerp_master_session');
     // Force a reload to cleanly apply state
+    window.location.reload();
+  };
+
+  const handlePasswordChangeComplete = () => {
+    localStorage.removeItem('jsmerp_master_session');
     window.location.reload();
   };
 
@@ -444,6 +450,11 @@ export default function App() {
       {/* Mandatory Onboarding Lockout for Student & Faculty Portals */}
       {userSession && userSession.role !== 'admin' && userSession.questionnaire_completed === false && !hasSkippedQuestionnaire && (
         <QuestionnaireModal onComplete={handleQuestionnaireComplete} onSkip={() => { setHasSkippedQuestionnaire(true); sessionStorage.setItem("skipped_questionnaire", "true"); }} />
+      )}
+      
+      {/* Mandatory Password Change Lockout */}
+      {userSession && userSession.force_password_change === true && (
+        <ForcePasswordChangeModal onComplete={handlePasswordChangeComplete} />
       )}
       
       {userSession && !isAppLoading && <IntelligentBot />}

@@ -207,6 +207,7 @@ export const ErpProvider = ({ children }) => {
                 academic_batch: profile.academic_batch,
                 semester: profile.semester,
                 questionnaire_completed: profile.questionnaire_completed || false,
+                force_password_change: profile.force_password_change || false,
                 profile_picture_url: profile.profile_picture_url || null };
 
             // Update UI and write to permanent cache securely
