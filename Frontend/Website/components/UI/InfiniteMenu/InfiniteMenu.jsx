@@ -189,7 +189,7 @@ class Geometry {
   }
 
   getMidPoint(ndxA, ndxB, cache) {
-    const cacheKey = ndxA < ndxB ? \`k_\${ndxA}_\${ndxB}\` : \`k_\${ndxB}_\${ndxA}\`;
+    const cacheKey = ndxA < ndxB ? `k_${ndxA}_${ndxB}` : `k_${ndxB}_${ndxA}`;
     if (Object.prototype.hasOwnProperty.call(cache, cacheKey)) {
       return cache[cacheKey];
     }
@@ -977,9 +977,9 @@ export default function InfiniteMenu({ items = [], scale = 1.0, backgroundColor 
 
       {activeItem && (
         <>
-          {activeItem.title && <h2 className={\`face-title \${isMoving ? 'inactive' : 'active'}\`}>{activeItem.title}</h2>}
+          {activeItem.title && <h2 className={`face-title ${isMoving ? 'inactive' : 'active'}`}>{activeItem.title}</h2>}
 
-          <div onClick={handleButtonClick} className={\`action-button \${isMoving ? 'inactive' : 'active'}\`}>
+          <div onClick={handleButtonClick} className={`action-button ${isMoving ? 'inactive' : 'active'}`}>
             <Maximize className="action-button-icon" size={20} />
           </div>
         </>
