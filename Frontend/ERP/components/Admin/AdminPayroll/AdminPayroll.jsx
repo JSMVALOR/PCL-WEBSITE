@@ -46,8 +46,6 @@ export default function AdminPayroll() {
         tdsAmount: 0
     });
     const [isProcessing, setIsProcessing] = useState(false);
-    
-    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const loadConfig = async () => {
