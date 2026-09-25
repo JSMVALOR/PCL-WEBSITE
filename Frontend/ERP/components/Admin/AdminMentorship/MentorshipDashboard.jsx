@@ -135,11 +135,11 @@ export default function MentorshipDashboard({ setActiveTab }) {
  </div>
 
  <div className="grid grid-cols-2 gap-4 mt-2">
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="bg-themeElevated/90 p-4 rounded-lg border border-themeBorder dark:border-white/5">
  <span className="text-2xl font-semibold tracking-tight text-themeText block mb-1">{stats.totalStudents}</span>
  <span className="text-[12px] font-medium text-themeTextSec">Total Students</span>
  </div>
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-lg border border-themeBorder dark:border-white/5">
+ <div className="bg-themeElevated/90 p-4 rounded-lg border border-themeBorder dark:border-white/5">
  <span className="text-2xl font-semibold tracking-tight text-themeText block mb-1">{stats.totalFaculty}</span>
  <span className="text-[12px] font-medium text-themeTextSec">Active Mentors</span>
  </div>
@@ -159,7 +159,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <div className="w-full flex-1 flex justify-center items-center"><i className="fa-solid fa-circle-notch fa-spin text-2xl text-themeAccent"></i></div>
  ) : (
  <div className="flex-1 flex flex-col justify-center gap-5">
- <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border-l-2 border-indigo-500">
+ <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 border-l-2 border-indigo-500">
  <div className="flex flex-col">
  <span className="text-xs font-bold text-themeText">Average Load</span>
  <span className="text-[12px] font-medium text-themeTextSec mt-0.5">Mentees per Faculty</span>
@@ -167,7 +167,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <span className="text-xl font-semibold tracking-tight text-indigo-500">{stats.avgMentees}</span>
  </div>
 
- <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5">
+ <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 border border-themeBorder dark:border-white/5">
  <div className="flex flex-col">
  <span className="text-xs font-bold text-themeText">Largest Load</span>
  <span className="text-[12px] font-medium text-themeTextSec mt-0.5">Maximum Assigned</span>
@@ -175,7 +175,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <span className="text-xl font-semibold tracking-tight text-themeText">{stats.maxLoad}</span>
  </div>
 
- <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5">
+ <div className="flex items-center justify-between p-4 rounded-lg bg-themeElevated/90 border border-themeBorder dark:border-white/5">
  <div className="flex flex-col">
  <span className="text-xs font-bold text-themeText">Smallest Load</span>
  <span className="text-[12px] font-medium text-themeTextSec mt-0.5">Minimum Assigned</span>
