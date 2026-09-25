@@ -196,7 +196,15 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Emergency Contact Relation</label>
-                                    <input type="text" name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" placeholder="e.g. Father, Mother, Guardian" />
+                                    <select name="emergencyRelation" required value={formData.emergencyRelation} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition">
+                                        <option value="">Select Relation</option>
+                                        <option value="Father">Father</option>
+                                        <option value="Mother">Mother</option>
+                                        <option value="Guardian">Guardian</option>
+                                        <option value="Sibling">Sibling</option>
+                                        <option value="Spouse">Spouse</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
