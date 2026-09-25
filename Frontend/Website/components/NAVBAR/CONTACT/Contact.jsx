@@ -68,8 +68,10 @@ Message: ${formData.message}`,
 
       setStatus({ type: 'success', message: `Message sent! Your Ticket ID is ${ticketId}` });
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       setStatus({ type: 'error', message: 'Failed to send message. Please try again later.' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmitting(false);
     }
@@ -116,9 +118,9 @@ Message: ${formData.message}`,
             
             <div className="space-y-8">
               <div className="flex gap-5 group">
-                <div className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/20 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--primary-color)] transition-colors duration-300">
+                <a href="https://maps.app.goo.gl/B9U1Gv7nJ21c97Nf8" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/20 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--primary-color)] transition-colors duration-300">
                   <MapPin className="text-[var(--primary-color)] group-hover:text-[#000]" size={20} />
-                </div>
+                </a>
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Address</h3>
                   <p className="text-[var(--text-color)] leading-relaxed text-base">
@@ -131,9 +133,9 @@ Message: ${formData.message}`,
               </div>
 
               <div className="flex gap-5 group">
-                <div className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/20 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--primary-color)] transition-colors duration-300">
+                <a href="tel:+918599000777" className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/20 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--primary-color)] transition-colors duration-300">
                   <Phone className="text-[var(--primary-color)] group-hover:text-[#000]" size={20} />
-                </div>
+                </a>
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Phone</h3>
                   <p className="text-[var(--text-color)] leading-relaxed text-base">
@@ -143,9 +145,9 @@ Message: ${formData.message}`,
               </div>
 
               <div className="flex gap-5 group">
-                <div className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/20 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--primary-color)] transition-colors duration-300">
+                <a href="mailto:info@prudentiacollegeoflaw.com" className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/20 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-[var(--primary-color)] transition-colors duration-300">
                   <Mail className="text-[var(--primary-color)] group-hover:text-[#000]" size={20} />
-                </div>
+                </a>
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Email</h3>
                   <p className="text-[var(--text-color)] leading-relaxed text-base">

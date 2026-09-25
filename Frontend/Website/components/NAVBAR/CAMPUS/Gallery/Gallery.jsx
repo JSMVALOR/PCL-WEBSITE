@@ -118,6 +118,8 @@ export default function Gallery() {
                 <Masonry 
                   items={(dbImages.length > 0 ? dbImages : masonryItems).map(item => ({ ...item, onImageClick: (i) => setSelectedImage(i.img) }))} 
                   colorShiftOnHover={true}
+                  blurToFocus={false}
+                  stagger={0.02}
                 />
               )}
             </motion.div>

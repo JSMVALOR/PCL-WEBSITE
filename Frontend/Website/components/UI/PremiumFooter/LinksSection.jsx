@@ -74,7 +74,7 @@ export default function LinksSection() {
           <a href="https://www.instagram.com/prudentiacollegeoflaw" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="Instagram">
             <FaInstagram className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
           </a>
-          <a href="https://www.instagram.com/prudentiacollegeoflaw" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="WhatsApp">
+          <a href="https://wa.me/918599000777" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="WhatsApp">
             <FaWhatsapp className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
           </a>
         </div>

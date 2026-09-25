@@ -7,7 +7,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from '../../Navbar.jsx';
 import PixelCard from './PixelCard.jsx';
-import founderImg from "../../../../../Shared/Assets/PEOPLE/pcl_founder.png";
+import founderImg from "../../../../../Shared/Assets/PEOPLE/Dr_Sneha_Mulla.png";
 import coFounderImg from "../../../../../Shared/Assets/PEOPLE/pcl_cofounder.png";
 import { useSiteContent } from '../../../../../Shared/lib/hooks/useSiteContent';
 

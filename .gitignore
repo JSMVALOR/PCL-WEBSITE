@@ -34,3 +34,5 @@ dist/
 *.apk
 android/gradle-8.14.3-all.zip
 backend/email-service/chrome/
+
+mobile_app_resources/android/gradle-8.14.3-all.zip

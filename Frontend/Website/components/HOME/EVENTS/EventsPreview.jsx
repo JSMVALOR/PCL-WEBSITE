@@ -20,12 +20,12 @@ const EventsPreview = React.forwardRef((props, ref) => {
     let isMounted = true;
     const fetchEvents = async () => {
       setLoading(true);
-      const now = new Date().toISOString();
+      const today = new Date().toISOString().split('T')[0];
       const { data, error: fetchError } = await supabase
         .from('admin_events')
         .select('*')
         .eq('is_public', true)
-        .gte('event_date', now)
+        .gte('event_date', today)
         .order('event_date', { ascending: true })
         .limit(6);
 

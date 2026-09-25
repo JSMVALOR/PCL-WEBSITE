@@ -108,6 +108,7 @@ export default function AdminNotices({ isHubView = false }) {
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
+ if (window.toast) window.toast.success("Broadcast published successfully!"); else alert("Broadcast published successfully!");
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsPublishing(false);
  }
@@ -143,6 +144,7 @@ export default function AdminNotices({ isHubView = false }) {
  setEventEndDate("");
  setEventDesc("");
  fetchEvents();
+ if (window.toast) window.toast.success("Event scheduled successfully!"); else alert("Event scheduled successfully!");
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsScheduling(false);
  }

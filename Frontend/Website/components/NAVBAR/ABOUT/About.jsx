@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import founderImg from '../../../../Shared/Assets/PEOPLE/pcl_founder.png';
+import founderImg from '../../../../Shared/Assets/PEOPLE/Dr_Sneha_Mulla.png';
 import coFounderImg from "../../../../Shared/Assets/PEOPLE/pcl_cofounder.png";
 import { useSiteContent } from '../../../../Shared/lib/hooks/useSiteContent';
 
