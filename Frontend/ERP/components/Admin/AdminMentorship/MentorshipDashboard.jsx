@@ -17,6 +17,10 @@ export default function MentorshipDashboard({ setActiveTab }) {
  useEffect(() => {
  let isMounted = true;
  const fetchDashboardData = async () => {
+ const cached = sessionStorage.getItem('jsmerp_mentorship_dash_stats');
+ if (cached) {
+ setStats(JSON.parse(cached));
+ }
  try {
  // 1. Fetch total students
  const { count: studentCount, error: sErr } = await supabase
@@ -50,7 +54,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  const min = activeMentorsCount > 0 ? Math.min(...workloads) : 0;
  const avg = activeMentorsCount > 0 ? Math.round((assignedStudentsCount / activeMentorsCount) * 10) / 10 : 0;
 
- setStats({
+ const newStats = {
  totalFaculty: activeMentorsCount, // Or total faculty in system? Let's use Active Mentors
  totalStudents: studentCount || 0,
  assignedStudents: assignedStudentsCount,
@@ -59,7 +63,10 @@ export default function MentorshipDashboard({ setActiveTab }) {
  maxLoad: max,
  minLoad: min,
  loading: false
- });
+ };
+
+ setStats(newStats);
+ sessionStorage.setItem('jsmerp_mentorship_dash_stats', JSON.stringify(newStats));
 
  } catch (error) {
  console.error("Error fetching mentorship dashboard data:", error);

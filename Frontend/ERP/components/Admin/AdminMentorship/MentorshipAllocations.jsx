@@ -31,6 +31,17 @@ export default function MentorshipAllocations({}) {
  const fetchMentorshipData = async () => {
  setIsLoading(true);
  try {
+ const cachedUnallocated = sessionStorage.getItem('jsmerp_mentorship_unallocated');
+ const cachedFaculty = sessionStorage.getItem('jsmerp_mentorship_faculty');
+ const cachedCapacity = sessionStorage.getItem('jsmerp_mentorship_capacity');
+ 
+ if (cachedUnallocated && cachedFaculty) {
+ setUnallocatedStudents(JSON.parse(cachedUnallocated));
+ setFaculty(JSON.parse(cachedFaculty));
+ if (cachedCapacity) setMaxCapacity(parseInt(cachedCapacity));
+ setIsLoading(false);
+ }
+
  const [
  { data: students, error: studentsError },
  { data: facultyData, error: facultyError },
@@ -87,7 +98,12 @@ export default function MentorshipAllocations({}) {
 
  const totalStudents = students ? students.length : 0;
  const totalFac = facultyData ? facultyData.length : 1;
- setMaxCapacity(Math.ceil(totalStudents / Math.max(1, totalFac)));
+ const calcCapacity = Math.ceil(totalStudents / Math.max(1, totalFac));
+ setMaxCapacity(calcCapacity);
+
+ sessionStorage.setItem('jsmerp_mentorship_unallocated', JSON.stringify(unallocated));
+ sessionStorage.setItem('jsmerp_mentorship_faculty', JSON.stringify(facultyState));
+ sessionStorage.setItem('jsmerp_mentorship_capacity', calcCapacity.toString());
 
  } catch (error) {
  console.error("Error fetching mentorship data:", error);
