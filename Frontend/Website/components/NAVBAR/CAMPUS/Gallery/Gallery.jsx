@@ -5,6 +5,7 @@ import Navbar from '../../Navbar.jsx';
 import styles from '../../PROGRAMS/Programs.module.css';
 
 import Masonry from '../../../UI/Masonry/Masonry.jsx';
+import InfiniteMenu from '../../../UI/InfiniteMenu/InfiniteMenu.jsx';
 import { supabase } from '../../../../../Shared/lib/supabase/supabaseClient';
 
 // Import all campus images
@@ -86,16 +87,22 @@ export default function Gallery() {
             </h1>
             
             {/* View Mode Toggle */}
-            <div className="inline-flex mt-6 bg-[var(--card-bg)] rounded-full p-1.5 backdrop-blur-xl border border-[var(--card-border)] shadow-lg">
+            <div className="inline-flex mt-6 bg-[var(--card-bg)] rounded-full p-1.5 backdrop-blur-xl border border-[var(--card-border)] shadow-lg flex-wrap justify-center max-w-[90vw]">
               <button
                 onClick={() => setViewMode('masonry')}
-                className={`px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${viewMode === 'masonry' ? 'bg-[var(--text-color)] text-[var(--bg-color)] shadow-md' : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'}`}
+                className={`px-6 md:px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${viewMode === 'masonry' ? 'bg-[var(--text-color)] text-[var(--bg-color)] shadow-md' : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'}`}
               >
                 Photo Grid
               </button>
               <button
+                onClick={() => setViewMode('3d-carousel')}
+                className={`px-6 md:px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${viewMode === '3d-carousel' ? 'bg-[var(--text-color)] text-[var(--bg-color)] shadow-md' : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'}`}
+              >
+                3D Carousel
+              </button>
+              <button
                 onClick={() => setViewMode('virtual-tour')}
-                className={`px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${viewMode === 'virtual-tour' ? 'bg-[var(--text-color)] text-[var(--bg-color)] shadow-md' : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'}`}
+                className={`px-6 md:px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${viewMode === 'virtual-tour' ? 'bg-[var(--text-color)] text-[var(--bg-color)] shadow-md' : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'}`}
               >
                 3D Virtual Tour
               </button>
@@ -120,6 +127,28 @@ export default function Gallery() {
                   colorShiftOnHover={true}
                   blurToFocus={false}
                   stagger={0.02}
+                />
+              )}
+            </motion.div>
+          )}
+
+          {/* 3D CAROUSEL VIEW */}
+          {viewMode === '3d-carousel' && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} 
+              animate={{ opacity: 1, scale: 1 }} 
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative z-10 w-full h-[60vh] md:h-[700px] mb-20 rounded-3xl overflow-hidden border border-[var(--primary-color)]/20 shadow-2xl"
+            >
+              {loading ? (
+                <div className="flex justify-center items-center h-full">
+                  <div className="animate-spin w-12 h-12 border-4 border-[var(--primary-color)] border-t-transparent rounded-full"></div>
+                </div>
+              ) : (
+                <InfiniteMenu 
+                  items={(dbImages.length > 0 ? dbImages : masonryItems).map(item => ({ image: item.img, title: "Gallery", img: item.img }))} 
+                  onItemClick={(item) => setSelectedImage(item.img)}
+                  scale={1.2}
                 />
               )}
             </motion.div>
