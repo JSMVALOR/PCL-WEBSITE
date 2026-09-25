@@ -562,7 +562,9 @@ export default function CVBuilder({ isEmbedded = false }) {
 
  setErpData(newData);
  writeCache(newData);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) {
+ console.error("CV data fetch failed:", err);
+ }
  }, [userSession]);
 
  useEffect(() => {
@@ -611,7 +613,9 @@ export default function CVBuilder({ isEmbedded = false }) {
  page: { margin: Margin.NONE, format: 'a4' },
  canvas: { scale: 4, useCORS: true }
  });
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) {
+ console.error("PDF Export failed", error);
+ } finally {
  setIsExporting(false);
  }
  };
@@ -642,7 +646,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0 disabled:cursor-not-allowed"
+ className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export PDF"}
@@ -658,7 +662,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+ className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export Professional CV"}
@@ -677,13 +681,13 @@ export default function CVBuilder({ isEmbedded = false }) {
  onClick={() => setCvConfig({ ...cvConfig, template: key })}
  className={`w-full text-left p-4 rounded-[2rem] border-theme transition duration-200 group ${
  cvConfig.template === key
- ? "bg-themePanel border-theme border-themeBorderStrong border-black/5 dark:border-white/10 ring-1 ring-themeBorderStrong"
- : "bg-themePanel border-theme border-themeBorderStrong border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 hover:bg-themeElevated/50"
+ ? "bg-themePanel border-black/[0.04] dark:border-white/[0.08] border-black/5 dark:border-white/10 ring-1 ring-themeBorderStrong"
+ : "bg-themePanel border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 hover:bg-themeElevated/50"
  }`}
  >
  <div className="flex items-center justify-between mb-1.5">
  <span className="flex items-center gap-2.5">
- <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${cvConfig.template === key ? "bg-themeAccent/10 text-themeAccent" : "bg-themePanel border-theme border-themeBorderStrong text-themeTextSec group-hover:text-themeText"}`}>
+ <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${cvConfig.template === key ? "bg-themeAccent/10 text-themeAccent" : "bg-themePanel border-black/[0.04] dark:border-white/[0.08] text-themeTextSec group-hover:text-themeText"}`}>
  <i className={`fa-solid ${tmpl.icon} text-[10px]`}></i>
  </div>
  <span className={`text-xs font-bold tracking-wide ${cvConfig.template === key ? "text-themeAccent" : "text-themeText"}`}>{tmpl.name}</span>
@@ -697,7 +701,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  </div>
 
  {/* Data Integration Toggles */}
- <div className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] p-5 lg:p-6 border border-black/10 dark:border-white/20 relative overflow-hidden">
+ <div className="bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 border border-black/10 dark:border-white/20 relative overflow-hidden">
  <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel/30 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none blur-2xl"></div>
  <div className="flex items-center gap-2 mb-1.5 relative z-10">
  <i className="fa-solid fa-database text-themeAccent"></i>
@@ -708,7 +712,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  {dataToggles.map((toggle) => (
  <label
  key={toggle.id}
- className="flex items-center justify-between p-3.5 bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] cursor-pointer hover:border-black/5 dark:border-white/10 hover:bg-themePanel border-theme border-themeBorderStrong transition group"
+ className="flex items-center justify-between p-3.5 bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] cursor-pointer hover:border-black/5 dark:border-white/10 hover:bg-themePanel border-black/[0.04] dark:border-white/[0.08] transition group"
  >
  <span className="text-[10px] lg:text-[11px] font-bold text-themeTextSec group-hover:text-themeText transition-colors flex items-center gap-2.5">
  <i className={`fa-solid ${toggle.icon} text-[10px] opacity-50 w-3 text-center`}></i>
@@ -719,7 +723,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  type="checkbox"
  checked={cvConfig[toggle.id]}
  onChange={() => handleToggle(toggle.id)}
- className="peer appearance-none w-10 h-5 bg-themePanel border-theme border-themeBorderStrong rounded-full checked:bg-amber-500 checked:border-amber-500 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-1 focus:ring-offset-themePanel"
+ className="peer appearance-none w-10 h-5 bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded-full checked:bg-amber-500 checked:border-amber-500 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-1 focus:ring-offset-themePanel"
  />
  <div className="absolute left-[3px] top-[2.5px] w-3.5 h-3.5 bg-neutral-400 peer-checked:bg-[#050505] rounded-full peer-checked:translate-x-5 transition-transform duration-300 ease-out pointer-events-none"></div>
  </div>
@@ -742,7 +746,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <span className={`text-[13px] font-medium ${theme.text.secondary} flex items-center gap-2`}>
  <i className="fa-solid fa-eye text-themeAccent"></i> Live Preview — {activeTemplate.name}
  </span>
- <span className={`text-[9px] font-bold ${theme.text.muted} tracking-normal px-2 py-1 bg-themePanel border-theme border-themeBorderStrong rounded border border-black/10 dark:border-white/20`}>
+ <span className={`text-[9px] font-bold ${theme.text.muted} tracking-normal px-2 py-1 bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded border border-black/10 dark:border-white/20`}>
  A4 · 210 × 297 mm
  </span>
  </div>

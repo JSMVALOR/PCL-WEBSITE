@@ -44,7 +44,9 @@ export default function CLETracker() {
  } else {
  setDiaries(data || []);
  }
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) {
+ console.error("Failed to load CLE diaries", err);
+ } finally {
  setIsLoading(false);
  }
  };
@@ -68,7 +70,10 @@ export default function CLETracker() {
  setForm({ week_number: "", case_title: "", court_name: "", learning_outcome: "", hours_logged: "" });
  setShowModal(false);
  fetchDiaries();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) {
+ console.error(err);
+ window.erpDialog.alert("Failed to submit Case Diary");
+ } finally {
  setIsSubmitting(false);
  }
  };
@@ -176,7 +181,7 @@ export default function CLETracker() {
  <p className="text-[9px] text-themeTextSec mt-1.5 text-right">{form.learning_outcome.length}/500</p>
  </div>
  
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeAccent hover:bg-themeAccent/90 text-white rounded-xl text-sm font-black tracking-wide transition active:scale-[0.98] disabled:opacity-50 mt-2 shadow-lg shadow-themeAccent/20 disabled:cursor-not-allowed">
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeAccent hover:bg-themeAccent/90 text-white rounded-xl text-sm font-black tracking-wide transition active:scale-[0.98] disabled:opacity-50 mt-2 shadow-lg shadow-themeAccent/20">
  {isSubmitting ? "Submitting..." : "Submit Case Diary"}
  </button>
  </form>

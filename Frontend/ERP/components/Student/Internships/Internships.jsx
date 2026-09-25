@@ -74,25 +74,30 @@ const LZW = {
 };
 
 const packLogs = (logs) => {
-    const tuples = logs.map(l => [l.date, l.entry, l.logged_at]);
-    return "LZW:" + LZW.compress(JSON.stringify(tuples));
+    return logs; // Supabase handles JSONB arrays natively
 };
 
 const unpackLogs = (packed) => {
     if (!packed) return [];
-    if (typeof packed !== 'string') return packed;
-    let rawJson = packed;
-    if (packed.startsWith("LZW:")) {
-        rawJson = LZW.decompress(packed.slice(4));
+    if (typeof packed === 'string') {
+        if (packed.startsWith("LZW:")) {
+            try {
+                const rawJson = LZW.decompress(packed.slice(4));
+                const parsed = JSON.parse(rawJson);
+                return parsed.map(item => Array.isArray(item) ? { date: item[0], entry: item[1], logged_at: item[2] } : item);
+            } catch { return []; }
+        }
+        try {
+            return JSON.parse(packed);
+        } catch {
+            return [];
+        }
     }
-    try {
-        const parsed = JSON.parse(rawJson);
-        return parsed.map(item => Array.isArray(item) ? { date: item[0], entry: item[1], logged_at: item[2] } : item);
-    } catch { return []; }
+    return Array.isArray(packed) ? packed : [];
 };
 
 // --- SHARED STYLES ---
-const INPUT_CLS = "w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition";
+const INPUT_CLS = "w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition";
 const LABEL_CLS = "block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1";
 
 export default function Internships({ isEmbedded = false }) {
@@ -229,7 +234,11 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(false);
  setExpForm({ company_name: '', role_title: '', location: '', start_date: '', end_date: '', description: '', type: 'Corporate', status: 'Ongoing', certificate_notes: '' });
  }, 1500);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) {
+ console.error("Exp submit err:", err);
+ alert("Failed to log experience.");
+ setIsSubmitting(false);
+ }
  };
 
  const handlePrintNoc = (req) => {
@@ -294,7 +303,10 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAll();
  setTimeout(() => { setShowPermModal(false); setSubmitSuccess(false); setPermUrl(''); setPermForm({ company_name: "", start_date: "", end_date: "" }); }, 50);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsSubmitting(false); }
+ } catch (err) {
+ console.error("Permission request failed:", err);
+ window.erpDialog?.alert("Failed to route Permission request.");
+ } finally { setIsSubmitting(false); }
  };
 
  const handlePracSubmit = async (e) => {
@@ -310,7 +322,10 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAll();
  setTimeout(() => { setShowPracModal(false); setSubmitSuccess(false); setPracForm({ title: "", type: "Court Visit", date_logged: "", hours: "", description: "" }); }, 50);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsSubmitting(false); }
+ } catch (err) {
+ console.error("Practical log failed:", err);
+ window.erpDialog?.alert("Failed to log practical hours.");
+ } finally { setIsSubmitting(false); }
  };
 
  const handleDailyLogSubmit = async (e) => {
@@ -333,7 +348,10 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAll();
  setTimeout(() => { setShowDailyLogModal(false); setSubmitSuccess(false); setDailyLogForm({ experience_id: "", date: "", entry: "" }); }, 50);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsSubmitting(false); }
+ } catch (err) {
+ console.error("Daily log failed:", err);
+ window.erpDialog?.alert("Failed to add daily log entry.");
+ } finally { setIsSubmitting(false); }
  };
 
  // --- CALCULATIONS ---
@@ -357,7 +375,7 @@ export default function Internships({ isEmbedded = false }) {
  case 'Judiciary': return "bg-amber-500/10 text-amber-400 border-amber-500/20";
  case 'Court Visit': return "bg-purple-500/10 text-purple-400 border-purple-500/20";
  case 'Legal Aid Clinic': return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
- default: return "bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec border-black/10 dark:border-white/20";
+ default: return "bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec border-black/10 dark:border-white/20";
  }
  };
 
@@ -481,8 +499,8 @@ export default function Internships({ isEmbedded = false }) {
  <p className="text-xs lg:text-sm font-bold text-themeTextSec"><i className="fa-regular fa-building mr-1"></i> {log.company_name}</p>
 
  <div className="flex items-center gap-3 mt-4 text-[9px] lg:text-[10px] font-bold text-themeTextSec opacity-80 tracking-normal">
- <span className="flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20"><i className="fa-regular fa-calendar text-themeAccent"></i> {log.duration}</span>
- <span className="flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20"><i className="fa-solid fa-location-dot text-themeAccent"></i> {log.location}</span>
+ <span className="flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20"><i className="fa-regular fa-calendar text-themeAccent"></i> {log.duration}</span>
+ <span className="flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20"><i className="fa-solid fa-location-dot text-themeAccent"></i> {log.location}</span>
  </div>
  </div>
 
@@ -490,7 +508,7 @@ export default function Internships({ isEmbedded = false }) {
  <div className="border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 animate-fade-in bg-gray-100 dark:bg-themeApp/20 rounded-b-themePanel">
  <div className="px-5 lg:px-6 py-5">
  <p className={`text-[12px] font-medium ${theme.text.muted} mb-2`}>Description</p>
- <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong p-4 rounded-[2rem] italic">
+ <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-4 rounded-[2rem] italic">
  "{log.description}"
  </p>
  </div>
@@ -507,20 +525,20 @@ export default function Internships({ isEmbedded = false }) {
  <div className="px-5 lg:px-6 pb-5">
  <div className="flex items-center justify-between mb-3">
  <p className={`text-[12px] font-medium text-blue-400`}><i className="fa-solid fa-timeline mr-1"></i> Daily Logs ({dailyLogs.length})</p>
- <button type="button" onClick={(e) => { e.stopPropagation(); setDailyLogForm({ experience_id: log.id, date: '', entry: '' }); setShowDailyLogModal(true); }} className="text-[9px] font-black text-themeAccent tracking-normal flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong px-3 py-1.5 rounded-md border border-black/10 dark:border-white/20 hover:border-black/[0.04] dark:border-white/[0.08] hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong transition">
+ <button type="button" onClick={(e) => { e.stopPropagation(); setDailyLogForm({ experience_id: log.id, date: '', entry: '' }); setShowDailyLogModal(true); }} className="text-[9px] font-black text-themeAccent tracking-normal flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-3 py-1.5 rounded-md border border-black/10 dark:border-white/20 hover:border-black/[0.04] dark:border-white/[0.08] hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] transition">
  <i className="fa-solid fa-plus text-[8px]"></i> Add Entry
  </button>
  </div>
 
  {dailyLogs.length === 0 ? (
- <div className="py-6 text-center bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-[2rem]">
+ <div className="py-6 text-center bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-[2rem]">
  <i className="fa-regular fa-note-sticky text-xl text-neutral-600/50 mb-2"></i>
  <p className={`text-[10px] ${theme.text.muted}`}>No daily log entries. Keep a journal of your tasks!</p>
  </div>
  ) : (
  <div className="space-y-3 max-h-56 overflow-y-auto pr-2 custom-scrollbar">
  {dailyLogs.sort((a, b) => new Date(b.date) - new Date(a.date)).map((entry, i) => (
- <div key={i} className="flex items-start gap-3 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong p-3.5 rounded-[2rem] hover:border-black/[0.04] dark:border-white/[0.08] transition-colors">
+ <div key={i} className="flex items-start gap-3 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-3.5 rounded-[2rem] hover:border-black/[0.04] dark:border-white/[0.08] transition-colors">
  <div className="w-7 h-7 rounded-full bg-blue-500/10 border-black/[0.04] dark:border-white/[0.08] border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
  <i className="fa-solid fa-pen-nib text-blue-400 text-[10px]"></i>
  </div>
@@ -566,11 +584,11 @@ export default function Internships({ isEmbedded = false }) {
  <div className={`${theme.layout.panel} p-5 lg:p-6 rounded-[2rem]`}>
  <div className="flex justify-between items-end mb-3">
  <p className={`text-[9px] lg:text-[10px] font-black text-themeTextSec tracking-normal`}><span className="text-themeAccent text-lg lg:text-xl">{totalPracticalHours}</span> / {REQUIRED_HOURS} Hours Logged</p>
- <span className={`text-[12px] font-medium px-2 py-1 rounded border-black/[0.04] dark:border-white/[0.08] ${hoursProgress >= 100 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec border-black/10 dark:border-white/20'}`}>
+ <span className={`text-[12px] font-medium px-2 py-1 rounded border-black/[0.04] dark:border-white/[0.08] ${hoursProgress >= 100 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec border-black/10 dark:border-white/20'}`}>
  {hoursProgress >= 100 ? 'Completed' : 'In Progress'}
  </span>
  </div>
- <div className="h-2.5 lg:h-3 w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-full overflow-hidden border border-black/10 dark:border-white/20">
+ <div className="h-2.5 lg:h-3 w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full overflow-hidden border border-black/10 dark:border-white/20">
  <div className={`h-full rounded-full transition duration-1000 relative overflow-hidden ${hoursProgress >= 100 ? 'bg-emerald-500' : hoursProgress >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${hoursProgress}%` }}>
  <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
  </div>
@@ -591,7 +609,7 @@ export default function Internships({ isEmbedded = false }) {
  <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-black/[0.04] dark:border-white/[0.08] ${getTypeTheme(log.type)}`}>
  {log.type}
  </span>
- <span className="text-[10px] lg:text-[14px] font-medium text-themeText bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong px-3 py-1 rounded-md border border-black/10 dark:border-white/20">{log.hours} Hours</span>
+ <span className="text-[10px] lg:text-[14px] font-medium text-themeText bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-3 py-1 rounded-md border border-black/10 dark:border-white/20">{log.hours} Hours</span>
  </div>
  <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText mb-1.5 group-hover:text-themeAccent transition-colors">{log.title}</h3>
  <p className={`text-[8px] lg:text-[9px] font-bold text-themeTextSec opacity-70 tracking-normal mb-4`}><i className="fa-regular fa-calendar mr-1"></i> {new Date(log.date_logged).toLocaleDateString('en-GB')}</p>
@@ -627,14 +645,14 @@ export default function Internships({ isEmbedded = false }) {
  {showExpModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowExpModal(false)}>
  <div className="bg-transparent w-full max-w-xl rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Log Legal Experience</h3>
  <p className="text-[10px] lg:text-xs text-emerald-400 font-bold tracking-normal"><i className="fa-solid fa-link mr-1"></i> Will sync to CV Builder</p>
  </div>
- <button type="button" onClick={() => setShowExpModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowExpModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleExpSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -674,7 +692,7 @@ export default function Internships({ isEmbedded = false }) {
  <div><label className={LABEL_CLS}><i className="fa-solid fa-certificate mr-1 text-emerald-400"></i> Certificate Notes (Optional)</label><textarea rows="2" value={expForm.certificate_notes} onChange={e => setExpForm({ ...expForm, certificate_notes: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="Type certificate details, completion notes, or reference info..."></textarea></div>
  
  <div className="flex items-center gap-3 bg-[#0a66c2]/10 p-4 rounded-[2rem] border-black/[0.04] dark:border-white/[0.08] border-[#0a66c2]/20 cursor-pointer hover:bg-[#0a66c2]/20 transition-colors" onClick={() => setShareExpOnSubmit(!shareExpOnSubmit)}>
- <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${shareExpOnSubmit ? 'bg-[#0a66c2] text-themeText' : 'bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong'}`}>
+ <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${shareExpOnSubmit ? 'bg-[#0a66c2] text-themeText' : 'bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]'}`}>
  {shareExpOnSubmit && <i className="fa-solid fa-check text-xs"></i>}
  </div>
  <div>
@@ -686,7 +704,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Experience Logged</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Writing to Ledger..." : "Log Experience"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Writing to Ledger..." : "Log Experience"}</button>
  )}
  </form>
  </div>
@@ -697,14 +715,14 @@ export default function Internships({ isEmbedded = false }) {
  {showPermModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowPermModal(false)}>
  <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Apply for Internship Permission</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Will be routed directly to your assigned mentor.</p>
  </div>
- <button type="button" onClick={() => setShowPermModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowPermModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handlePermSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -736,7 +754,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Application Routed to Mentor</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
  )}
  </form>
  </div>
@@ -747,14 +765,14 @@ export default function Internships({ isEmbedded = false }) {
  {showPracModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowPracModal(false)}>
  <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Add Practical Log</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Log hours for mandatory clinical courses.</p>
  </div>
- <button type="button" onClick={() => setShowPracModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowPracModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handlePracSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -776,7 +794,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Practical Hours Logged</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
  )}
  </form>
  </div>
@@ -787,14 +805,14 @@ export default function Internships({ isEmbedded = false }) {
  {showDailyLogModal && (
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowDailyLogModal(false)}>
  <div className="bg-transparent w-full max-w-md rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden">
- <div className="absolute top-0 right-0 w-24 h-24 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden">
+ <div className="absolute top-0 right-0 w-24 h-24 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight mb-1">Add Daily Log Entry</h3>
  <p className={`text-[10px] lg:text-xs text-blue-400 font-bold tracking-normal`}><i className="fa-solid fa-timeline mr-1"></i> Internship Journal</p>
  </div>
- <button type="button" onClick={() => setShowDailyLogModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]BorderStrong text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowDailyLogModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleDailyLogSubmit} className="p-5 lg:p-6 flex flex-col gap-5">
@@ -803,7 +821,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Entry Added</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-themeText rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Saving..." : "Add Log Entry"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-themeText rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Saving..." : "Add Log Entry"}</button>
  )}
  </form>
  </div>

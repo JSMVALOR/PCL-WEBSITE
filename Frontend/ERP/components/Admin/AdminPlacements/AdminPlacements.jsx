@@ -29,7 +29,9 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  try {
  const { data, error } = await supabase.from('placement_drives').select('*').order('created_at', { ascending: false });
  if (!error && data) setDrives(data);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) {
+ console.error("Error fetching drives:", error);
+ }
  };
 
  const fetchApplications = async () => {
@@ -43,7 +45,9 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  `)
  .order('created_at', { ascending: false });
  if (!error && data) setApplications(data);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) {
+ console.error("Error fetching applications:", error);
+ }
  };
 
  const fetchInquiries = async () => {
@@ -53,7 +57,9 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  .select('*')
  .order('created_at', { ascending: false });
  if (!error && data) setInquiries(data);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) {
+ console.error("Error fetching inquiries:", error);
+ }
  };
 
  const handleCreateDrive = async (e) => {
@@ -68,7 +74,10 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  setShowCreateModal(false);
  setDriveForm({ company_name: "", role_title: "", drive_date: "", eligibility_criteria: "", package_details: "" });
  fetchDrives();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) {
+ console.error("Error creating drive", err);
+ window.erpDialog?.alert("Failed to create drive.");
+ } finally {
  setIsSubmitting(false);
  }
  };
@@ -78,7 +87,10 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  const { error } = await supabase.from('placement_applications').update({ status: newStatus }).eq('id', appId);
  if (error) throw error;
  fetchApplications();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) {
+ console.error("Error updating application status", err);
+ window.erpDialog?.alert("Failed to update status.");
+ }
  };
 
  const handleUpdateInquiryStatus = async (inqId, newStatus) => {
@@ -86,7 +98,10 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  const { error } = await supabase.from('placement_inquiries').update({ status: newStatus }).eq('id', inqId);
  if (error) throw error;
  fetchInquiries();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) {
+ console.error("Error updating inquiry status", err);
+ window.erpDialog?.alert("Failed to update status.");
+ }
  };
 
  return (
@@ -105,7 +120,7 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
 } />
  )}
 
- <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-black/[0.04] dark:border-white/[0.08]BorderStrong relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
+ <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
  <button type="button" onClick={() => setActiveTab('drives')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'drives' ? 'bg-themeAccent text-white shadow-[0_4px_12px_rgba(var(--accent-rgb),0.25)] border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-transparent scale-95 hover:scale-100'}`}>
  <i className="fa-solid fa-building"></i> Placement Drives
  </button>
@@ -316,7 +331,7 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  <label className="block text-[13px] font-medium text-themeTextSec mb-2 ml-1">Package Details</label>
  <textarea rows="2" value={driveForm.package_details} onChange={e => setDriveForm({ ...driveForm, package_details: e.target.value})} className="w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-3 text-xs font-bold text-themeText outline-none resize-none focus:border-themeAccent transition-colors" placeholder="e.g. 12 LPA CTC, 6-month internship + PPO" required></textarea>
  </div>
- <button type="submit" disabled={isSubmitting} className="btn-erp disabled:cursor-not-allowed">
+ <button type="submit" disabled={isSubmitting} className="btn-erp">
  {isSubmitting ? "Saving..." : "Publish Drive"}
  </button>
  </form>
