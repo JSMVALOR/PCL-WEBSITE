@@ -52,9 +52,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                 setReportingTo({ full_name: 'Hon. Vice Chancellor', role: 'Leadership' });
                 setMembers(admins.slice(0, 3));
             }
-        } catch (err) {
-            console.error("Error fetching directory:", err);
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const getPresenceStatus = () => null;
@@ -259,9 +257,7 @@ function FullDirectoryModal({ onClose, allUsers, role, menteeIds, getPresenceSta
                                 <kbd className="hidden sm:inline-block bg-black/10 dark:bg-white/10 border border-black/10 dark:border-white/10 rounded px-1.5 py-0.5 text-[9px] font-black font-sans text-themeTextSec">⌘K</kbd>
                             </div>
                         </div>
-                        <button onClick={onClose} className="w-10 h-10 shrink-0 rounded-full bg-black/5 dark:bg-white/5 hover:bg-rose-500 hover:text-themeText dark:text-white transition-colors flex items-center justify-center border border-black/5 dark:border-white/10">
-                            <i className="fa-solid fa-xmark text-lg"></i>
-                        </button>
+                        <button aria-label="Action button" onClick={onClose} className="w-10 h-10 shrink-0 rounded-full bg-black/5 dark:bg-white/5 hover:bg-rose-500 hover:text-themeText dark:text-white transition-colors flex items-center justify-center border border-black/5 dark:border-white/10"><i className="fa-solid fa-xmark text-lg"></i></button>
                     </div>
                 </div>
 

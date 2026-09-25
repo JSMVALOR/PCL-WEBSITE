@@ -81,10 +81,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  image_url: data.faculty_profiles?.image_url || '',
  is_public: data.faculty_profiles?.is_public ?? true
  });
- } catch (err) {
- console.error("Failed to load faculty:", err);
- window.erpDialog?.alert('Failed to load faculty data.');
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -111,10 +108,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  const objectUrl = URL.createObjectURL(blob);
  setImgSrc(objectUrl);
  setCrop(undefined);
- } catch (err) {
- console.error(err);
- alert("Could not load current image for cropping due to CORS or network error.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const onImageLoad = (e) => {
@@ -218,9 +212,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  if (fProfileError) throw fProfileError;
 
  onSave();
- } catch (err) {
- console.error("Save error:", err);
- window.erpDialog?.alert(`Save failed: ${err.message}`);
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }`);
  } finally {
  setSaving(false);
  }
@@ -265,9 +257,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  </div>
  </div>
  </div>
- <button type="button" onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-black/40 hover:bg-black/10 dark:hover:bg-white/10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
- <i className="fa-solid fa-xmark text-base"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-black/40 hover:bg-black/10 dark:hover:bg-white/10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95"><i className="fa-solid fa-xmark text-base"></i></button>
  </div>
 
  {/* SCROLLABLE CONTENT */}
@@ -393,10 +383,10 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  {/* FOOTER */}
  <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-black/5 dark:border-white/10 flex justify-end shrink-0 gap-4 z-10">
- <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-themeBorder dark:border-white/10 hover:text-themeText transition">
+ <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-themeBorder dark:border-white/10 hover:text-themeText transition disabled:cursor-not-allowed">
  Cancel
  </button>
- <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white px-10 py-3 rounded-xl font-black tracking-normal text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+ <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white px-10 py-3 rounded-xl font-black tracking-normal text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 disabled:cursor-not-allowed">
  {saving ? (
  <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div> Saving Changes...</>
  ) : (

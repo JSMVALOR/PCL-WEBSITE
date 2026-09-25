@@ -52,10 +52,7 @@ export default function AdminCampusPulse({ className = "" }) {
                 });
                 setLoading(false);
             }
-        } catch (error) {
-            console.error("Failed to load presence:", error);
-            if (isMounted) setLoading(false);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     fetchLivePresence();

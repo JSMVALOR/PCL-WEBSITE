@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../../../ERP/context/ErpContext';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
@@ -120,9 +121,7 @@ export default function ParentDashboard({ onLogout }) {
                     mentor: mentorObj
                 }));
             }
-        } catch (err) {
-            console.error("Parent dashboard error", err);
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         setLoading(false);
     };
 
@@ -164,16 +163,13 @@ export default function ParentDashboard({ onLogout }) {
             setActiveModal(null);
             setEmailData({ subject: '', message: '' });
             alert("Message sent successfully!");
-        } catch (error) {
-            console.error("Failed to send email", error);
-            alert("Failed to send message. Please try again.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setSendingEmail(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-themeApp p-4 sm:p-8 font-sans selection:bg-themeAccent/20 text-themeText dark:text-white">
+        <main className="min-h-screen bg-themeApp p-4 sm:p-8 font-sans selection:bg-themeAccent/20 text-themeText dark:text-white">
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                 <div>
                     <h1 className="text-[32px] font-semibold text-themeText dark:text-white tracking-tight font-sans">Parent Portal</h1>
@@ -228,7 +224,7 @@ export default function ParentDashboard({ onLogout }) {
                         {/* Attendance (4) */}
                         <div onClick={() => setActiveModal('attendance')} className="col-span-1 md:col-span-6 lg:col-span-4 bg-white/70 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-[24px] p-8 flex flex-col items-center justify-center cursor-pointer hover:border-themeAccent/30 transition-colors relative group">
                             <h3 className="absolute top-6 left-6 text-[15px] font-semibold flex items-center gap-2"><i className="fa-solid fa-chart-pie text-themeAccent"></i> Activity</h3>
-                            <button className="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-themeTextSec dark:text-white/50 group-hover:bg-themeAccent/10 group-hover:text-themeAccent transition-colors"><i className="fa-solid fa-chevron-right text-[10px]"></i></button>
+                            <button aria-label="Action button" className="absolute top-6 right-6 w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center text-themeTextSec dark:text-white/50 group-hover:bg-themeAccent/10 group-hover:text-themeAccent transition-colors"><i className="fa-solid fa-chevron-right text-[10px]"></i></button>
                             <div className="relative w-36 h-36 mt-8 mb-4 drop-shadow-[0_4px_12px_rgba(0,122,255,0.3)]">
                                 <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                                     <circle cx="50" cy="50" r="40" className="stroke-black/5 dark:stroke-white/10 fill-none" strokeWidth="8" />
@@ -444,7 +440,7 @@ export default function ParentDashboard({ onLogout }) {
                                             <label className="text-[13px] font-semibold text-themeTextSec dark:text-white/50">Message</label>
                                             <textarea required value={emailData.message} onChange={e => setEmailData({...emailData, message: e.target.value})} placeholder="Write your message here..." rows="5" className="w-full px-4 py-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-[15px] font-medium outline-none focus:border-themeAccent/50 transition-colors resize-none"></textarea>
                                         </div>
-                                        <button type="submit" disabled={sendingEmail} className="w-full mt-4 py-3 bg-themeAccent text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-themeAccent/90 transition-colors disabled:opacity-50">
+                                        <button type="submit" disabled={sendingEmail} className="w-full mt-4 py-3 bg-themeAccent text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-themeAccent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                                             {sendingEmail ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-regular fa-paper-plane"></i>}
                                             {sendingEmail ? 'Sending...' : 'Send Message'}
                                         </button>
@@ -455,6 +451,6 @@ export default function ParentDashboard({ onLogout }) {
                     </div>
                 )}
             </AnimatePresence>
-        </div>
+        </main>
     );
 }

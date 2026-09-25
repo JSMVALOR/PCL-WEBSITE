@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { useERP } from '../../../context/ErpContext';
 import { FACULTY_ATTENDANCE_RULES } from '../../../lib/facultyAttendanceRules';
@@ -31,9 +32,7 @@ export default function FacultyWebClock() {
                 .maybeSingle();
             
             if (data) setAttendanceRecord(data);
-        } catch (error) {
-            console.error("Error fetching attendance log:", error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };
@@ -65,9 +64,7 @@ export default function FacultyWebClock() {
             } else {
                 setAttendanceRecord(data);
             }
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };
@@ -97,9 +94,7 @@ export default function FacultyWebClock() {
             } else {
                 setAttendanceRecord(data);
             }
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };

@@ -80,9 +80,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  setGrievances(grievancesData || []);
  setAllProfiles(profilesData || []);
 
- } catch (error) {
- console.error("Error fetching approvals data:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  }, [userSession?.db_id, userSession?.id]);
@@ -147,10 +145,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  window.erpDialog.alert("Leave request submitted to your mentor successfully.");
  setLeaveData({ startDate: minDateStr, endDate: minDateStr, reason: "" });
  fetchData();
- } catch (error) {
- console.error("Error submitting leave:", error);
- window.erpDialog.alert("Failed to submit leave request.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -202,10 +197,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  
  setGrievanceData({ accusedId: "", category: "Academics", description: "", imageUrl: "" });
  fetchData();
- } catch (error) {
- console.error("Error submitting grievance:", error);
- window.erpDialog.alert("Failed to submit grievance.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -268,7 +260,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Provide a detailed reason..." value={leaveData.reason} onChange={e => setLeaveData({ ...leaveData, reason: e.target.value})}></textarea>
  </div>
 
- <button disabled={isSubmitting || !mentor} type="submit" className="btn-erp">
+ <button disabled={isSubmitting || !mentor} type="submit" className="btn-erp disabled:cursor-not-allowed">
  {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit Request"}
  </button>
  </form>
@@ -332,7 +324,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <input type="url" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" placeholder="https://..." value={grievanceData.imageUrl} onChange={e => setGrievanceData({ ...grievanceData, imageUrl: e.target.value})} />
  </div>
 
- <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
+ <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
  {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit Grievance"}
  </button>
  </form>

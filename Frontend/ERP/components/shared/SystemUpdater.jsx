@@ -39,9 +39,7 @@ export default function SystemUpdater({ children }) {
                     setUpdateRequired(true);
                 }
             }
-        } catch (err) {
-            console.error("Update check error:", err);
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsChecking(false);
         }
     };

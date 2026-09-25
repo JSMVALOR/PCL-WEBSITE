@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../../context/ErpContext';
@@ -22,10 +23,7 @@ export default function MenteeReport({ menteeId, menteeName, setMenteeTab }) {
             if (error) throw error;
             window.erpDialog?.alert("Report successfully filed with Admin.");
             setMenteeTab('grievances');
-        } catch (e) {
-            console.error(e);
-            window.erpDialog?.alert("Failed to submit report.");
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };

@@ -96,9 +96,7 @@ export default function Timetable({ isEmbedded = false }) {
  });
 
  setSchedule(formatted);
- } catch (err) {
- console.error("Failed to fetch schedule:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };

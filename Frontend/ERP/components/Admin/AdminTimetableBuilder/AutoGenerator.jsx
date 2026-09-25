@@ -162,11 +162,7 @@ export default function AutoGenerator({}) {
  setTimeout(() => setProgress(''), 3000);
  window.erpDialog?.alert("Auto-Timetable generation completed successfully!");
  
- } catch (error) {
- console.error('Generation Error:', error);
- window.erpDialog?.alert("Error auto-generating timetable: " + error.message);
- setProgress('');
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsGenerating(false);
  }
  };
@@ -181,7 +177,7 @@ export default function AutoGenerator({}) {
  <button type="button"
  onClick={generateTimetable}
  disabled={isGenerating}
- className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0"
+ className="relative overflow-hidden group bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white font-black text-lg py-4 px-10 rounded-full transition transform hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
  >
  {isGenerating ? (
  <span className="flex items-center gap-3">

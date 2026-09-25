@@ -120,10 +120,7 @@ export default function Notices({ setActiveTab }) {
                 } else {
                     setNotices([]);
                 }
-            } catch (err) {
-                console.error("Failed to fetch notices:", err);
-                setNotices([]);
-            }
+            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
             setLoading(false);
         };
         fetchNotices();
@@ -151,9 +148,7 @@ export default function Notices({ setActiveTab }) {
             
             // Remove unread dot visually
             setNotices(notices.map(n => n.id === id ? { ...n, isUnread: false } : n));
-        } catch (err) {
-            console.error("Ack failed", err);
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     // Filter Logic

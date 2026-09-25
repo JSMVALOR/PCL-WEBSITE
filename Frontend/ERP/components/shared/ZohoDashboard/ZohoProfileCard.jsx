@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 
 export default function ZohoProfileCard({ session, roleLabel }) {

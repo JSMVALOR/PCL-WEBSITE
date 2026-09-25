@@ -22,9 +22,7 @@ export default function MentorshipLogs({}) {
  
  if (error) throw error;
  setLogs(data || []);
- } catch (error) {
- console.error("Error fetching audit logs:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -37,12 +35,10 @@ export default function MentorshipLogs({}) {
  <span>Audit Log</span>
  <i className="fa-solid fa-list-check text-themeTextSec"></i>
  </h3>
- <button type="button" 
+ <button aria-label="Action button" type="button" 
  onClick={fetchLogs}
  className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-indigo-500 hover:border-indigo-500 transition-colors flex items-center justify-center"
- >
- <i className="fa-solid fa-rotate-right text-xs"></i>
- </button>
+ ><i className="fa-solid fa-rotate-right text-xs"></i></button>
  </div>
 
  {isLoading ? (

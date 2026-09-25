@@ -61,7 +61,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  const parsed = JSON.parse(cached);
  if (parsed && parsed.students && parsed.faculty) return parsed;
  }
- } catch (e) { console.error("Cache parse error", e); }
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  }
  return { students: [], faculty: [], disciplinary: [] };
  });
@@ -106,9 +106,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  if (typeof window !== "undefined") {
  sessionStorage.setItem(CACHE_KEY, JSON.stringify(structuredData));
  }
- } catch (error) {
- console.error("Failed to fetch directory:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -154,9 +152,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
         } else {
             await sendSystemEmail('ACCOUNT_REACTIVATED', { to_email: user.email, name: user.name });
         }
-      } catch (err) {
-        console.error("Failed to send status email", err);
-      }
+      } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
 
  } catch (error) {
  window.erpDialog.alert("Failed to update status: " + error.message);
@@ -623,9 +619,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight tracking-tight mb-1 text-themeText dark:text-white">Provision New Account</h3>
  <p className={`text-[10px] lg:text-xs text-amber-500 font-medium`}>Generate credentials and assign records.</p>
  </div>
- <button type="button" onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-black/[0.04] dark:border-white/[0.08] text-themeText dark:text-white transition-colors shrink-0">
- <i className="fa-solid fa-xmark text-sm"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-black/[0.04] dark:border-white/[0.08] text-themeText dark:text-white transition-colors shrink-0"><i className="fa-solid fa-xmark text-sm"></i></button>
  </div>
  </div>
 
@@ -739,7 +733,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  {!provisionSuccess && (
  <div className="p-4 lg:p-5 border-t border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shrink-0 flex flex-col sm:flex-row gap-3">
  <button type="button" onClick={closeProvisionWizard} className="w-full sm:w-auto px-6 py-3.5 bg-black/5 dark:bg-themeApp hover:bg-themeBorder text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition-colors border border-black/[0.04] dark:border-white/[0.08] active:scale-95">Cancel</button>
- <button type="button" onClick={handleProvisionSubmit} disabled={isProvisioning || !newUserName || !newUserEmail || !assignment} className="w-full sm:flex-1 bg-amber-500 hover:bg-amber-500Muted text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 group relative overflow-hidden active:scale-[0.98]">
+ <button type="button" onClick={handleProvisionSubmit} disabled={isProvisioning || !newUserName || !newUserEmail || !assignment} className="w-full sm:flex-1 bg-amber-500 hover:bg-amber-500Muted text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 group relative overflow-hidden active:scale-[0.98] disabled:cursor-not-allowed">
  {!isProvisioning && newUserName && newUserEmail && assignment && (
  <div className="absolute inset-0 w-full h-full -translate-x-full group-hover:"></div>
  )}

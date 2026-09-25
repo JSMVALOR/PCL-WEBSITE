@@ -89,10 +89,7 @@ export default function AdminOverview({}) {
  
  setLoading(false);
  }
- } catch (error) {
- console.error("Error fetching overview data:", error);
- if (isMounted) setLoading(false);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  fetchData();

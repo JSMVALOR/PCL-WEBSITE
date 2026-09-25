@@ -28,10 +28,7 @@ export default function ForgotPasswordModal({ onClose }) {
             if (insertError) throw insertError;
             
             setSuccess(true);
-        } catch (err) {
-            setError('Failed to submit request. Please verify your connection or try again later.');
-            console.error(err);
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSubmitting(false);
         }
     };
@@ -40,12 +37,10 @@ export default function ForgotPasswordModal({ onClose }) {
         <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-y-auto">
             {/* Close Button - Moved outside the inner container to ensure it's always clickable and visible */}
             <button 
-                type="button"
+                aria-label="Action button" type="button"
                 onClick={onClose}
                 className="fixed top-6 right-6 lg:top-10 lg:right-10 w-12 h-12 rounded-md bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated hover:bg-themeBorder border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec hover:text-themeText transition outline-none z-[250] shadow-2xl cursor-pointer hover:scale-110"
-            >
-                <i className="fa-solid fa-times text-xl"></i>
-            </button>
+            ><i className="fa-solid fa-times text-xl"></i></button>
 
             {/* Subtle Background Effects */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">

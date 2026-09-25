@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
@@ -23,10 +24,7 @@ export default function WhatsAppAdmin() {
             setWaStatus(data.status);
             if (data.qr) setQrCode(data.qr);
             if (data.logs) setLogs(data.logs);
-        } catch (error) {
-            console.error("Failed to fetch WhatsApp status", error);
-            setWaStatus('ERROR');
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     
@@ -52,16 +50,11 @@ export default function WhatsAppAdmin() {
                     try {
                         const groupId = await createWhatsAppGroup(groupName, phones);
                         await sendSystemWhatsApp(groupId, `Welcome to the official WhatsApp broadcast group for ${batch}. This group will be used for automated attendance and exam notices.`);
-                    } catch (e) {
-                        console.error(`Failed to create group for ${batch}`, e);
-                    }
+                    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
                 }
             }
             window.erpToast.success("Batch groups generated successfully!");
-        } catch (error) {
-            console.error(error);
-            window.erpToast.error("Failed to generate groups.");
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         setIsLoading(false);
     };
 
@@ -72,9 +65,7 @@ export default function WhatsAppAdmin() {
             await fetch(endpoint, { method: 'POST' });
             setWaStatus('DISCONNECTED');
             setQrCode(null);
-        } catch (error) {
-            console.error(error);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         setIsLoading(false);
     };
 
@@ -133,10 +124,10 @@ export default function WhatsAppAdmin() {
                         
                         
                         <div className="flex gap-4 mt-4">
-                            <button onClick={handleGenerateGroups} disabled={isLoading} className="px-6 py-3 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF] hover:text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors">
+                            <button onClick={handleGenerateGroups} disabled={isLoading} className="px-6 py-3 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF] hover:text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors disabled:cursor-not-allowed">
                                 {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Auto-Generate Batch Groups"}
                             </button>
-                            <button onClick={handleReset} disabled={isLoading} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors">
+                            <button onClick={handleReset} disabled={isLoading} className="px-6 py-3 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition-colors disabled:cursor-not-allowed">
                                 {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Disconnect Device"}
                             </button>
                         </div>

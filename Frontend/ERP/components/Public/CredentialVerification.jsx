@@ -35,10 +35,7 @@ export default function CredentialVerification() {
                 if (docError) throw docError;
                 setDocuments(docs || []);
 
-            } catch (err) {
-                console.error(err);
-                setErrorMsg(err.message);
-            } finally {
+            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
                 setIsLoading(false);
             }
         };
@@ -53,10 +50,7 @@ export default function CredentialVerification() {
             if (data?.signedUrl) {
                 window.open(data.signedUrl, '_blank');
             }
-        } catch (e) {
-            console.error(e);
-            window.erpDialog?.alert("Failed to generate secure preview link.");
-        }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     if (isLoading) {

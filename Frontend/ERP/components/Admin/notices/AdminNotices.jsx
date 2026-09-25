@@ -59,9 +59,7 @@ export default function AdminNotices({ isHubView = false }) {
  .limit(300)
  .order('created_at', { ascending: false });
  if (!error && data) setNotices(data);
- } catch (err) {
- console.error("Error fetching notices:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const fetchEvents = async () => {
@@ -72,9 +70,7 @@ export default function AdminNotices({ isHubView = false }) {
  .limit(300)
  .order('start_date', { ascending: true });
  if (!error && data) setEvents(data);
- } catch (err) {
- console.error("Error fetching events:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  // --- HANDLERS ---
@@ -112,10 +108,7 @@ export default function AdminNotices({ isHubView = false }) {
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
- } catch (err) {
- console.error("Failed to publish notice:", err);
- window.erpDialog?.alert("Failed to publish notice. Check console.");
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsPublishing(false);
  }
  };
@@ -150,10 +143,7 @@ export default function AdminNotices({ isHubView = false }) {
  setEventEndDate("");
  setEventDesc("");
  fetchEvents();
- } catch (err) {
- console.error("Failed to schedule event:", err);
- window.erpDialog?.alert("Failed to schedule event. Check console.");
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsScheduling(false);
  }
  };
@@ -235,7 +225,7 @@ export default function AdminNotices({ isHubView = false }) {
  <input type="checkbox" checked={isPublicWebsite} onChange={e => setIsPublicWebsite(e.target.checked)} className="hidden" />
  </label>
 
- <button type="submit" disabled={isPublishing} className="btn-erp">
+ <button type="submit" disabled={isPublishing} className="btn-erp disabled:cursor-not-allowed">
  {isPublishing ? 'Broadcasting...' : 'Publish Notice'}
  </button>
  </form>
@@ -329,7 +319,7 @@ export default function AdminNotices({ isHubView = false }) {
         </div>
     )}
  </div>
- <button type="submit" disabled={isScheduling} className="btn-erp">
+ <button type="submit" disabled={isScheduling} className="btn-erp disabled:cursor-not-allowed">
  {isScheduling ? 'Scheduling...' : 'Add to Calendar'}
  </button>
  </form>

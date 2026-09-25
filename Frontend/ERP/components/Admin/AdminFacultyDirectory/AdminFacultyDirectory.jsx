@@ -64,9 +64,7 @@ export default function AdminFacultyDirectory({ isEmbedded = false,  isHubView =
 
  if (error) throw error;
  setFaculties(data || []);
- } catch (error) {
- console.error("Failed to fetch faculty directory:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };

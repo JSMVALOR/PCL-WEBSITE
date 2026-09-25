@@ -326,9 +326,7 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
             } else {
                 setOverallAttendance(100);
             }
-        } catch (e) {
-            console.error("Error fetching student attendance:", e);
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     }, [userSession, menteeId, targetUserId]);
@@ -432,12 +430,7 @@ const handleScanQR = async (e) => {
  fetchAcademicData();
  }, 2000);
  
- } catch (error) {
- console.error(error);
- setScanStatus("error");
- window.erpDialog?.alert(error.message || "Failed to mark attendance.");
- setTimeout(() => setScanStatus("idle"), 2000);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  // UI Helpers
@@ -659,7 +652,7 @@ const handleScanQR = async (e) => {
  <button 
  type="submit" 
  disabled={scanStatus !== 'idle' || !scanToken.trim()}
- className="btn-erp"
+ className="btn-erp disabled:cursor-not-allowed"
  >
  {scanStatus === 'idle' ? 'Mark Present' : 
  scanStatus === 'scanning' ? 'Verifying...' : 
@@ -789,7 +782,7 @@ const handleScanQR = async (e) => {
                         />
                         <div className="flex justify-end gap-3 mt-2">
                             <button onClick={() => setShowAppealModal(false)} className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-themeText dark:text-white text-sm font-bold transition-colors">Cancel</button>
-                            <button onClick={handleFileAppeal} disabled={isAppealing} className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-black transition-colors">
+                            <button onClick={handleFileAppeal} disabled={isAppealing} className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-sm font-black transition-colors disabled:cursor-not-allowed">
                                 {isAppealing ? 'Submitting...' : 'Submit Appeal'}
                             </button>
                         </div>

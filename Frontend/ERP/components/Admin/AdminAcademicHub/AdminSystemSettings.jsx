@@ -29,9 +29,7 @@ export default function AdminSystemSettings({}) {
  debar_percentage: data.value.debar_percentage || 75
  });
  }
- } catch (err) {
- console.error("Failed to load settings:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -54,10 +52,7 @@ export default function AdminSystemSettings({}) {
  if (error) throw error;
  setSaveSuccess(true);
  setTimeout(() => setSaveSuccess(false), 3000);
- } catch (err) {
- console.error("Save error:", err);
- window.erpDialog?.alert("Failed to save settings.");
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSaving(false);
  }
  };
@@ -126,7 +121,7 @@ export default function AdminSystemSettings({}) {
  <button 
  type="submit" 
  disabled={isSaving}
- className="btn-erp"
+ className="btn-erp disabled:cursor-not-allowed"
  >
  {isSaving ? (
  <span><i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Saving...</span>

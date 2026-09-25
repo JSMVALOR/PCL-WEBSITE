@@ -32,9 +32,7 @@ export default function Credentials() {
      setIsGeneratingID(true);
      try {
          await generateComponentPDF(idCardRef.current, `${profileData.full_name.replace(/\s+/g, '_')}_ID_Card.pdf`, { format: [54, 86], orientation: 'portrait', fitToPage: true }); // CR80 standard ID size in mm
-     } catch (e) {
-         console.error("Failed to download ID:", e);
-     } finally {
+     } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
          setIsGeneratingID(false);
      }
  };
@@ -83,9 +81,7 @@ export default function Credentials() {
  }
  }
 
- } catch (err) {
- console.error("Failed to load official record:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -395,7 +391,7 @@ export default function Credentials() {
  <div className="w-full flex flex-col items-center mt-8 gap-6">
     <div className="flex items-center justify-between w-full max-w-sm">
         <h3 className="text-[14px] font-bold tracking-widest text-themeText uppercase"><i className="fa-solid fa-id-badge text-themeAccent mr-2"></i> Digital ID Card</h3>
-        <button type="button" onClick={handleDownloadID} disabled={isGeneratingID} className="bg-themeAccent hover:bg-themeAccent/80 text-themeApp px-4 py-2 rounded-xl text-xs font-bold tracking-widest uppercase transition-colors flex items-center gap-2">
+        <button type="button" onClick={handleDownloadID} disabled={isGeneratingID} className="bg-themeAccent hover:bg-themeAccent/80 text-themeApp px-4 py-2 rounded-xl text-xs font-bold tracking-widest uppercase transition-colors flex items-center gap-2 disabled:cursor-not-allowed">
             {isGeneratingID ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>}
             Download PDF
         </button>

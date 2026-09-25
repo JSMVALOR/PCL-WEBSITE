@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../../../Shared/lib/supabase/supabaseClient";
 import { theme } from '../../../../Shared/theme';
@@ -26,9 +27,7 @@ export default function SecuritySettings() {
                         }
                     ]);
                 }
-            } catch (err) {
-                console.error("Security sync failed:", err);
-            } finally {
+            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
                 if (isMounted) setIsLoading(false);
             }
         };
@@ -67,10 +66,7 @@ export default function SecuritySettings() {
         try {
             await supabase.auth.signOut();
             window.location.href = '/login';
-        } catch (error) {
-            console.error("Global logout failed:", error);
-            setIsLoggingOut(false);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     return (

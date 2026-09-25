@@ -42,9 +42,7 @@ export default function Helpdesk({ isEmbedded = false }) {
             if (error) throw error;
             setTickets(data || []);
             sessionStorage.setItem(`helpdesk_tickets_${userId}`, JSON.stringify(data || []));
-        } catch (error) {
-            console.error("Failed to sync helpdesk tickets:", error);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     useEffect(() => {
@@ -101,9 +99,7 @@ export default function Helpdesk({ isEmbedded = false }) {
                 setTicketForm({ category: "IT Support", subject: "", description: "" });
             }, 2000);
 
-        } catch (error) {
-            console.error("Ticket creation failed:", error);
-            setStatusMessage({ type: "error", text: "Failed to submit ticket. Please try again." });
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); });
         } finally {
             setIsSubmitting(false);
         }
@@ -222,7 +218,7 @@ export default function Helpdesk({ isEmbedded = false }) {
                                         <textarea required rows="5" className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-medium text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Explain your issue in detail..." value={ticketForm.description} onChange={e => setTicketForm({ ...ticketForm, description: e.target.value })}></textarea>
                                     </div>
 
-                                    <button disabled={isSubmitting} type="submit" className="w-full bg-themeAccent hover:bg-themeAccentMuted text-themeApp font-bold text-sm py-4 rounded-xl transition-colors mt-2 disabled:opacity-50 flex justify-center items-center gap-2">
+                                    <button disabled={isSubmitting} type="submit" className="w-full bg-themeAccent hover:bg-themeAccentMuted text-themeApp font-bold text-sm py-4 rounded-xl transition-colors mt-2 disabled:opacity-50 flex justify-center items-center gap-2 disabled:cursor-not-allowed">
                                         {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <><i className="fa-solid fa-paper-plane"></i> Submit Ticket</>}
                                     </button>
                                 </form>

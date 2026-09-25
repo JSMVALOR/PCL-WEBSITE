@@ -31,9 +31,7 @@ export default function AdminMarksController() {
                 .select('*, profiles:faculty_id(full_name), master_subjects:subject_id(name, code)')
                 .order('submitted_at', { ascending: false });
             if (!error && data) setSubmissions(data);
-        } catch (e) {
-            console.error(e);
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoadingSubs(false);
         }
     };
@@ -46,9 +44,7 @@ export default function AdminMarksController() {
                 .select('*, faculty:profiles!mark_correction_requests_faculty_id_fkey(full_name), student:profiles!mark_correction_requests_student_id_fkey(full_name, erp_id), subject:master_subjects(name, code)')
                 .order('created_at', { ascending: false });
             if (!error && data) setCorrectionRequests(data);
-        } catch (e) {
-            console.error(e);
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoadingCorrections(false);
         }
     };
@@ -79,10 +75,7 @@ export default function AdminMarksController() {
                 
             window.erpDialog?.alert(`Request ${statusStr.toUpperCase()} successfully.`);
             fetchCorrections();
-        } catch (error) {
-            console.error(error);
-            window.erpDialog?.alert("Error resolving request.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsResolving(false);
         }
     };
@@ -131,10 +124,7 @@ export default function AdminMarksController() {
 
             await generateBeautifulExcel(title, metaData, columns, dataRows, filename);
             
-        } catch (e) {
-            console.error("Export Error:", e);
-            window.erpDialog?.alert("Failed to export OU sheet.");
-        }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleEditMaxMarks = async (sub) => {
@@ -153,10 +143,7 @@ export default function AdminMarksController() {
                     .eq('assessment_type', sub.assessment_type);
                 if (error) throw error;
                 window.erpDialog?.alert(`Max marks successfully updated to ${newMax} for all students in this assessment.`, "Success");
-            } catch(e) {
-                console.error(e);
-                window.erpDialog?.alert("Failed to update max marks.");
-            }
+            } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         }
     };
 

@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
@@ -71,9 +72,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             });
 
             setFacultyData(enriched);
-        } catch (error) {
-            console.error("Error fetching faculty attendance:", error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };
@@ -125,10 +124,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             }]);
 
             fetchAttendanceData();
-        } catch (error) {
-            console.error(error);
-            alert("Failed to mark attendance.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };
@@ -145,7 +141,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                 setAuditHistory(data);
                 setShowHistoryModal(true);
             }
-        } catch(e) { console.error(e); }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
 

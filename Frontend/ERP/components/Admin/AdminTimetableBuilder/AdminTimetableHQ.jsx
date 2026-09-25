@@ -32,9 +32,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  timetableRows: errTt ? 0 : (ttCount || 0),
  loading: false
  });
- } catch (err) {
- console.error(err);
- setStats(s => ({ ...s, loading: false }));
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }));
  }
  };
  fetchStats();

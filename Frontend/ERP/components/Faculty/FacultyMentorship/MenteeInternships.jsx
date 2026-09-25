@@ -22,9 +22,7 @@ export default function MenteeInternships({ menteeId }) {
 
             if (error) throw error;
             setInternships(data || []);
-        } catch (error) {
-            console.error("Failed to fetch internships:", error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -42,10 +40,7 @@ export default function MenteeInternships({ menteeId }) {
 
             window.erpDialog?.alert(`Internship marked as ${actionType.replace('_', ' ')} successfully.`);
             fetchInternships();
-        } catch (error) {
-            console.error("Failed to update status:", error);
-            window.erpDialog?.alert("Failed to update status: " + error.message);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };

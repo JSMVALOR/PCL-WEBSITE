@@ -115,9 +115,7 @@ export default function ScheduleBuilder({}) {
  
  setSchedule(formatted);
  }
- } catch (err) {
- console.error("Failed to fetch schedule data:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -181,10 +179,7 @@ export default function ScheduleBuilder({}) {
  }
 
  return null; // no conflict
- } catch (err) {
- console.error("Conflict check error:", err);
- return null;
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleSlotClick = async (dayString, timeStr, explicitEndTime) => {
@@ -252,11 +247,7 @@ export default function ScheduleBuilder({}) {
  setPendingDraws([]);
  fetchData();
  window.erpDialog?.alert(`Successfully saved ${inserts.length} classes!`);
- } catch (err) {
- console.error("Failed to save drafts:", err);
- window.erpDialog?.alert("Error saving drawn classes.");
- setLoading(false);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  // Removed handleCreate as draw mode handles creation
@@ -277,10 +268,7 @@ export default function ScheduleBuilder({}) {
  
  setSelectedClass(null);
  fetchData();
- } catch (err) {
- console.error("Failed to delete class:", err);
- window.erpDialog?.alert("Error deleting class.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  return (

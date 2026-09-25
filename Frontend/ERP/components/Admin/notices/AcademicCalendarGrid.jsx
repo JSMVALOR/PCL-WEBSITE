@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
@@ -25,9 +26,7 @@ export default function AcademicCalendarGrid() {
                 if (data.value.columns) setColumns(data.value.columns);
                 if (data.value.rows) setRows(data.value.rows);
             }
-        } catch (err) {
-            console.error("Error fetching calendar grid:", err);
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -41,10 +40,7 @@ export default function AcademicCalendarGrid() {
                 .upsert({ key: 'academic_calendar_grid', value: payload }, { onConflict: 'key' });
             if (upsertError) throw upsertError;
             window.erpDialog?.alert("Calendar updated successfully!");
-        } catch (err) {
-            console.error("Error saving:", err);
-            window.erpDialog?.alert("Failed to save calendar grid.");
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSaving(false);
         }
     };
@@ -103,7 +99,7 @@ export default function AcademicCalendarGrid() {
                     <button onClick={addRow} className="btn-erp-secondary">
                         <i className="fa-solid fa-plus mr-2"></i> Add Row
                     </button>
-                    <button onClick={saveData} disabled={isSaving} className="btn-erp">
+                    <button onClick={saveData} disabled={isSaving} className="btn-erp disabled:cursor-not-allowed">
                         <i className="fa-solid fa-floppy-disk mr-2"></i> {isSaving ? 'Saving...' : 'Save Grid'}
                     </button>
                 </div>

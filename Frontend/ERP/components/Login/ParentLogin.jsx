@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../lib/EmailService';
@@ -111,7 +112,7 @@ export default function ParentLogin({ onBack, onLoginSuccess }) {
                             className="w-full bg-themeElevated/50 border border-black/5 dark:border-white/5 rounded-xl pl-11 pr-4 py-3.5 text-sm font-medium text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none"
                         />
                     </div>
-                    <button disabled={loading} className="w-full bg-themeText text-themeApp py-3.5 rounded-xl text-[14px] font-medium tracking-normal hover:opacity-90 transition mt-2">
+                    <button disabled={loading} className="w-full bg-themeText text-themeApp py-3.5 rounded-xl text-[14px] font-medium tracking-normal hover:opacity-90 transition mt-2 disabled:cursor-not-allowed">
                         {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Generate OTP"}
                     </button>
                 </form>
@@ -148,7 +149,7 @@ export default function ParentLogin({ onBack, onLoginSuccess }) {
                             />
                         ))}
                     </div>
-                    <button disabled={loading} className="w-full bg-themeAccent text-themeText dark:text-white py-3.5 rounded-xl text-[14px] font-medium tracking-normal hover:bg-themeAccent/90 transition">
+                    <button disabled={loading} className="w-full bg-themeAccent text-themeText dark:text-white py-3.5 rounded-xl text-[14px] font-medium tracking-normal hover:bg-themeAccent/90 transition disabled:cursor-not-allowed">
                         {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Verify & Login"}
                     </button>
                 </form>

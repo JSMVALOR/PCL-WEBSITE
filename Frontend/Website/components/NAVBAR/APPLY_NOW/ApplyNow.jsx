@@ -16,7 +16,7 @@ export default function ApplyNow() {
   const { isAdmissionsOpen } = useSite();
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', program: 'B.A., LL.B. (Hons.)',
-    familyInLegal: 'No', familyInLegalWho: '', marks10th: '', marksInter: '',
+    familyInLegal: 'No', familyInLegalName: '', familyInLegalRelation: '', familyInLegalProfession: '', marks10th: '', marksInter: '',
     examTGLAWCET: '', examCLAT: '', examOther: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +28,11 @@ export default function ApplyNow() {
 
 
   const handleChange = (e) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    let { name, value } = e.target;
+    if (name === 'phone') {
+        value = value.replace(/\D/g, '').slice(0, 10);
+    }
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -42,10 +46,14 @@ export default function ApplyNow() {
     
     try {
       const ticketId = `TCK-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`;
+      const combinedFamilyInLegalWho = formData.familyInLegal === 'Yes' 
+        ? `${formData.familyInLegalName} - ${formData.familyInLegalRelation} - ${formData.familyInLegalProfession}` 
+        : '';
+        
       const { error } = await supabase.from('admissions_applications').insert([{
         name: formData.name, email: formData.email, phone: formData.phone,
         program: formData.program, family_in_legal: formData.familyInLegal,
-        family_in_legal_who: formData.familyInLegalWho, marks_10th: formData.marks10th,
+        family_in_legal_who: combinedFamilyInLegalWho, marks_10th: formData.marks10th,
         marks_inter: formData.marksInter, exam_tglawcet: formData.examTGLAWCET,
         exam_clat: formData.examCLAT, exam_other: formData.examOther,
         status: 'pending', source: 'website'
@@ -249,12 +257,12 @@ Program: ${formData.program}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Class X Marks (%) *</label>
                                 <input type="number" name="marks10th" required value={formData.marks10th} onChange={handleChange} min="0" max="100" step="0.01"
-                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="e.g. 92.5" />
+                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="00.00" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Class XII Marks (%) *</label>
                                 <input type="number" name="marksInter" required value={formData.marksInter} onChange={handleChange} min="0" max="100" step="0.01"
-                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="e.g. 88.0" />
+                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="00.00" />
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">TG LAWCET Rank (Optional)</label>
@@ -296,9 +304,23 @@ Program: ${formData.program}
                             <AnimatePresence>
                                 {formData.familyInLegal === 'Yes' && (
                                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
-                                        <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1 mt-4">Please specify relationship and profession</label>
-                                        <input type="text" name="familyInLegalWho" value={formData.familyInLegalWho} onChange={handleChange}
-                                            className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="e.g. Mother - Senior Advocate at High Court" />
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Name</label>
+                                                <input type="text" name="familyInLegalName" value={formData.familyInLegalName} onChange={handleChange} required
+                                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="Name" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Relationship</label>
+                                                <input type="text" name="familyInLegalRelation" value={formData.familyInLegalRelation} onChange={handleChange} required
+                                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="e.g. Mother" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Profession</label>
+                                                <input type="text" name="familyInLegalProfession" value={formData.familyInLegalProfession} onChange={handleChange} required
+                                                    className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 outline-none transition-all" placeholder="e.g. Senior Advocate" />
+                                            </div>
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>

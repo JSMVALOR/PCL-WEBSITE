@@ -50,9 +50,7 @@ export default function Achievements({ isEmbedded = false, }) {
  .order('date_achieved', { ascending: false });
  if (error) throw error;
  if (data) setAchievements(data);
- } catch (error) {
- console.error("Error fetching achievements:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -129,10 +127,7 @@ export default function Achievements({ isEmbedded = false, }) {
  fetchAchievements();
  setShowAddWizard(false);
  setFormData({ category: "Moot Courts", title: "", issuer: "", date_achieved: "", role: "", description: "", proof_link: "", include_in_cv: true });
- } catch (err) {
- console.error(err);
- window.erpDialog.alert("Failed to add achievement: " + (err?.message || err?.details || JSON.stringify(err)));
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -146,7 +141,7 @@ export default function Achievements({ isEmbedded = false, }) {
  setSelectedAchievement({ ...selectedAchievement, include_in_cv: newVal });
  }
  await supabase.from('student_achievements').update({ include_in_cv: newVal }).eq('id', achievement.id);
- } catch (e) { console.error(e); }
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handlePrintCertificate = (ach) => {
@@ -594,7 +589,7 @@ export default function Achievements({ isEmbedded = false, }) {
 
  <div className="p-6 border-t border-black/10 dark:border-white/20 bg-themePanel border border-black/5 dark:border-white/10 flex justify-end gap-3">
  <button type="button" onClick={() => setShowAddWizard(false)} className="px-6 py-3 rounded-lg text-sm font-bold text-themeTextSec hover:bg-themeBorder transition-colors">Cancel</button>
- <button type="button" onClick={handleAddSubmit} disabled={isSubmitting} className="px-6 py-3 rounded-lg text-sm font-bold bg-themeAccent text-themeText dark:text-white hover:brightness-110 transition flex items-center gap-2">
+ <button type="button" onClick={handleAddSubmit} disabled={isSubmitting} className="px-6 py-3 rounded-lg text-sm font-bold bg-themeAccent text-themeText dark:text-white hover:brightness-110 transition flex items-center gap-2 disabled:cursor-not-allowed">
  {isSubmitting ? <i className="fa-solid fa-spinner fa-spin"></i> : "Submit to Mentor"}
  </button>
  </div>

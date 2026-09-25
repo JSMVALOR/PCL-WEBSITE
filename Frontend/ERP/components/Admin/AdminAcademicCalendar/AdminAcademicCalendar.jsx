@@ -46,10 +46,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
       }
       
  setEvents(data || []);
- } catch (error) {
- console.error("Error fetching academic events:", error);
- // Ignore if table doesn't exist yet
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -123,10 +120,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  
  setIsEditing(false);
  fetchEvents();
- } catch (error) {
- console.error("Error saving event:", error);
- alert("Error saving event. Make sure the Supabase table and storage bucket exist.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setUploading(false);
  }
  };
@@ -157,10 +151,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
       
  alert("Event deleted.");
  fetchEvents();
- } catch (error) {
- console.error("Error deleting event:", error);
- alert("Error deleting event.");
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const getEventTypeColor = (type) => {
@@ -184,10 +175,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
         });
         if (error) throw error;
         window.erpDialog?.alert("PDF URL updated successfully!");
-    } catch (err) {
-        console.error(err);
-        window.erpDialog?.alert("Failed to update PDF URL.");
-    } finally {
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
         setSavingPdf(false);
     }
  };
@@ -214,7 +202,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
                             placeholder="https://example.com/calendar.pdf"
                         />
                     </div>
-                    <button onClick={handleSavePdf} disabled={savingPdf} className="px-6 py-3 bg-themeAccent hover:bg-themeAccent/90 text-white font-black text-sm rounded-xl transition-colors shadow-lg shadow-themeAccent/20">
+                    <button onClick={handleSavePdf} disabled={savingPdf} className="px-6 py-3 bg-themeAccent hover:bg-themeAccent/90 text-white font-black text-sm rounded-xl transition-colors shadow-lg shadow-themeAccent/20 disabled:cursor-not-allowed">
                         {savingPdf ? 'Saving...' : 'Save PDF'}
                     </button>
                 </div>
@@ -320,7 +308,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  <button 
  type="submit" 
  disabled={uploading}
- className="btn-erp"
+ className="btn-erp disabled:cursor-not-allowed"
  >
  {uploading ? 'Saving...' : (isEditing ? 'Update Event' : 'Add Event')}
  </button>

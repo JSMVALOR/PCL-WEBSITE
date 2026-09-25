@@ -55,9 +55,7 @@ export default function StudentProgressCard({ isEmbedded = false }) {
                 .order('subject_name', { ascending: true });
 
             if (!eErr) setExamResults(examData || []);
-        } catch (error) {
-            console.error('Error fetching progress card:', error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };

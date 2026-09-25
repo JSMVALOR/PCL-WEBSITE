@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 
 import React, { useState, useEffect } from 'react';
 
@@ -33,9 +34,7 @@ export default function ScheduleManager() {
       } else {
         setClassrooms(roomsData || []);
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
       setLoading(false);
     }
   };
@@ -57,10 +56,7 @@ export default function ScheduleManager() {
       if (error) throw error;
       setEditingRoom(null);
       fetchData();
-    } catch (err) {
-      console.error(err);
-      window.erpDialog?.alert("Failed to update classroom.");
-    }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
 
   const handleAddClassroom = async (e) => {
@@ -78,10 +74,7 @@ export default function ScheduleManager() {
       window.erpDialog?.alert("Classroom added successfully.");
       setNewRoomName('');
       fetchData();
-    } catch (err) {
-      console.error("Error adding classroom:", err);
-      window.erpDialog?.alert("Failed to add classroom. Did you run the SQL artifact?");
-    }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
 
   const toggleClassroomStatus = async (id, currentStatus) => {
@@ -93,9 +86,7 @@ export default function ScheduleManager() {
         .eq('id', id);
       if (error) throw error;
       fetchData();
-    } catch (err) {
-      console.error("Error toggling status:", err);
-    }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
 
   const deleteClassroom = async (id) => {
@@ -107,10 +98,7 @@ export default function ScheduleManager() {
         .eq('id', id);
       if (error) throw error;
       fetchData();
-    } catch (err) {
-      console.error("Error deleting classroom:", err);
-      window.erpDialog?.alert("Failed to delete classroom. It might be in use.");
-    }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
 
   if (loading) return <div className="p-8 text-center text-themeTextSec animate-pulse">Loading...</div>;

@@ -219,13 +219,11 @@ export default function SidebarFramework({
                 </div>
 
                 {/* Collapse Toggle Button (Absolute Positioned on Edge) */}
-                <button type="button" 
+                <button aria-label="Action button" type="button" 
                     onClick={toggleSidebar} 
                     className="absolute -right-3 top-7 w-6 h-6 rounded-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-black/10 dark:border-black/5 dark:border-white/10 shadow-md flex items-center justify-center text-themeTextSec hover:text-themeText hover:scale-110 transition z-50"
                     title={isCompact ? "Expand Sidebar" : "Collapse Sidebar"}
-                >
-                    <i className={`fa-solid ${isCompact ? 'fa-chevron-right' : 'fa-chevron-left'} text-[9px]`}></i>
-                </button>
+                ><i className={`fa-solid ${isCompact ? 'fa-chevron-right' : 'fa-chevron-left'} text-[9px]`}></i></button>
 
                 {/* 3. NAVIGATION ZONE */}
                 <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 custom-scrollbar flex flex-col gap-5">
@@ -309,12 +307,10 @@ export default function SidebarFramework({
                         </div>
                     ) : (
                         <button 
-                            onClick={onLogout}
+                            aria-label="Action button" onClick={onLogout}
                             className="w-full aspect-square mt-2 rounded-xl flex flex-col items-center justify-center gap-1 text-themeTextSec hover:text-rose-500 hover:bg-rose-500/10 transition-colors group"
                             title="Log Out"
-                        >
-                            <i className="fa-solid fa-power-off text-[15px] group-hover:scale-110 transition-transform"></i>
-                        </button>
+                        ><i className="fa-solid fa-power-off text-[15px] group-hover:scale-110 transition-transform"></i></button>
                     )}
                     
                 </div>

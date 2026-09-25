@@ -33,9 +33,7 @@ export default function LeaveRequests({ onReviewRequest }) {
             } else if (leaves) {
                 setRequests(leaves);
             }
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };

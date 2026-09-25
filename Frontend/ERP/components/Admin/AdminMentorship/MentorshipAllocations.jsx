@@ -105,9 +105,7 @@ export default function MentorshipAllocations({}) {
  sessionStorage.setItem('jsmerp_mentorship_faculty', JSON.stringify(facultyState));
  sessionStorage.setItem('jsmerp_mentorship_capacity', calcCapacity.toString());
 
- } catch (error) {
- console.error("Error fetching mentorship data:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -133,9 +131,7 @@ export default function MentorshipAllocations({}) {
  action: actionDesc,
  table_name: 'mentorship'
  });
- } catch (e) {
- console.error("Audit log failed:", e);
- }
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const executeDistribution = async (studentsToDistribute, currentFacultyState) => {
@@ -172,11 +168,7 @@ export default function MentorshipAllocations({}) {
                 const { error } = await supabase.from('mentorship').insert(newAllocations);
                 if (error) throw error;
                 await logAction(`Auto-allocated ${newAllocations.length} students`);
-            } catch (error) {
-                console.error("Error saving allocations:", error);
-                window.erpDialog?.alert("Failed to save auto-allocations.");
-                fetchMentorshipData();
-            }
+            } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         },
         () => {
             setFaculty(backupFaculty);
@@ -325,10 +317,7 @@ export default function MentorshipAllocations({}) {
  await logAction(`Bulk Imported ${rows.length} mentor assignments via CSV`);
  window.erpDialog?.alert(`Successfully imported ${rows.length} assignments from CSV.`);
  
- } catch (err) {
- console.error(err);
- window.erpDialog?.alert("Failed to parse CSV file.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  });
  };
 
@@ -394,7 +383,7 @@ export default function MentorshipAllocations({}) {
  <button type="button"
  onClick={handleAutoAllocate}
  disabled={filteredStudents.length === 0 || isProcessing}
- className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
+ className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98] disabled:cursor-not-allowed"
  >
  <i className="fa-solid fa-wand-magic-sparkles text-sm lg:text-base"></i> Auto-Allocate View
  </button>

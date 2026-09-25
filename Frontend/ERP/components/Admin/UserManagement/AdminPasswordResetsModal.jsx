@@ -25,10 +25,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  
  if (fetchError) throw fetchError;
  setRequests(data || []);
- } catch (err) {
- console.error(err);
- setError('Failed to fetch requests.');
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -84,10 +81,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  // Remove from local list
  setRequests(prev => prev.filter(r => r.id !== request.id));
 
- } catch (err) {
- console.error(err);
- alert('Error processing approval: ' + err.message);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setProcessingId(null);
  }
  };
@@ -105,10 +99,7 @@ export default function AdminPasswordResetsModal({ onClose }) {
  .eq('id', requestId);
  
  setRequests(prev => prev.filter(r => r.id !== requestId));
- } catch (err) {
- console.error(err);
- alert('Error rejecting request.');
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setProcessingId(null);
  }
  };
@@ -117,12 +108,10 @@ export default function AdminPasswordResetsModal({ onClose }) {
  <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
  {/* Close Button - Fixed to top right */}
  <button 
- type="button"
+ aria-label="Action button" type="button"
  onClick={onClose}
  className="absolute top-6 right-6 lg:top-10 lg:right-10 w-12 h-12 rounded-full bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec hover:text-themeText transition outline-none z-[250] cursor-pointer hover:scale-110"
- >
- <i className="fa-solid fa-times text-xl"></i>
- </button>
+ ><i className="fa-solid fa-times text-xl"></i></button>
 
  {/* Subtle Background Effects */}
  <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">

@@ -36,9 +36,7 @@ export default function MentorshipTransfers({}) {
  
  if (error) throw error;
  setMentors(data || []);
- } catch (error) {
- console.error("Error fetching mentors:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -69,9 +67,7 @@ export default function MentorshipTransfers({}) {
  
  setMentees(formatted);
  setSelectedMentees(new Set());
- } catch (error) {
- console.error("Error fetching mentees:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const logAction = async (actionDesc) => {
@@ -80,9 +76,7 @@ export default function MentorshipTransfers({}) {
  action: actionDesc,
  table_name: 'mentorship'
  });
- } catch (e) {
- console.error("Audit log failed:", e);
- }
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const toggleStudentSelection = (studentId) => {
@@ -145,10 +139,7 @@ export default function MentorshipTransfers({}) {
  window.erpDialog?.alert("Transfer Complete!");
  fetchMentees(sourceMentorId); // Refresh roster
 
- } catch (error) {
- console.error("Transfer failed:", error);
- window.erpDialog?.alert("Failed to transfer students.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  setActionMessage("");
  }
@@ -257,7 +248,7 @@ export default function MentorshipTransfers({}) {
  <button type="button"
  onClick={handleTransfer}
  disabled={!sourceMentorId || !targetMentorId || selectedMentees.size === 0 || isProcessing}
- className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98]"
+ className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98] disabled:cursor-not-allowed"
  >
  <i className="fa-solid fa-paper-plane"></i> Execute Transfer ({selectedMentees.size} Students)
  </button>

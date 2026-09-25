@@ -48,11 +48,7 @@ export default function SQLStudio({ isEmbedded = false, }) {
  setResults([{ Message: "Query executed successfully. (Unknown response format)" }]);
  }
  
- } catch (err) {
- console.error("SQL Execution Error:", err);
- if (err.message?.includes('Could not find the function') || err.code === 'PGRST202') {
- setError('RPC_MISSING');
- } else {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } else {
  setError(err.message || "An error occurred while executing the query.");
  }
  } finally {
@@ -122,7 +118,7 @@ export default function SQLStudio({ isEmbedded = false, }) {
  <button type="button" 
  onClick={handleExecute} 
  disabled={isExecuting}
- className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-emerald-950 text-[10px] px-4 py-1.5 rounded-md font-black uppercase tracking-widest transition flex items-center gap-2 active:scale-95"
+ className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-emerald-950 text-[10px] px-4 py-1.5 rounded-md font-black uppercase tracking-widest transition flex items-center gap-2 active:scale-95 disabled:cursor-not-allowed"
  >
  {isExecuting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-play"></i>}
  Execute

@@ -73,9 +73,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  setInternships(internshipsData || []);
  setAllProfiles(profilesData || []);
 
- } catch (error) {
- console.error("Error fetching faculty approvals data:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -129,9 +127,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
         if (student?.email) sendSystemEmail(template, { ...params, to_email: student.email }).catch(e=>e);
         if (parentEmail) sendSystemEmail(template, { ...params, to_email: parentEmail }).catch(e=>e);
-    } catch(e) {
-        console.error('Leave approval email failed', e);
-    }
+    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  })();
 
 
@@ -161,10 +157,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  window.erpDialog.alert(`Leave request has been ${newStatus}.`);
  fetchData();
- } catch (error) {
- console.error("Error updating leave:", error);
- window.erpDialog.alert("Failed to process leave request.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -183,10 +176,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  if (error) throw error;
  window.erpDialog.alert(`Grievance marked as ${newStatus}.`);
  fetchData();
- } catch (error) {
- console.error("Error updating grievance:", error);
- window.erpDialog.alert("Failed to process grievance.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -199,10 +189,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  if (error) throw error;
  window.erpDialog.alert(`Internship application ${newStatus.replace(/_/g, ' ')}.`);
  fetchData();
- } catch(err) {
- console.error(err);
- window.erpDialog.alert("Failed to process internship request.");
- } finally { setIsProcessing(false); }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsProcessing(false); }
  };
 
  const submitFacultyGrievance = async (e) => {
@@ -224,10 +211,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  window.erpDialog.alert("Grievance submitted successfully. It has been escalated directly to the Admin.");
  setGrievanceData({ accusedId: "", category: "Academics", description: "" });
- } catch (error) {
- console.error("Error submitting faculty grievance:", error);
- window.erpDialog.alert("Failed to submit grievance.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -476,7 +460,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  <textarea required rows="5" className="w-full bg-themeElevated border-theme border-themeBorder rounded-lg px-3 py-3 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details. The administration will review this confidentially." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
  </div>
 
- <button disabled={isProcessing} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-sm py-4 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50">
+ <button disabled={isProcessing} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-sm py-4 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
  {isProcessing ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit to Administration"}
  </button>
  </form>

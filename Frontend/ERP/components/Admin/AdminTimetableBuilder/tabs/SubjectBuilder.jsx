@@ -53,9 +53,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             } else {
                 setSubjects(subData || []);
             }
-        } catch (err) {
-            console.error("Failed to fetch data:", err);
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };
@@ -106,10 +104,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             resetForm();
             fetchData();
             window.erpDialog?.alert(`✅ Master Syllabus ${editingId ? 'Updated' : 'Deployed'}`);
-        } catch (err) {
-            console.error(err);
-            window.erpDialog?.alert("Error saving subject. Ensure the V6_CURRICULUM_VAULT SQL migration was run.");
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleDelete = async (id) => {

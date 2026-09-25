@@ -59,10 +59,7 @@ export default function FacultyTeachingDashboard({ onNavigate }) {
             sessionStorage.setItem(`jsmerp_faculty_dash_stats_${userSession.db_id}`, JSON.stringify(newStats));
             sessionStorage.setItem(`jsmerp_faculty_dash_sched_${userSession.db_id}`, JSON.stringify(newSched));
             setIsLoading(false);
-        } catch (error) {
-            console.error("Dashboard error:", error);
-            setIsLoading(false);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     if (isLoading) {

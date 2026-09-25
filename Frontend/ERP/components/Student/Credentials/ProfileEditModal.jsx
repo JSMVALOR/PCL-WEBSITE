@@ -120,10 +120,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  .getPublicUrl(filePath);
 
  setFormData({ ...formData, profile_picture_url: urlData.publicUrl });
- } catch (error) {
- console.error('Error uploading cropped image:', error);
- window.erpDialog?.alert('Failed to upload image.');
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setUploadingImage(false);
  setUpImg(null);
  }
@@ -187,9 +184,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  window.erpDialog?.alert('Profile update request submitted for admin approval.');
  onSubmit(data, false);
  }
- } catch (error) {
- console.error('Error submitting request:', error);
- window.erpDialog?.alert(`Failed to save changes: ${error.message || error}`);
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }`);
  } finally {
  setIsSubmitting(false);
  }
@@ -207,9 +202,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  {/* Premium Full-Screen Header */}
  <div className="sticky top-0 z-50 bg-transparent/80 backdrop-blur-xl border-b border-black/10 dark:border-white/20 px-6 lg:px-12 py-5 flex items-center justify-between">
  <div className="flex items-center gap-4">
- <button type="button" onClick={onClose} className="w-10 h-10 rounded-full bg-white/80 dark:bg-themeElevated/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-sm text-themeText dark:text-themeText hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors">
- <i className="fa-solid fa-arrow-left"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={onClose} className="w-10 h-10 rounded-full bg-white/80 dark:bg-themeElevated/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-sm text-themeText dark:text-themeText hover:bg-black/5 dark:hover:bg-white/5 flex items-center justify-center transition-colors"><i className="fa-solid fa-arrow-left"></i></button>
  <div>
  <h2 className="text-xl lg:text-2xl font-semibold tracking-tight text-themeText tracking-tight">Edit Profile</h2>
  {userRole === 'student' && (
@@ -222,7 +215,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  <button type="button" 
  onClick={handleSubmit} 
  disabled={isSubmitting || uploadingImage} 
- className="px-6 py-2.5 rounded-full text-[14px] font-medium tracking-normal bg-themeAccent text-themeApp hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 hover:scale-105 active:scale-95"
+ className="px-6 py-2.5 rounded-full text-[14px] font-medium tracking-normal bg-themeAccent text-themeApp hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 hover:scale-105 active:scale-95 disabled:cursor-not-allowed"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Saving...</> : <><i className="fa-solid fa-check"></i> Save Changes</>}
  </button>

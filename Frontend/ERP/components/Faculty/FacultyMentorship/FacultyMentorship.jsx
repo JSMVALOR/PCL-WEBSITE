@@ -153,9 +153,7 @@ export default function FacultyMentorship() {
                 }
             }
 
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -195,10 +193,7 @@ export default function FacultyMentorship() {
             setShowScheduleModal(false);
             setScheduleData({ date: '', time: '', topic: '', link: '' });
             fetchData();
-        } catch (error) {
-            console.error(error);
-            window.erpDialog?.alert("Failed to schedule meeting.");
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleMeetingStatus = async (meetingId, newStatus) => {
@@ -215,9 +210,7 @@ export default function FacultyMentorship() {
                 .order('created_at', { ascending: false });
             if (grievData) setGrievances(grievData);
 
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };
@@ -231,10 +224,7 @@ export default function FacultyMentorship() {
             window.erpDialog?.alert(`Grievance marked as ${newStatus}.`);
             
             setGrievances(prev => prev.map(g => g.id === grievanceId ? { ...g, status: newStatus, resolution_notes: notes } : g));
-        } catch (error) {
-            console.error(error);
-            window.erpDialog?.alert("Failed to update grievance.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };
@@ -257,9 +247,7 @@ export default function FacultyMentorship() {
                 .order('created_at', { ascending: false });
             if (grievData) setGrievances(grievData);
 
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };
@@ -271,10 +259,7 @@ export default function FacultyMentorship() {
             await supabase.from('noc_requests').update({ status: newStatus }).eq('id', appId);
             window.erpDialog?.alert(`Application ${action}d successfully.`);
             fetchData();
-        } catch (error) {
-            console.error(error);
-            window.erpDialog?.alert("Failed to update application.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };
@@ -290,10 +275,7 @@ export default function FacultyMentorship() {
                 window.erpDialog?.alert("Achievement rejected.");
             }
             fetchData();
-        } catch (error) {
-            console.error(error);
-            window.erpDialog?.alert("Failed to verify achievement.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setActionLoading(null);
         }
     };

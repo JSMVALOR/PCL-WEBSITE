@@ -76,9 +76,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  replacementAssigned
  });
 
- } catch (error) {
- console.error("Error fetching leave stats:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };

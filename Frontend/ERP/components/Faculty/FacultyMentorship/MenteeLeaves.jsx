@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
@@ -18,9 +19,7 @@ export default function MenteeLeaves({ menteeId }) {
                 .eq('student_id', menteeId)
                 .order('created_at', { ascending: false });
             if (data) setLeaves(data);
-        } catch (e) {
-            console.error(e);
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };
@@ -30,9 +29,7 @@ export default function MenteeLeaves({ menteeId }) {
             await supabase.from('leave_requests').update({ status }).eq('id', id);
             fetchLeaves();
             window.erpDialog?.alert(`Leave marked as ${status}`);
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const exportToExcel = () => {

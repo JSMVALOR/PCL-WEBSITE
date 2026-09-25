@@ -80,9 +80,7 @@ export default function Assignments({ isEmbedded = false }) {
  setCompletedAssignments(completed);
  writeCache(CACHE_PENDING, pending);
  writeCache(CACHE_COMPLETED, completed);
- } catch (err) {
- console.error("Assignments fetch:", err.message);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  }, [userSession]);
 
  useEffect(() => { fetchAssignments(); }, [fetchAssignments]);
@@ -134,10 +132,7 @@ export default function Assignments({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAssignments();
  setTimeout(() => closeModal(), 50);
- } catch (err) {
- console.error("Submission failed:", err);
- setSubmitError("Submission failed. Please try again.");
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -348,9 +343,7 @@ export default function Assignments({ isEmbedded = false }) {
  <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.master_subjects?.name || selectedTask.subject_name || 'Subject'}</span>
  <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">{selectedTask.title}</h3>
  </div>
- <button type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-themeText dark:text-white transition-colors shrink-0">
- <i className="fa-solid fa-xmark"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-themeText dark:text-white transition-colors shrink-0"><i className="fa-solid fa-xmark"></i></button>
  </div>
 
  {/* Modal Body */}
@@ -398,7 +391,7 @@ export default function Assignments({ isEmbedded = false }) {
  <button 
  type="submit" 
  disabled={isSubmitting || (!selectedTask.is_offline && (isOverLimit || !submissionText.trim()))}
- className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-themeText dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2"
+ className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-themeText dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2 disabled:cursor-not-allowed"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting...</> : <><i className="fa-solid fa-paper-plane"></i> Submit Final</>}
  </button>

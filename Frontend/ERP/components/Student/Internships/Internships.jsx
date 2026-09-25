@@ -229,11 +229,7 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(false);
  setExpForm({ company_name: '', role_title: '', location: '', start_date: '', end_date: '', description: '', type: 'Corporate', status: 'Ongoing', certificate_notes: '' });
  }, 1500);
- } catch (err) {
- console.error("Exp submit err:", err);
- alert("Failed to log experience.");
- setIsSubmitting(false);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handlePrintNoc = (req) => {
@@ -298,10 +294,7 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAll();
  setTimeout(() => { setShowPermModal(false); setSubmitSuccess(false); setPermUrl(''); setPermForm({ company_name: "", start_date: "", end_date: "" }); }, 50);
- } catch (err) {
- console.error("Permission request failed:", err);
- window.erpDialog?.alert("Failed to route Permission request.");
- } finally { setIsSubmitting(false); }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsSubmitting(false); }
  };
 
  const handlePracSubmit = async (e) => {
@@ -317,10 +310,7 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAll();
  setTimeout(() => { setShowPracModal(false); setSubmitSuccess(false); setPracForm({ title: "", type: "Court Visit", date_logged: "", hours: "", description: "" }); }, 50);
- } catch (err) {
- console.error("Practical log failed:", err);
- window.erpDialog?.alert("Failed to log practical hours.");
- } finally { setIsSubmitting(false); }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsSubmitting(false); }
  };
 
  const handleDailyLogSubmit = async (e) => {
@@ -343,10 +333,7 @@ export default function Internships({ isEmbedded = false }) {
  setSubmitSuccess(true);
  fetchAll();
  setTimeout(() => { setShowDailyLogModal(false); setSubmitSuccess(false); setDailyLogForm({ experience_id: "", date: "", entry: "" }); }, 50);
- } catch (err) {
- console.error("Daily log failed:", err);
- window.erpDialog?.alert("Failed to add daily log entry.");
- } finally { setIsSubmitting(false); }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setIsSubmitting(false); }
  };
 
  // --- CALCULATIONS ---
@@ -699,7 +686,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Experience Logged</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Writing to Ledger..." : "Log Experience"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Writing to Ledger..." : "Log Experience"}</button>
  )}
  </form>
  </div>
@@ -749,7 +736,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Application Routed to Mentor</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
  )}
  </form>
  </div>
@@ -789,7 +776,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Practical Hours Logged</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
  )}
  </form>
  </div>
@@ -816,7 +803,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Entry Added</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-themeText rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Saving..." : "Add Log Entry"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-themeText rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">{isSubmitting ? "Saving..." : "Add Log Entry"}</button>
  )}
  </form>
  </div>

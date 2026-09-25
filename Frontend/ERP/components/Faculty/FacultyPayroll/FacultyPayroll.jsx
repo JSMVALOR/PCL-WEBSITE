@@ -34,9 +34,7 @@ export default function FacultyPayroll() {
             if (payslipRef.current) {
                 try {
                     await generateComponentPDF(payslipRef.current, `Payslip_${slip.month}_${slip.year}.pdf`, { format: 'a4', orientation: 'portrait' });
-                } catch (e) {
-                    console.error("Failed to download payslip:", e);
-                }
+                } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
             }
             setDownloadingId(null);
             setSelectedPayslip(null);
@@ -65,7 +63,7 @@ export default function FacultyPayroll() {
                     const totalLop = leaves.reduce((sum, l) => sum + (Number(l.days) || 0), 0);
                     if (isMounted) setPendingLop(totalLop);
                 }
-            } catch (e) {}
+            } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
             try {
                 const { data } = await supabase
                     .from('faculty_payroll')
@@ -157,11 +155,7 @@ export default function FacultyPayroll() {
                 else alert("Payroll destination synced securely.");
                 setShowAccountModal(false);
             }
-        } catch (error) {
-            console.error(error);
-            if (window.erpDialog) window.erpDialog.alert("An unexpected error occurred.", "error");
-            else alert("An unexpected error occurred.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSaving(false);
         }
     };
@@ -305,7 +299,7 @@ export default function FacultyPayroll() {
                                     }} placeholder="HDFC0001234" maxLength={11} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder dark:border-white/5 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition uppercase placeholder:normal-case placeholder:text-gray-400 dark:placeholder:text-white/30" />
                                 </div>
 
-                                <button type="submit" disabled={isSaving} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <button type="submit" disabled={isSaving} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
                                     {isSaving ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-shield-check"></i> Sync Account Details</>}
                                 </button>
                             </form>

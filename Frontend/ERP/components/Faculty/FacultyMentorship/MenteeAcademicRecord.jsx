@@ -77,9 +77,7 @@ export default function MenteeAcademicRecord({ menteeId, mentorId }) {
                 .order('created_at', { ascending: false });
 
             if (!marksErr) setInternalMarks(marksData || []);
-        } catch (err) {
-            console.error("Failed to fetch academic record:", err);
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -228,10 +226,7 @@ export default function MenteeAcademicRecord({ menteeId, mentorId }) {
             setShowEntryForm(false);
             setEntryRows([{ subject_name: '', subject_code: '', marks_obtained: '', max_marks: 100, grade: '', credits: '', result: 'pass' }]);
             fetchAll();
-        } catch (err) {
-            console.error("Save failed:", err);
-            window.erpDialog?.alert("Failed to save results: " + (err.message || err));
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSaving(false);
         }
     };
@@ -370,7 +365,7 @@ export default function MenteeAcademicRecord({ menteeId, mentorId }) {
                         
                         <div className="ml-auto"></div>
                         <button onClick={handleSaveResults} disabled={isSaving}
-                            className="px-6 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2">
+                            className="px-6 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2 disabled:cursor-not-allowed">
                             {isSaving ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Saving...</> : <><i className="fa-solid fa-check"></i> Save Results</>}
                         </button>
                     </div>

@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React from 'react';
 
 export default function ZohoReportingCard({ mode = "reporting", users = [] }) {

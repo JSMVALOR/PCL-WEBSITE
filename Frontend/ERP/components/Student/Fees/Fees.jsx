@@ -38,9 +38,7 @@ export default function Fees({ isEmbedded = false }) {
          if (invoiceRef.current) {
              try {
                  await generateComponentPDF(invoiceRef.current, `Invoice_${txn.id}.pdf`, { format: 'a4', orientation: 'portrait' });
-             } catch (e) {
-                 console.error("Failed to download invoice:", e);
-             }
+             } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
          }
          setDownloadingInvoiceId(null);
          setSelectedInvoice(null);
@@ -116,9 +114,7 @@ export default function Fees({ isEmbedded = false }) {
  return prev;
  });
 
- } catch (error) {
- console.error("Failed to fetch financial ledgers:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  useEffect(() => {
@@ -183,10 +179,7 @@ export default function Fees({ isEmbedded = false }) {
             setIsVerificationModalOpen(false);
             setSuccessModal({ amount: currentTotal, transactionId: transactionId, isPending: true });
 
-        } catch (error) {
-            console.error("Payment submission failed:", error);
-            alert("Failed to submit verification. Please check your connection.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsProcessing(false);
         }
     };
@@ -281,7 +274,7 @@ export default function Fees({ isEmbedded = false }) {
  <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Transfer Date</label>
  <input type="date" required value={verificationData.transferDate} onChange={e => setVerificationData({...verificationData, transferDate: e.target.value})} className="w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeBorder dark:border-white/5Accent" />
  </div>
- <button type="submit" disabled={isProcessing} className="w-full py-3.5 bg-themeAccent text-themeText dark:text-white font-black text-sm rounded-xl hover:bg-themeAccent/90 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50">
+ <button type="submit" disabled={isProcessing} className="w-full py-3.5 bg-themeAccent text-themeText dark:text-white font-black text-sm rounded-xl hover:bg-themeAccent/90 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
  {isProcessing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Submit for Verification'}
  </button>
  </form>

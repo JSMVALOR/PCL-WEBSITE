@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../context/ErpContext';
@@ -200,14 +201,12 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
                             className="flex-1 bg-transparent px-4 py-2 text-[14px] font-medium focus:outline-none text-themeText dark:text-white placeholder:text-themeTextSec/50"
                         />
                         <button 
-                            type="submit" 
+                            aria-label="Action button" type="submit" 
                             disabled={!input.trim() || isSending}
                             className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors ${
                                 input.trim() ? 'bg-amber-500 text-black shadow-md' : 'bg-transparent text-themeTextSec/50'
                             }`}
-                        >
-                            <i className="fa-solid fa-arrow-up text-sm"></i>
-                        </button>
+                        ><i className="fa-solid fa-arrow-up text-sm"></i></button>
                     </div>
                 </form>
 

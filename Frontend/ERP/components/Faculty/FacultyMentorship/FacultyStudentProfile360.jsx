@@ -64,9 +64,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
             .order('created_at', { ascending: false });
         if (error) throw error;
         if (data) setLeaves(data);
-    } catch (e) {
-        console.error("Failed to fetch leaves:", e);
-    }
+    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const fetchAnalytics = async () => {
@@ -82,10 +80,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
             if (error) throw error;
             setLeaves(leaves.map(l => l.id === leaveId ? { ...l, status: newStatus } : l));
             window.erpDialog?.alert(`Leave has been ${newStatus}.`);
-        } catch(e) {
-            console.error(e);
-            window.erpDialog?.alert('Failed to update leave.');
-        }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
  const fetchAchievements = async () => {
@@ -100,9 +95,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  setAchievements(data);
  sessionStorage.setItem(`profile360_achievements_${mentee.id}`, JSON.stringify(data));
  }
- } catch (err) {
- console.error("Failed to fetch achievements:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleVerifySubmit = async () => {
@@ -124,10 +117,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  setShowVerifyModal(false);
  setRemarks("");
  setVerifyingId(null);
- } catch (err) {
- console.error(err);
- window.erpDialog?.alert("Failed to update achievement status.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const openVerifyModal = (id, type) => {

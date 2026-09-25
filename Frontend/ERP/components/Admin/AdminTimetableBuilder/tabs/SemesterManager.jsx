@@ -22,9 +22,7 @@ export default function SemesterManager({}) {
  
  if (error) throw error;
  setSemesters(data || []);
- } catch (err) {
- console.error("Failed to fetch semesters:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -47,10 +45,7 @@ export default function SemesterManager({}) {
  setStartDate('');
  setEndDate('');
  fetchSemesters();
- } catch (err) {
- console.error("Failed to create semester:", err);
- window.erpDialog?.alert("Error creating semester.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const toggleActive = async (id, currentStatus) => {
@@ -71,10 +66,7 @@ export default function SemesterManager({}) {
  
  if (error) throw error;
  fetchSemesters();
- } catch (err) {
- console.error("Failed to toggle semester:", err);
- window.erpDialog?.alert("Error toggling semester.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  return (

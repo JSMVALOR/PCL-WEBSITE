@@ -2026,19 +2026,25 @@ html[data-theme="structural-neo-brutalism"] .theme-logo {
 }
 
 @media print {
-    body * {
-        visibility: hidden;
+    /* Hide common UI elements that shouldn't be printed */
+    nav, footer, .no-print, button {
+        display: none !important;
     }
-    #cv-printable-area, #cv-printable-area * {
-        visibility: visible;
+    
+    /* Ensure body and html are printable */
+    html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
     }
-    #cv-printable-area {
-        position: absolute;
-        left: 0;
-        top: 0;
+    
+    /* For CV and Legal specific areas, ensure they are visible and take up the page */
+    #cv-printable-area, #legal-printable-area {
+        position: relative;
         width: 100%;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         box-shadow: none;
+        background: white;
     }
 }

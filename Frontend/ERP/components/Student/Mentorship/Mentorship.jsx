@@ -49,9 +49,7 @@ export default function Mentorship() {
                 .order('scheduled_at', { ascending: false });
             
             if (meetingData) setMeetingHistory(meetingData);
-        } catch (error) {
-            console.error(error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -148,9 +146,9 @@ export default function Mentorship() {
                                 )}
                                 <span className="mt-3 px-3 py-1 rounded-full bg-themeElevated border border-themeBorder text-[11px] font-black uppercase tracking-widest text-themeAccent shadow-sm">{mentorData.department || 'Mentorship Team'}</span>
                                 <div className="w-full h-px bg-themeBorderStrong my-6"></div>
-                                <a href={`mailto:${mentorData.email}`} className="w-full py-3.5 rounded-xl bg-themeElevated border border-themeBorder text-themeText hover:bg-themeAccent hover:text-themeText text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-sm group/btn">
+                                <button onClick={() => window.dispatchEvent(new Event('openMentorshipChat'))} className="w-full py-3.5 rounded-xl bg-themeElevated border border-themeBorder text-themeText hover:bg-themeAccent hover:text-themeText text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-sm group/btn">
                                     <i className="fa-solid fa-paper-plane group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5 transition-transform"></i> Message Mentor
-                                </a>
+                                </button>
                             </div>
 
                             {/* Session History */}
@@ -323,7 +321,7 @@ export default function Mentorship() {
                                     </div>
                                 </div>
 
-                                <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
                                     {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> Submit Request</>}
                                 </button>
                             </form>

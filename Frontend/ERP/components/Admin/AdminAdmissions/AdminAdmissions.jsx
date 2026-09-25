@@ -58,9 +58,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  if (!settingsError && settingsData?.value) {
  setIsAdmissionsOpen(settingsData.value.is_open !== false);
  }
- } catch (error) {
- console.error("Error fetching applications:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -202,9 +200,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  });
  if (resetError) throw resetError;
  addLog(`[SUCCESS] Setup link successfully dispatched to ${app.email}!`);
- } catch (emailErr) {
- console.error("Supabase Email Error:", emailErr);
- addLog(`[WARNING] Link dispatch failed: ${emailErr.message}. The account was created successfully, but credentials must be provided manually.`);
+ } catch (emailErr) { console.error(emailErr); if (window.toast) window.toast.error("An error occurred. Please try again."); }. The account was created successfully, but credentials must be provided manually.`);
  }
 
  setProvisionStatus("success");

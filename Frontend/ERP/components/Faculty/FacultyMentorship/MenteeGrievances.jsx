@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
@@ -19,9 +20,7 @@ export default function MenteeGrievances({ menteeId }) {
                 .or(`reporter_id.eq.${menteeId},accused_id.eq.${menteeId}`)
                 .order('created_at', { ascending: false });
             if (data) setGrievances(data);
-        } catch (e) {
-            console.error(e);
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };

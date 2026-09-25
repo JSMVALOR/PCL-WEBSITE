@@ -37,19 +37,19 @@ const Advantages = forwardRef(({ windowWidth, ...props }, ref) => {
     
     card1_title = 'Industry Integration',
     card1_desc = 'Direct pipelines into elite law firms and judicial chambers for sustained courtroom exposure.',
-    card1_link = '/campus/facilities/corporate-placements',
+    card1_link = '/careers/placement',
     
     card2_title = 'Practical Training',
     card2_desc = 'Rigorous moot court and ADR simulations built to mirror real courtroom stakes.',
-    card2_link = '/campus/facilities/moot-court',
+    card2_link = '/campus/moot-court',
     
     card3_title = 'Legal Aid Clinic',
     card3_desc = 'An in-house clinic where students deliver real defense to underserved communities.',
-    card3_link = '/campus/facilities/legal-aid-clinic',
+    card3_link = '/campus/legal-aid',
     
     card4_title = 'Integrated Civil Services',
     card4_desc = 'A dedicated partnership with Sharat Chandra Academy, shaping future judicial officers.',
-    card4_link = '/campus/facilities/integrated-coaching'
+    card4_link = '/programs/judiciary'
   } = advContent;
 
   const bgImage = IMAGE_MAP[hero_img] || ladyJusticeImg;

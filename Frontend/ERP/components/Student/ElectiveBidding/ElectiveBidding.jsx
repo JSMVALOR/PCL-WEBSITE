@@ -32,9 +32,7 @@ export default function ElectiveBidding() {
  const electiveIds = (subData || []).map(s => s.id || s.code);
  const filteredAssignments = (assignData || []).filter(a => electiveIds.includes(a.subject_id || a.subject_name));
  setAssignments(filteredAssignments);
- } catch (err) {
- console.error("Failed to load electives:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
  fetchElectives();
  }, []);
@@ -64,10 +62,7 @@ export default function ElectiveBidding() {
  const { error } = await supabase.from("elective_bids").insert(bidsToInsert);
  if (error) throw error;
  window.erpDialog.alert("Bids submitted successfully!");
- } catch (err) {
- console.error(err);
- window.erpDialog.alert("Error submitting bids.");
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -130,7 +125,7 @@ export default function ElectiveBidding() {
  <button type="button" 
  onClick={submitBids} 
  disabled={isSubmitting}
- className="btn-erp"
+ className="btn-erp disabled:cursor-not-allowed"
  >
  {isSubmitting ? "Submitting..." : "Submit Bids"}
  </button>

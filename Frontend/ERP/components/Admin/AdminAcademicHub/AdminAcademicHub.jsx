@@ -43,9 +43,7 @@ export default function AdminAcademicHub() {
                 localStorage.setItem('admin_wired_dataset_v3', 'true');
                 if (window.erpDialog) window.erpDialog.alert("Dataset successfully wired by Admin!");
                 else alert("Dataset successfully wired by Admin!");
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         };
         wireDataAsAdmin();
     }, []);

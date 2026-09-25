@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React from "react";
 import { theme } from '../../../../Shared/theme';
 import { useERP } from "../../../context/ErpContext";

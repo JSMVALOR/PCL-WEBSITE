@@ -42,9 +42,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  setPendingDocuments(documentsData || []);
  setProfileUpdates(profileUpdatesData || []);
 
- } catch (error) {
- console.error("Error fetching admin approvals data:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  }, []);
@@ -83,10 +81,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
             window.erpDialog?.alert(`Timetable request marked as ${newStatus} ${newStatus === 'Approved' ? 'and slot reassigned.' : ''}`);
             fetchData();
-        } catch (error) {
-            console.error("Error updating timetable request:", error);
-            window.erpDialog?.alert("Failed to process timetable request.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsProcessing(false);
         }
     };
@@ -112,10 +107,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  await handleGrievanceAction(g.id, 'investigating', `Meeting scheduled for ${meetingTime}`);
  
  window.erpDialog.alert(`Meeting scheduled and email sent to ${g.reporter.full_name}.`);
- } catch (err) {
- console.error(err);
- window.erpDialog.alert("Failed to send meeting email.");
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -163,10 +155,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  }
  window.erpDialog.alert(`Escalated grievance marked as ${newStatus}.`);
  fetchData();
- } catch (error) {
- console.error("Error updating grievance:", error);
- window.erpDialog.alert("Failed to process grievance.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -199,10 +188,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  }
  window.erpDialog.alert(`Document marked as ${newStatus}.`);
  fetchData();
- } catch (error) {
- console.error("Error updating document:", error);
- window.erpDialog.alert("Failed to process document verification.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -219,10 +205,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  if (data?.signedUrl) {
  window.open(data.signedUrl, '_blank');
  }
- } catch (e) {
- console.error(e);
- window.erpDialog?.alert("Failed to load document preview.");
- }
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleProfileUpdateAction = async (request, newStatus, remarks = "") => {
@@ -267,10 +250,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  window.erpDialog.alert(`Profile update request marked as ${newStatus}.`);
  fetchData();
- } catch (error) {
- console.error("Error updating profile request:", error);
- window.erpDialog.alert("Failed to process profile update request.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };

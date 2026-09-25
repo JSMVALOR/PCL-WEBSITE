@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../context/ErpContext';
@@ -43,10 +44,7 @@ export default function ForcePasswordChangeModal({ onComplete }) {
 
             onComplete();
 
-        } catch (err) {
-            console.error("Failed to update password:", err);
-            setErrorMsg(err.message || "Failed to update password. Please try again.");
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -81,7 +79,7 @@ export default function ForcePasswordChangeModal({ onComplete }) {
                         <input type="password" required minLength={6} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-rose-500" placeholder="Confirm your new password" />
                     </div>
 
-                    <button type="submit" disabled={isLoading || !newPassword || !confirmPassword} className="w-full py-4 mt-2 bg-rose-500 hover:bg-rose-400 rounded-xl text-white text-sm font-black transition disabled:opacity-50 flex justify-center items-center gap-2">
+                    <button type="submit" disabled={isLoading || !newPassword || !confirmPassword} className="w-full py-4 mt-2 bg-rose-500 hover:bg-rose-400 rounded-xl text-white text-sm font-black transition disabled:opacity-50 flex justify-center items-center gap-2 disabled:cursor-not-allowed">
                         {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-lock"></i>}
                         {isLoading ? 'Encrypting...' : 'Save & Continue'}
                     </button>

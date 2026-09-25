@@ -212,7 +212,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                         onMouseEnter={() => handleMouseEnter('notifications')}
                         onMouseLeave={handleMouseLeave}
                     >
-                        <button type="button" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group outline-none shadow-sm">
+                        <button type="button" aria-label="View Notices" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-themeAccent focus-visible:ring-offset-2 shadow-sm">
                             <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
                             {(notices?.length > 0 || unreadNotifications > 0) && (
                                 <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-themeBorder"></span>
@@ -237,9 +237,9 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                         onMouseEnter={() => handleMouseEnter('profile')}
                         onMouseLeave={handleMouseLeave}
                     >
-                        <button type="button" 
+                        <button type="button" aria-label="View Profile" 
                             onClick={() => setActiveTab('credentials')}
-                            className="flex items-center gap-3 hover:bg-black/5 dark:hover:bg-white/5 p-1 pr-1 xl:pr-3 rounded-xl transition duration-300 outline-none"
+                            className="flex items-center gap-3 hover:bg-black/5 dark:hover:bg-white/5 p-1 pr-1 xl:pr-3 rounded-xl transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-themeAccent focus-visible:ring-offset-2"
                         >
                             <div className="w-9 h-9 rounded-lg bg-themeElevated flex items-center justify-center font-black text-[11px] text-themeText shadow-inner border border-black/5 dark:border-white/5 group-hover/profile:border-themeAccent/30 transition-colors overflow-hidden relative">
                                 {userSession?.profile_picture_url ? (

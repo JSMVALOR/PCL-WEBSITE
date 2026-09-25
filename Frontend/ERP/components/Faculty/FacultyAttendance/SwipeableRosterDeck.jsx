@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 

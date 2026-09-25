@@ -33,9 +33,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  })).sort((a, b) => b.compatibility - a.compatibility).slice(0, 4);
 
  setSuggestions(mappedSuggestions);
- } catch (error) {
- console.error("Error fetching replacements:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -76,10 +74,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
 
  onComplete();
 
- } catch (error) {
- console.error("Error assigning replacement:", error);
- window.erpDialog?.alert("Failed to assign replacement.", "error");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsProcessing(false);
  }
  };
@@ -88,12 +83,10 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <div className="flex flex-col gap-6 animate-fade-in max-w-4xl mx-auto">
  
  <div className="flex items-center gap-4">
- <button type="button" 
+ <button aria-label="Action button" type="button" 
  onClick={onBack}
  className="w-10 h-10 rounded-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors"
- >
- <i className="fa-solid fa-arrow-left"></i>
- </button>
+ ><i className="fa-solid fa-arrow-left"></i></button>
  <div>
  <h2 className={`font-bold tracking-tight text-xl text-themeText`}>Replacement Engine</h2>
  <p className="text-xs text-themeTextSec">Find and assign replacements for {request.faculty?.name || 'Faculty'}</p>

@@ -23,15 +23,15 @@ export function LiveClock() {
 
 export function GlobalSearch() {
     return (
-        <div className="hidden md:flex items-center w-full max-w-[200px] lg:max-w-[240px] xl:max-w-[320px] group mx-2 lg:mx-4">
+        <div className="hidden xl:flex items-center w-full min-w-[150px] max-w-[220px] group mr-2">
             <div className={`w-full flex items-center px-4 py-2.5 rounded-themeBtn bg-themePanel/85 backdrop-blur-2xl shadow-premium border border-themeBorder dark:border-white/5 focus-within:border-themeAccent transition hover:border-black/5 dark:border-white/10 shadow-sm`}>
-                <i className="fa-solid fa-magnifying-glass text-themeTextSec opacity-50 group-focus-within:text-themeAccent transition-colors"></i>
+                <i className="fa-solid fa-magnifying-glass text-themeTextSec opacity-50 group-focus-within:text-themeAccent transition-colors text-xs"></i>
                 <input 
                     type="text" 
-                    placeholder="Search resources..." 
-                    className="w-full bg-transparent border-none outline-none text-themeText text-xs font-medium ml-3 placeholder-themeTextSec placeholder-opacity-50 min-w-0"
+                    placeholder="Search..." 
+                    className="w-full bg-transparent border-none outline-none text-themeText text-xs font-medium ml-2.5 placeholder-themeTextSec placeholder-opacity-50 min-w-0"
                 />
-                <div className="hidden lg:flex items-center justify-center px-1.5 py-0.5 rounded bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 text-[9px] font-black text-themeTextSec opacity-70 ml-2 shadow-premiumElevated shrink-0">
+                <div className="hidden 2xl:flex items-center justify-center px-1.5 py-0.5 rounded bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 text-[9px] font-black text-themeTextSec opacity-70 ml-2 shadow-premiumElevated shrink-0">
                     ⌘K
                 </div>
             </div>

@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
@@ -37,9 +38,7 @@ export default function AdminWebsiteInquiries({ isEmbedded = false }) {
             unique.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
             
             setInquiries(unique);
-        } catch (error) {
-            console.error('Error fetching inquiries:', error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -94,10 +93,7 @@ export default function AdminWebsiteInquiries({ isEmbedded = false }) {
 
             setReplyText(prev => ({ ...prev, [ticketId]: '' }));
             fetchInquiries();
-        } catch (error) {
-            console.error("Failed to reply:", error);
-            window.erpDialog?.alert("Failed to submit reply.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setSubmittingReply(null);
         }
     };

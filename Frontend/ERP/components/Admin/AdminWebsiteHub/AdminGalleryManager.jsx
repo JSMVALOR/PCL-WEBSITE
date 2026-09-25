@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
@@ -69,9 +70,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                 supabase.from('gallery_images').update({ created_at: currentCreatedAt }).eq('id', targetItem.id)
             ]);
             fetchImages();
-        } catch (e) {
-            console.error("Move error:", e);
-        }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
         const handleOpenEdit = async (img) => {
@@ -80,10 +79,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const blob = await response.blob();
             const localUrl = URL.createObjectURL(blob);
             setEditingImage({ ...img, local_url: localUrl });
-        } catch (error) {
-            console.error("Failed to load image blob:", error);
-            alert("Failed to load image for editing.");
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleSaveEdit = async () => {
@@ -107,10 +103,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             await supabase.from('gallery_images').update({ image_url: publicUrl }).eq('id', editingImage.id);
             if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null);
             fetchImages();
-        } catch (error) {
-            console.error("Failed to update crop:", error);
-            alert("Failed to update image. Cross-Origin (CORS) might be blocking the canvas.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSavingEdit(false);
         }
     };
@@ -136,9 +129,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
             if (error) throw error;
             setImages(data || []);
-        } catch (error) {
-            console.error('Error fetching gallery:', error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };
@@ -184,10 +175,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             }
             alert("Auto-Sync Complete!");
             fetchImages();
-        } catch (error) {
-            console.error("Sync failed:", error);
-            alert("Sync failed: " + error.message);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSyncing(false);
         }
     };
@@ -252,10 +240,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                     resolve(blob);
                 }, 'image/jpeg', 0.95);
             });
-        } catch (e) {
-            console.error("Crop error:", e);
-            return null; // fallback
-        }
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
 
@@ -318,10 +303,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             if (fileInput) fileInput.value = '';
             
             fetchImages();
-        } catch (error) {
-            console.error("Failed to upload image:", error);
-            alert("Failed to upload image. Make sure your storage bucket 'gallery' is created and public.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSaving(false);
         }
     };
@@ -333,9 +315,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const { error } = await supabase.from('gallery_images').delete().eq('id', id);
             if (error) throw error;
             fetchImages();
-        } catch (error) {
-            console.error("Failed to delete image:", error);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const toggleStatus = async (id, currentStatus) => {
@@ -343,9 +323,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const { error } = await supabase.from('gallery_images').update({ is_active: !currentStatus }).eq('id', id);
             if (error) throw error;
             fetchImages();
-        } catch (error) {
-            console.error("Failed to toggle status:", error);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     return (
@@ -369,7 +347,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                     <div className="lg:col-span-4 h-fit bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-3xl p-6 lg:p-8">
                                                 <h2 className="text-lg font-semibold tracking-tight text-themeText mb-6 flex justify-between items-center">
                             Add New Image
-                            <button onClick={handleAutoSync} disabled={isSyncing} className="text-xs px-3 py-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20 flex items-center gap-2">
+                            <button onClick={handleAutoSync} disabled={isSyncing} className="text-xs px-3 py-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 rounded-lg transition-colors border border-blue-500/20 flex items-center gap-2 disabled:cursor-not-allowed">
                                 {isSyncing ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-rotate"></i>}
                                 {isSyncing ? 'Syncing...' : 'Auto-Sync Legacy Images'}
                             </button>
@@ -431,7 +409,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                                 <textarea className="bg-black/5 dark:bg-themeElevated/90 border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent resize-none h-20" value={description} onChange={e => setDescription(e.target.value)} placeholder="Brief description..." />
                             </div>
 
-                            <button disabled={isSaving} type="submit" className="w-full mt-4 px-6 py-3.5 bg-themeAccent hover:bg-themeAccent/90 text-white font-black tracking-normal text-[13px] rounded-xl transition-colors border border-themeAccent/20 shadow-lg shadow-themeAccent/20 flex items-center justify-center gap-2">
+                            <button disabled={isSaving} type="submit" className="w-full mt-4 px-6 py-3.5 bg-themeAccent hover:bg-themeAccent/90 text-white font-black tracking-normal text-[13px] rounded-xl transition-colors border border-themeAccent/20 shadow-lg shadow-themeAccent/20 flex items-center justify-center gap-2 disabled:cursor-not-allowed">
                                 {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-cloud-arrow-up"></i>}
                                 {isSaving ? 'Publishing...' : 'Publish to Gallery'}
                             </button>
@@ -521,7 +499,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                         </div>
                         <div className="flex justify-end gap-3 mt-6">
                             <button onClick={() => { if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null); }} className="px-5 py-2.5 rounded-xl font-bold text-sm text-themeTextSec hover:bg-black/5 transition-colors">Cancel</button>
-                            <button onClick={handleSaveEdit} disabled={isSavingEdit} className="px-5 py-2.5 bg-themeAccent text-white font-bold text-sm rounded-xl hover:bg-themeAccent/90 shadow-lg shadow-themeAccent/20 transition-all flex items-center gap-2">
+                            <button onClick={handleSaveEdit} disabled={isSavingEdit} className="px-5 py-2.5 bg-themeAccent text-white font-bold text-sm rounded-xl hover:bg-themeAccent/90 shadow-lg shadow-themeAccent/20 transition-all flex items-center gap-2 disabled:cursor-not-allowed">
                                 {isSavingEdit ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-crop-simple"></i>}
                                 {isSavingEdit ? 'Saving...' : 'Save Adjustments'}
                             </button>

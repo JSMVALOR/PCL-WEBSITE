@@ -123,7 +123,7 @@ export default function TermsAndConditions() {
         aria-hidden="true"
       />
 
-      <div className="relative pt-32 pb-24 px-6 md:px-12 max-w-6xl mx-auto">
+      <div id="legal-printable-area" className="relative pt-32 pb-24 px-6 md:px-12 max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-14 border-b border-brand-border pb-8">
           <div className="flex flex-wrap items-center gap-3 mb-6">

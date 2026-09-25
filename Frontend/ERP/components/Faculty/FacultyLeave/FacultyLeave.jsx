@@ -59,11 +59,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
             fetchLeaveData();
             if (window.erpDialog) window.erpDialog.alert("Leave request withdrawn successfully.", "success");
             else alert("Leave request withdrawn successfully.");
-        } catch (error) {
-            console.error(error);
-            if (window.erpDialog) window.erpDialog.alert("Failed to withdraw: " + (error?.message || error?.details || JSON.stringify(error)));
-            else alert("Failed to withdraw: " + (error?.message || JSON.stringify(error)));
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleEdit = (leave) => {
@@ -111,9 +107,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
                 .neq('id', userSession.db_id);
             
             if (facList) setFacultyList(facList);
-        } catch (error) {
-            console.error(error);
-        }
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     useEffect(() => {
@@ -414,7 +408,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-medium text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm resize-none placeholder:text-themeTextSec dark:text-white/30"></textarea>
  </div>
 
- <button type="submit" disabled={isSubmitting} className="w-full mt-4 py-4 rounded-2xl bg-amber-500 text-black font-black text-[13px] tracking-wide uppercase hover:bg-amber-400 hover:shadow-[0_0_20px_#f59e0b40] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+ <button type="submit" disabled={isSubmitting} className="w-full mt-4 py-4 rounded-2xl bg-amber-500 text-black font-black text-[13px] tracking-wide uppercase hover:bg-amber-400 hover:shadow-[0_0_20px_#f59e0b40] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
  {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> {editingLeaveId ? "Update Request" : "Submit Request"}</>}
  </button>
  </form>

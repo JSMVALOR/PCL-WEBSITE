@@ -67,10 +67,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         if (error) throw error;
         setNewExpense({ title: '', amount: '' });
         fetchOverview();
-    } catch (err) {
-        console.error(err);
-        alert('Failed to add expense.');
-    }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
   
   const handleRemoveExpense = async (id) => {
@@ -78,9 +75,7 @@ export default function AdminFees({ isEmbedded = false, }) {
           const { error } = await supabase.from('recurring_expenses').delete().eq('id', id);
           if (error) throw error;
           fetchOverview();
-      } catch (err) {
-          console.error(err);
-      }
+      } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
 
   const fetchOverview = async () => {
@@ -124,9 +119,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       }
 
       setOverviewData({ totalExpected: expected, totalCollected: collected, pendingCount: count, payrollExpense: expense });
-    } catch (e) {
-      console.error(e);
-    } finally {
+    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
       setFetchingOverview(false);
     }
   };
@@ -139,7 +132,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         .select('*, profiles:student_id(full_name, academic_batch)')
         .eq('status', 'pending');
       if (data) setPendingVerifications(data);
-    } catch (err) {} finally { setLoading(false); }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
   };
 
   const fetchInvoiceHistory = async () => {
@@ -151,7 +144,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         .order('created_at', { ascending: false })
         .limit(300);
       if (data) setInvoiceHistory(data);
-    } catch (e) {} finally { setLoading(false); }
+    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
   };
 
   const fetchBatches = async () => {
@@ -159,7 +152,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       const { data } = await supabase.from('profiles').select('academic_batch').eq('role', 'student');
       const distinctBatches = [...new Set(data.map(item => item.academic_batch).filter(Boolean))].sort();
       setBatches(distinctBatches);
-    } catch (err) {}
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
   };
 
   const fetchBatchStudents = async (batchName) => {
@@ -172,7 +165,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         .eq('academic_batch', batchName)
         .eq('role', 'student');
       if (data) setStudents(data);
-    } catch (err) {} finally { setLoading(false); }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
   };
 
   // ================== ACTIONS ==================
@@ -218,10 +211,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       
       fetchVerifications();
       (window.erpDialog?.alert || alert)(`✅ Payment Confirmed & Locked PDF Sent to ${txn.profiles?.full_name}`);
-    } catch (err) {
-      console.error(err);
-      (window.erpDialog?.alert || alert)('Failed to confirm payment.');
-    } finally { 
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { 
       setIsVerifying(false); 
       setCurrentTxnPayload(null);
     }
@@ -237,7 +227,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       setSelectedStudentIds([]);
       fetchBatchStudents(selectedBatch);
       (window.erpDialog?.alert || alert)('Bulk Marked Paid successfully.');
-    } catch (e) {} finally { setLoading(false); }
+    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
   };
 
   const handleAssignFee = async (e) => {
@@ -255,7 +245,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       setAssignTitle(''); setAssignAmount(''); setAssignDueDate('');
       fetchBatchStudents(selectedBatch);
       (window.erpDialog?.alert || alert)('Fee assigned to batch successfully.');
-    } catch (err) {} finally { setLoading(false); }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
   };
 
   const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
@@ -503,7 +493,7 @@ export default function AdminFees({ isEmbedded = false, }) {
                   <label className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest block mb-1">Due Date</label>
                   <input type="date" required value={assignDueDate} onChange={e => setAssignDueDate(e.target.value)} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-amber-500" />
                 </div>
-                <button type="submit" disabled={!selectedBatch || loading} className="w-full mt-2 py-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-black transition-colors disabled:opacity-50">
+                <button type="submit" disabled={!selectedBatch || loading} className="w-full mt-2 py-3.5 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                   Deploy to {selectedBatch || 'Batch'}
                 </button>
               </form>

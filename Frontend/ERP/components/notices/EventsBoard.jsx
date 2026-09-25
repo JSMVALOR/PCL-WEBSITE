@@ -65,10 +65,7 @@ export default function EventsBoard() {
             setImageUrl("");
             setIsPublic(false);
 
-        } catch (error) {
-            console.error("Error creating event:", error);
-            window.erpDialog?.alert("Failed to create event. Please try again.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSubmitting(false);
         }
     };
@@ -272,7 +269,7 @@ export default function EventsBoard() {
                                             <button type="button"
                                                 onClick={handleAddGalleryImage}
                                                 disabled={isGalleryUpdating || !galleryInput.trim()}
-                                                className="bg-purple-600 text-themeText dark:text-white px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-50"
+                                                className="bg-purple-600 text-themeText dark:text-white px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 {isGalleryUpdating ? 'Adding...' : 'Add Image'}
                                             </button>
@@ -392,7 +389,7 @@ export default function EventsBoard() {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full mt-4 bg-purple-600 hover:opacity-90 text-themeText dark:text-white rounded-xl py-4 text-[14px] font-medium tracking-normal transition-opacity flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
+                                className="w-full mt-4 bg-purple-600 hover:opacity-90 text-themeText dark:text-white rounded-xl py-4 text-[14px] font-medium tracking-normal transition-opacity flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? (
                                     <>

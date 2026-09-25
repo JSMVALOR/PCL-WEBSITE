@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 
 import HoldButton from '../../../../../../Shared/components/ReactBits/HoldButton/HoldButton';
@@ -96,10 +97,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
             window.erpDialog?.alert("✅ Syllabus saved successfully.");
             if(onRefresh) onRefresh();
             if(onClose) onClose();
-        } catch (error) {
-            console.error("Save error:", error);
-            window.erpDialog?.alert("Error saving syllabus.");
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };
@@ -119,9 +117,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
                         </h2>
                         <p className="text-xs font-bold text-themeTextSec dark:text-white/50 mt-1">{subject.name}</p>
                     </div>
-                    <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 transition">
-                        <i className="fa-solid fa-xmark"></i>
-                    </button>
+                    <button aria-label="Action button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 transition"><i className="fa-solid fa-xmark"></i></button>
                 </div>
 
                 {/* Body */}
@@ -228,7 +224,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
                         {isReadOnly ? 'Close Viewer' : 'Cancel'}
                     </button>
                     {!isReadOnly && (
-                        <button onClick={handleSave} disabled={loading} className="flex-1 py-3 rounded-xl font-black text-sm bg-amber-500 text-black hover:bg-amber-600 transition disabled:opacity-50">
+                        <button onClick={handleSave} disabled={loading} className="flex-1 py-3 rounded-xl font-black text-sm bg-amber-500 text-black hover:bg-amber-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Save Syllabus'}
                         </button>
                     )}

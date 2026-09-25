@@ -28,9 +28,7 @@ export default function AdminBatchManager({}) {
  
  if (error) throw error;
  setBatches(data || []);
- } catch (err) {
- console.error("Failed to fetch batches:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -62,10 +60,7 @@ export default function AdminBatchManager({}) {
  setWhatsappGroupId('');
  fetchBatches();
  window.erpDialog?.alert("Batch created successfully.");
- } catch (err) {
- console.error("Failed to create batch:", err);
- window.erpDialog?.alert("Error creating batch. Make sure the name is unique.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleDelete = async (id) => {
@@ -80,10 +75,7 @@ export default function AdminBatchManager({}) {
  
  if (error) throw error;
  fetchBatches();
- } catch (err) {
- console.error("Failed to delete batch:", err);
- window.erpDialog?.alert("Error deleting batch.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  return (

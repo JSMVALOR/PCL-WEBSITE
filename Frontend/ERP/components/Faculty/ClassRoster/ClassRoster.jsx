@@ -106,9 +106,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  setAttendanceState(getCachedAttendance(data[0].id));
  }
  }
- } catch (err) {
- console.error("Failed to load faculty timetable:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
  fetchMyClasses();
  }, [userSession, activeClass]);
@@ -212,9 +210,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  sessionStorage.setItem(`jsmerp_roster_cache_${activeClass}`, JSON.stringify(processedRoster));
  sessionStorage.setItem(`jsmerp_attendance_cache_${activeClass}`, JSON.stringify(newAttendanceState));
 
- } catch (err) {
- console.error("Failed to fetch roster:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  fetchStudentsForClass();
@@ -277,10 +273,7 @@ export default function ClassRoster({ isEmbedded = false }) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 2500);
 
- } catch (error) {
- console.error("Failed to save attendance:", error);
- window.erpDialog.alert("Failed to sync attendance to the server.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSaving(false);
  }
  };
@@ -355,7 +348,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <button type="button" 
  onClick={generateQRCode}
  disabled={facultyClasses.length === 0 || rosterData.length === 0}
- className="w-full sm:w-auto px-6 py-3.5 bg-black/5 dark:bg-white/5 backdrop-blur-xl hover:bg-themeAccent hover:text-themeText dark:text-white disabled:bg-themeApp disabled:text-themeTextSec dark:text-white/50 opacity-70 disabled:border-black/5 dark:border-white/5Strong text-themeText dark:text-white border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-95 flex items-center justify-center gap-2 group shrink-0 no-print"
+ className="w-full sm:w-auto px-6 py-3.5 bg-black/5 dark:bg-white/5 backdrop-blur-xl hover:bg-themeAccent hover:text-themeText dark:text-white disabled:bg-themeApp disabled:text-themeTextSec dark:text-white/50 opacity-70 disabled:border-black/5 dark:border-white/5Strong text-themeText dark:text-white border-themeBorder dark:border-white/5 border-black/5 dark:border-white/5 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-95 flex items-center justify-center gap-2 group shrink-0 no-print disabled:cursor-not-allowed"
  >
  <i className="fa-solid fa-qrcode group-hover:scale-110 transition-transform"></i> Live QR
  </button>

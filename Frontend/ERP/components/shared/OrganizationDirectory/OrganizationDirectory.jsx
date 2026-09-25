@@ -33,9 +33,7 @@ export default function OrganizationDirectory() {
                 });
             }
             setMembers(directory);
-        } catch (error) {
-            console.error("Failed to fetch organization directory:", error);
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };

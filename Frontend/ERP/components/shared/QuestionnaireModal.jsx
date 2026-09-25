@@ -127,10 +127,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
 
             onComplete(finalData);
 
-        } catch (err) {
-            console.error("Failed to submit questionnaire:", err);
-            window.erpDialog.alert("Submission failed. Please try again or contact IT support.");
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsLoading(false);
         }
     };

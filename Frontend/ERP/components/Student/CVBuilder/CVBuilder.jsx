@@ -562,9 +562,7 @@ export default function CVBuilder({ isEmbedded = false }) {
 
  setErpData(newData);
  writeCache(newData);
- } catch (err) {
- console.error("CV data fetch failed:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  }, [userSession]);
 
  useEffect(() => {
@@ -613,9 +611,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  page: { margin: Margin.NONE, format: 'a4' },
  canvas: { scale: 4, useCORS: true }
  });
- } catch (error) {
- console.error("PDF Export failed", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsExporting(false);
  }
  };
@@ -646,7 +642,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
+ className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0 disabled:cursor-not-allowed"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export PDF"}
@@ -662,7 +658,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+ className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export Professional CV"}

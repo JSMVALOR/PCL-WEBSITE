@@ -63,9 +63,7 @@ export default function BarCompliance({}) {
  results.sort((a, b) => a.totalHours - b.totalHours);
  
  setComplianceData(results);
- } catch (err) {
- console.error("Compliance Engine Error:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  }

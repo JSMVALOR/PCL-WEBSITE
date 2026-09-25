@@ -102,9 +102,7 @@ export default function IntelligentBot() {
                 priority: 'High',
                 status: 'Open'
             }]);
-        } catch (err) {
-            console.error('Escalation failed:', err);
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleNavigationCommands = (text) => {

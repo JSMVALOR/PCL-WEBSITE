@@ -140,9 +140,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  page: { margin: Margin.NONE, format: 'a4' },
  canvas: { scale: 2, useCORS: true }
  });
- } catch (error) {
- console.error("PDF Export failed", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsExporting(false);
  }
  };
@@ -166,14 +164,12 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  <button type="button" 
  onClick={handleExport}
  disabled={isLoading || isExporting}
- className="bg-emerald-500 hover:bg-emerald-400 text-themeText px-5 py-2.5 rounded-lg text-[13px] font-medium transition flex items-center gap-2 disabled:opacity-50"
+ className="bg-emerald-500 hover:bg-emerald-400 text-themeText px-5 py-2.5 rounded-lg text-[13px] font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>} 
  Export PDF
  </button>
- <button type="button" onClick={onClose} className="w-10 h-10 rounded-lg border border-black/5 dark:border-white/10 flex justify-center items-center text-themeTextSec hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors">
- <i className="fa-solid fa-xmark"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={onClose} className="w-10 h-10 rounded-lg border border-black/5 dark:border-white/10 flex justify-center items-center text-themeTextSec hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
 

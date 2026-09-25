@@ -146,9 +146,7 @@ export default function Leave({ isEmbedded = false, }) {
  if (sessionKey) {
  sessionStorage.setItem(sessionKey, JSON.stringify(fetchedData));
  }
- } catch (error) {
- console.error("Failed to sync leave history:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  useEffect(() => {
@@ -164,10 +162,7 @@ export default function Leave({ isEmbedded = false, }) {
             if (error) throw error;
             window.erpDialog?.alert("Leave request withdrawn successfully.");
             fetchLeaveHistory();
-        } catch (err) {
-            console.error(err);
-            window.erpDialog?.alert("Failed to withdraw leave: " + (err?.message || err?.details || JSON.stringify(err)));
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleRequestSubmit = async (e) => {
@@ -247,9 +242,7 @@ export default function Leave({ isEmbedded = false, }) {
  setFromDate(""); setToDate(""); setReason(""); setDocumentUrl('');
  }, 2000);
 
- } catch (error) {
- console.error("Leave submission failed:", error);
- setStatusMessage({ type: "error", text: error.message || "Failed to submit application." });
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); });
  } finally {
  setIsSubmitting(false);
  }
@@ -445,7 +438,7 @@ export default function Leave({ isEmbedded = false, }) {
  </div>
  </div>
 
- <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+ <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-black font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
  {isSubmitting ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> Submit Application</>}
  </button>
  </form>

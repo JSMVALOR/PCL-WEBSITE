@@ -154,9 +154,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  sessionStorage.setItem(`fac_assignments_${userSession.db_id}`, JSON.stringify(assigns));
  }
 
- } catch (error) {
- console.error("Error fetching assignment data:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handlePublish = async (e) => {
@@ -229,9 +227,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
          submission_mode: 'URL_ONLY',
          portal_link: window.location.origin + '/login'
      }).catch(e => console.error("Email dispatch failed", e));
-   } catch(e) {
-     console.error("Failed to send assignment emails", e);
-   }
+   } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  })();
 
  
@@ -246,10 +242,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  });
  fetchInitialData();
  
- } catch (error) {
- console.error("Error creating assignment:", error);
- window.erpDialog?.alert("Failed to create assignment: " + (error?.message || error?.details || JSON.stringify(error)));
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -260,10 +253,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  try {
  await supabase.from('assignments').delete().eq('id', id);
  setAssignments(prev => prev.filter(a => a.id !== id));
- } catch (error) {
- console.error("Error deleting:", error);
- window.erpDialog?.alert("Failed to delete assignment: " + (error?.message || error?.details || JSON.stringify(error)));
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
     return (
@@ -425,7 +415,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <button 
  type="submit"
  disabled={isSubmitting}
- className="btn-erp"
+ className="btn-erp disabled:cursor-not-allowed"
  >
  {isSubmitting ? 'Saving...' : (formData.id ? 'Save Changes' : 'Issue Assignment')}
  </button>

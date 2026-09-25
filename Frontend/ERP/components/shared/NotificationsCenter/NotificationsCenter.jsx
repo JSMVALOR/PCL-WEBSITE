@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
@@ -30,9 +31,7 @@ export default function NotificationsCenter({ setActiveTab }) {
             
             setUniversalNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
             setUnreadNotifications(prev => Math.max(0, prev - 1));
-        } catch (err) {
-            console.error("Failed to mark as read:", err);
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const markAllAsRead = async () => {
@@ -55,9 +54,7 @@ export default function NotificationsCenter({ setActiveTab }) {
             
             setUniversalNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
             setUnreadNotifications(0);
-        } catch (err) {
-            console.error("Failed to mark all as read:", err);
-        }
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const filteredNotifications = universalNotifications.filter(n => {

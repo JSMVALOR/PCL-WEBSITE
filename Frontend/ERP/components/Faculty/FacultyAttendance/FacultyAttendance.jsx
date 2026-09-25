@@ -196,7 +196,7 @@ export default function FacultyAttendance({ subjectContext }) {
             const todayLen = cachedToday ? JSON.parse(cachedToday).length : 0;
             // if (todayLen === 0 && !activeSession) setActiveTab('analytics');
         }
-    } catch(err) { console.error(err); }
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  // Timer for QR
@@ -256,10 +256,7 @@ export default function FacultyAttendance({ subjectContext }) {
 
  setTodayClasses(enrichedClasses || []);
  sessionStorage.setItem(`fac_todayClasses_${userSession.db_id}`, JSON.stringify(enrichedClasses || []));
- } catch (error) {
- console.error("Error fetching today classes:", error);
- window.erpDialog?.alert("Failed to load today's schedule.");
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
      const handleResolveUnmarked = async (missedSlot) => {
@@ -352,10 +349,7 @@ export default function FacultyAttendance({ subjectContext }) {
             setActiveTab("window");
             if (missedSlot.isMarked) setIsSwipeMode(false);
             
-        } catch (error) {
-            console.error("Error resolving unmarked:", JSON.stringify(error, null, 2), error);
-            window.erpDialog?.alert("Error: " + (error.message || JSON.stringify(error)));
-        } finally {
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSaving(false);
         }
     };
@@ -465,10 +459,7 @@ export default function FacultyAttendance({ subjectContext }) {
  setActiveSession({ ...currentSession, classData });
  setActiveTab("window");
  
- } catch (error) {
- console.error("Error starting attendance:", error);
- window.erpDialog?.alert("Failed to initialize attendance session.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSaving(false);
  }
  };
@@ -539,7 +530,7 @@ export default function FacultyAttendance({ subjectContext }) {
                             }
                         }
                     }
-                } catch(e) {}
+                } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
             }
 
         const { data: existing } = await supabase.from('attendance_records').select('id').eq('session_id', payload.session_id).eq('student_id', payload.student_id);
@@ -561,9 +552,7 @@ export default function FacultyAttendance({ subjectContext }) {
  throw error;
  }
 
- } catch (error) {
- console.error("Failed to mark attendance:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleBulkMark = async (status) => {
@@ -625,10 +614,7 @@ export default function FacultyAttendance({ subjectContext }) {
  });
  setAttendanceRecords(newRecords);
 
- } catch (error) {
- console.error("Bulk mark failed:", error);
- window.erpDialog?.alert("Failed to perform bulk action.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSaving(false);
  }
  };
@@ -663,9 +649,7 @@ export default function FacultyAttendance({ subjectContext }) {
  setQrTimeLeft(60);
  setQrActive(true);
  
- } catch (error) {
- console.error("QR Generation failed:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
  
  const refreshLiveAttendance = async () => {
@@ -684,9 +668,7 @@ export default function FacultyAttendance({ subjectContext }) {
  });
  return next;
  });
- } catch (error) {
- console.error("Refresh failed:", error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleCloseSession = async () => {
@@ -713,10 +695,7 @@ export default function FacultyAttendance({ subjectContext }) {
      alert("Session finalized and saved successfully!");
  }
  return true;
- } catch (error) {
- console.error("Failed to close:", error);
- throw error;
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  
@@ -811,9 +790,7 @@ export default function FacultyAttendance({ subjectContext }) {
                     localStorage.setItem('wired_dataset_aug_17_v2', 'true');
                     window.location.reload();
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         };
         wireDataset();
     }, [userSession]);
@@ -1081,11 +1058,7 @@ export default function FacultyAttendance({ subjectContext }) {
                         else alert("Correction requests submitted to Admin!");
                         setEditMode(false);
                         setStagedChanges({});
-                    } catch (e) {
-                        console.error(e);
-                        if (window.erpDialog) window.erpDialog.alert("Failed to submit corrections.", "error");
-                        else alert("Failed to submit corrections.");
-                    } finally {
+                    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
                         setIsSaving(false);
                     }
                 }} disabled={isSaving} className="flex-1 py-4 rounded-xl text-[14px] font-bold tracking-tight bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-sm">
@@ -1129,9 +1102,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <button type="button" onClick={() => setIsSwipeMode(!isSwipeMode)} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-themeElevated border border-black/5 dark:border-white/5 rounded-xl hover:text-emerald-500 text-themeTextSec shadow-sm transition-all hover:scale-105 active:scale-95" title={isSwipeMode ? "Switch to List View" : "Switch to Tinder Swipe View"}>
  <i className={`fa-solid ${isSwipeMode ? 'fa-list-ul' : 'fa-layer-group'}`}></i>
  </button>
- <button type="button" onClick={refreshLiveAttendance} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-themeElevated border border-black/5 dark:border-white/5 rounded-xl hover:text-themeAccent text-themeTextSec shadow-sm transition-all hover:scale-105 active:scale-95" title="Sync live OTP entries">
- <i className="fa-solid fa-rotate-right"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={refreshLiveAttendance} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-themeElevated border border-black/5 dark:border-white/5 rounded-xl hover:text-themeAccent text-themeTextSec shadow-sm transition-all hover:scale-105 active:scale-95" title="Sync live OTP entries"><i className="fa-solid fa-rotate-right"></i></button>
  </div>
  
  <div className="flex-1 overflow-y-auto p-3 custom-scrollbar">

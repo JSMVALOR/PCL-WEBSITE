@@ -32,7 +32,7 @@ export default function StudentDashboard({ setActiveTab }) {
  try {
  const saved = localStorage.getItem('pcl_quick_actions');
  if (saved) return JSON.parse(saved);
- } catch (e) {}
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  return ['timetable', 'attendance', 'assignments', 'library'];
  });
  const [isEditingActions, setIsEditingActions] = useState(false);

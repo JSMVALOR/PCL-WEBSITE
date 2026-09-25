@@ -122,9 +122,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
     if (uniqueSubs.length > 0 && !reqSubjectId) setReqSubjectId(uniqueSubs[0].id);
  }
 
- } catch (err) {
- console.error("Failed to fetch faculty timetable data:", err);
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  useEffect(() => {
@@ -161,10 +159,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  setReqReason('');
  fetchData();
  window.erpDialog?.alert("Request submitted successfully to Admin!");
- } catch (err) {
- console.error("Failed to submit request:", err);
- window.erpDialog?.alert("Error submitting request.");
- }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const renderTimeline = () => {

@@ -27,9 +27,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
 
  if (error) throw error;
  setTickets(data || []);
- } catch (error) {
- console.error("Failed to fetch tickets:", error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsLoading(false);
  }
  };
@@ -76,10 +74,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
  fetchTickets();
- } catch (error) {
- console.error("Failed to reply:", error);
- window.erpDialog.alert("Failed to submit reply.");
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setSubmittingReply(null);
  }
  };

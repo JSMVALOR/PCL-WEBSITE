@@ -1,3 +1,4 @@
+/* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
@@ -201,9 +202,7 @@ export default function CourseVault({ isEmbedded = false }) {
 
                     if (isMounted) setHistoricalStats(subjectStats);
                 }
-            } catch (error) {
-                console.error("Error fetching Course Vault data:", error);
-            } finally {
+            } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
                 if (isMounted) setIsLoading(false);
             }
         };

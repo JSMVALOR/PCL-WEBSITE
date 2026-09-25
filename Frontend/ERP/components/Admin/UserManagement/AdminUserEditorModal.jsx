@@ -47,7 +47,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
               initialData.bio = data.bio || '';
               initialData.research = data.research ? (Array.isArray(data.research) ? data.research.join(', ') : data.research) : '';
             }
-          } catch (e) {}
+          } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         }
         setFormData(initialData);
       }
@@ -93,10 +93,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
       window.erpToast.success("User details updated successfully");
       onUpdate();
       onClose();
-    } catch (err) {
-      console.error(err);
-      window.erpToast.error("Failed to update user details");
-    } finally {
+    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
       setIsSaving(false);
     }
   };
@@ -106,9 +103,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div className={`${theme.layout.panel} rounded-2xl w-full max-w-lg p-6 lg:p-8 flex flex-col gap-6 shadow-2xl relative border border-themeBorder dark:border-white/10`}>
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-themeElevated/90 hover:bg-themeBorder text-themeTextSec flex items-center justify-center transition-colors">
-          <i className="fa-solid fa-xmark"></i>
-        </button>
+        <button aria-label="Action button" type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-themeElevated/90 hover:bg-themeBorder text-themeTextSec flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
 
         <div>
           <h2 className="text-xl font-bold text-themeText mb-1">Edit {user.role === 'student' ? 'Student' : 'Staff'} Details</h2>
@@ -177,7 +172,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
             <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl text-xs font-bold text-themeTextSec hover:bg-themeElevated/90 transition-colors border border-transparent hover:border-black/5 dark:hover:border-themeBorder dark:border-white/10">
               Cancel
             </button>
-            <button type="submit" disabled={isSaving} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-themeAccent text-themeText dark:text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2">
+            <button type="submit" disabled={isSaving} className="px-5 py-2.5 rounded-xl text-xs font-bold bg-themeAccent text-themeText dark:text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 disabled:cursor-not-allowed">
               {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-check"></i>}
               Save Changes
             </button>

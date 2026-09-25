@@ -46,9 +46,7 @@ export default function CohortManager() {
             const { data: bData, error: bErr } = await supabase.from('academic_batches').select('*, academic_programs(name, code, duration_years, theme_color)').order('start_year', { ascending: false });
             if (bErr && bErr.code !== '42P01') throw bErr;
             setBatches(bData || []);
-        } catch (err) {
-            console.error("Cohort Data Error:", err);
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setLoading(false);
         }
     };

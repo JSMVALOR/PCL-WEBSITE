@@ -41,9 +41,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                         fees: { collected: Number(kpi.fees?.collected) || 0, pending: Number(kpi.fees?.pending) || 0 }
                     });
                 }
-            } catch (error) {
-                console.error("Error fetching KPIs:", error);
-            } finally {
+            } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
                 if (isMounted) setLoading(false);
             }
         };

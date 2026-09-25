@@ -68,10 +68,7 @@ export default function AdminPayroll() {
         try {
             await supabase.from('system_settings').upsert({ key: 'payroll_config', value: config });
             window.erpDialog?.alert("✅ Policy Engine updated successfully.");
-        } catch (e) {
-            console.error(e);
-            window.erpDialog?.alert("Failed to save policy.");
-        } finally {
+        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSavingConfig(false);
         }
     };
@@ -100,8 +97,8 @@ export default function AdminPayroll() {
     const fetchFaculty = async () => {
         setLoading(true);
         try {
-            const { data: facultyData } = await supabase.from('profiles').select('*').eq('role', 'faculty');
-            
+            const { data: facultyData, error } = await supabase.from('profiles').select('*').eq('role', 'faculty');
+            if (error) throw error;
             if (facultyData) {
                 const currentMonthStart = new Date();
                 currentMonthStart.setDate(1);
@@ -175,7 +172,7 @@ export default function AdminPayroll() {
                     let bankDetails = { bankName: 'Not Provided', accountNo: 'N/A', ifsc: 'N/A' };
                     try {
                         if (f.payment_details) bankDetails = typeof f.payment_details === 'string' ? JSON.parse(f.payment_details) : f.payment_details;
-                    } catch (e) {}
+                    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
 
                     // Check if already processed this month
                     const isProcessed = (previousRolls || []).some(pr => pr.faculty_id === f.id && pr.month === currentMonth && pr.year === currentYear);
@@ -201,6 +198,7 @@ export default function AdminPayroll() {
             }
         } catch (error) {
             console.error(error);
+            if (window.toast) window.toast.error(error.message || "Failed to load payroll data. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -311,17 +309,14 @@ export default function AdminPayroll() {
             window.erpDialog?.alert("✅ Payment processed & Recorded. Ultra Luxury Encrypted PDF Generated.");
             setShowPaymentModal(false);
 
-        } catch (err) {
-            console.error(err);
-            window.erpDialog?.alert('Failed to process payment.');
-        } finally {
+        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsProcessing(false);
             setPdfPayload(null);
         }
     };
 
     return (
-        <div className="w-full animate-fade-in pb-12">
+        <section className="w-full animate-fade-in pb-12">
             
             {/* INVISIBLE PDF TEMPLATE RENDERER */}
             <div className="absolute opacity-0 pointer-events-none -z-50" style={{ top: '-9999px', left: '-9999px' }}>
@@ -361,7 +356,7 @@ export default function AdminPayroll() {
                         <button 
                             onClick={handleSaveConfig}
                             disabled={isSavingConfig}
-                            className="w-full py-3.5 mt-2 bg-white/5 hover:bg-white/10 rounded-xl text-themeText dark:text-white text-xs font-black transition-colors disabled:opacity-50"
+                            className="w-full py-3.5 mt-2 bg-white/5 hover:bg-white/10 rounded-xl text-themeText dark:text-white text-xs font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSavingConfig ? 'Saving...' : 'Save Configuration'}
                         </button>
@@ -409,7 +404,7 @@ export default function AdminPayroll() {
                                             <div className="flex justify-between items-center mb-1">
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Gross Base Salary (Editable)</span>
-                                                    <button onClick={() => toggleCardBreakdown(f.id)} className="w-5 h-5 flex items-center justify-center rounded bg-white/5 hover:bg-white/10 text-themeTextSec dark:text-white/40 hover:text-themeText dark:text-white transition-colors">
+                                                    <button aria-label={expandedCards.includes(f.id) ? "Collapse breakdown" : "Expand breakdown"} onClick={() => toggleCardBreakdown(f.id)} className="w-5 h-5 flex items-center justify-center rounded bg-white/5 hover:bg-white/10 text-themeTextSec dark:text-white/40 hover:text-themeText dark:text-white transition-colors">
                                                         <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${expandedCards.includes(f.id) ? 'rotate-180' : ''}`}></i>
                                                     </button>
                                                 </div>
@@ -583,7 +578,7 @@ export default function AdminPayroll() {
                         <div className="p-6 lg:p-8 border-t border-themeBorder dark:border-white/5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-center shrink-0">
                             <div className="w-full max-w-3xl flex justify-end gap-4">
                                 <button onClick={() => setShowPaymentModal(false)} className="px-8 py-4 bg-white/5 hover:bg-white/10 rounded-xl text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white text-sm font-black transition-colors">Cancel</button>
-                                <button form="payment-form" type="submit" disabled={isProcessing} className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 rounded-xl text-black text-sm font-black transition-colors disabled:opacity-50 flex items-center gap-2">
+                                <button form="payment-form" type="submit" disabled={isProcessing} className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 rounded-xl text-black text-sm font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                                     {isProcessing ? 'Processing...' : <><i className="fa-solid fa-lock"></i> Mark Paid & Generate PDF</>}
                                 </button>
                             </div>
@@ -779,6 +774,6 @@ export default function AdminPayroll() {
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 }

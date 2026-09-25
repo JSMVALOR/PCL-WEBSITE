@@ -250,9 +250,7 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  sessionStorage.setItem(`fac_course_resources_${userSession.db_id}`, JSON.stringify(res));
  }
 
- } catch (error) {
- console.error(error);
- }
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
  const handleAddResource = async (e) => {
@@ -280,9 +278,7 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
         }
  setFormData({ id: null, title: "", url: "", type: "Drive Link" });
  setShowResourceForm(false);
- } catch (error) {
- console.error(error);
- } finally {
+ } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsSubmitting(false);
  }
  };
@@ -295,17 +291,14 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
                 await supabase.from('course_resources').delete().eq('id', id);
                 setResources(prev => prev.filter(r => r.id !== id));
                 window.erpDialog.alert("Resource deleted successfully.", "success");
-            } catch (error) {
-                console.error(error);
-                window.erpDialog.alert("Failed to delete resource.", "error");
-            }
+            } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
         });
     } else {
         if (!confirm("Are you sure?")) return;
         try {
             await supabase.from('course_resources').delete().eq('id', id);
             setResources(prev => prev.filter(r => r.id !== id));
-        } catch (error) {}
+        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     }
 };
 
@@ -528,7 +521,7 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  <label className="text-[11px] font-bold tracking-tight text-themeTextSec">URL</label>
  <input required type="url" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[#007AFF]" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value})} />
  </div>
- <button type="submit" disabled={isSubmitting} className="btn-erp">
+ <button type="submit" disabled={isSubmitting} className="btn-erp disabled:cursor-not-allowed">
  {isSubmitting ? 'Saving...' : 'Save Resource'}
  </button>
  </form>

@@ -101,9 +101,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  studentAvgAttendance: avgAtt
  }));
  }
- } catch (err) {
- console.error("Error fetching profile analytics:", err);
- } finally {
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -121,9 +119,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  <div className={`p-6 lg:p-8 bg-gradient-to-r ${user.role === 'student' ? 'from-themeAccent to-themeAccent/80' : 'from-blue-600 to-blue-500'} relative overflow-hidden shrink-0`}>
  <div className="absolute top-0 right-0 w-full max-w-[300px] md:w-[300px] h-[300px] bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 mix-blend-overlay pointer-events-none"></div>
  
- <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-black/20 hover:bg-black/40 text-themeText dark:text-white transition-colors z-20">
- <i className="fa-solid fa-xmark text-sm"></i>
- </button>
+ <button aria-label="Action button" type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-black/20 hover:bg-black/40 text-themeText dark:text-white transition-colors z-20"><i className="fa-solid fa-xmark text-sm"></i></button>
 
  <div className="flex items-center gap-5 relative z-10">
  <div className="w-20 h-20 rounded-2xl bg-themePanel/85 backdrop-blur-2xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
