@@ -36,12 +36,12 @@ export default function UnifiedDisclaimer() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className={`max-w-2xl w-full relative overflow-hidden ${theme.layout.panel}`}
+            className={`max-w-2xl w-full max-h-[90vh] relative overflow-hidden flex flex-col ${theme.layout.panel}`}
           >
             {/* Luxury Gradient Accent */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-themeAccent to-transparent opacity-50"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-themeAccent to-transparent opacity-50 z-10"></div>
             
-            <div className="p-6 md:p-8 flex flex-col gap-5">
+            <div className="p-5 md:p-8 flex flex-col gap-4 overflow-y-auto min-h-0">
               
               <div className={`flex items-center gap-4 pb-4 border-b ${theme.layout.divider}`}>
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-themeElevated border-theme border-themeBorder`}>

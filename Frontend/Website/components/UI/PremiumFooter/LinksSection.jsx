@@ -10,7 +10,7 @@ export default function LinksSection() {
   const isAdmissionsOpen = siteContext?.isAdmissionsOpen;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-y-12 gap-x-8 lg:gap-12 xl:gap-16 mb-12 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-16">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-y-8 md:gap-y-12 gap-x-8 lg:gap-12 xl:gap-16 mb-8 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-8 md:pt-16">
       {/* Brand & Identity */}
       <div className="flex flex-col col-span-1 sm:col-span-2 lg:col-span-5 pr-0 lg:pr-12">
         <Link to="/" className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 group w-fit">

@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useState } from 'react';
 
 import styles from '../../PROGRAMS/Programs.module.css';
 
@@ -123,6 +124,102 @@ const STATIC_FACILITIES = [
   }
 ];
 
+function FacilityCarousel({ facilities }) {
+  const scrollRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (!isHovered) {
+      interval = setInterval(() => {
+        if (scrollRef.current) {
+          const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+          if (scrollLeft + clientWidth >= scrollWidth - 10) {
+            scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            scrollRef.current.scrollBy({ left: clientWidth >= 768 ? 400 : 300, behavior: 'smooth' });
+          }
+        }
+      }, 3500);
+    }
+    return () => clearInterval(interval);
+  }, [isHovered]);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const clientWidth = scrollRef.current.clientWidth;
+      const scrollAmount = clientWidth >= 768 ? 400 : 300;
+      if (direction === 'start') {
+        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        scrollRef.current.scrollBy({ left: direction === 'next' ? scrollAmount : -scrollAmount, behavior: 'smooth' });
+      }
+    }
+  };
+
+  return (
+    <div 
+      className="relative w-full group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onTouchStart={() => setIsHovered(true)}
+      onTouchEnd={() => setTimeout(() => setIsHovered(false), 2000)}
+    >
+      <div 
+        ref={scrollRef}
+        className="carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        <style>{`.carousel-container::-webkit-scrollbar { display: none; }`}</style>
+        {facilities.map((facility) => (
+          <div key={facility.id} className="min-w-[85vw] sm:min-w-[350px] md:min-w-[400px] snap-start opacity-0 carousel-item shrink-0 h-full flex flex-col">
+            <div className={`${styles.glassCard} flex-1 p-0 flex flex-col transition-all duration-500 hover:border-[var(--primary-color)]/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:-translate-y-2 overflow-hidden`}>
+              <ModuleFigure 
+                iconName={facility.icon} 
+                tag={facility.tag} 
+                image={getImage(facility.image)} 
+              />
+              <div className="p-6 flex-1 flex flex-col bg-[var(--card-bg)]/40 relative z-20">
+                <h3 className="text-xl md:text-2xl text-[var(--text-color)] font-bold mb-3 group-hover:text-[var(--primary-color)] transition-colors font-['Playfair_Display'] italic leading-snug">
+                  {facility.title}
+                </h3>
+                <p className="text-[var(--text-muted)] text-sm md:text-base leading-relaxed flex-1 mb-6">
+                  {facility.summary}
+                </p>
+                <div className="mt-auto">
+                  <Link to={`/campus/gallery`} className="tlh-btn justify-center w-full">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.15em]">
+                      View Gallery
+                    </span>
+                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1.64453 0.972656L6.97897 6.3071L1.67567 11.6104" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Controls */}
+      <div className="flex items-center justify-between mt-4">
+        <button onClick={() => scroll('start')} className="text-[var(--text-muted)] hover:text-[var(--primary-color)] text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 px-2 py-1 rounded-md active:bg-black/10">
+          <Icons.RotateCcw size={14} /> Return to start
+        </button>
+        <div className="flex gap-3">
+          <button onClick={() => scroll('prev')} aria-label="Previous" className="w-10 h-10 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--text-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-colors bg-[var(--card-bg)] hover:bg-black/20">
+            <Icons.ChevronLeft size={20} />
+          </button>
+          <button onClick={() => scroll('next')} aria-label="Next" className="w-10 h-10 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--text-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-colors bg-[var(--card-bg)] hover:bg-black/20">
+            <Icons.ChevronRight size={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Facilities() {
   const containerRef = useRef(null);
 
@@ -144,13 +241,13 @@ export default function Facilities() {
       });
 
       // Stagger animate cards
-      gsap.utils.toArray('.facilities-grid').forEach((grid) => {
-        gsap.fromTo(grid.children,
+      gsap.utils.toArray('.carousel-container').forEach((container) => {
+        gsap.fromTo(container.children,
           { opacity: 0, y: 40 },
           {
             opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
             scrollTrigger: {
-              trigger: grid,
+              trigger: container,
               start: 'top 80%',
               toggleActions: 'play none none none'
             }
@@ -203,39 +300,7 @@ export default function Facilities() {
               <p className="text-[var(--text-muted)] text-center md:text-left max-w-2xl text-base md:text-lg">{category.description}</p>
             </div>
 
-            <div className="facilities-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {category.facilities.map((facility) => (
-                <div key={facility.id} className="opacity-0">
-                  <div className={`${styles.glassCard} h-full p-0 flex flex-col transition-all duration-500 hover:border-[var(--primary-color)]/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:-translate-y-2 overflow-hidden`}>
-                    <ModuleFigure 
-                      iconName={facility.icon} 
-                      tag={facility.tag} 
-                      image={getImage(facility.image)} 
-                    />
-
-                    <div className="p-6 flex-1 flex flex-col bg-[var(--card-bg)]/40 relative z-20">
-                      <h3 className="text-xl md:text-2xl text-[var(--text-color)] font-bold mb-3 group-hover:text-[var(--primary-color)] transition-colors font-['Playfair_Display'] italic leading-snug">
-                        {facility.title}
-                      </h3>
-                      <p className="text-[var(--text-muted)] text-sm md:text-base leading-relaxed flex-1 mb-6">
-                        {facility.summary}
-                      </p>
-
-                      <div className="mt-auto">
-                        <Link to={`/campus/gallery`} className="tlh-btn justify-center w-full">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.15em]">
-                            View Gallery
-                          </span>
-                          <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1.64453 0.972656L6.97897 6.3071L1.67567 11.6104" stroke="currentColor" strokeWidth="2"/>
-                          </svg>
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <FacilityCarousel facilities={category.facilities} />
           </div>
         ))}
       </div>
