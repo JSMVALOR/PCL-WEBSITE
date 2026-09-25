@@ -70,7 +70,7 @@ export default function LeadershipProfile({ overrideId }) {
 
     profile = {
       ...profile,
-      name: cmsProfile.name || profile.name,
+      name: id === 'founder' ? 'Dr. Sneha Mula Goud' : (cmsProfile.name || profile.name),
       title: cmsProfile.title || profile.title,
       eyebrow: cmsProfile.eyebrow || profile.eyebrow,
       image: cmsProfile.image || profile.image,

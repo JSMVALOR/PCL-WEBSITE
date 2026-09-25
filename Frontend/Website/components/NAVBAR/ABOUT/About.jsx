@@ -29,7 +29,7 @@ function LeadershipCard({ leader, index }) {
         <img loading="lazy"
           src={leader.image}
           alt={leader.name}
-          className="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className={`absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] ${leader.id === 'co-founder' ? 'object-top' : 'object-center'}`}
         />
         {/* Dark portrait gradient regardless of theme for editorial aesthetic */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-700" />
@@ -64,7 +64,7 @@ export default function About() {
     mission: content?.mission || "To provide an elite, integrated legal environment that merges academic brilliance with uncompromising practical training, fostering critical thinkers who will redefine jurisprudence.",
     vision: content?.vision || "To stand as the definitive institution of legal education in India—nurturing advocates, judges, and policy architects who uphold the Constitution with courage and social conscience.",
     motto: content?.motto || "Excellence in Theory. Command in Practice.",
-    founder_name: content?.founder_name || "Ms. Mula Sneha Goud",
+    founder_name: "Dr. Sneha Mula Goud",
     founder_title: content?.founder_title || "Founder & Chairman",
     founder_image: content?.founder_image || founderImg,
     cofounder_name: content?.cofounder_name || "Mr. Bharat Krishna Buddala",
