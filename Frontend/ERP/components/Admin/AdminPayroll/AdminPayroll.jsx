@@ -2,7 +2,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import LuxuryPayslipTemplate from '../../../DocumentTemplates/LuxuryPayslipTemplate';
 import { generateComponentPDF } from '../../../DocumentTemplates/pdfEngine';
 import { generateNativePayslip } from '../../../DocumentTemplates/NativePayslipEngine';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
@@ -48,12 +47,7 @@ export default function AdminPayroll() {
     });
     const [isProcessing, setIsProcessing] = useState(false);
     
-    // Luxury PDF Engine Refs & State
-    const payslipRef = useRef(null);
-    const [pdfPayload, setPdfPayload] = useState(null);
-
-    const luxuryPayslipRef = React.useRef(null);
-    const [currentPayload, setCurrentPayload] = React.useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -264,17 +258,11 @@ export default function AdminPayroll() {
                 gross_lop_amount: selectedFac.grossLopAmount || 0
             };
 
-            // 1. Sync payload to state so the hidden HTML template renders it
-            setPdfPayload(payload);
-            
-            // 2. Wait 100ms for React to mount the hidden template DOM
-            await new Promise(r => setTimeout(r, 100));
-
-            // 3. Database Insert
+            // 1. Database Insert
             const { error } = await supabase.from('faculty_payroll').insert([payload]);
             if (error) throw error;
 
-            // 4. Generate Ultra Luxury PDF via NATIVE ENGINE (Zero DOM Dependency)
+            // 2. Generate Ultra Luxury PDF via NATIVE ENGINE (Zero DOM Dependency)
             const base64Pdf = await generateNativePayslip(
                 payload, 
                 selectedFac.full_name, 
@@ -282,14 +270,14 @@ export default function AdminPayroll() {
                 "Faculty of Law"
             );
 
-            // 5. Download the PDF directly for the Admin
+            // 3. Download the PDF directly for the Admin
             const linkSource = `data:application/pdf;base64,${base64Pdf}`;
             const downloadLink = document.createElement("a");
             downloadLink.href = linkSource;
             downloadLink.download = `Payslip_${selectedFac.full_name}_${payload.month}.pdf`;
             downloadLink.click();
 
-            // 6. Optional: Email Dispatch
+            // 4. Optional: Email Dispatch
             await sendSystemEmail('PAYROLL_DISBURSAL', {
                 faculty_name: selectedFac.full_name,
                 month: payload.month,
@@ -315,17 +303,11 @@ export default function AdminPayroll() {
             }
         } finally {
             setIsProcessing(false);
-            setPdfPayload(null);
         }
     };
 
     return (
         <section className="w-full animate-fade-in pb-12">
-            
-            {/* INVISIBLE PDF TEMPLATE RENDERER */}
-            <div className="absolute opacity-0 pointer-events-none -z-50" style={{ top: '-9999px', left: '-9999px' }}>
-                <LuxuryPayslipTemplate ref={payslipRef} faculty={selectedFac} payload={pdfPayload} />
-            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
                 
@@ -591,193 +573,6 @@ export default function AdminPayroll() {
                 </div>
             , document.body)}
 
-            {/* ULTRA LUXURY PAYSLIP TEMPLATE */}
-            {currentPayload && selectedFac && (
-                <div className="hidden">
-                    <div ref={luxuryPayslipRef} className="w-[800px] h-[1131px] bg-white text-black p-8 flex flex-col justify-between" style={{ fontFamily: 'Inter, sans-serif' }}>
-                        
-                        <div>
-                            {/* 1. Header (Institution Identity) */}
-                            <div className="flex justify-between items-center border-b-[1px] border-[#d4af37] pb-6 mb-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-themeApp rounded-lg flex flex-col items-center justify-center text-[#d4af37]">
-                                        <span className="font-black text-xl tracking-tighter leading-none">PCL</span>
-                                        <span className="text-[6px] tracking-widest uppercase">Prudentia</span>
-                                    </div>
-                                    <div>
-                                        <h1 className="text-2xl font-black uppercase tracking-widest text-[#1a1a1a]">Sri Vidya Law College</h1>
-                                        <p className="text-[9px] font-semibold text-themeTextSec uppercase tracking-widest mt-1">NAAC Accredited | BCI Approved</p>
-                                        <p className="text-[9px] text-themeTextSec mt-1">123 Legal Avenue, Knowledge Park, Hyderabad</p>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <h2 className="text-xl font-black tracking-widest uppercase text-[#d4af37]">Faculty Payslip</h2>
-                                    <p className="text-xs font-bold text-themeText uppercase tracking-widest mt-1">{currentPayload.month} {currentPayload.year}</p>
-                                    <p className="text-[9px] text-themeTextSec mt-1">hr@prudentiacollege.edu | www.prudentiacollege.edu</p>
-                                </div>
-                            </div>
-
-                            {/* 2. Employee Information */}
-                            <div className="grid grid-cols-4 gap-4 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Employee ID</p>
-                                    <p className="text-xs font-black">{selectedFac.erp_id || "FAC-XXXX"}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Department</p>
-                                    <p className="text-xs font-black">{selectedFac.department || "School of Law"}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Employee Name</p>
-                                    <p className="text-xs font-black">{selectedFac.full_name}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Designation</p>
-                                    <p className="text-xs font-black">{selectedFac.role === 'admin' ? 'Administrator' : 'Faculty Member'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">PAN Number</p>
-                                    <p className="text-xs font-black">{selectedFac.pan_number || "ABCDE1234F"}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">UAN Number</p>
-                                    <p className="text-xs font-black">{selectedFac.uan_number || "100512345678"}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Bank Account</p>
-                                    <p className="text-xs font-black">{selectedFac.bankDetails?.account_number || "XXXX6789"}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Date of Joining</p>
-                                    <p className="text-xs font-black">{selectedFac.date_of_joining ? new Date(selectedFac.date_of_joining).toLocaleDateString('en-GB') : "12 Jul 2022"}</p>
-                                </div>
-                            </div>
-
-                            {/* 3. Payroll Summary */}
-                            <div className="flex justify-between items-center mb-6 px-4">
-                                <div>
-                                    <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Salary Credit Date</p>
-                                    <p className="text-sm font-black">{new Date(currentPayload.transaction_date).toLocaleDateString('en-GB')}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Working Days</p>
-                                    <p className="text-sm font-black">30</p>
-                                </div>
-                                <div>
-                                    <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Days Paid</p>
-                                    <p className="text-sm font-black">{30 - (selectedFac.lopDays || 0)}</p>
-                                </div>
-                            </div>
-
-                            {/* 4 & 5. Earnings & Deductions Grid */}
-                            <div className="grid grid-cols-2 gap-8 mb-8">
-                                {/* Earnings */}
-                                <div>
-                                    <h3 className="text-xs font-black uppercase tracking-widest mb-3 border-b border-themeBorder pb-2 text-[#1a1a1a]">Earnings</h3>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Basic Pay</span><span className="font-bold">₹{(currentPayload.base_pay || 50000).toLocaleString('en-IN')}</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Dearness Allowance (DA)</span><span className="font-bold">₹{(currentPayload.base_pay * 0.40).toLocaleString('en-IN')}</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">House Rent Allowance (HRA)</span><span className="font-bold">₹{(currentPayload.base_pay * 0.50).toLocaleString('en-IN')}</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Conveyance Allowance</span><span className="font-bold">₹3,200</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Medical Allowance</span><span className="font-bold">₹2,000</span></div>
-                                    </div>
-                                    <div className="flex justify-between text-xs font-black mt-4 pt-3 border-t border-themeBorder">
-                                        <span className="uppercase tracking-widest">Gross Earnings (A)</span>
-                                        <span>₹{(currentPayload.base_pay * 1.9 + 5200).toLocaleString('en-IN')}</span>
-                                    </div>
-                                </div>
-
-                                {/* Deductions */}
-                                <div>
-                                    <h3 className="text-xs font-black uppercase tracking-widest mb-3 border-b border-themeBorder pb-2 text-[#1a1a1a]">Deductions</h3>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Provident Fund (PF)</span><span className="font-bold">₹6,000</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Professional Tax</span><span className="font-bold">₹{currentPayload.professional_tax}</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Income Tax (TDS)</span><span className="font-bold">₹{currentPayload.tds_deducted}</span></div>
-                                        <div className="flex justify-between text-xs"><span className="text-themeTextSec">Loss of Pay (LOP)</span><span className="font-bold">₹{(selectedFac.deduction || 0).toLocaleString('en-IN')}</span></div>
-                                    </div>
-                                    <div className="flex justify-between text-xs font-black mt-4 pt-3 border-t border-themeBorder">
-                                        <span className="uppercase tracking-widest">Total Deductions (B)</span>
-                                        <span>₹{(6000 + currentPayload.professional_tax + currentPayload.tds_deducted + (selectedFac.deduction || 0)).toLocaleString('en-IN')}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 6. Net Salary Hero Section */}
-                            <div className="w-full bg-themeApp text-white rounded-2xl p-8 flex justify-between items-center relative overflow-hidden mb-8">
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] to-[#2c2c2c]"></div>
-                                <div className="relative z-10">
-                                    <p className="text-[10px] font-bold text-[#d4af37] uppercase tracking-widest mb-2">Net Salary</p>
-                                    <h1 className="text-5xl font-black tracking-tighter">₹{currentPayload.final_net_pay.toLocaleString('en-IN')}</h1>
-                                    <p className="text-xs text-themeTextSec mt-2 font-mono uppercase">Bank Ref: {currentPayload.transaction_id || 'AUTO-GEN-NEFT'}</p>
-                                </div>
-                                <div className="relative z-10 text-right">
-                                    <p className="text-xs font-bold text-gray-300">Gross: ₹{(currentPayload.base_pay * 1.9 + 5200).toLocaleString('en-IN')}</p>
-                                    <p className="text-xs font-bold text-gray-300 mt-1">Deductions: ₹{(6000 + currentPayload.professional_tax + currentPayload.tds_deducted + (selectedFac.deduction || 0)).toLocaleString('en-IN')}</p>
-                                </div>
-                            </div>
-
-                            {/* 7 & 9. Leave & Tax Summary */}
-                            <div className="grid grid-cols-2 gap-8 mb-8">
-                                <div>
-                                    <h3 className="text-[10px] font-black uppercase tracking-widest mb-3 text-themeTextSec">Leave Balance (YTD)</h3>
-                                    <div className="flex justify-between text-xs border-b border-gray-100 py-2"><span className="font-semibold text-themeTextSec">Casual Leave</span><span className="font-black">6 / 12</span></div>
-                                    <div className="flex justify-between text-xs border-b border-gray-100 py-2"><span className="font-semibold text-themeTextSec">Earned Leave</span><span className="font-black">8 / 24</span></div>
-                                </div>
-                                <div>
-                                    <h3 className="text-[10px] font-black uppercase tracking-widest mb-3 text-themeTextSec">Tax Information (YTD)</h3>
-                                    <div className="flex justify-between text-xs border-b border-gray-100 py-2"><span className="font-semibold text-themeTextSec">Gross YTD</span><span className="font-black">₹6,42,000</span></div>
-                                    <div className="flex justify-between text-xs border-b border-gray-100 py-2"><span className="font-semibold text-themeTextSec">TDS YTD</span><span className="font-black">₹52,500</span></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Bottom Sections: Notes, Auth, Footer */}
-                        <div>
-                            {/* 10. Notes */}
-                            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                                <p className="text-[9px] font-medium text-themeTextSec leading-relaxed">
-                                    • This is a system-generated payslip and does not require a physical signature.<br/>
-                                    • Salary has been credited to the registered bank account ending in {selectedFac.bankDetails?.account_number?.slice(-4) || "6789"}.<br/>
-                                    • Income tax has been deducted as per applicable laws. Any discrepancy must be reported within 7 working days.
-                                </p>
-                            </div>
-
-                            {/* 11. Authentication */}
-                            <div className="flex justify-between items-end border-t border-themeBorder pt-6 mb-8">
-                                <div className="flex gap-12">
-                                    <div className="text-center">
-                                        <div className="w-32 border-b border-themeBorder pb-8 mb-2"></div>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-themeTextSec">Finance Controller</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="w-32 border-b border-themeBorder pb-8 mb-2"></div>
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-themeTextSec">Registrar</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4 items-center">
-                                    <div className="text-right">
-                                        <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Document ID</p>
-                                        <p className="text-[10px] font-mono font-black">SVLC-PS-2026-{currentPayload.faculty_id.substring(0, 4)}</p>
-                                        <p className="text-[8px] font-bold text-themeTextSec uppercase tracking-widest mt-2 mb-1">Generated On</p>
-                                        <p className="text-[9px] font-mono font-black">{new Date().toLocaleString('en-GB')}</p>
-                                    </div>
-                                    <div className="w-16 h-16 border-4 border-[#d4af37] p-1 rounded-lg">
-                                        <QRCode value={`VERIFY: SVLC-PS-2026-${currentPayload.faculty_id.substring(0, 4)}`} size={50} />
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {/* 12. Footer */}
-                            <div className="w-full bg-themeApp text-white text-[8px] uppercase tracking-widest font-black py-4 px-6 flex justify-between rounded-lg">
-                                <span>Prudentia College of Law</span>
-                                <span className="text-[#d4af37]">Confidential Document</span>
-                                <span>ERP Verified</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </section>
     );
 }
