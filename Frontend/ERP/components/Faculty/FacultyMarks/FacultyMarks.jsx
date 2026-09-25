@@ -139,7 +139,7 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
          let subs = finalSubs.map(s => ({ id: s.id, master_id: s.master_subjects?.id, name: s.master_subjects?.name || 'Unknown', code: s.master_subjects?.code || 'Unknown', batch_name: s.academic_batches?.batch_name }));
 
          // 2. Assignments
-         const { data: assigns } = await supabase.from('assignments').select('id, title, total_marks, subject_id, batch').eq('faculty_id', userSession.db_id);
+         const { data: assigns } = await supabase.from('assignments').select('id, title, total_marks, subject_id, batch, submission_type').eq('faculty_id', userSession.db_id);
          if (assigns) {
             setAssignments(assigns);
             sessionStorage.setItem(`fac_marks_assignments_${userSession.db_id}`, JSON.stringify(assigns));
@@ -643,10 +643,11 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
                                                         ) : (
                                                             <input 
                                                                 type="number" step="0.1" min="0" max={maxMarks} placeholder="—"
-                                                                className="w-20 bg-white/40 dark:bg-white/10 border border-themeBorder rounded-lg px-3 py-2 text-right text-[15px] font-semibold text-themeText outline-none focus:border-themeAccent focus:ring-0 focus:outline-none focus:ring-1 focus:ring-themeAccent transition"
+                                                                className="w-20 bg-white/40 dark:bg-white/10 border border-themeBorder rounded-lg px-3 py-2 text-right text-[15px] font-semibold text-themeText outline-none focus:border-themeAccent focus:ring-0 focus:outline-none focus:ring-1 focus:ring-themeAccent transition disabled:opacity-30 disabled:cursor-not-allowed"
                                                                 value={editMode ? (stagedMarks[student.id] !== undefined ? stagedMarks[student.id] : (hasMark ? mark : "")) : (hasMark ? mark : "")}
                                                                 onChange={(e) => handleMarkChange(student.id, e.target.value)}
-                                                                disabled={isLocked && !editMode}
+                                                                disabled={(isLocked && !editMode) || (!isGenericAssessment && activeAssignment?.submission_type === 'online' && !(submissionFiles[student.id] && (submissionFiles[student.id].url || submissionFiles[student.id].text)))}
+                                                                title={(!isGenericAssessment && activeAssignment?.submission_type === 'online' && !(submissionFiles[student.id] && (submissionFiles[student.id].url || submissionFiles[student.id].text))) ? "Cannot grade: No online submission received yet" : ""}
                                                             />
                                                         )}
                                                         <span className="text-xs font-bold text-themeTextSec">/ {maxMarks}</span>
