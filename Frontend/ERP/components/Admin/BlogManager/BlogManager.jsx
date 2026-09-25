@@ -214,23 +214,33 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  }
  };
 
- const generateWhatsAppLink = (type) => {
- if (!authorContact?.phone) return "#";
- const phone = authorContact.phone.replace(/[^0-9]/g, '');
- const message = type === 'approve' 
- ? `Hello ${formData.author_name}, great news! Your blog post "${formData.title}" has been approved and published on the Prudentia College of Law website. You can view it live now.`
- : `Hello ${formData.author_name}, we appreciate your submission titled "${formData.title}". After review, our editorial team has decided not to move forward with publishing it at this time. We encourage you to submit future works!`;
- return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
- };
+ 
 
- const generateEmailLink = (type) => {
- if (!authorContact?.email) return "#";
- const subject = type === 'approve' ? 'Your PCL Blog Post is Published!' : 'Update regarding your PCL Blog Post submission';
- const body = type === 'approve'
- ? `Hello ${formData.author_name},\n\nGreat news! Your blog post "${formData.title}" has been approved and published on the Prudentia College of Law website.\n\nThank you for contributing to the community.\n\nBest regards,\nPCL Editorial Team`
- : `Hello ${formData.author_name},\n\nThank you for your submission titled "${formData.title}". After review, our editorial team has decided not to move forward with publishing it at this time.\n\nWe appreciate your effort and encourage you to submit future works.\n\nBest regards,\nPCL Editorial Team`;
- return `mailto:${authorContact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
- };
+ const sendAutomatedEmail = async (type) => {
+    if (!authorContact?.email) {
+        window.erpDialog?.alert("No email address found for this author.");
+        return;
+    }
+    const subject = type === 'approve' ? 'Your PCL Blog Post is Published!' : 'Update regarding your PCL Blog Post submission';
+    const textBody = type === 'approve'
+        ? `Hello ${formData.author_name},<br><br>Great news! Your blog post "<b>${formData.title}</b>" has been approved and published on the Prudentia College of Law website.<br><br>Thank you for contributing to the community.<br><br>Best regards,<br>PCL Editorial Team`
+        : `Hello ${formData.author_name},<br><br>Thank you for your submission titled "<b>${formData.title}</b>". After review, our editorial team has decided not to move forward with publishing it at this time.<br><br>We appreciate your effort and encourage you to submit future works.<br><br>Best regards,<br>PCL Editorial Team`;
+    
+    try {
+        const { data, error } = await supabase.functions.invoke('send-email', {
+            body: {
+                to_email: authorContact.email,
+                subject: subject,
+                message_body: textBody
+            }
+        });
+        if (error) throw error;
+        window.erpDialog?.alert(`Automated ${type} email sent successfully to ${authorContact.email}!`);
+    } catch (err) {
+        console.error("Email send failed:", err);
+        window.erpDialog?.alert("Failed to send automated email. Ensure Supabase edge functions are configured.");
+    }
+};
 
  
 
@@ -279,12 +289,12 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  </>
  )}
  
- <a href={generateEmailLink('approve')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ <button type="button" onClick={() => sendAutomatedEmail('approve')} className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Approve
- </a>
- <a href={generateEmailLink('reject')} target="_blank" rel="noopener noreferrer" className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
+ </button>
+ <button type="button" onClick={() => sendAutomatedEmail('reject')} className="px-3 py-2 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors flex items-center gap-2">
  <i className="fa-solid fa-envelope text-sm"></i> Reject
- </a>
+ </button>
  </div>
  </div>
  )}
