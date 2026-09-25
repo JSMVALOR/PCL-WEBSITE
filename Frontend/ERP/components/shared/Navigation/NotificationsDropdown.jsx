@@ -63,7 +63,7 @@ export default function NotificationsDropdown({ onClose, setActiveTab }) {
                                     </div>
                                     <div className="flex flex-col flex-1 min-w-0">
                                         <span className="text-[12px] font-bold text-themeText tracking-tight truncate">{n.title}</span>
-                                        <span className="text-[11px] text-themeTextSec mt-0.5 leading-snug line-clamp-2">{n.message}</span>
+                                        <span className="text-[11px] text-themeTextSec mt-0.5 leading-snug truncate">{n.message}</span>
                                         <span className="text-[9px] font-black text-themeTextSec/60 uppercase tracking-widest mt-2">
                                             {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                                         </span>

@@ -125,7 +125,7 @@ const FeeReceiptTemplate = React.forwardRef(({ invoiceData, studentData }, ref) 
                 <div className="grid grid-cols-2 gap-12 pt-8 border-t-2 border-neutral-200">
                     <div>
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-3">Terms & Conditions</h4>
-                        <ol className="list-decimal list-inside text-[9px] text-neutral-500 space-y-2 font-medium leading-relaxed">
+                        <ol className="list-decimal list-inside text-[9px] text-neutral-500 space-y-2 font-medium leading-relaxed text-justify">
                             <li>This is a computer-generated invoice and does not require a physical signature.</li>
                             <li>Late payments may attract a penalty as per the institution's financial guidelines.</li>
                             <li>All disputes are subject to the jurisdiction of courts in Hyderabad, Telangana.</li>
