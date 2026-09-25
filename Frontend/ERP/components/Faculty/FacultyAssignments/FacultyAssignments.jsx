@@ -49,13 +49,14 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [formData, setFormData] = useState({
  id: null,
- id: null,
  subject_id: "",
  batch: "",
  title: "",
  description: "",
  total_marks: 100,
- due_date: ""
+ due_date: "",
+ submission_type: "offline",
+ word_limit: 3000
  });
 
  // Batches logic
@@ -184,6 +185,8 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
             description: formData.description,
             total_marks: Number(formData.total_marks),
             due_date: formData.due_date,
+            submission_type: formData.submission_type,
+            word_limit: formData.submission_type === 'online' ? Number(formData.word_limit) : null,
             updated_at: new Date().toISOString()
         }).eq('id', formData.id);
         error = res.error;
@@ -197,6 +200,8 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
             description: formData.description,
             total_marks: Number(formData.total_marks),
             due_date: formData.due_date,
+            submission_type: formData.submission_type,
+            word_limit: formData.submission_type === 'online' ? Number(formData.word_limit) : null,
             status: 'active'
         });
         error = res.error;
@@ -340,6 +345,31 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
     </div>
  )}
 
+ {/* Submission Type */}
+ <div className="flex flex-col gap-2">
+    <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Submission Type *</label>
+    <div className="flex bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl p-1">
+        <button type="button" onClick={() => setFormData({...formData, submission_type: 'offline'})} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors ${formData.submission_type === 'offline' ? 'bg-amber-500 text-white shadow-sm' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5'}`}>Offline</button>
+        <button type="button" onClick={() => setFormData({...formData, submission_type: 'online'})} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors ${formData.submission_type === 'online' ? 'bg-indigo-500 text-white shadow-sm' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5'}`}>Online (ERP)</button>
+    </div>
+ </div>
+
+ {formData.submission_type === 'online' && (
+     <div className="flex flex-col gap-2 md:col-span-1">
+         <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Word Limit *</label>
+         <input 
+             type="number"
+             min="10"
+             max="5000"
+             className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
+             value={formData.word_limit}
+             onChange={(e) => setFormData({...formData, word_limit: e.target.value})}
+             required={formData.submission_type === 'online'}
+         />
+         <p className="text-[10px] text-themeTextSec px-1">Note: Limit should not cross ~3000 words.</p>
+     </div>
+ )}
+
  {/* Title */}
  <div className="flex flex-col gap-2 md:col-span-2">
  <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Assignment Title *</label>
@@ -429,6 +459,9 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <span className={`px-2 py-0.5 rounded text-[12px] font-medium ${isPastDue ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
  {isPastDue ? 'Past Due' : 'Active'}
  </span>
+ <span className="bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded text-[12px] font-medium ml-2 uppercase tracking-wide">
+    {assign.submission_type === 'online' ? 'ONLINE' : 'OFFLINE'}
+ </span>
  {assign.updated_at && <span className="text-[10px] font-bold text-themeTextSec bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded ml-2">Edited: {new Date(assign.updated_at).toLocaleDateString()} {new Date(assign.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>}
  <span className="bg-black/5 dark:bg-white/5 backdrop-blur-xl px-2 py-0.5 rounded text-[12px] font-medium text-themeTextSec dark:text-white/50">
  {assign.batch}
@@ -439,7 +472,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  </div>
  
  <div className="flex gap-2">
-    <button onClick={() => { setFormData({ id: assign.id, subject_id: assign.subject_id, batch: assign.batch, title: assign.title, description: assign.description, total_marks: assign.total_marks, due_date: assign.due_date }); setShowForm(true); }} className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10 hover:bg-amber-500/10 text-themeTextSec hover:text-amber-500 transition">
+    <button onClick={() => { setFormData({ id: assign.id, subject_id: assign.subject_id, batch: assign.batch, title: assign.title, description: assign.description, total_marks: assign.total_marks, due_date: assign.due_date, submission_type: assign.submission_type || 'offline', word_limit: assign.word_limit || 3000 }); setShowForm(true); }} className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10 hover:bg-amber-500/10 text-themeTextSec hover:text-amber-500 transition">
         <i className="fa-solid fa-pen text-xs"></i>
     </button>
     <HoldButton size="sm" onHold={() => handleDelete(assign.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>

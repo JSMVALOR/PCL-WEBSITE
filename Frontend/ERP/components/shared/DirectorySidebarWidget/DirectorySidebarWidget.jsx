@@ -12,6 +12,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
     const [reportingTo, setReportingTo] = useState(null);
     const [isFullViewOpen, setIsFullViewOpen] = useState(false);
     const [allUsers, setAllUsers] = useState([]);
+    const [menteeIds, setMenteeIds] = useState([]);
 
     useEffect(() => {
         fetchDirectoryData();
@@ -43,6 +44,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
 
                 // Exact mentees for this faculty
                 const myMenteeIds = mentorships.filter(m => m.faculty_id === userSession?.id || m.faculty_id === userSession?.db_id).map(m => m.student_id);
+                setMenteeIds(myMenteeIds);
                 const myMentees = users.filter(u => myMenteeIds.includes(u.id));
                 setMembers(myMentees.slice(0, 3));
             } else {
@@ -148,6 +150,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                         onClose={() => setIsFullViewOpen(false)} 
                         allUsers={allUsers}
                         role={role}
+                        menteeIds={menteeIds}
                         getPresenceStatus={getPresenceStatus}
                     />
                 )}
@@ -156,7 +159,7 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
     );
 }
 
-function FullDirectoryModal({ onClose, allUsers, role, getPresenceStatus }) {
+function FullDirectoryModal({ onClose, allUsers, role, menteeIds, getPresenceStatus }) {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Handle Cmd+K for focusing search
@@ -196,7 +199,8 @@ function FullDirectoryModal({ onClose, allUsers, role, getPresenceStatus }) {
             });
         } else if (role === 'faculty') {
             groups['Fellow Faculty'] = filtered.filter(u => u.role === 'faculty');
-            groups['My Mentees'] = filtered.filter(u => u.role === 'student');
+            groups['My Mentees'] = filtered.filter(u => u.role === 'student' && menteeIds.includes(u.id));
+            groups['Other Students'] = filtered.filter(u => u.role === 'student' && !menteeIds.includes(u.id));
         } else {
             // Admin View
             groups['Key Management'] = filtered.filter(u => u.role === 'admin');

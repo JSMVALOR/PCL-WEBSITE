@@ -677,6 +677,7 @@ export default function FacultyAttendance({ subjectContext }) {
  if (error) throw error;
  
  setActiveSession(null);
+ setSelectedUnmarkedSubject(null);
  setEnrolledStudents([]);
  setAttendanceRecords({});
  await fetchTodayClasses();
