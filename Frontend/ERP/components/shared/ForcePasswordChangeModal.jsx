@@ -35,7 +35,9 @@ export default function ForcePasswordChangeModal({ onComplete }) {
             const { error: profileError } = await supabase
                 .from('profiles')
                 .update({ force_password_change: false })
-                .eq('id', userSession.db_id);
+                .eq('id', userSession.db_id)
+                .select()
+                .single();
             
             if (profileError) throw profileError;
 
