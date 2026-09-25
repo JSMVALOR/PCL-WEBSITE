@@ -28,7 +28,11 @@ if (import.meta.env.PROD) {
 
 
 // Global Security Protections
-document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('contextmenu', event => {
+  if (event.target.tagName === 'IMG' || event.target.closest('.profile-photo')) {
+    event.preventDefault();
+  }
+});
 document.addEventListener('keydown', (e) => {
   // Prevent Save As (Ctrl+S, Cmd+S), Print (Ctrl+P, Cmd+P)
   if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p')) {
