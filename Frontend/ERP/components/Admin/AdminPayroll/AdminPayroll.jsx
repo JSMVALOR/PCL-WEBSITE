@@ -309,7 +309,14 @@ export default function AdminPayroll() {
             window.erpDialog?.alert("✅ Payment processed & Recorded. Ultra Luxury Encrypted PDF Generated.");
             setShowPaymentModal(false);
 
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (err) { 
+            console.error(err); 
+            if (err.code === 'PGRST204' || (err.message && err.message.includes('does not exist'))) {
+                window.erpDialog?.alert("Database schema is missing new payroll columns (TDS, Pro Tax, etc.). Please execute the pending SQL in Backend/all_pending_fixes.sql", "Schema Error");
+            } else {
+                window.erpDialog?.alert(err.message || "An error occurred while processing payroll. Please try again.", "Error");
+            }
+        } finally {
             setIsProcessing(false);
             setPdfPayload(null);
         }

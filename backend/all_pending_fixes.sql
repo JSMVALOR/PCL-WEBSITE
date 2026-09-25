@@ -55,3 +55,19 @@ ALTER TABLE public.mentorship_messages ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can update own received messages" ON public.mentorship_messages;
 CREATE POLICY "Users can update own received messages" ON public.mentorship_messages
     FOR UPDATE USING (receiver_id = auth.uid());
+
+-- [PAYROLL] Add missing columns for Tax & Transaction Questionnaire
+ALTER TABLE faculty_payroll
+ADD COLUMN IF NOT EXISTS final_net_pay NUMERIC,
+ADD COLUMN IF NOT EXISTS professional_tax NUMERIC,
+ADD COLUMN IF NOT EXISTS tds_amount NUMERIC,
+ADD COLUMN IF NOT EXISTS tds_percentage NUMERIC,
+ADD COLUMN IF NOT EXISTS transaction_id TEXT,
+ADD COLUMN IF NOT EXISTS payment_mode TEXT,
+ADD COLUMN IF NOT EXISTS payment_date DATE,
+ADD COLUMN IF NOT EXISTS lop_days NUMERIC,
+ADD COLUMN IF NOT EXISTS lop_waived_days NUMERIC,
+ADD COLUMN IF NOT EXISTS lop_waived_amount NUMERIC,
+ADD COLUMN IF NOT EXISTS lop_waiver_reason TEXT,
+ADD COLUMN IF NOT EXISTS salary_structure JSONB,
+ADD COLUMN IF NOT EXISTS gross_lop_amount NUMERIC;
