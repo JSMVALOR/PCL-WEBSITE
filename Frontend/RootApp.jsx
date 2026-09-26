@@ -10,6 +10,7 @@ import RouteSkeleton from './Website/components/UI/RouteSkeleton';
 import ErpSkeleton from './ERP/components/shared/ErpSkeleton';
 import ScrollToTop from './Website/components/UI/ScrollToTop';
 import App from './App';
+import Maintenance from './Website/components/UI/Maintenance';
 import { SiteProvider } from './Website/context/SiteContext';
 import { ErpProvider } from './ERP/context/ErpContext';
 import ErpApp from './ERP/ErpApp';
@@ -40,6 +41,12 @@ const RootApp = () => {
                      path.startsWith('/faculty') || 
                      path.startsWith('/admin') || 
                      path.startsWith('/verify');
+
+  // Check Maintenance Mode
+  if (import.meta.env.VITE_MAINTENANCE_MODE === 'true') {
+    return <Maintenance />;
+  }
+
   return (
     <SystemUpdater>
     <>
