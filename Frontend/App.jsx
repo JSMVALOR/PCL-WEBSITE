@@ -39,6 +39,7 @@ import SubmitBlog from './Website/components/NAVBAR/BLOGS/SubmitBlog';
 import ApplyNow from './Website/components/NAVBAR/APPLY_NOW/ApplyNow';
 import TermsAndConditions from './Website/components/LEGAL/TermsAndConditions';
 import PrivacyPolicy from './Website/components/LEGAL/PrivacyPolicy';
+import CookieConsent from './Website/components/LEGAL/CookieConsent';
 import WebsiteTracker from './Website/components/UI/WebsiteTracker';
 
 function App() {
@@ -47,11 +48,14 @@ function App() {
 
   return (
     <>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] bg-[#cda75b] text-white px-6 py-3 rounded-lg font-bold shadow-2xl">
+        Skip to main content
+      </a>
       <WebsiteTracker />
             <ScrollToTop />
       <UnifiedDisclaimer />
             <Routes>
-        <Route path="/" element={<><SEO title="Home | Prudentia College of Law" description="Premier legal education institution offering BA LLB, BBA LLB, and LLB programs with practical moot court experience." jsonLd={{ "@context": "https://schema.org", "@type": "CollegeOrUniversity", "name": "Prudentia College of Law", "url": "https://prudentiacollegeoflaw.com" }} /><Navbar /><main><Home /></main></>} />
+        <Route path="/" element={<><SEO title="Home | Prudentia College of Law" description="Premier legal education institution offering BA LLB, BBA LLB, and LLB programs with practical moot court experience." jsonLd={{ "@context": "https://schema.org", "@type": "CollegeOrUniversity", "name": "Prudentia College of Law", "url": "https://prudentiacollegeoflaw.com" }} /><Navbar /><main id="main-content"><Home /></main></>} />
         
         <Route path="/about" element={<><SEO title="About Us" description="Learn about the history, vision, and mission of Prudentia College of Law." /><Navbar /><About /></>} />
         <Route path="/about/leadership" element={<><SEO title="Leadership" description="Meet the leadership team at Prudentia College of Law." /><Navbar /><About /></>} />
@@ -93,6 +97,7 @@ function App() {
         <Route path="*" element={<NotFound404 />} />
       </Routes>
       {!isHome && <PremiumFooter />}
+      <CookieConsent />
     </>
   )
 }
