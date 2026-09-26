@@ -123,5 +123,46 @@ module.exports = {
             Minimum Requirement: ${requiredHours} hrs
         </div>
         <p>Please ensure that all your classes and biometric logs are synced and any missed manual punches are submitted for Admin approval before the 28th to avoid LOP (Loss of Pay) deductions.</p>`
+    ),
+
+    // --- SYSTEM & ONBOARDING MAILS ---
+    welcomeEmailTemplate: (userName, role, portalUrl) => generateEmailWrapper(
+        "Welcome to Prudentia College of Law",
+        `<h2>Welcome to the PCL Digital Ecosystem!</h2>
+        <p>Dear ${userName},</p>
+        <p>Your official <strong>${role}</strong> account has been successfully provisioned. You can now access your personalized dashboard, schedules, and digital resources.</p>
+        <p>To get started, please log in using your newly issued credentials.</p>
+        <a href="${portalUrl}" class="btn">Access Portal</a>`
+    ),
+
+    passwordResetTemplate: (userName, resetLink) => generateEmailWrapper(
+        "Password Reset Request",
+        `<h2>Secure Your Account</h2>
+        <p>Dear ${userName},</p>
+        <p>We received a request to reset the password for your Prudentia College of Law account. If you made this request, please click the button below to establish a new secure password.</p>
+        <a href="${resetLink}" class="btn">Reset Password</a>
+        <p style="margin-top: 30px; font-size: 11px;">If you did not request a password reset, please ignore this email or contact the IT Helpdesk immediately.</p>`
+    ),
+
+    verificationEmailTemplate: (userName, otpCode) => generateEmailWrapper(
+        "Identity Verification Code",
+        `<h2>Identity Verification</h2>
+        <p>Dear ${userName},</p>
+        <p>To complete your secure login, please use the following One-Time Password (OTP):</p>
+        <div class="highlight-box" style="text-align: center; font-size: 24px; letter-spacing: 5px;">
+            ${otpCode}
+        </div>
+        <p>This code will expire in 10 minutes. Do not share this code with anyone.</p>`
+    ),
+
+    contactFormNotificationTemplate: (senderName, senderEmail, subject, message) => generateEmailWrapper(
+        "New Website Inquiry",
+        `<h2>New Website Inquiry Received</h2>
+        <p><strong>From:</strong> ${senderName} (${senderEmail})</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <div class="highlight-box" style="font-weight: normal; font-style: italic;">
+            "${message}"
+        </div>
+        <a href="mailto:${senderEmail}" class="btn">Reply to Sender</a>`
     )
 };
