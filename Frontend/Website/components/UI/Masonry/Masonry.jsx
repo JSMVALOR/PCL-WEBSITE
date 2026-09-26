@@ -109,7 +109,7 @@ const Masonry = ({
     const colHeights = new Array(columns).fill(0);
     const columnWidth = width / columns;
 
-    return items.map(child => {
+    const positionedItems = items.map(child => {
       const col = colHeights.indexOf(Math.min(...colHeights));
       const x = columnWidth * col;
       const height = child.height / 2;
@@ -119,6 +119,8 @@ const Masonry = ({
 
       return { ...child, x, y, w: columnWidth, h: height };
     });
+
+    return { positionedItems, containerHeight: Math.max(...colHeights) };
   }, [columns, items, width]);
 
   const hasMounted = useRef(false);
@@ -126,7 +128,7 @@ const Masonry = ({
   useLayoutEffect(() => {
     if (!imagesReady) return;
 
-    grid.forEach((item, index) => {
+    grid.positionedItems.forEach((item, index) => {
       const selector = `[data-key="${item.id}"]`;
       const animationProps = {
         x: item.x,
@@ -166,7 +168,7 @@ const Masonry = ({
 
     hasMounted.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grid, imagesReady, stagger, animateFrom, blurToFocus, duration, ease]);
+  }, [grid.positionedItems, imagesReady, stagger, animateFrom, blurToFocus, duration, ease]);
 
   const handleMouseEnter = (e, item) => {
     const element = e.currentTarget;
@@ -215,8 +217,8 @@ const Masonry = ({
   };
 
   return (
-    <div ref={containerRef} className="list">
-      {grid.map(item => {
+    <div ref={containerRef} className="list" style={{ height: grid.containerHeight }}>
+      {grid.positionedItems.map(item => {
         return (
           <div
             key={item.id}

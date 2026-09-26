@@ -186,14 +186,12 @@ function FacilityCarousel({ facilities }) {
                 <p className="text-[var(--text-muted)] text-sm md:text-base leading-relaxed flex-1 mb-6">
                   {facility.summary}
                 </p>
-                <div className="mt-auto">
-                  <Link to={`/campus/gallery`} className="tlh-btn justify-center w-full">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.15em]">
+                <div className="mt-auto pt-4">
+                  <Link to={`/campus/gallery`} className="flex items-center justify-center gap-3 w-full py-3 px-4 rounded-lg border border-[var(--primary-color)]/30 text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-black transition-all duration-300">
+                    <span className="text-xs font-bold uppercase tracking-[0.15em]">
                       View Gallery
                     </span>
-                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1.64453 0.972656L6.97897 6.3071L1.67567 11.6104" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
+                    <Icons.ArrowRight size={16} />
                   </Link>
                 </div>
               </div>
@@ -203,15 +201,15 @@ function FacilityCarousel({ facilities }) {
       </div>
       
       {/* Controls */}
-      <div className="flex items-center justify-between mt-4">
-        <button onClick={() => scroll('start')} className="text-[var(--text-muted)] hover:text-[var(--primary-color)] text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 px-2 py-1 rounded-md active:bg-black/10">
-          <Icons.RotateCcw size={14} /> Return to start
+      <div className="flex items-center justify-between mt-4 md:mt-6 px-1">
+        <button onClick={() => scroll('start')} className="text-[var(--text-muted)] hover:text-[var(--primary-color)] text-xs md:text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2 px-3 py-2 rounded-md active:bg-[var(--primary-color)]/10">
+          <Icons.RotateCcw size={16} /> <span className="hidden sm:inline">Return to start</span>
         </button>
-        <div className="flex gap-3">
-          <button onClick={() => scroll('prev')} aria-label="Previous" className="w-10 h-10 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--text-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-colors bg-[var(--card-bg)] hover:bg-black/20">
+        <div className="flex gap-2 md:gap-3">
+          <button onClick={() => scroll('prev')} aria-label="Previous" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--text-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-colors bg-[var(--card-bg)] active:bg-[var(--primary-color)]/20">
             <Icons.ChevronLeft size={20} />
           </button>
-          <button onClick={() => scroll('next')} aria-label="Next" className="w-10 h-10 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--text-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-colors bg-[var(--card-bg)] hover:bg-black/20">
+          <button onClick={() => scroll('next')} aria-label="Next" className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-[var(--card-border)] flex items-center justify-center text-[var(--text-color)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] transition-colors bg-[var(--card-bg)] active:bg-[var(--primary-color)]/20">
             <Icons.ChevronRight size={20} />
           </button>
         </div>
