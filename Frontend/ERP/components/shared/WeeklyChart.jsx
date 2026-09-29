@@ -37,7 +37,7 @@ const SUBJECT_COLORS = {
     rose: { bg: 'bg-rose-500/10 dark:bg-rose-400/10', text: 'text-rose-700 dark:text-rose-300', border: 'border-rose-500/20 dark:border-rose-400/20', solid: 'bg-rose-500 dark:bg-rose-400', shadow: 'shadow-rose-500/20 dark:shadow-rose-400/20' },
 };
 
-export default function WeeklyChart({ schedule = [], onLectureClick, role = 'student', isDrawMode = false, onSlotClick, batchName = '' }) {
+export default function WeeklyChart({ schedule = [], onLectureClick, role = 'student', isDrawMode = false, onSlotClick, batchName = '', onSlotSwap }) {
     
     // Auto-detect if Sunday is needed
     const hasSundayClass = schedule.some(c => c.day === 'Sunday');
@@ -111,20 +111,38 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                                             key={`${day}-${slot.id}`} 
                                             className={`flex-1 shrink-0 border-r border-black/10 dark:border-white/10 last:border-r-0 p-2 flex flex-col ${isDrawMode ? 'cursor-pointer hover:bg-amber-500/10' : ''}`}
                                             onClick={() => {
-                                                if (isDrawMode && onSlotClick) {
-                                                    onSlotClick(day, slot.start, slot.end);
-                                                }
-                                            }}
+        if (isDrawMode && onSlotClick) {
+            onSlotClick(day, slot.start, slot.end);
+        }
+    }}
+    onDragOver={(e) => {
+        if (onSlotSwap) e.preventDefault();
+    }}
+    onDrop={(e) => {
+        if (!onSlotSwap) return;
+        e.preventDefault();
+        const draggedId = e.dataTransfer.getData('text/plain');
+        if (draggedId) {
+            onSlotSwap(draggedId, day, slot.start, slot.end);
+        }
+    }}
                                         >
                                             {cls ? (
                                                 <div 
-                                                    onClick={(e) => {
-                                                        if (onLectureClick) {
-                                                            e.stopPropagation();
-                                                            onLectureClick(cls);
-                                                        }
-                                                    }}
-                                                    className={`h-full rounded-xl p-3 flex flex-col ${cls.isDraft ? 'border-2 border-dashed border-amber-500/50 bg-amber-500/5 opacity-80' : ''} ${cls.color ? (SUBJECT_COLORS[cls.color]?.bg + ' border border-black/5 dark:border-white/10') : 'bg-gray-100 dark:bg-white/5 border border-black/10 dark:border-white/10'} ${!isDrawMode ? 'cursor-pointer hover:scale-[1.02] transition-transform shadow-sm' : ''}`}
+        draggable={!!onSlotSwap}
+        onDragStart={(e) => {
+            if (onSlotSwap) {
+                e.dataTransfer.setData('text/plain', cls.id || (cls.raw && cls.raw.id) || '');
+                e.dataTransfer.effectAllowed = 'move';
+            }
+        }}
+        onClick={(e) => {
+            if (onLectureClick) {
+                e.stopPropagation();
+                onLectureClick(cls);
+            }
+        }}
+        className={`h-full rounded-xl cursor-grab active:cursor-grabbing p-3 flex flex-col ${cls.isDraft ? 'border-2 border-dashed border-amber-500/50 bg-amber-500/5 opacity-80' : ''} ${cls.color ? (SUBJECT_COLORS[cls.color]?.bg + ' border border-black/5 dark:border-white/10') : 'bg-gray-100 dark:bg-white/5 border border-black/10 dark:border-white/10'} ${!isDrawMode && !onSlotSwap ? 'cursor-pointer hover:scale-[1.02] transition-transform shadow-sm' : 'hover:scale-[1.02] transition-transform shadow-sm'}`}
                                                 >
                                                     <h4 className={`text-xs font-bold leading-snug line-clamp-2 ${cls.color ? SUBJECT_COLORS[cls.color]?.text : 'text-themeText'}`}>{cls.subject}</h4>
                                                     <div className="mt-auto pt-2 flex justify-between items-end">

@@ -259,38 +259,105 @@ export default function ScheduleBuilder({}) {
  fetchData();
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
+ 
  const handleShuffleGrid = async () => {
     if (schedule.length === 0) return window.erpDialog?.alert("No classes in the grid to shuffle.");
     if (!(await window.erpDialog?.confirm("Are you sure you want to magically shuffle all classes in this grid? This will randomly rearrange the current subjects across the existing time slots for this batch.", "Shuffle Grid"))) return;
 
     setLoading(true);
     try {
-        // 1. Get all occupied slots and all their contents
         const slots = schedule.map(s => ({ id: s.raw.id }));
         const contents = schedule.map(s => ({ master_subject_id: s.raw.master_subject_id, faculty_id: s.raw.faculty_id }));
 
-        // 2. Shuffle contents array randomly
+        // Backup original state for undo
+        const originalUpdates = slots.map((slot, idx) => ({
+            id: slot.id,
+            master_subject_id: contents[idx].master_subject_id,
+            faculty_id: contents[idx].faculty_id
+        }));
+
         for (let i = contents.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [contents[i], contents[j]] = [contents[j], contents[i]];
         }
 
-        // 3. Assign shuffled contents back to slots
         const updates = slots.map((slot, idx) => ({
             id: slot.id,
             master_subject_id: contents[idx].master_subject_id,
             faculty_id: contents[idx].faculty_id
         }));
 
-        // 4. Update database
         const { error } = await supabase.from('class_schedule').upsert(updates);
         if (error) throw error;
         
-        if (window.erpDialog) window.erpDialog.alert("Grid shuffled successfully!", "Success", false);
         fetchData();
+
+        if (window.erpToast?.undoable) {
+            window.erpToast.undoable(
+                "Grid magically shuffled! ✨",
+                () => {},
+                async () => {
+                    await supabase.from('class_schedule').upsert(originalUpdates);
+                    fetchData();
+                    window.erpToast.show("Shuffle undone. Grid restored.", "success");
+                }
+            );
+        } else if (window.erpToast) {
+            window.erpToast.show("Grid shuffled successfully!", "success");
+        }
     } catch (err) {
-        if (window.erpDialog) window.erpDialog.alert("Failed to shuffle grid: " + err.message, "Error", true);
+        if (window.erpToast) window.erpToast.show("Failed to shuffle grid: " + err.message, "error");
         setLoading(false);
+    }
+ };
+
+ const handleSlotSwap = async (draggedId, targetDay, targetStart, targetEnd) => {
+    const draggedClass = schedule.find(s => String(s.id) === String(draggedId) || (s.raw && String(s.raw.id) === String(draggedId)));
+    if (!draggedClass) return;
+
+    // Find if target slot is occupied
+    const targetClass = schedule.find(c => {
+        if (c.day !== targetDay) return false;
+        return (c.time >= targetStart && c.time < targetEnd) || (c.time <= targetStart && c.endTime > targetStart);
+    });
+
+    if (targetClass && targetClass.id === draggedClass.id) return; // Same slot
+
+    try {
+        const updates = [];
+        const originalUpdates = [];
+
+        if (targetClass) {
+            // Swap
+            updates.push({ id: draggedClass.raw.id, day_of_week: targetClass.raw.day_of_week, start_time: targetClass.raw.start_time, end_time: targetClass.raw.end_time });
+            updates.push({ id: targetClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
+            
+            originalUpdates.push({ id: draggedClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
+            originalUpdates.push({ id: targetClass.raw.id, day_of_week: targetClass.raw.day_of_week, start_time: targetClass.raw.start_time, end_time: targetClass.raw.end_time });
+        } else {
+            // Move
+            updates.push({ id: draggedClass.raw.id, day_of_week: targetDay, start_time: targetStart + ':00', end_time: targetEnd + ':00' });
+            originalUpdates.push({ id: draggedClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
+        }
+
+        const { error } = await supabase.from('class_schedule').upsert(updates);
+        if (error) throw error;
+        
+        fetchData();
+
+        if (window.erpToast?.undoable) {
+            window.erpToast.undoable(
+                targetClass ? "Classes interchanged." : "Class moved.",
+                () => {},
+                async () => {
+                    await supabase.from('class_schedule').upsert(originalUpdates);
+                    fetchData();
+                    window.erpToast.show("Move undone.", "success");
+                }
+            );
+        }
+    } catch (err) {
+        if (window.erpToast) window.erpToast.show("Failed to move class.", "error");
     }
  };
 
@@ -378,7 +445,7 @@ export default function ScheduleBuilder({}) {
  <div className="w-8 h-8 border-4 border-themeAccent border-t-transparent rounded-full animate-spin"></div>
  </div>
  ) : (
- <WeeklyChart schedule={[...schedule, ...pendingDraws]} role="admin" onLectureClick={(cls) => setSelectedClass(cls)} isDrawMode={isDrawMode} onSlotClick={handleSlotClick} batchName={selectedBatch} />
+ <WeeklyChart onSlotSwap={handleSlotSwap} schedule={[...schedule, ...pendingDraws]} role="admin" onLectureClick={(cls) => setSelectedClass(cls)} isDrawMode={isDrawMode} onSlotClick={handleSlotClick} batchName={selectedBatch} />
  )}
 
  {/* CREATE MODAL */}
