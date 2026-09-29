@@ -8,45 +8,7 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminAcademicHub() {
 
-    useEffect(() => {
-        const wireDataAsAdmin = async () => {
-            if (localStorage.getItem('admin_wired_dataset_v3')) return;
-            try {
-                // 1. Get LLB Batch
-                const { data: batches } = await supabase.from('academic_batches').select('id').ilike('name', '%LLB (Class of 2029)%').limit(1);
-                const batchId = batches?.[0]?.id;
-                if (!batchId) return;
-
-                // 2. Get Faculties
-                const { data: faculties } = await supabase.from('profiles').select('id').eq('role', 'faculty');
-                if (!faculties || faculties.length === 0) return;
-
-                // 3. Get Subjects
-                const { data: subjects } = await supabase.from('master_subjects').select('id, code').ilike('code', '%LLB 10%');
-                if (!subjects || subjects.length === 0) return;
-                
-                const sub1 = subjects.find(s => s.code.includes('102'))?.id || subjects[0].id;
-                const sub2 = subjects.find(s => s.code.includes('103'))?.id || subjects[0].id;
-                const sub3 = subjects.find(s => s.code.includes('104'))?.id || subjects[0].id;
-
-                // 4. Assign ALL faculties to these subjects for this batch
-                const cohortInserts = [];
-                faculties.forEach(f => {
-                    cohortInserts.push({ batch_id: batchId, faculty_id: f.id, master_subject_id: sub1 });
-                    cohortInserts.push({ batch_id: batchId, faculty_id: f.id, master_subject_id: sub2 });
-                    cohortInserts.push({ batch_id: batchId, faculty_id: f.id, master_subject_id: sub3 });
-                });
-
-                // Ignore errors for duplicates
-                await supabase.from('cohort_subjects').upsert(cohortInserts, { onConflict: 'batch_id, faculty_id, master_subject_id', ignoreDuplicates: true });
-
-                localStorage.setItem('admin_wired_dataset_v3', 'true');
-                if (window.erpDialog) window.erpDialog.alert("Dataset successfully wired by Admin!");
-                else alert("Dataset successfully wired by Admin!");
-            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
-        };
-        wireDataAsAdmin();
-    }, []);
+    
 
     const navigate = useNavigate();
 
