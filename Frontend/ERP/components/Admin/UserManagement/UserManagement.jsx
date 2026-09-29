@@ -13,7 +13,6 @@ import AdminFacultyEditorModal from "../AdminFacultyDirectory/AdminFacultyEditor
 import AdminStudentCVModal from './AdminStudentCVModal';
 import AdminUserEditorModal from './AdminUserEditorModal';
 import AdminUserProfileModal from './AdminUserProfileModal';
-import AdminPasswordResetsModal from './AdminPasswordResetsModal';
 import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 // Safe provisioning client so admin doesn't get logged out
@@ -52,8 +51,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  const [provisionLogs, setProvisionLogs] = useState([]);
  
  // Feature state
- const [showPasswordResetsModal, setShowPasswordResetsModal] = useState(false);
- const [transferModalState, setTransferModalState] = useState({ isOpen: false, sourceUser: null, classes: 0, subjects: 0, isDeactivating: false, selectedTarget: '' });
+  const [transferModalState, setTransferModalState] = useState({ isOpen: false, sourceUser: null, classes: 0, subjects: 0, isDeactivating: false, selectedTarget: '' });
 
  // Actual Data
  const [usersData, setUsersData] = useState(() => {
@@ -458,12 +456,6 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <PageHeader icon="fa-solid fa-users-gear" title="User Access Management" subtitle="Provision accounts, manage roles, and maintain the college directory." rightContent={
 <>
 <div className="flex gap-3 w-full lg:w-auto">
- <button type="button"
- onClick={() => setShowPasswordResetsModal(true)}
- className="flex-1 lg:flex-none px-6 py-3 bg-white/10 hover:bg-white/20 text-themeText dark:text-white rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 border border-white/30 backdrop-blur-md"
- >
- <i className="fa-solid fa-unlock-keyhole text-base"></i> Password Resets
- </button>
  <button type="button"
  onClick={() => setShowProvisionModal(true)}
  className="flex-1 lg:flex-none px-6 py-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border-amber-500/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 "
@@ -1013,9 +1005,6 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
           onClose={() => { setEditFacultyId(null); fetchDirectory(); }} 
         />
       )}
-      {showPasswordResetsModal && (
- <AdminPasswordResetsModal onClose={() => setShowPasswordResetsModal(false)} />
- )}
 
  {transferModalState.isOpen && transferModalState.sourceUser && (
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
