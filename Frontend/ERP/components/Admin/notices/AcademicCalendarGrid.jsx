@@ -1,7 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AcademicCalendarGrid() {
     const [columns, setColumns] = useState(['Date', 'Day', 'Event']);
@@ -27,7 +26,7 @@ export default function AcademicCalendarGrid() {
                 if (data.value.columns) setColumns(data.value.columns);
                 if (data.value.rows) setRows(data.value.rows);
             }
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred: " + err.message, "error"); else window.erpDialog?.alert("Error: " + err.message); } finally {
             setIsLoading(false);
         }
     };
@@ -41,7 +40,7 @@ export default function AcademicCalendarGrid() {
                 .upsert({ key: 'academic_calendar_grid', value: payload }, { onConflict: 'key' });
             if (upsertError) throw upsertError;
             if (window.erpToast) window.erpToast.show("Calendar updated successfully!", "success"); else window.erpDialog?.alert("Calendar updated successfully!");
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred: " + err.message, "error"); else window.erpDialog?.alert("Error: " + err.message); } finally {
             setIsSaving(false);
         }
     };
@@ -86,12 +85,7 @@ export default function AcademicCalendarGrid() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="w-full mb-6">
-                <PageHeader 
-                    icon="fa-solid fa-table-cells" 
-                    title="Calendar Grid" 
-                    subtitle="Dynamic Spreadsheet Interface" 
-                    rightContent={
+            <div className="w-full mb-6 flex justify-end">
                         <div className="flex flex-wrap gap-3">
                             <button onClick={addColumn} className="px-5 py-3 rounded-xl bg-black/5 dark:bg-white/10 text-themeText font-bold text-[13px] hover:bg-black/10 dark:hover:bg-white/20 transition-colors flex items-center gap-2">
                                 <i className="fa-solid fa-plus"></i> Add Column
@@ -103,9 +97,7 @@ export default function AcademicCalendarGrid() {
                                 <i className="fa-solid fa-floppy-disk"></i> {isSaving ? 'Saving...' : 'Save Grid'}
                             </button>
                         </div>
-                    }
-                />
-            </div>
+                    </div>
 
             <div className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-sm rounded-3xl overflow-hidden px-2 py-4">
 <div className="overflow-x-auto">
@@ -136,7 +128,7 @@ export default function AcademicCalendarGrid() {
                                             type="text"
                                             value={row.data[col] || ''}
                                             onChange={(e) => updateCell(row.id, col, e.target.value)}
-                                            className="w-full bg-transparent px-3 py-2 text-sm font-medium text-themeText border border-transparent focus:border-themeAccent/30 focus:bg-white/50 dark:focus:bg-black/20 rounded-lg outline-none transition-all"
+                                            className="w-full bg-black/5 dark:bg-white/5 px-3 py-2 text-sm font-medium text-themeText border border-black/10 dark:border-white/10 focus:border-themeAccent focus:bg-white/50 dark:focus:bg-black/20 rounded-lg outline-none transition-all"
                                             placeholder="..."
                                         />
                                     </td>
