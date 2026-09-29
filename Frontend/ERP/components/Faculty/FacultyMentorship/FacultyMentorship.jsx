@@ -294,22 +294,25 @@ export default function FacultyMentorship() {
 
     return (
         <div className="w-full h-full text-themeText dark:text-themeText animate-fade-in">
-            <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8">
+            <div className="w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8">
                 
                 {/* Header */}
                 {!selectedMentee && (
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm p-6 lg:p-8">
-                        <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl shadow-inner">
-                                <i className="fa-solid fa-users"></i>
-                            </div>
-                            <div>
-                                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-themeText dark:text-white">Mentorship Hub</h1>
-                                <p className="text-sm font-medium text-themeTextSec mt-1">Manage mentees and track academic progress.</p>
-                            </div>
-                        </div>
-                    </div>
-                )}
+    <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-amber-500/5 via-transparent to-transparent py-8 shrink-0">
+        <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-amber-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
+            <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-amber-500 shadow-sm">
+                    <i className="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Mentorship Hub</h1>
+                    <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Manage mentees & academic progress</p>
+                </div>
+            </div>
+        </div>
+    </div>
+)}
 
                 {selectedMentee ? (
                     /* ──── MENTEE PROFILE VIEW ──── */
