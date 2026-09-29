@@ -42,7 +42,9 @@ export default function AdminApprovals({ isEmbedded = false }) {
  setPendingDocuments(documentsData || []);
  setProfileUpdates(profileUpdatesData || []);
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) {
+ console.error("Error fetching admin approvals data:", error);
+ } finally {
  setIsLoading(false);
  }
  }, []);
@@ -81,7 +83,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
             window.erpDialog?.alert(`Timetable request marked as ${newStatus} ${newStatus === 'Approved' ? 'and slot reassigned.' : ''}`);
             fetchData();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) {
+            console.error("Error updating timetable request:", error);
+            window.erpDialog?.alert("Failed to process timetable request.");
+        } finally {
             setIsProcessing(false);
         }
     };
@@ -107,7 +112,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
  await handleGrievanceAction(g.id, 'investigating', `Meeting scheduled for ${meetingTime}`);
  
  window.erpDialog.alert(`Meeting scheduled and email sent to ${g.reporter.full_name}.`);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) {
+ console.error(err);
+ window.erpDialog.alert("Failed to send meeting email.");
+ } finally {
  setIsProcessing(false);
  }
  };
@@ -134,7 +142,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  notice_id: noticeId,
  title: `Grievance Update`,
  category: 'System Alert',
- target_audience: ['person'],
+ target_audience: 'person',
  target_id: grievanceData.reporter_id,
  priority: 'high',
  content: `Your grievance regarding ${grievanceData.category} has been marked as ${newStatus}.`,
@@ -155,7 +163,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
  }
  window.erpDialog.alert(`Escalated grievance marked as ${newStatus}.`);
  fetchData();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) {
+ console.error("Error updating grievance:", error);
+ window.erpDialog.alert("Failed to process grievance.");
+ } finally {
  setIsProcessing(false);
  }
  };
@@ -178,7 +189,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  notice_id: noticeId,
  title: `Document ${newStatus}`,
  category: 'System Alert',
- target_audience: ['person'],
+ target_audience: 'person',
  target_id: docData.profile_id,
  priority: 'normal',
  content: `Your uploaded document (${docData.document_type}) has been ${newStatus}.`,
@@ -188,7 +199,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
  }
  window.erpDialog.alert(`Document marked as ${newStatus}.`);
  fetchData();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) {
+ console.error("Error updating document:", error);
+ window.erpDialog.alert("Failed to process document verification.");
+ } finally {
  setIsProcessing(false);
  }
  };
@@ -205,7 +219,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
  if (data?.signedUrl) {
  window.open(data.signedUrl, '_blank');
  }
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (e) {
+ console.error(e);
+ window.erpDialog?.alert("Failed to load document preview.");
+ }
  };
 
  const handleProfileUpdateAction = async (request, newStatus, remarks = "") => {
@@ -219,7 +236,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  phone: request.requested_changes?.phone,
  blood_group: request.requested_changes?.blood_group,
  dob: request.requested_changes?.dob,
- profile_picture_url: request.requested_changes?.avatar_url || request.requested_changes?.profile_picture_url,
+ avatar_url: request.requested_changes?.avatar_url,
  questionnaire_data: request.requested_changes?.questionnaire_data
  })
  .eq('id', request.student_id);
@@ -240,7 +257,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  notice_id: noticeId,
  title: `Profile Update ${newStatus}`,
  category: 'System Alert',
- target_audience: ['person'],
+ target_audience: 'person',
  target_id: request.student_id,
  priority: 'normal',
  content: `Your profile update request has been ${newStatus}. ${remarks ? 'Remarks: ' + remarks : ''}`,
@@ -250,7 +267,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  window.erpDialog.alert(`Profile update request marked as ${newStatus}.`);
  fetchData();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) {
+ console.error("Error updating profile request:", error);
+ window.erpDialog.alert("Failed to process profile update request.");
+ } finally {
  setIsProcessing(false);
  }
  };
@@ -272,51 +292,33 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
  
  {/* Header and Tabs */}
- <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-themeAccent/5 via-transparent to-transparent py-8 shrink-0">
-    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-themeAccent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
-        <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-themeAccent shadow-sm">
-                <i className="fa-solid fa-scale-balanced"></i>
-            </div>
-            <div>
-                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Central Approvals</h1>
-                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Manage requests, mentors & reschedules</p>
-            </div>
-        </div>
-    </div>
-</div>
+ <PageHeader icon="fa-solid fa-scale-balanced" title="Central Approvals Center" subtitle="Manage student profile changes, mentor requests, faculty leaves, and document verifications." />
  
  {/* Tabs */}
- <div className="flex w-full border-b border-black/[0.04] dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6 mt-4">
-    <button type="button" 
-        onClick={() => setActiveTab('profile_updates')}
-        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'profile_updates' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
-    >
-        Profile & Mentors
-    </button>
-    <button type="button" 
-        onClick={() => setActiveTab('timetable_reschedules')}
-        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'timetable_reschedules' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
-    >
-        Timetable Reschedules
-    </button>
-    <button type="button" 
-        onClick={() => setActiveTab('faculty_leaves')}
-        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'faculty_leaves' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
-    >
-        Faculty Leaves
-    </button>
-    <button type="button" 
-        onClick={() => setActiveTab('escalated_grievances')}
-        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'escalated_grievances' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
-    >
-        Escalated Grievances
-    </button>
-</div>
+ <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium">
+ <button type="button" 
+ onClick={() => setActiveTab('profile_updates')}
+ className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'profile_updates' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
+ >
+ Profile & Mentors
+ </button>
+ <button type="button" 
+ onClick={() => setActiveTab('timetable_reschedules')}
+ className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'timetable_reschedules' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
+ >
+ Timetable Reschedules
+ </button>
+ <button type="button" 
+ onClick={() => setActiveTab('escalated_grievances')}
+ className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'escalated_grievances' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
+ >
+ Escalated Grievances
+ </button>
+ 
+ </div>
 
 
  {isLoading ? (
@@ -327,94 +329,16 @@ export default function AdminApprovals({ isEmbedded = false }) {
  ) : (
  <div className="relative z-10">
  
- 
-            {activeTab === 'timetable_reschedules' && (
-                <div className="flex flex-col w-full">
-                    {timetableRequests.length === 0 ? (
-                        <div className="col-span-full py-12 text-center border-b border-black/5 dark:border-white/10">
-                            <p className="text-sm font-semibold text-themeTextSec">No pending timetable reschedules.</p>
-                        </div>
-                    ) : (
-                        timetableRequests.map(req => (
-                            <div key={req.id} className={"py-6 px-4 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"}>
-                                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                                
-                                <div className="flex justify-between items-start">
-                                    <div className="flex gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 mt-1">
-                                            <i className="fa-solid fa-calendar-alt text-lg"></i>
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <h4 className="font-bold text-themeText text-lg">{req.faculty?.full_name || 'Faculty'}</h4>
-                                                <span className="text-[10px] font-bold tracking-widest uppercase bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded border border-blue-500/20">
-                                                    Reschedule
-                                                </span>
-                                                <span className="text-xs font-bold text-themeTextSec px-2 py-0.5 bg-black/5 dark:bg-white/5 rounded border border-black/5 dark:border-white/5">
-                                                    {new Date(req.created_at).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                            <p className="text-sm font-medium text-themeTextSec mb-2">Subject: {req.subject?.name || req.subject_id}</p>
-                                            
-                                            <div className="flex gap-6 mt-3 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/10">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] uppercase font-bold text-themeTextSec mb-1">Original Slot</span>
-                                                    <span className="text-sm font-bold line-through opacity-70">{new Date(req.original_date).toLocaleDateString()} - {req.original_time}</span>
-                                                </div>
-                                                <div className="flex flex-col justify-center text-themeTextSec">
-                                                    <i className="fa-solid fa-arrow-right"></i>
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] uppercase font-bold text-themeTextSec mb-1 text-blue-500">Requested Slot</span>
-                                                    <span className="text-sm font-bold text-themeText">{new Date(req.requested_date).toLocaleDateString()} - {req.requested_time}</span>
-                                                </div>
-                                            </div>
-                                            
-                                            {req.reason && (
-                                                <div className="mt-4 text-sm text-themeTextSec">
-                                                    <span className="font-bold text-themeText">Reason: </span>
-                                                    {req.reason}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {req.status === 'Pending' ? (
-                                        <div className="flex flex-col gap-2">
-                                            <button 
-                                                onClick={() => handleAction('timetable_reschedules', req.id, 'Approved')}
-                                                className="btn-erp bg-emerald-500 text-white hover:bg-emerald-600 shadow-none border-0"
-                                            >
-                                                Approve Reschedule
-                                            </button>
-                                            <button 
-                                                onClick={() => handleAction('timetable_reschedules', req.id, 'Rejected')}
-                                                className="btn-erp bg-transparent text-rose-500 border border-rose-500 hover:bg-rose-500/10 shadow-none"
-                                            >
-                                                Reject
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded border ${req.status === 'Approved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
-                                            {req.status}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            )}
-
-            {activeTab === 'faculty_leaves' && (
- <div className="flex flex-col">
+ {activeTab === 'faculty_leaves' && (
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {facultyLeaves.length === 0 ? (
- <div className="col-span-full py-12 text-center border-b border-black/5 dark:border-white/10">
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending leave requests from Faculty.</p>
  </div>
  ) : (
- facultyLeaves.map(req => (
- <div key={req.id} className={`py-5 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors px-4`}>
+ <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+{facultyLeaves.map(req => (
+ <div key={req.id} className={`${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -429,7 +353,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <span className="bg-themePanel/85 backdrop-blur-2xl border border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.days} Days</span>
  </div>
 
- <div className="py-2">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <p className="text-xs text-themeText italic">"{req.reason}"</p>
  </div>
 
@@ -460,19 +384,22 @@ export default function AdminApprovals({ isEmbedded = false }) {
  )}
  </div>
  ))
+}
+</div>
  )}
  </div>
  )}
 
  {activeTab === 'escalated_grievances' && (
- <div className="flex flex-col">
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {grievances.length === 0 ? (
- <div className="col-span-full py-12 text-center border-b border-black/5 dark:border-white/10">
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No escalated grievances require admin attention.</p>
  </div>
  ) : (
- grievances.map(g => (
- <div key={g.id} className={"py-6 px-4 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"}>
+ <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+{grievances.map(g => (
+ <div key={g.id} className={"bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -486,7 +413,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(g.status)}
  </div>
 
- <div className="py-2">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <p className="text-xs text-themeText">"{g.description}"</p>
  </div>
 
@@ -515,18 +442,21 @@ export default function AdminApprovals({ isEmbedded = false }) {
  )}
  </div>
  ))
+}
+</div>
  )}
  </div>
  )}
  {activeTab === 'profile_updates' && (
- <div className="flex flex-col">
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {profileUpdates.length === 0 ? (
- <div className="col-span-full py-12 text-center border-b border-black/5 dark:border-white/10">
+ <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending profile update requests.</p>
  </div>
  ) : (
- profileUpdates.map(req => (
- <div key={req.id} className={"py-6 px-4 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"}>
+ <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+{profileUpdates.map(req => (
+ <div key={req.id} className={"bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-amber-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -537,7 +467,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(req.status)}
  </div>
  
- <div className="py-2">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
  <p className="text-[13px] font-medium text-themeTextSec mb-2 border-b border-black/5 dark:border-white/10 pb-1">Requested Changes</p>
  <ul className="text-xs text-themeText flex flex-col gap-1.5">
  {req.requested_changes?.phone && <li><span className="text-themeTextSec">Phone:</span> {req.requested_changes.phone}</li>}
@@ -569,13 +499,15 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
  </div>
  ))
+}
+</div>
  )}
  </div>
  )}
 
  </div>
- ) }
-</div>
-</div>
+ )}
+ </div>
+ </div>
  );
 }

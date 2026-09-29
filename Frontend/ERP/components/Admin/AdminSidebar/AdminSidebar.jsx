@@ -89,6 +89,7 @@ export const ADMIN_NAV_MEGA = [
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
       { id: "adminapprovals", label: "Approvals", icon: "fa-solid fa-shield-halved" },
+      { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
       {
         id: "academic_group", label: "Academics", icon: "fa-solid fa-graduation-cap",
         sections: [
