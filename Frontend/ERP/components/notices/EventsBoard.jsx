@@ -20,7 +20,7 @@ export default function EventsBoard({ isDashboardWidget = false }) {
     const [imageUrl, setImageUrl] = useState("");
     const [isPublic, setIsPublic] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    
 
     const role = userSession?.role || "student";
     const canCreate = role === "faculty" || role === "admin";
@@ -49,7 +49,7 @@ export default function EventsBoard({ isDashboardWidget = false }) {
             setIsPublic(false);
             
             if (window.erpToast) window.erpToast.show("Event published successfully!", "success");
-            else setShowSuccessModal(true);
+            else if (window.erpToast) window.erpToast.show("Event published successfully!", "success");
 
         } catch (error) { 
             console.error(error); 

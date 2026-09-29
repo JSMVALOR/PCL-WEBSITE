@@ -23,8 +23,7 @@ export default function AdminNotices({ isHubView = false }) {
  const [isPublishing, setIsPublishing] = useState(false);
  
  // Broadcast Form
- const [showSuccessModal, setShowSuccessModal] = useState(false);
- const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("");
  const [content, setContent] = useState("");
  const [category, setCategory] = useState("General");
  const [priority, setPriority] = useState("normal");
@@ -160,7 +159,7 @@ try {
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
- if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success"); else setShowSuccessModal(true);
+ if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success"); else if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success");
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsPublishing(false);
  }

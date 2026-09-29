@@ -78,6 +78,10 @@ function ToastItem({ toast, onRemove }) {
                         <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center">
                             <i className="fa-solid fa-clock-rotate-left"></i>
                         </div>
+                    ) : toast.type === 'error' ? (
+                        <div className="w-8 h-8 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center">
+                            <i className="fa-solid fa-triangle-exclamation"></i>
+                        </div>
                     ) : (
                         <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center">
                             <i className="fa-solid fa-check"></i>
