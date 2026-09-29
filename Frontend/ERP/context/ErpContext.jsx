@@ -28,7 +28,7 @@ const ErpContext = createContext();
 export const useERP = () => useContext(ErpContext);
 
 // --- STRICT ROLE GUARD ---
-const VALID_ROLES = ['student', 'faculty', 'admin'];
+const VALID_ROLES = ['student', 'faculty', 'admin', 'parent'];
 
 export const ErpProvider = ({ children }) => {
     const { addFlag } = useNotification();

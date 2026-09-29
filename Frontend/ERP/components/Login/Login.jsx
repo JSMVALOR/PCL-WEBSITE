@@ -168,7 +168,7 @@ export default function Login() {
                     <>
 
                 <div className="text-center mb-6">
-                    <img src={pclLogo} alt="PCL Logo" className="w-12 h-12 mx-auto mb-3 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
+                    <img src={pclLogo} alt="PCL Logo" className="w-12 h-12 mx-auto mb-3 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial") || activeTheme.includes("royal")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
                     <h2 className="text-xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
                     <h3 className="text-xs font-medium text-[var(--text-muted)] mb-2 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
                     <p className="text-[var(--primary-color)] text-[9px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-2 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
