@@ -586,11 +586,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
                                         <button type="button" onClick={() => setEditBasicUserId(user)} className="w-7 h-7 rounded-lg flex items-center justify-center text-themeText dark:text-white hover:text-emerald-500 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i className="fa-solid fa-pen text-[10px]"></i></button>
                                         <button type="button" onClick={() => handleToggleStatus(user)} className="w-7 h-7 rounded-lg flex items-center justify-center text-themeText dark:text-white hover:text-rose-500 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i className="fa-solid fa-ban text-[10px]"></i></button>
                                     </div>
-                                    {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
-                                        <img src={getAvatarUrl(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
-                                    ) : (
-                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
-                                    )}
+                                    <img src={getAvatarUrl({ name: user.name, avatar_url: user.avatar_url })} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
                                     <h4 className="text-[14px] font-bold text-center text-themeText dark:text-white truncate w-full px-2">{user.name}</h4>
                                     <span className="text-[11px] font-bold text-themeTextSec tracking-widest mt-1 uppercase">{user.id}</span>
                                     <span className="text-[10px] font-medium text-amber-500/80 truncate w-full text-center mt-1 px-2">{user.email}</span>
@@ -626,11 +622,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </td>
  <td className="p-4 lg:p-5">
  <div className="flex items-center gap-4 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
- {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
- <img src={getAvatarUrl(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
- ) : (
- <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
- )}
+ <img src={getAvatarUrl({ name: user.name, avatar_url: user.avatar_url })} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  <div className="min-w-0">
  <p className="text-[15px] font-semibold text-themeText dark:text-white group-hover/profile:text-amber-500 transition-colors truncate">{user.name}</p>
  <div className="flex items-center gap-2 mt-1">
@@ -691,11 +683,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div key={i} className="p-4 flex flex-col gap-4">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-center gap-3 min-w-0 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
- {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
- <img src={getAvatarUrl(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
- ) : (
- <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
- )}
+ <img src={getAvatarUrl({ name: user.name, avatar_url: user.avatar_url })} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  <div className="min-w-0">
  <p className="text-[15px] font-semibold text-themeText dark:text-white group-hover/profile:text-amber-500 transition-colors truncate">{user.name}</p>
  <div className="flex items-center gap-2 mt-0.5">

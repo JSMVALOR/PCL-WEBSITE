@@ -2032,6 +2032,10 @@ html:not(.dark) input[type="date"] {
 
 html[data-theme="apple-hig-light"] .theme-logo,
 html[data-theme="marble-executive"] .theme-logo,
+html[data-theme="emerald-chancery"] .theme-logo,
+html[data-theme="imperial-crown"] .theme-logo,
+html.light .theme-logo,
+html:not(.dark) .theme-logo,
 html[data-theme="structural-neo-brutalism"] .theme-logo {
   filter: none !important; /* ERP light themes */
 }
