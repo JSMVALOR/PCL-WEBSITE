@@ -460,7 +460,7 @@ export default function App() {
         <ForcePasswordChangeModal onComplete={handlePasswordChangeComplete} />
       )}
       
-      {userSession && !isAppLoading && <IntelligentBot />}
+      {/* {userSession && !isAppLoading && <IntelligentBot />} */}
     </>
   );
 }

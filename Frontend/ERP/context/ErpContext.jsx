@@ -381,9 +381,7 @@ export const ErpProvider = ({ children }) => {
             fetchUniversal();
 
             // Request Push Notification Permission
-            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                Notification.requestPermission();
-            }
+            // Notification permission request disabled for aggressive prompting
 
             // Realtime Listener for new notices (Push Notifications)
             const noticeChannel = supabase.channel('realtime_notices')
