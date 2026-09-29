@@ -48,9 +48,9 @@ export default function AdminSystemVitals() {
   }, []);
 
   const vitalsConfig = [
-    { name: "Database Load", value: Math.round(stats.dbLoad), color: "bg-[#007AFF]" },
-    { name: "Storage Capacity", value: stats.storageCap, color: "bg-[#FF9F0A]" },
-    { name: "API Rate Limits", value: stats.apiLimit, color: "bg-[#34C759]" },
+    { name: "Database Load", value: Math.round(stats.dbLoad), color: "bg-themeAccent" },
+    { name: "Storage Capacity", value: stats.storageCap, color: "bg-amber-500" },
+    { name: "API Rate Limits", value: stats.apiLimit, color: "bg-emerald-500" },
   ];
 
   return (

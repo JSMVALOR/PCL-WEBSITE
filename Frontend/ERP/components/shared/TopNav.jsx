@@ -56,7 +56,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                 }`}
             >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-inner ${
-                    isActive ? 'bg-themeAccent/10 text-themeAccent border border-themeAccent/20' : 'bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-themeTextSec group-hover/btn:text-themeAccent group-hover/btn:bg-[#007AFF]/5 group-hover/btn:border-[#007AFF]/10'
+                    isActive ? 'bg-themeAccent/10 text-themeAccent border border-themeAccent/20' : 'bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-themeTextSec group-hover/btn:text-themeAccent group-hover/btn:bg-themeAccent/5 group-hover/btn:border-themeAccent/10'
                 }`}>
                     <i className={`${link.icon || 'fa-solid fa-cube'} text-[12px]`}></i>
                 </div>

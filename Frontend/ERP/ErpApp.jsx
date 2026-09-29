@@ -210,9 +210,9 @@ export default function App() {
   };
 
   const getThemeColors = () => {
-    if (userSession?.role === 'admin') return { text: 'text-indigo-500', bg: 'bg-indigo-500', border: 'border-indigo-500' };
-    if (userSession?.role === 'faculty') return { text: 'text-blue-500', bg: 'bg-blue-500', border: 'border-blue-500' };
-    return { text: 'text-amber-500', bg: 'bg-amber-500', border: 'border-amber-500' };
+    if (userSession?.role === 'admin') return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
+    if (userSession?.role === 'faculty') return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
+    return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
   };
   const roleColors = getThemeColors();
 

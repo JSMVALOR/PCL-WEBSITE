@@ -92,7 +92,7 @@ export default function AdminCampusPulse({ className = "" }) {
             </div>
             <div className="w-full h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden">
                 <div 
-                    className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out relative"
+                    className="h-full bg-themeAccent rounded-full transition-all duration-1000 ease-out relative"
                     style={{ width: `${studentPct}%` }}
                 >
                     <div className="absolute top-0 right-0 bottom-0 w-4 bg-gradient-to-r from-transparent to-white/50 blur-[2px]"></div>
