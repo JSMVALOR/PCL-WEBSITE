@@ -16,25 +16,16 @@ export const Dialog = {
         if (isError === null) {
             isError = String(message).toLowerCase().includes("error") || String(message).toLowerCase().includes("fail");
         }
-        return new Promise((resolve) => {
-            if (_setDialogState) {
-                _setDialogState({
-                    isOpen: true,
-                    type: 'alert',
-                    isError,
-                    title,
-                    message,
-                    onConfirm: () => {
-                        _setDialogState(prev => ({ ...prev, isOpen: false }));
-                        resolve(true);
-                    }
-                });
-            } else {
-                console.warn("DialogContainer not mounted. Falling back to native alert.");
-                window.alert(message);
-                resolve(true);
-            }
-        });
+        
+        // Route alerts to the bottom-right toast system as requested
+        if (window.erpToast) {
+            window.erpToast.show(message, isError ? 'error' : 'success');
+        } else {
+            console.warn("ToastContainer not mounted. Falling back to native alert.");
+            window.alert(message);
+        }
+        
+        return Promise.resolve(true);
     },
 
     prompt: (message, title = "Input Required", defaultValue = "", uppercase = false, isSuccess = false) => {
