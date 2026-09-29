@@ -357,7 +357,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  rightContent={
  <div className="relative z-10 w-full lg:w-auto shrink-0 mt-4 md:mt-0">
  <div className="flex bg-black/[0.04] dark:bg-white/[0.04] p-1.5 rounded-2xl border border-black/5 dark:border-white/5 overflow-x-auto no-scrollbar w-fit max-w-full gap-1">
- {['Timeline', 'Week', 'Requests'].map(tab => (
+ {['Timeline', 'Week'].map(tab => (
  <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
@@ -380,7 +380,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  
  </>
  )}
- {activeTab === 'requests' && renderRequests()}
+ 
  </div>
 
  <div className="w-full xl:w-80 shrink-0 flex flex-col gap-6 sticky top-32">
@@ -392,10 +392,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <span className="text-4xl font-semibold tracking-tight text-themeText dark:text-themeText">{schedule.filter(s => s.day === { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' }[new Date().getDay()]).length}</span>
  <span className="text-[13px] font-medium text-themeTextSec">Classes</span>
  </div>
- <div className="flex flex-col gap-1">
- <span className="text-4xl font-semibold tracking-tight text-[#FF9500]">{requests.filter(r => r.status === 'Pending').length}</span>
- <span className="text-[13px] font-medium text-themeTextSec">Pending Reqs</span>
- </div>
+ 
  </div>
  </div>
  </div>
