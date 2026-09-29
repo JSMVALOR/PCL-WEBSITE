@@ -87,7 +87,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
     };
 
     return (
-        <div className="flex flex-col gap-4 border-b border-black/[0.04] dark:border-white/[0.04] pb-6 mb-2">
+        <div className="flex flex-col gap-4 border-b border-black/[0.04] dark:border-white/[0.04] pb-4">
             <div className="flex justify-between items-center px-1 mb-2">
                 <h3 className="text-sm font-black text-themeText tracking-tight uppercase">System Overview</h3>
                 <button 

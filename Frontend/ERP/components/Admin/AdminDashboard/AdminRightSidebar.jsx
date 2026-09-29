@@ -15,7 +15,7 @@ export default function AdminRightSidebar({ setActiveTab }) {
  ];
 
  return (
- <div className="w-full flex flex-col gap-6">
+ <div className="w-full flex flex-col gap-4">
  
  {/* Unified Campus Hub: Pulse + Actions */}
  <div className="w-full flex flex-col gap-4">

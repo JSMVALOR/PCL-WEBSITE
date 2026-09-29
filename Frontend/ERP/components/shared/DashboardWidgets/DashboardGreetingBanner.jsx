@@ -39,7 +39,7 @@ export default function DashboardGreetingBanner({ role = 'student' }) {
         <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full flex items-center justify-between relative overflow-hidden group pb-4 sm:pb-6 border-b border-black/[0.04] dark:border-white/[0.04]"
+            className="w-full flex items-center justify-between relative overflow-hidden group pb-3 sm:pb-4 border-b border-black/[0.04] dark:border-white/[0.04]"
         >
             <div className="flex items-center gap-4 sm:gap-6 z-10 w-full">
                 {/* Left Insignia Box - Kept for accent, but made more subtle */}

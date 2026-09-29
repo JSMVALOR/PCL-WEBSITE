@@ -13,8 +13,8 @@ export default function AdminDashboard({ isEmbedded = false,  setActiveTab }) {
  const [viewMode, setViewMode] = useState('dashboard');
 
  return (
- <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-4 lg:gap-6 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 xl:pb-4" : "pb-6"}`}>
+ <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "bg-themeApp text-themeText" : ""}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-4 lg:gap-4 ${!isEmbedded ? "p-4 sm:p-6 lg:p-6 xl:pb-0" : "pb-6"}`}>
  
  {/* Mobile Utility Toggle */}
  <div className="xl:hidden w-full flex justify-between items-center mb-4 bg-themePanel/85 backdrop-blur-2xl p-3 rounded-2xl border border-themeBorder dark:border-white/5 animate-fade-in">
@@ -32,7 +32,7 @@ export default function AdminDashboard({ isEmbedded = false,  setActiveTab }) {
  
 
  {/* Main Content Area (9 Columns) */}
- <div className="xl:col-span-9 flex flex-col gap-6 min-w-0 animate-fade-in">
+ <div className="xl:col-span-9 flex flex-col gap-4 min-w-0 animate-fade-in">
  
  <DashboardGreetingBanner role="admin" />
 

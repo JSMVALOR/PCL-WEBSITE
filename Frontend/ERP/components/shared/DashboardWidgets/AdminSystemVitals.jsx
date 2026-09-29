@@ -54,8 +54,8 @@ export default function AdminSystemVitals() {
   ];
 
   return (
-    <div className="w-full relative flex-1 min-w-0 flex flex-col py-6 border-b border-black/[0.04] dark:border-white/[0.04]">
-      <div className="flex justify-between items-start mb-6">
+    <div className="w-full relative flex-1 min-w-0 flex flex-col py-4 border-b border-black/[0.04] dark:border-white/[0.04]">
+      <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-xl font-black tracking-tight text-themeText flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
@@ -68,7 +68,7 @@ export default function AdminSystemVitals() {
       </div>
       
       {/* 1. Supabase Exact Metrics */}
-      <div className="grid grid-cols-3 gap-4 mb-8 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/5">
+      <div className="grid grid-cols-3 gap-4 mb-4 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/5">
           <div className="flex flex-col gap-1">
               <span className="text-[9px] font-bold text-themeTextSec tracking-normal">DB Size</span>
               <span className="text-[15px] font-semibold text-themeText">{stats.loading ? '--' : stats.dbSize}</span>
