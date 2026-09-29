@@ -211,7 +211,7 @@ export default function Assignments({ isEmbedded = false }) {
  const timeLeft = getTimeLeft(task.due_date);
 
  return (
- <div key={task.id} className={`${theme.layout.panel} border border-black/10 dark:border-white/20 rounded-[2rem] hover:border-black/5 dark:border-white/10 transition duration-300 overflow-hidden flex flex-col relative group`}>
+ <div key={task.id} className={`py-6 border-b border-black/5 dark:border-white/10 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors flex flex-col relative group px-4`}>
  {timeLeft.urgent && <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-amber-500"></div>}
 
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
@@ -274,7 +274,7 @@ export default function Assignments({ isEmbedded = false }) {
  const maxM = task.max_marks || 100;
 
  return (
- <div key={sub.id} className={`${theme.layout.panel} border border-black/10 dark:border-white/20 rounded-[2rem] flex flex-col relative`}>
+ <div key={sub.id} className={`py-6 border-b border-black/5 dark:border-white/10 flex flex-col relative px-4`}>
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
  <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>

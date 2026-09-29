@@ -357,7 +357,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
              type="number"
              min="10"
              max="5000"
-             className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
+             className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
              value={formData.word_limit}
              onChange={(e) => setFormData({...formData, word_limit: e.target.value})}
              required={formData.submission_type === 'online'}
@@ -371,7 +371,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Assignment Title *</label>
  <input 
  type="text"
- className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
+ className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
  placeholder="e.g., Constitutional Law Research Paper"
  value={formData.title}
  onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -383,7 +383,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <div className="flex flex-col gap-2 md:col-span-2">
  <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Instructions / Description</label>
  <textarea 
- className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors resize-none h-24"
+ className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors resize-none h-24"
  placeholder="Optional instructions for the batch..."
  value={formData.description}
  onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -396,7 +396,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <input 
  type="number"
  min="1"
- className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
+ className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
  value={formData.total_marks}
  onChange={(e) => setFormData({...formData, total_marks: e.target.value})}
  required
@@ -408,7 +408,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Offline Due Date *</label>
  <input 
  type="date"
-    className="bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors [color-scheme:dark] cursor-pointer"
+    className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors [color-scheme:dark] cursor-pointer"
     onClick={(e) => e.target.showPicker && e.target.showPicker()}
     onKeyDown={(e) => e.preventDefault()}
  value={formData.due_date}
@@ -446,13 +446,13 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
  </div>
  ) : (
- <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+ <div className="flex flex-col">
  {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).map(assign => {
  const dueDate = new Date(assign.due_date);
  const isPastDue = dueDate < new Date();
  
  return (
- <div key={assign.id} className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-5 hover:border-black/10 dark:hover:border-white/10 transition flex flex-col gap-4 group">
+ <div key={assign.id} className="py-5 border-b border-black/5 dark:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors flex flex-col gap-4 group px-4">
  
  <div className="flex justify-between items-start">
  <div>
