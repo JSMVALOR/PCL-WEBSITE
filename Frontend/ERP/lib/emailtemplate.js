@@ -858,6 +858,16 @@ export const HTML_EMAIL_TEMPLATES = {
         <p style="font-size: 13px; color: #71717a;">This code will expire in 10 minutes.</p>`
     ),
 
+    PASSCODE_RESET: (params) => buildEmailHtml(
+        'Account Password Reset',
+        `<p>Dear ${params.name || 'User'},</p>
+        <p>Your ERP portal password has been reset by the administration. You can now log in using your ID (<strong>${params.erp_id}</strong>) and the new temporary passcode below:</p>
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #18181b; border-radius: 8px;">
+            <span style="font-family: monospace; font-size: 32px; letter-spacing: 2px; color: #b59c72; font-weight: bold;">${params.password}</span>
+        </div>
+        <p style="font-size: 13px; color: #71717a;">Please keep this passcode secure. If you did not request this change, please contact the administration immediately.</p>`
+    ),
+
     APPLICATION_RECEIVED: (params) => buildEmailHtml(
         'Application Received',
         `<p>Dear Applicant,</p>

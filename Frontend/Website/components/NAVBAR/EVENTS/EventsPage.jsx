@@ -185,7 +185,7 @@ export default function EventsPage() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-widest text-[var(--text-color)] mb-6 uppercase leading-tight"
+                        className="text-5xl md:text-6xl lg:text-7xl  tracking-widest text-[var(--text-color)] mb-6 uppercase leading-tight font-serif tracking-tight font-bold"
                        
                     >
                         Campus <span className="text-[var(--primary-color)] italic">Events</span>

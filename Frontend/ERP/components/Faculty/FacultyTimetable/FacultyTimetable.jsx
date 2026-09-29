@@ -5,9 +5,7 @@ import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { Badge } from "../../ui/Badge";
-import WeeklyChart from "../../shared/WeeklyChart";
 import WeeklyList from "../../shared/WeeklyList";
-import SubjectFlipCard from "../../shared/SubjectFlipCard";
 
 const SUBJECT_COLORS = {
  blue: { bg: 'bg-blue-500/10', text: 'text-blue-500', border: 'border-blue-500/20', solid: 'bg-blue-500' },
@@ -336,7 +334,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <h2 className={`text-2xl font-semibold tracking-tight tracking-tight mb-2 ${c.text} relative z-10`}>{selectedLecture.subject}</h2>
  <div className="flex items-center gap-4 text-xs font-bold text-themeTextSec relative z-10">
  <span className="flex items-center gap-1.5"><i className="fa-solid fa-graduation-cap"></i> {selectedLecture.semester}</span>
- <span className="flex items-center gap-1.5"><i className="fa-solid fa-location-dot"></i> {selectedLecture.room}</span>
+ 
  </div>
  </div>
  <div className="overflow-y-auto p-6 flex flex-col gap-8 custom-scrollbar">

@@ -10,9 +10,9 @@ export default function LinksSection() {
   const isAdmissionsOpen = siteContext?.isAdmissionsOpen;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-y-8 md:gap-y-12 gap-x-8 lg:gap-12 xl:gap-16 mb-8 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-8 md:pt-16">
+    <div className="grid grid-cols-2 lg:grid-cols-12 gap-y-8 md:gap-y-12 gap-x-4 md:gap-x-8 lg:gap-12 xl:gap-16 mb-8 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-8 md:pt-16">
       {/* Brand & Identity */}
-      <div className="flex flex-col col-span-1 sm:col-span-2 lg:col-span-5 pr-0 lg:pr-12">
+      <div className="flex flex-col col-span-2 lg:col-span-5 pr-0 lg:pr-12">
         <Link to="/" className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 group w-fit">
           <img decoding="async" loading="lazy" 
             src={logo} 
@@ -62,9 +62,9 @@ export default function LinksSection() {
       </div>
 
       {/* Social & Contact */}
-      <div className="flex flex-col items-start text-left col-span-1 sm:col-span-2 lg:col-span-3 mt-4 lg:mt-0">
+      <div className="flex flex-col items-center lg:items-start text-center lg:text-left col-span-2 lg:col-span-3 mt-4 lg:mt-0 w-full">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Connect</h4>
-        <ul className="flex flex-col items-start gap-2 md:gap-4 mb-6 md:mb-8">
+        <ul className="flex flex-col items-center lg:items-start gap-2 md:gap-4 mb-6 md:mb-8 w-full">
           <li><a href="mailto:info@prudentiacollegeoflaw.com" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium break-all">info@prudentiacollegeoflaw.com</a></li>
           <li><a href="tel:+918599000777" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">+91 8599000777</a></li>
           <li><span className="text-[var(--text-muted)] text-xs md:text-sm font-medium">Hyderabad, India</span></li>

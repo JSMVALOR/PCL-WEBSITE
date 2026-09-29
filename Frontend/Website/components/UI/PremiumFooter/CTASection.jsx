@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './PremiumFooter.module.css';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { theme } from '../../../../Shared/theme';
 import { useSite } from "../../../context/SiteContext";
 

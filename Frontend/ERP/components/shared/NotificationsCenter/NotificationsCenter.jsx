@@ -1,9 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../../context/ErpContext';
-import { formatDistanceToNow, format } from 'date-fns';
+import { format } from 'date-fns';
 import PageHeader from '../PageHeader/PageHeader';
 
 export default function NotificationsCenter({ setActiveTab }) {

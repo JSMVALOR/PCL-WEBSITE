@@ -219,7 +219,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  phone: request.requested_changes?.phone,
  blood_group: request.requested_changes?.blood_group,
  dob: request.requested_changes?.dob,
- avatar_url: request.requested_changes?.avatar_url,
+ profile_picture_url: request.requested_changes?.avatar_url || request.requested_changes?.profile_picture_url,
  questionnaire_data: request.requested_changes?.questionnaire_data
  })
  .eq('id', request.student_id);

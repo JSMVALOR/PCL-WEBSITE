@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { motion, useAnimation, useAnimationControls } from 'framer-motion';
+import { motion, useAnimationControls } from 'framer-motion';
 
 import './HoldButton.css';
 

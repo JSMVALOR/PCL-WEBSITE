@@ -3,7 +3,6 @@ import React from 'react';
 import { MapContainer, TileLayer, Marker as LeafletMarker, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { ExternalLink } from "lucide-react";
 
 // Custom Leaflet Icon mimicking the premium theme
 const customIcon = L.divIcon({
@@ -53,15 +52,14 @@ export default function GlobeMap() {
         <MapContainer 
           center={position} 
           zoom={14} 
-          scrollWheelZoom={'center'} // Only zoom directly into the center
+          scrollWheelZoom={false} // Prevent page scroll hijack
           dragging={false}           // Lock panning completely
           doubleClickZoom={'center'} // Lock double click zooming to center
           style={{ width: "100%", height: "100%", background: "var(--bg-color)" }}
           zoomControl={false}
           attributionControl={false}
         >
-          {/* Custom positioned zoom control */}
-          <ZoomControl position="bottomleft" />
+          {/* Zoom control removed by user request */}
           
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

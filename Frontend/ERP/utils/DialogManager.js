@@ -37,8 +37,7 @@ export const Dialog = {
         });
     },
 
-    
-    prompt: (message, title = "Input Required", defaultValue = "") => {
+    prompt: (message, title = "Input Required", defaultValue = "", uppercase = false, isSuccess = false) => {
         return new Promise((resolve) => {
             if (_setDialogState) {
                 _setDialogState({
@@ -47,6 +46,8 @@ export const Dialog = {
                     title,
                     message,
                     inputValue: defaultValue,
+                    uppercase: uppercase,
+                    isSuccess: isSuccess,
                     onConfirm: (val) => {
                         _setDialogState(prev => ({ ...prev, isOpen: false }));
                         resolve(val);

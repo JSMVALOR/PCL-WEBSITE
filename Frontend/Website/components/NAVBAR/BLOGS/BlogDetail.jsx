@@ -27,7 +27,7 @@ export default function BlogDetail() {
         if (erpId && !erpId.startsWith('GUEST:')) {
           const { data: profileData } = await supabase
             .from('profiles')
-            .select('full_name, avatar_url, role, programme, department, academic_batch')
+            .select('full_name, profile_picture_url, role, programme, department, academic_batch')
             .eq('erp_id', erpId)
             .single();
             
@@ -94,7 +94,7 @@ export default function BlogDetail() {
                   {blog.category || 'Announcement'}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--text-color)] leading-[1.1] mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl  text-[var(--text-color)] leading-[1.1] mb-6 font-serif tracking-tight font-bold">
                 {blog.title}
               </h1>
               
@@ -103,7 +103,7 @@ export default function BlogDetail() {
                 {authorProfile && (
                   <div className="w-12 h-12 rounded-full overflow-hidden border border-[var(--primary-color)]/30 shrink-0 shadow-[0_0_10px_var(--primary-glow)]">
                     <img decoding="async" loading="lazy" 
-                      src={authorProfile.avatar_url || `https://ui-avatars.com/api/?name=${blog.author_name || 'Admin'}&background=random`} 
+                      src={authorProfile.profile_picture_url || `https://ui-avatars.com/api/?name=${blog.author_name || 'Admin'}&background=random`} 
                       alt={blog.author_name}
                       className="w-full h-full object-cover"
                     />
@@ -144,7 +144,7 @@ export default function BlogDetail() {
                 {authorProfile && (
                   <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[var(--primary-color)]/50 shadow-[0_0_20px_var(--primary-glow)] mb-6">
                     <img decoding="async" loading="lazy" 
-                      src={authorProfile.avatar_url || `https://ui-avatars.com/api/?name=${blog.author_name || 'Admin'}&background=random`} 
+                      src={authorProfile.profile_picture_url || `https://ui-avatars.com/api/?name=${blog.author_name || 'Admin'}&background=random`} 
                       alt={blog.author_name}
                       className="w-full h-full object-cover"
                     />

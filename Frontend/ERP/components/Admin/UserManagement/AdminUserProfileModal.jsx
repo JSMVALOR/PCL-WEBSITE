@@ -1,9 +1,13 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
+import AvatarCropperModal from './AvatarCropperModal';
 
 export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  const [loading, setLoading] = useState(true);
+ const [isCropperOpen, setIsCropperOpen] = useState(false);
+ const [localAvatarUrl, setLocalAvatarUrl] = useState(null);
  const [stats, setStats] = useState({
  totalLeaves: 0,
  approvedLeaves: 0,
@@ -112,42 +116,43 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  if (!isOpen || !user) return null;
 
  return (
- <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
- <div className="w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-themeBorder dark:border-white/5">
+ <div className="w-full flex flex-col bg-themeApp animate-fade-in font-sans border border-themeBorder dark:border-white/5 rounded-3xl overflow-hidden shadow-sm">
+ <div className="w-full mx-auto flex flex-col relative z-10 bg-themePanel/85 backdrop-blur-2xl">
  
- {/* Header Profile Card */}
- <div className={`p-6 lg:p-8 bg-gradient-to-r ${user.role === 'student' ? 'from-themeAccent to-themeAccent/80' : 'from-blue-600 to-blue-500'} relative overflow-hidden shrink-0`}>
- <div className="absolute top-0 right-0 w-full max-w-[300px] md:w-[300px] h-[300px] bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 mix-blend-overlay pointer-events-none"></div>
- 
- <button aria-label="Action button" type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 dark:bg-black/20 hover:bg-black/40 text-themeText dark:text-white transition-colors z-20"><i className="fa-solid fa-xmark text-sm"></i></button>
+        {/* Header Profile Card */}
+        <div className={`p-6 lg:p-8 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border-b border-black/[0.04] dark:border-white/[0.08] relative overflow-hidden shrink-0`}>
+            <div className="absolute top-0 right-0 w-full max-w-[300px] md:w-[300px] h-[300px] bg-themeAccent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            
+            <button aria-label="Action button" type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-themeText dark:text-white transition-colors z-20"><i className="fa-solid fa-xmark text-sm"></i></button>
 
- <div className="flex items-center gap-5 relative z-10">
- <div className="w-20 h-20 rounded-2xl bg-themePanel/85 backdrop-blur-2xl flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
- {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
-     <img src={user.avatar_url} alt={user.name} className="w-full h-full object-cover" />
- ) : (
-     <span className={`text-3xl font-semibold tracking-tight ${user.role === 'student' ? 'text-themeAccent' : 'text-blue-600'}`}>
-        {user.name.charAt(0)}
-     </span>
- )}
- </div>
- <div className="text-themeText dark:text-white min-w-0">
- <div className="flex items-center gap-2 mb-1">
- <span className="px-2 py-0.5 bg-white/20 rounded-md text-[13px] font-medium backdrop-blur-md border border-black/10 dark:border-white/20">
- {user.role}
- </span>
- <div className={`px-2 py-0.5 rounded-md text-[13px] font-medium backdrop-blur-md flex items-center gap-1 border ${user.status === 'Active' ? 'bg-emerald-500/30 border-emerald-500/50' : 'bg-rose-500/30 border-rose-500/50'}`}>
- <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
- {user.status}
- </div>
- </div>
- <h2 className="text-2xl font-semibold tracking-tight truncate">{user.name}</h2>
- <p className="text-white/90 text-xs lg:text-sm font-medium mt-1 truncate">
- {user.id} &bull; {user.email}
- </p>
- </div>
- </div>
- </div>
+            <div className="flex items-center gap-5 relative z-10">
+                <div onClick={() => setIsCropperOpen(true)} className="w-20 h-20 rounded-2xl bg-white dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] flex items-center justify-center shrink-0 overflow-hidden shadow-sm p-0.5 cursor-pointer hover:ring-2 hover:ring-amber-500 transition-all group relative">
+                 <div className="absolute inset-0 bg-black/50 items-center justify-center hidden group-hover:flex z-20 rounded-[14px]">
+                    <i className="fa-solid fa-crop-simple text-white text-xl"></i>
+                 </div>
+                 {(localAvatarUrl || user.avatar_url) && (localAvatarUrl || user.avatar_url) !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+                     <img src={(localAvatarUrl || user.avatar_url).match(/^(\/|http|data)/) ? (localAvatarUrl || user.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-full h-full object-cover rounded-[14px]" />
+                 ) : (
+                     <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-full h-full object-cover rounded-[14px]" />
+                 )}
+                 </div>
+                <div className="text-themeText dark:text-white min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="px-2 py-0.5 bg-black/5 dark:bg-white/5 rounded-md text-[11px] font-medium border border-black/5 dark:border-white/10 uppercase tracking-widest text-themeTextSec">
+                            {user.role}
+                        </span>
+                        <div className={`px-2 py-0.5 rounded-md text-[11px] font-medium flex items-center gap-1 border uppercase tracking-widest ${user.status === 'Active' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-rose-500/10 border-rose-500/20 text-rose-500'}`}>
+                            <div className={`w-1.5 h-1.5 rounded-full ${user.status === 'Active' ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                            {user.status}
+                        </div>
+                    </div>
+                    <h2 className="text-2xl font-semibold tracking-tight truncate text-themeText dark:text-white">{user.name}</h2>
+                    <p className="text-themeTextSec text-xs lg:text-sm font-medium mt-1 truncate">
+                        {user.id} &bull; {user.email}
+                    </p>
+                </div>
+            </div>
+        </div>
 
  {/* Content Area */}
  <div className="p-6 lg:p-8 bg-themeApp overflow-y-auto flex-1 flex flex-col gap-8 no-scrollbar">
@@ -186,7 +191,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
                                         <div className="flex flex-col gap-1">
                                             <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">LinkedIn Profile</span>
                                             {user.questionnaire_data.linkedInProfile ? (
-                                                <a href={user.questionnaire_data.linkedInProfile.startsWith('http') ? user.questionnaire_data.linkedInProfile : `https://${user.questionnaire_data.linkedInProfile}`} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-themeAccent hover:underline flex items-center gap-2">
+                                                <a href={user.questionnaire_data.linkedInProfile.match(/^(\/|http)/) ? user.questionnaire_data.linkedInProfile : `https://${user.questionnaire_data.linkedInProfile}`} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-themeAccent hover:underline flex items-center gap-2">
                                                     <i className="fa-brands fa-linkedin"></i> View Profile
                                                 </a>
                                             ) : (
@@ -239,6 +244,27 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
                                             </p>
                                         </div>
                                     </div>
+
+                                    {/* Bank Details (if available) */}
+                                    {(user.questionnaire_data.bankName || user.questionnaire_data.bankAccount) && (
+                                        <>
+                                            <div className="w-full border-t border-themeBorder dark:border-white/5 my-2"></div>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Bank Name</span>
+                                                    <span className="text-sm font-semibold text-themeText">{user.questionnaire_data.bankName || 'N/A'}</span>
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">Account Number</span>
+                                                    <span className="text-sm font-mono font-semibold text-themeText tracking-wider">{user.questionnaire_data.bankAccount || 'N/A'}</span>
+                                                </div>
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[11px] font-bold tracking-widest text-themeTextSec uppercase">IFSC Code</span>
+                                                    <span className="text-sm font-mono font-bold text-themeAccent tracking-wider">{user.questionnaire_data.bankIfsc || 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
 
                                 </div>
                             </div>
@@ -317,6 +343,14 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  </div>
 
  </div>
+
+ <AvatarCropperModal
+    user={user}
+    currentImageUrl={(localAvatarUrl || user.avatar_url)?.match(/^(\/|http|data)/) ? (localAvatarUrl || user.avatar_url) : null}
+    isOpen={isCropperOpen}
+    onClose={() => setIsCropperOpen(false)}
+    onSaved={(base64) => setLocalAvatarUrl(base64)}
+ />
  </div>
  );
 }

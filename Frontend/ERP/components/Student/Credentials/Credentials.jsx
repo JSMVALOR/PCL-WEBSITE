@@ -11,6 +11,7 @@ import SecuritySettings from "./SecuritySettings";
 import AppearanceSettings from "./AppearanceSettings";
 import ProfileEditModal from "./ProfileEditModal";
 import QuestionnaireModal from "../../shared/QuestionnaireModal";
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 export default function Credentials() {
  const { userSession, refreshProfile } = useERP();
@@ -201,13 +202,15 @@ export default function Credentials() {
  {/* Photo & Status */}
  <div className="relative group shrink-0 flex flex-col items-center">
  <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-xl bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent border-[4px] border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden relative">
- {profileData.profile_picture_url ? (
- <img src={profileData.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
- ) : (
- <div className="text-3xl lg:text-4xl font-black">
- {getInitials(profileData.full_name)}
- </div>
- )}
+ <img 
+    src={
+        profileData.profile_picture_url || getLocalAvatar(profileData.full_name) 
+        ? (profileData.profile_picture_url || getLocalAvatar(profileData.full_name))
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+    } 
+    alt="Profile" 
+    className="w-full h-full object-cover" 
+ />
  </div>
  <div className="mt-3 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded flex items-center gap-1.5">
  <i className="fa-solid fa-circle text-[6px]"></i> Active {roleTitle}

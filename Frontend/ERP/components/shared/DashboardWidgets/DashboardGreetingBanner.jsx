@@ -27,7 +27,7 @@ export default function DashboardGreetingBanner({ role = 'student' }) {
         }
     }, [role]);
 
-    const userName = (userSession?.full_name || userSession?.name || 'User').split(' ')[0]; // Use first name for friendlier greeting
+    const userName = userSession?.full_name || userSession?.name || 'User';
 
     const getRoleInsignia = () => {
         if (role === 'admin') return <i className="fa-solid fa-shield-halved text-amber-500"></i>;

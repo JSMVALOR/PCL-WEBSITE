@@ -4,15 +4,11 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
 
-import HoldButton from '../../../../Shared/components/ReactBits/HoldButton/HoldButton';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Delete02Icon } from '@hugeicons/core-free-icons';
 
 
 import FacultyMarks from "../FacultyMarks/FacultyMarks";
 import FacultyAttendance from "../FacultyAttendance/FacultyAttendance";
 import FacultyAssignments from "../FacultyAssignments/FacultyAssignments";
-import ClassRoster from "../ClassRoster/ClassRoster";
 import SyllabusEditorModal from "../../Admin/AdminTimetableBuilder/tabs/components/SyllabusEditorModal";
 
 

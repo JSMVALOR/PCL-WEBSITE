@@ -1,5 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import CodeSlots from "../../../../Shared/components/ReactBits/CodeSlots/CodeSlots";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';

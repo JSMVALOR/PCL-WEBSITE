@@ -32,8 +32,7 @@ export default function AdminHeroBanner({}) {
  }
  } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  }
- };
-
+ 
  fetchSnapshotData();
  return () => { isMounted = false; };
  }, []);

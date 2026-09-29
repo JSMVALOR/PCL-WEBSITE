@@ -89,16 +89,20 @@ export default function FacultyPayroll() {
             }
             
             try {
-                // Try fetching from profiles JSONB column 'payment_details'
-                const { data } = await supabase.from('profiles').select('*').eq('id', facultyId).maybeSingle();
-                if (data && data.payment_details) {
-                    setAccountDetails(data.payment_details);
-                    sessionStorage.setItem(`salary_acc_${facultyId}`, JSON.stringify(data.payment_details));
-                } else if (data && data.bank_name) {
-                    // Fallback to individual columns if they exist
-                    const dets = { bank_name: data.bank_name, account_number: data.account_number, ifsc_code: data.ifsc_code };
-                    setAccountDetails(dets);
-                    sessionStorage.setItem(`salary_acc_${facultyId}`, JSON.stringify(dets));
+                // Read bank details from questionnaire_data JSONB (single source of truth)
+                const { data } = await supabase.from('profiles').select('questionnaire_data').eq('id', facultyId).maybeSingle();
+                if (data && data.questionnaire_data) {
+                    let qData = data.questionnaire_data;
+                    if (typeof qData === 'string') qData = JSON.parse(qData);
+                    if (qData.bankName || qData.bankAccount || qData.bankIfsc) {
+                        const dets = { 
+                            bank_name: qData.bankName || '', 
+                            account_number: qData.bankAccount || '', 
+                            ifsc_code: qData.bankIfsc || '' 
+                        };
+                        setAccountDetails(dets);
+                        sessionStorage.setItem(`salary_acc_${facultyId}`, JSON.stringify(dets));
+                    }
                 }
             } catch (e) {
                 // Ignore schema errors quietly
@@ -135,18 +139,24 @@ export default function FacultyPayroll() {
 
         setIsSaving(true);
         try {
-            const { error: err1 } = await supabase.from('profiles').update({
-                payment_details: accountDetails
+            // Read current questionnaire_data, merge bank details, write back
+            const { data: currentProfile } = await supabase.from('profiles').select('questionnaire_data').eq('id', facultyId).maybeSingle();
+            let existingData = currentProfile?.questionnaire_data || {};
+            if (typeof existingData === 'string') existingData = JSON.parse(existingData);
+
+            const updatedData = {
+                ...existingData,
+                bankName: accountDetails.bank_name,
+                bankAccount: accountDetails.account_number,
+                bankIfsc: accountDetails.ifsc_code
+            };
+
+            const { error } = await supabase.from('profiles').update({
+                questionnaire_data: updatedData
             }).eq('id', facultyId);
 
-            const { error: err2 } = await supabase.from('profiles').update({
-                bank_name: accountDetails.bank_name,
-                account_number: accountDetails.account_number,
-                ifsc_code: accountDetails.ifsc_code
-            }).eq('id', facultyId);
-
-            if (err1 && err2) {
-                console.error("Sync Error:", err1, err2);
+            if (error) {
+                console.error("Sync Error:", error);
                 if (window.erpDialog) window.erpDialog.alert("Failed to sync account details. Database error.", "error");
                 else alert("Failed to sync account details. Database error.");
             } else {
@@ -159,6 +169,7 @@ export default function FacultyPayroll() {
             setIsSaving(false);
         }
     };
+
 
     const hasAccount = accountDetails.account_number && accountDetails.bank_name;
     const lastPayslip = payslips[0];

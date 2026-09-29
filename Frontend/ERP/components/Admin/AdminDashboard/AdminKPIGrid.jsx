@@ -58,9 +58,6 @@ export default function AdminKPIGrid({ setActiveTab }) {
     };
 
     const handleRefreshDatabase = async () => {
-        const confirmed = window.confirm("WARNING: This will force a full resynchronization of the database metrics cache. This may temporarily impact performance. Are you sure you want to proceed?");
-        if (!confirmed) return;
-        
         setRefreshing(true);
         try {
             const { data: kpi, error } = await supabase.rpc('get_admin_kpi_stats');
@@ -105,12 +102,11 @@ export default function AdminKPIGrid({ setActiveTab }) {
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
             
             {/* 1. Students */}
-            <div className="w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
+            <div onClick={() => setActiveTab && setActiveTab('users')} className="cursor-pointer w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
                 <div className="flex justify-between items-start">
                     <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0">
                         <i className="fa-solid fa-user-graduate"></i>
                     </div>
-                    <button type="button" onClick={() => setActiveTab && setActiveTab('users')} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-themeText dark:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-themeBorder dark:border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
                 </div>
                 <div>
                     <p className="text-2xl font-black text-themeText tracking-tight">{data.students.total}</p>
@@ -119,12 +115,11 @@ export default function AdminKPIGrid({ setActiveTab }) {
             </div>
 
             {/* 2. Faculty */}
-            <div className="w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
+            <div onClick={() => setActiveTab && setActiveTab('faculty')} className="cursor-pointer w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
                 <div className="flex justify-between items-start">
                     <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0">
                         <i className="fa-solid fa-chalkboard-user"></i>
                     </div>
-                    <button type="button" onClick={() => setActiveTab && setActiveTab('faculty')} className="hidden xl:inline-block text-[8px] font-bold text-themeText hover:text-themeText dark:text-white bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeAccent border border-themeBorder dark:border-white/5 px-2 py-1 rounded transition-colors cursor-pointer">Manage</button>
                 </div>
                 <div>
                     <p className="text-2xl font-black text-themeText tracking-tight">{data.faculty.total}</p>
@@ -133,7 +128,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
             </div>
 
             {/* 3. Attendance */}
-            <div className="w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
+            <div onClick={() => setActiveTab && setActiveTab('academics')} className="cursor-pointer w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
                 <div className="flex justify-between items-start">
                     <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0">
                         <i className="fa-solid fa-clipboard-user"></i>
@@ -146,7 +141,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
             </div>
 
             {/* 4. Approvals */}
-            <div className="w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
+            <div onClick={() => setActiveTab && setActiveTab('approvals')} className="cursor-pointer w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
                 <div className="flex justify-between items-start">
                     <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0">
                         <i className="fa-solid fa-stamp"></i>
@@ -159,7 +154,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
             </div>
 
             {/* 5. Revenue */}
-            <div className="w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
+            <div onClick={() => setActiveTab && setActiveTab('finance')} className="cursor-pointer w-full h-[140px] bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-4 flex flex-col justify-between group hover:border-themeAccent transition-colors">
                 <div className="flex justify-between items-start">
                     <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent border border-themeAccent/20 flex items-center justify-center text-sm shrink-0">
                         <i className="fa-solid fa-indian-rupee-sign"></i>

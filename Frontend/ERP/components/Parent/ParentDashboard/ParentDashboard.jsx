@@ -4,6 +4,7 @@ import { useERP } from '../../../../ERP/context/ErpContext';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import OrganizationDirectory from '../../shared/OrganizationDirectory/OrganizationDirectory';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 export default function ParentDashboard({ onLogout }) {
     const { userSession } = useERP();
@@ -162,8 +163,8 @@ export default function ParentDashboard({ onLogout }) {
             });
             setActiveModal(null);
             setEmailData({ subject: '', message: '' });
-            alert("Message sent successfully!");
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+            window.erpDialog?.alert("Message sent successfully!", "Success");
+        } catch (error) { console.error(error); window.erpDialog?.alert("An error occurred. Please try again.", "Error"); } finally {
             setSendingEmail(false);
         }
     };
@@ -203,7 +204,15 @@ export default function ParentDashboard({ onLogout }) {
                         {/* Profile (8) */}
                         <div className="col-span-1 md:col-span-6 lg:col-span-8 bg-white/70 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-[24px] p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
                             <div className="w-28 h-28 rounded-[24px] bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0 overflow-hidden">
-                                {studentData.profile_picture_url ? <img src={studentData.profile_picture_url} className="w-full h-full object-cover" /> : <i className="fa-solid fa-user-graduate text-4xl text-themeTextSec dark:text-white/30"></i>}
+                                <img 
+                                    src={
+                                        studentData.profile_picture_url || getLocalAvatar(studentData.full_name) 
+                                        ? (studentData.profile_picture_url || getLocalAvatar(studentData.full_name))
+                                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentData.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                    } 
+                                    alt={studentData.full_name}
+                                    className="w-full h-full object-cover" 
+                                />
                             </div>
                             <div className="flex flex-col text-center sm:text-left w-full">
                                 <span className="text-[13px] font-semibold text-themeAccent mb-1 px-3 py-1 bg-themeAccent/10 rounded-full w-fit mx-auto sm:mx-0">Enrolled Student</span>

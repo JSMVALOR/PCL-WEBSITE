@@ -15,14 +15,12 @@ export default function AdminMentorship({ isEmbedded = false,  isHubView = false
  const tabs = [
  { id: "dashboard", label: "Dashboard", icon: "fa-chart-pie" },
  { id: "allocations", label: "Mentor Allocation", icon: "fa-network-wired" },
- { id: "transfers", label: "Transfers & Reshuffle", icon: "fa-shuffle" },
- { id: "reports", label: "Reports", icon: "fa-file-csv" },
- { id: "logs", label: "Audit Logs", icon: "fa-list-check" }
+ { id: "reports", label: "Reports", icon: "fa-file-csv" }
  ];
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 xl:pb-8" : "pb-10"}`}>
  
  {/* Header and Tabs */}
  {!isHubView && (

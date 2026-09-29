@@ -114,8 +114,33 @@ export default function TermsAndConditions() {
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans">
       <Navbar />
 
+      <style>{`
+        @media print {
+          @page { margin: 2cm; }
+          body, html, #root { background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
+          nav, button, .pointer-events-none, .sticky { display: none !important; }
+          #legal-printable-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          h1, h2, h3, p, span, div, ul, li, a, strong, section { 
+            color: black !important; 
+            background: transparent !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
+          }
+          .prose { max-width: 100% !important; }
+          .border-b, .border-l, .border-brand-border { border-color: #eee !important; }
+        }
+      `}</style>
+
       <div
-        className="pointer-events-none fixed inset-0 opacity-[0.03]"
+        className="pointer-events-none fixed inset-0 opacity-[0.03] print:hidden"
         style={{
           backgroundImage:
             'linear-gradient(var(--primary-color) 1px, transparent 1px), linear-gradient(90deg, var(--primary-color) 1px, transparent 1px)',

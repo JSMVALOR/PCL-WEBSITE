@@ -29,7 +29,8 @@ export default function Faculty() {
               is_public
             )
           `)
-          .in('role', ['faculty', 'admin']);
+          .in('role', ['faculty', 'admin'])
+          .ilike('status', 'active');
 
         if (error) throw error;
         
@@ -65,14 +66,14 @@ export default function Faculty() {
   }, [facultyList]);
 
   return (
-    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-32">
-      <div className="relative z-20 pt-32 md:pt-40 px-6 md:px-12 max-w-7xl mx-auto">
+    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[100px]">
+      <div className="relative z-20 pt-[160px] md:pt-[160px] px-6 md:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-widest text-[var(--text-color)] mb-8 uppercase"
+            className="text-5xl md:text-6xl lg:text-7xl  tracking-widest text-[var(--text-color)] mb-8 uppercase font-serif tracking-tight font-bold"
            
           >
             OUR <span className="text-[var(--primary-color)] italic">FACULTY</span>

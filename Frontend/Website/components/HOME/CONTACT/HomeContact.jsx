@@ -1,6 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { forwardRef } from 'react';
-import { MapPin, Phone, Mail, ArrowRight, ArrowUp } from 'lucide-react';
+import { Phone, Mail, ArrowRight, ArrowUp } from 'lucide-react';
 import CountUp from './CountUp';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -57,7 +57,7 @@ const HomeContact = forwardRef((props, ref) => {
           <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left z-20">
             <motion.div variants={itemVars} className="hidden lg:block w-16 h-[2px] bg-[var(--primary-color)] mb-4 md:mb-6"></motion.div>
             
-            <motion.h2 variants={itemVars} className="text-2xl md:text-5xl lg:text-[58px] font-bold leading-[1.05] mb-2 md:mb-6 text-[var(--text-color)] tracking-tight">
+            <motion.h2 variants={itemVars} className="text-2xl md:text-5xl lg:text-[58px]  leading-[1.05] mb-2 md:mb-6 text-[var(--text-color)] tracking-tight font-serif tracking-tight font-bold">
               {cms.heading_line1} <span className="text-[var(--primary-color)] font-medium italic">{cms.heading_highlight}</span><br className="hidden md:block"/>
               <span className="ml-1 md:ml-0">{cms.heading_line2}</span>
             </motion.h2>
@@ -85,7 +85,7 @@ const HomeContact = forwardRef((props, ref) => {
             <motion.div variants={itemVars} className="col-span-2 bg-[var(--card-bg)] border border-[var(--card-border)]/50 rounded-[16px] md:rounded-[28px] p-4 md:p-10 backdrop-blur-3xl group hover:border-[var(--primary-color)]/60 hover:bg-[var(--card-bg)]/80 transition-all duration-700 relative overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center text-center transform hover:-translate-y-2">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[var(--primary-color)] rounded-full blur-[80px] opacity-10 group-hover:opacity-20 transition-opacity duration-1000 pointer-events-none"></div>
               
-              <h3 className="text-4xl md:text-[88px] font-black text-[var(--text-color)] mb-0 md:mb-2 tracking-tighter leading-none">
+              <h3 className="text-4xl md:text-[88px]  text-[var(--text-color)] mb-0 md:mb-2 tracking-tighter leading-none font-serif tracking-tight font-bold">
                 <CountUp to={cms.metric1_value} duration={2.5} />
               </h3>
               <p className="text-[var(--primary-color)] uppercase tracking-[0.2em] md:tracking-[0.25em] text-[8px] md:text-xs font-bold mt-1 md:mt-2">{cms.metric1_label}</p>
@@ -93,7 +93,7 @@ const HomeContact = forwardRef((props, ref) => {
             
             {/* Secondary Metric 1 */}
             <motion.div variants={itemVars} className="bg-[var(--card-bg)] border border-[var(--card-border)]/50 rounded-[12px] md:rounded-[24px] p-3 md:p-8 backdrop-blur-3xl group hover:border-[var(--primary-color)]/50 hover:bg-[var(--card-bg)]/80 transition-all duration-700 relative overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] flex flex-col items-center text-center transform hover:-translate-y-1">
-              <h3 className="text-2xl md:text-5xl font-black text-[var(--text-color)] mb-0 tracking-tighter leading-none">
+              <h3 className="text-2xl md:text-5xl  text-[var(--text-color)] mb-0 tracking-tighter leading-none font-serif tracking-tight font-bold">
                 <CountUp to={cms.metric2_value} duration={2.5} /><span className="text-[var(--primary-color)] text-lg md:text-3xl absolute mt-0 md:-mt-1 ml-0.5 md:ml-1">{cms.metric2_suffix}</span>
               </h3>
               <p className="text-[var(--text-muted)] uppercase tracking-[0.05em] md:tracking-[0.2em] text-[7px] md:text-[10px] font-extrabold mt-1 md:mt-2">{cms.metric2_label}</p>
@@ -101,7 +101,7 @@ const HomeContact = forwardRef((props, ref) => {
             
             {/* Secondary Metric 2 */}
             <motion.div variants={itemVars} className="bg-[var(--card-bg)] border border-[var(--card-border)]/50 rounded-[12px] md:rounded-[24px] p-3 md:p-8 backdrop-blur-3xl group hover:border-[var(--primary-color)]/50 hover:bg-[var(--card-bg)]/80 transition-all duration-700 relative overflow-hidden shadow-[0_20px_40px_-10px_rgba(0,0,0,0.05)] flex flex-col items-center text-center transform hover:-translate-y-1">
-              <h3 className="text-2xl md:text-5xl font-black text-[var(--text-color)] mb-0 tracking-tighter leading-none">
+              <h3 className="text-2xl md:text-5xl  text-[var(--text-color)] mb-0 tracking-tighter leading-none font-serif tracking-tight font-bold">
                 <CountUp to={cms.metric3_value} duration={2.5} separator="," /><span className="text-[var(--primary-color)] text-lg md:text-3xl absolute mt-0 md:-mt-1 ml-0.5 md:ml-1">{cms.metric3_suffix}</span>
               </h3>
               <p className="text-[var(--text-muted)] uppercase tracking-[0.05em] md:tracking-[0.2em] text-[7px] md:text-[10px] font-extrabold mt-1 md:mt-2">{cms.metric3_label}</p>

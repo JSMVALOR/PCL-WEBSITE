@@ -1,7 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import { motion } from 'framer-motion';
 import React, { useState } from "react";
-import { theme } from '../../../../Shared/theme';
 import CourseVault from "../CourseVault/CourseVault";
 import Attendance from "../Attendance/Attendance";
 import Timetable from "../Timetable/Timetable";

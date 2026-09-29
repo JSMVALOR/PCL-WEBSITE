@@ -114,7 +114,7 @@ export default function EventDetail() {
                 </span>
               )}
             </div>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-[var(--text-color)] leading-tight">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl  text-[var(--text-color)] leading-tight font-serif tracking-tight font-bold">
               {event.title}
             </h1>
           </div>

@@ -108,7 +108,7 @@ export default function LeadershipProfile({ overrideId }) {
         style={{ backgroundImage: 'radial-gradient(var(--card-border) 1px, transparent 1px)', backgroundSize: '40px 40px' }}
       ></div>
 
-      <div className="relative z-10 pt-32 pb-40 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="relative z-10 pt-[160px] pb-40 px-6 md:px-12 max-w-7xl mx-auto">
 
         <button
           onClick={() => navigate(-1)}
@@ -145,7 +145,7 @@ export default function LeadershipProfile({ overrideId }) {
               <div className="absolute bottom-0 left-0 w-full p-8 md:p-10 flex flex-col justify-end h-full pointer-events-none">
                 <div className="w-12 h-[2px] bg-[var(--primary-color)] mb-6"></div>
                 <h1
-                  className="text-4xl md:text-5xl text-white font-bold mb-3 leading-tight"
+                  className="text-4xl md:text-5xl text-white  mb-3 leading-tight font-serif tracking-tight font-bold"
                  
                 >
                   {profile.name}

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
-import { sendSystemEmail } from '../../../lib/EmailService';
 import { createClient } from '@supabase/supabase-js';
 import AdminFacultyEditorModal from './AdminFacultyEditorModal';
 import PageHeader from "../../shared/PageHeader/PageHeader";

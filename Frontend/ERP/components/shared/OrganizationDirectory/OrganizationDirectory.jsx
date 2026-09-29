@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 export default function OrganizationDirectory() {
     const [members, setMembers] = useState({ faculty: [], student: [] });
@@ -108,13 +109,15 @@ export default function OrganizationDirectory() {
                                     className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-5 flex items-center gap-4 group"
                                 >
                                     <div className="w-16 h-16 rounded-xl bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 shadow-inner overflow-hidden flex items-center justify-center shrink-0">
-                                        {member.profile_picture_url ? (
-                                            <img src={member.profile_picture_url} alt={member.full_name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="text-lg font-semibold tracking-tight text-themeTextSec">
-                                                {member.full_name ? member.full_name.substring(0,2).toUpperCase() : 'US'}
-                                            </span>
-                                        )}
+                                        <img 
+                                            src={
+                                                member.profile_picture_url || getLocalAvatar(member.full_name) 
+                                                ? (member.profile_picture_url || getLocalAvatar(member.full_name))
+                                                : `https://ui-avatars.com/api/?name=${encodeURIComponent(member.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                            } 
+                                            alt={member.full_name} 
+                                            className="w-full h-full object-cover" 
+                                        />
                                     </div>
                                     <div className="flex flex-col min-w-0 flex-1">
                                         <h4 className="text-[14px] font-bold text-themeText dark:text-themeText truncate tracking-tight mb-0.5">

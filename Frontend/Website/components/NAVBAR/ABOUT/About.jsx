@@ -83,10 +83,10 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-32">
+    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[100px]">
       
       {/* Content Container */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[120px] md:pt-[160px] pb-12">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[120px] md:pt-[160px] pb-[100px]">
 
         {/* Editorial Intro Section */}
         <div className="w-full mb-32 flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
@@ -95,7 +95,7 @@ export default function About() {
               initial={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-5xl md:text-6xl lg:text-7xl font-bold text-[var(--text-color)] mb-6 tracking-tight"
+              className="text-5xl md:text-6xl lg:text-7xl  text-[var(--text-color)] mb-6 tracking-tight font-serif tracking-tight font-bold"
              
             >
               {cms.hero_line1} <br/>

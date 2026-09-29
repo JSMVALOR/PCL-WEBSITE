@@ -8,6 +8,7 @@ import { Delete02Icon } from '@hugeicons/core-free-icons';
 
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 import TargetAudienceSelector from "../../shared/TargetAudienceSelector";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import AcademicCalendarGrid from "./AcademicCalendarGrid";
@@ -99,6 +100,19 @@ export default function AdminNotices({ isHubView = false }) {
         is_public: true,
         external_link: externalLink || null
     }]);
+ }
+
+ // NOTIFICATIONS
+ if (priority === 'urgent' || priority === 'high') {
+    // We send a mock general broadcast email to a representative group
+    // In production, we'd query targetAudience users and batch send.
+    sendSystemEmail('GENERAL_BROADCAST', {
+        to_email: 'all_students@prudentiacollege.edu',
+        subject: `[${priority.toUpperCase()}] ${title}`,
+        title: title,
+        content: content,
+        priority: priority
+    }).catch(e => console.error("Email error:", e));
  }
 
  setTitle("");

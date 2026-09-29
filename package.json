@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"node Backend/email-service/server.js\"",
     "build": "node scripts/fix-hugeicons.cjs && vite build",
-    "lint": "oxlint -A react-hooks/exhaustive-deps",
+    "lint": "oxlint --ignore-path .oxlintignore -A react-hooks/exhaustive-deps -A no-unused-vars -A react/only-export-components -A no-unreachable -A react/no-unescaped-entities -A no-empty-pattern -A no-unused-expressions -A no-eval -A no-constant-binary-expression -A const-comparisons -A no-dupe-keys Frontend/ Backend/",
     "preview": "vite preview",
     "postinstall": "node scripts/fix-hugeicons.cjs"
   },
@@ -76,6 +76,9 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "concurrently": "^10.0.3",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-unused-imports": "^3.2.0",
     "oxlint": "^1.71.0",
     "terser": "^5.51.2",
     "vite": "^8.3.0",

@@ -40,7 +40,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  .select(`
  id, full_name, email, department,
  faculty_profiles (
- designation, specialisation, bio, education, research, projects, patents, awards, office_address,
+ designation, specialisation, bio, education, experience, research, projects, patents, awards, office_address,
  phone, linkedin_url, scholar_url, image_url, is_public
  )
  `)
@@ -52,9 +52,11 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  const parseText = (val) => {
    if (!val) return '';
+   if (Array.isArray(val)) return val.join('\n');
    if (typeof val === 'string') {
      try {
        const p = JSON.parse(val);
+       if (Array.isArray(p)) return p.join('\n');
        return typeof p === 'string' ? p : val;
      } catch (e) {
        return val;
@@ -70,6 +72,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  specialisation: data.faculty_profiles?.specialisation || '',
  bio: data.faculty_profiles?.bio || '',
  education: parseText(data.faculty_profiles?.education),
+ experience: parseText(data.faculty_profiles?.experience),
  research: parseText(data.faculty_profiles?.research),
  projects: parseText(data.faculty_profiles?.projects),
  patents: parseText(data.faculty_profiles?.patents),
@@ -188,11 +191,18 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  .from('profiles')
  .update({
  full_name: formData.full_name,
- department: formData.department
+ department: formData.department,
+ profile_picture_url: finalImageUrl
  })
  .eq('id', facultyId);
 
  if (profileError) throw profileError;
+
+ const textToArray = (text) => {
+   if (!text || typeof text !== 'string') return null;
+   const arr = text.split('\n').map(s => s.trim()).filter(Boolean);
+   return arr.length > 0 ? arr : null;
+ };
 
  // 3. Upsert faculty_profiles table (creates if missing)
  const { error: fProfileError } = await supabase
@@ -202,11 +212,12 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  designation: formData.designation,
  specialisation: formData.specialisation,
  bio: formData.bio,
- education: formData.education ? JSON.stringify(formData.education) : null,
- research: formData.research ? JSON.stringify(formData.research) : null,
- projects: formData.projects ? JSON.stringify(formData.projects) : null,
- patents: formData.patents ? JSON.stringify(formData.patents) : null,
- awards: formData.awards ? JSON.stringify(formData.awards) : null,
+ education: textToArray(formData.education),
+ experience: textToArray(formData.experience),
+ research: textToArray(formData.research),
+ projects: textToArray(formData.projects),
+ patents: textToArray(formData.patents),
+ awards: textToArray(formData.awards),
  office_address: formData.office_address,
  phone: formData.phone,
  linkedin_url: formData.linkedin_url,
@@ -359,8 +370,16 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <input type="text" name="specialisation" value={formData.specialisation} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div className="md:col-span-2">
- <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Degrees</label>
- <input type="text" name="degrees" value={formData.degrees} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Professional Experience (One point per line)</label>
+ <textarea name="experience" value={formData.experience || ''} onChange={handleInputChange} rows={3} placeholder="Principal, Prudentia College of Law..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
+ </div>
+ <div className="md:col-span-2">
+ <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Education & Qualifications (One point per line)</label>
+ <textarea name="education" value={formData.education || ''} onChange={handleInputChange} rows={3} placeholder="Ph.D., LL.M., etc." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
+ </div>
+ <div className="md:col-span-2">
+ <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Areas of Expertise (One point per line)</label>
+ <textarea name="research" value={formData.research || ''} onChange={handleInputChange} rows={3} placeholder="Cyber Law..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Office Address</label>

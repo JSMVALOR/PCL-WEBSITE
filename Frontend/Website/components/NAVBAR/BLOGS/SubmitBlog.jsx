@@ -133,7 +133,7 @@ export default function SubmitBlog() {
                     <motion.h1 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-widest text-[var(--text-color)] mb-6 uppercase leading-tight"
+                        className="text-4xl md:text-5xl lg:text-6xl  tracking-widest text-[var(--text-color)] mb-6 uppercase leading-tight font-serif tracking-tight font-bold"
                        
                     >
                         Submit a <span className="text-[var(--primary-color)] italic">Blog</span>

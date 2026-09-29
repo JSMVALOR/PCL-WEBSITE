@@ -224,11 +224,22 @@ export const ErpProvider = ({ children }) => {
         try {
             let cleanCredential = credential.toLowerCase().trim();
             
-            // Shorthand mapping removed for production security
-
-            const emailToLogin = cleanCredential.includes('@')
-                ? cleanCredential
-                : (cleanCredential === 'fac0000' ? 'fac0000@pcl.edu' : `${cleanCredential}_v2@jsm.edu`);
+            let emailToLogin = cleanCredential;
+            
+            if (!cleanCredential.includes('@')) {
+                if (cleanCredential === 'admin' || cleanCredential === 'principal' || cleanCredential === 'adm0001') {
+                    emailToLogin = 'principal@prudentiacollegeoflaw.com';
+                } else if (cleanCredential === 'fac0000') {
+                    emailToLogin = 'fac0000@pcl.edu';
+                } else {
+                    const { data: lookedUpEmail, error: lookupError } = await supabase.rpc('get_email_by_erp_id', { target_erp_id: cleanCredential });
+                    if (!lookupError && lookedUpEmail) {
+                        emailToLogin = lookedUpEmail;
+                    } else {
+                        emailToLogin = `${cleanCredential}_v2@jsm.edu`; // Fallback to legacy structure
+                    }
+                }
+            }
 
             // Step 1: Check Auth Vault
             const { data, error } = await supabase.auth.signInWithPassword({
@@ -250,6 +261,11 @@ export const ErpProvider = ({ children }) => {
             if (profileError || !profile) {
                 await supabase.auth.signOut();
                 return { success: false, error: { message: "Account authenticated, but your Profile is missing in the database. Contact Admin." } };
+            }
+
+            if (profile.status === 'Suspended' || profile.status === 'Restricted') {
+                await supabase.auth.signOut();
+                return { success: false, error: { message: "Your account is currently restricted. Please contact administration for further details." } };
             }
 
             const normalizedRole = profile.role?.toLowerCase().trim();

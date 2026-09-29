@@ -46,9 +46,9 @@ export default function AdminCampusPulse({ className = "" }) {
             if (isMounted) {
                 setData({
                     studentsPresent: sPresent,
-                    studentsTotal: sTotal || 1, // prevent division by zero
+                    studentsTotal: sTotal,
                     facultyPresent: fPresent,
-                    facultyTotal: fTotal || 1
+                    facultyTotal: fTotal
                 });
                 setLoading(false);
             }
@@ -59,8 +59,8 @@ export default function AdminCampusPulse({ className = "" }) {
     return () => { isMounted = false; };
   }, []);
 
-  const studentPct = Math.round((data.studentsPresent / data.studentsTotal) * 100) || 0;
-  const facultyPct = Math.round((data.facultyPresent / data.facultyTotal) * 100) || 0;
+  const studentPct = data.studentsTotal > 0 ? Math.round((data.studentsPresent / data.studentsTotal) * 100) : 0;
+  const facultyPct = data.facultyTotal > 0 ? Math.round((data.facultyPresent / data.facultyTotal) * 100) : 0;
 
   return (
     <div className={`w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl flex flex-col p-5 relative ${className}`}>

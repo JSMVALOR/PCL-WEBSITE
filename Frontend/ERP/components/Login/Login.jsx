@@ -1,11 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
-import ValorLogo from '../shared/ValorLogo';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useERP } from '../../context/ErpContext';
 import { Capacitor } from '@capacitor/core';
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import ForgotPasswordModal from './ForgotPasswordModal';
 import ParentLogin from './ParentLogin';
 import campusImg from '../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
@@ -94,6 +93,12 @@ export default function Login() {
             return;
         }
 
+        // Prevent empty credentials
+        if (!credential.trim()) {
+            setErrorMsg("Please enter your User ID or Email.");
+            return;
+        }
+
         if (failedAttempts >= 3) {
             const expectedAnswer = captcha.num1 + captcha.num2;
             if (parseInt(captcha.answer, 10) !== expectedAnswer) {
@@ -156,20 +161,20 @@ export default function Login() {
 
 
             {/* Glass Container Form */}
-            <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-8 md:p-10 overflow-hidden">
+            <div className="relative z-10 w-full max-w-md mx-auto bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-lg p-6 md:p-8 overflow-hidden">
                 {showParentLogin ? (
                     <ParentLogin onBack={() => setShowParentLogin(false)} onLoginSuccess={() => window.location.reload()} />
                 ) : (
                     <>
 
-                <div className="text-center mb-8">
-                    <img src={pclLogo} alt="PCL Logo" className="w-16 h-16 mx-auto mb-4 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
-                    <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
-                    <h3 className="text-sm font-medium text-[var(--text-muted)] mb-3 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
-                    <p className="text-[var(--primary-color)] text-[10px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-3 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
+                <div className="text-center mb-6">
+                    <img src={pclLogo} alt="PCL Logo" className="w-12 h-12 mx-auto mb-3 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("emerald") || activeTheme.includes("imperial")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
+                    <h2 className="text-xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
+                    <h3 className="text-xs font-medium text-[var(--text-muted)] mb-2 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
+                    <p className="text-[var(--primary-color)] text-[9px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-2 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
                 </div>
 
-                <form id="login-form" className="flex flex-col gap-6 no-confirm-form" onSubmit={handleSubmit}>
+                <form id="login-form" className="flex flex-col gap-4 no-confirm-form" onSubmit={handleSubmit}>
                     <AnimatePresence>
                         {errorMsg && (
                             <div className="bg-rose-500/10 border border-rose-500/30 text-rose-500 p-4 rounded-lg text-xs font-bold uppercase tracking-wider flex items-start gap-3">
@@ -179,11 +184,11 @@ export default function Login() {
                         )}
                     </AnimatePresence>
 
-                    <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-4">
                         {/* ID Input */}
                         <div className="relative group">
                             <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] mb-2 ml-1">
-                                Institutional ID
+                                USER ID
                             </label>
                             <div className="relative">
                                 <i className="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm z-10"></i>
@@ -191,8 +196,9 @@ export default function Login() {
                                     type="text"
                                     value={credential}
                                     onChange={(e) => setCredential(e.target.value)}
-                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-3.5 pl-12 pr-5 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50 uppercase"
-                                    placeholder="e.g. 26BBL7020"
+                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-2.5 pl-12 pr-5 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50 uppercase"
+                                    placeholder="Enter your User ID"
+                                    maxLength={12}
                                     required
                                     autoCapitalize="none"
                                     autoCorrect="off"
@@ -221,8 +227,9 @@ export default function Login() {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-3.5 pl-12 pr-12 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50"
+                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-2.5 pl-12 pr-12 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50"
                                     placeholder="••••••••"
+                                    maxLength={64}
                                     required
                                     autoCapitalize="none"
                                     autoCorrect="off"
@@ -270,7 +277,7 @@ export default function Login() {
                         id="login-form-submit"
                         type="submit"
                         disabled={isLoading || isLockedOut || !credential || !password || (failedAttempts >= 3 && !captcha.answer)}
-                        className="tlh-btn w-full justify-center !py-4 mt-2"
+                        className="tlh-btn w-full justify-center !py-3 mt-1"
                         style={{ opacity: (isLoading || !credential || !password || (failedAttempts >= 3 && !captcha.answer)) ? 0.5 : 1, pointerEvents: (isLoading || !credential || !password || (failedAttempts >= 3 && !captcha.answer)) ? 'none' : 'auto' }}
                     >
                         {isLoading ? (

@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../context/ErpContext";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { getLocalAvatar } from '../../utils/avatarUtils';
 
 export default function BirthdayWidget() {
     const { userSession } = useERP();
@@ -132,11 +133,15 @@ export default function BirthdayWidget() {
                             className="flex items-center gap-3 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] px-3 py-2.5 rounded-xl border border-black/5 dark:border-white/10 group hover:border-[#FF2D55]/30 hover:shadow-[0_4px_12px_rgba(255,45,85,0.1)] transition-all cursor-default"
                         >
                             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF2D55]/10 to-[#FF9500]/10 border border-white/20 dark:border-white/5 flex items-center justify-center overflow-hidden shrink-0 relative">
-                                {person.profile_picture_url ? (
-                                    <img src={person.profile_picture_url} alt={person.full_name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <i className="fa-solid fa-user text-xs text-[#FF2D55]/60"></i>
-                                )}
+                                <img 
+                                    src={
+                                        person.profile_picture_url || getLocalAvatar(person.full_name) 
+                                        ? (person.profile_picture_url || getLocalAvatar(person.full_name))
+                                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(person.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                    } 
+                                    alt={person.full_name} 
+                                    className="w-full h-full object-cover" 
+                                />
                                 <div className="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/10 rounded-xl pointer-events-none"></div>
                             </div>
                             <div className="flex flex-col text-left pr-2 flex-1">

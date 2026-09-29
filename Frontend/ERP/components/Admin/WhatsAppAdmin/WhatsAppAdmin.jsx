@@ -1,6 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { createWhatsAppGroup, sendSystemWhatsApp } from '../../../lib/EmailService';
 

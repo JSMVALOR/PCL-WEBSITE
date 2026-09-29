@@ -95,7 +95,7 @@ export default function Programs() {
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[var(--text-color)] mb-6"
+            className="text-4xl md:text-5xl lg:text-6xl  tracking-tight text-[var(--text-color)] mb-6 font-serif tracking-tight font-bold"
            
           >
             Academic <span className="text-[var(--primary-color)] italic font-medium pr-2">Excellence.</span>

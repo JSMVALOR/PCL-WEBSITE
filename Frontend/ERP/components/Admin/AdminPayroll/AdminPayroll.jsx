@@ -103,14 +103,13 @@ export default function AdminPayroll() {
                 
                 const { data: leaves } = await supabase
                     .from('faculty_leaves')
-                    .select('faculty_id, start_date, end_date')
+                    .select('faculty_id, from_date, to_date')
                     .eq('status', 'approved')
-                    .gte('start_date', currentMonthStart.toISOString().split('T')[0]);
+                    .gte('from_date', currentMonthStart.toISOString().split('T')[0]);
 
                 const { data: attendanceLogs } = await supabase
-                    .from('faculty_attendance_log')
-                    .select('faculty_id, date, status')
-                    .eq('status', 'absent')
+                    .from('faculty_daily_presence')
+                    .select('faculty_id, date, status, total_missed_minutes')
                     .gte('date', currentMonthStart.toISOString().split('T')[0]);
 
                 const { data: previousRolls } = await supabase
@@ -125,8 +124,8 @@ export default function AdminPayroll() {
                     let totalLeaveDays = 0;
                     
                     facLeaves.forEach(l => {
-                        let start = new Date(l.start_date);
-                        let end = new Date(l.end_date);
+                        let start = new Date(l.from_date);
+                        let end = new Date(l.to_date);
                         if (start < currentMonthStart) start = currentMonthStart;
                         if (end >= start) {
                             const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
@@ -134,8 +133,16 @@ export default function AdminPayroll() {
                         }
                     });
 
-                    // Add manually enforced Admin absences
-                    const enforcedAbsences = (attendanceLogs || []).filter(log => log.faculty_id === f.id).length;
+                    // Add manually enforced Admin absences and partial late minutes
+                    let enforcedAbsences = 0;
+                    (attendanceLogs || []).filter(log => log.faculty_id === f.id).forEach(log => {
+                        if (log.status === 'absent') {
+                            enforcedAbsences += 1;
+                        } else if (log.total_missed_minutes > 0) {
+                            // Assuming 8 hours (480 minutes) is a full day
+                            enforcedAbsences += log.total_missed_minutes / 480;
+                        }
+                    });
                     totalLeaveDays += enforcedAbsences;
 
                     const lopDays = Math.max(0, totalLeaveDays - config.allowedPaidLeaves);
@@ -163,8 +170,12 @@ export default function AdminPayroll() {
                     // Parse payment details
                     let bankDetails = { bankName: 'Not Provided', accountNo: 'N/A', ifsc: 'N/A' };
                     try {
-                        if (f.payment_details) bankDetails = typeof f.payment_details === 'string' ? JSON.parse(f.payment_details) : f.payment_details;
-                    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+                        let qData = f.questionnaire_data || {};
+                        if (typeof qData === 'string') qData = JSON.parse(qData);
+                        if (qData.bankName) bankDetails.bankName = qData.bankName;
+                        if (qData.bankAccount) bankDetails.accountNo = qData.bankAccount;
+                        if (qData.bankIfsc) bankDetails.ifsc = qData.bankIfsc;
+                    } catch (e) { console.error("Error parsing bank details:", e); }
 
                     // Check if already processed this month
                     const isProcessed = (previousRolls || []).some(pr => pr.faculty_id === f.id && pr.month === currentMonth && pr.year === currentYear);
@@ -277,6 +288,7 @@ export default function AdminPayroll() {
 
             // 4. Optional: Email Dispatch
             await sendSystemEmail('PAYROLL_DISBURSAL', {
+                to_email: selectedFac.email,
                 faculty_name: selectedFac.full_name,
                 month: payload.month,
                 year: payload.year,
@@ -302,6 +314,32 @@ export default function AdminPayroll() {
         } finally {
             setIsProcessing(false);
         }
+    };
+
+    // --- Missing Functions (Audit Fix #2) ---
+    const handleFacultyPropUpdate = (facId, prop, value) => {
+        setFaculty(prev => prev.map(f => {
+            if (f.id !== facId) return f;
+            const updated = { ...f, [prop]: Number(value) || 0 };
+            // Recalculate net pay when basePay changes
+            if (prop === 'basePay') {
+                const dailyRate = updated.basePay / 30;
+                const grossLop = Math.round(updated.lopDays * dailyRate);
+                updated.deduction = Math.max(0, grossLop - (updated.waivedAmount || 0));
+                updated.netPay = updated.basePay - updated.deduction;
+                updated.grossLopAmount = grossLop;
+            }
+            return updated;
+        }));
+    };
+
+    const handleUpdateStructure = (facId, index, field, value) => {
+        setFaculty(prev => prev.map(f => {
+            if (f.id !== facId) return f;
+            const newStructure = [...(f.salary_structure || [])];
+            newStructure[index] = { ...newStructure[index], [field]: field === 'percentage' ? Number(value) || 0 : value };
+            return { ...f, salary_structure: newStructure };
+        }));
     };
 
     return (
@@ -370,8 +408,8 @@ export default function AdminPayroll() {
                                     )}
                                     
                                     <div className="flex items-center gap-4">
-                                        {f.avatar_url ? (
-                                            <img src={f.avatar_url} alt={f.full_name} className="w-12 h-12 rounded-full object-cover border border-themeBorder dark:border-white/10 shadow-sm" />
+                                        {f.profile_picture_url ? (
+                                            <img src={f.profile_picture_url} alt={f.full_name} className="w-12 h-12 rounded-full object-cover border border-themeBorder dark:border-white/10 shadow-sm" />
                                         ) : (
                                             <div className="w-12 h-12 rounded-full bg-white/5 border border-themeBorder dark:border-white/10 text-themeTextSec dark:text-white/50 flex items-center justify-center font-black text-lg shadow-sm">
                                                 {f.full_name.charAt(0)}

@@ -298,110 +298,132 @@ export default function EventsBoard() {
                 </div>
             )}
 
-            {/* 4. CREATE EVENT MODAL */}
+            {/* 4. FULLSCREEN CREATE EVENT MODAL */}
             {isCreateModalOpen && canCreate && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-                    <div className="bg-themeApp w-full max-w-lg rounded-xl overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
-                        <div className="p-6 border-b-theme border-themeBorder dark:border-white/5 flex justify-between items-center bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated">
-                            <div>
-                                <h3 className={`${theme.text.heading} text-xl text-themeText`}>Add College Event</h3>
-                                <p className={`${theme.text.secondary} text-xs mt-1`}>Publish a new event to the dashboard.</p>
+                <div className="fixed inset-0 z-[100] w-full h-[100dvh] bg-themeApp flex flex-col overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+                    <div className="absolute top-0 right-0 w-full max-w-[600px] h-[600px] bg-themeAccent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none opacity-60"></div>
+                    
+                    {/* Header */}
+                    <div className="w-full flex-shrink-0 px-6 py-6 lg:px-12 lg:py-8 flex justify-between items-center relative z-10 border-b border-themeBorder dark:border-white/5 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8]">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-themeAccent/10 flex items-center justify-center text-themeAccent text-xl border border-themeAccent/20">
+                                <i className="fa-solid fa-calendar-plus"></i>
                             </div>
-                            <button type="button" onClick={() => setIsCreateModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-themePanel/85 backdrop-blur-2xl shadow-premium hover:bg-themeBorder text-themeText transition-colors shrink-0">
-                                <i className="fa-solid fa-xmark"></i>
-                            </button>
+                            <div>
+                                <h3 className={`${theme.text.heading} text-2xl tracking-tight text-themeText`}>Add College Event</h3>
+                                <p className={`${theme.text.secondary} text-sm mt-0.5`}>Publish a new event, seminar, or extracurricular activity.</p>
+                            </div>
                         </div>
-                        
-                        <form onSubmit={handleCreateEvent} className="p-6 flex flex-col gap-5 overflow-y-auto">
-                            <div>
-                                <label className="block text-xs font-bold text-themeText tracking-normal mb-2">Event Title</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    placeholder="e.g. Annual Tech Symposium"
-                                    className="w-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-themeText focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-themeText tracking-normal mb-2">Date & Time</label>
-                                    <input
-                                        type="datetime-local"
-                                        required
-                                        value={eventDate}
-                                        onChange={(e) => setEventDate(e.target.value)}
-                                        className="w-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-themeText focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-themeText tracking-normal mb-2">Location</label>
-                                    <input
-                                        type="text"
-                                        value={location}
-                                        onChange={(e) => setLocation(e.target.value)}
-                                        placeholder="e.g. Main Auditorium"
-                                        className="w-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-themeText focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-themeText tracking-normal mb-2">Description</label>
-                                <textarea
-                                    required
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    placeholder="Enter event details..."
-                                    rows={4}
-                                    className="w-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-themeText focus:outline-none focus:border-purple-500 transition-colors text-sm resize-none"
-                                ></textarea>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-themeText tracking-normal mb-2">Image URL (Optional)</label>
-                                <input
-                                    type="url"
-                                    value={imageUrl}
-                                    onChange={(e) => setImageUrl(e.target.value)}
-                                    placeholder="https://example.com/banner.jpg"
-                                    className="w-full bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated border border-themeBorder dark:border-white/5 rounded-lg px-4 py-3 text-themeText focus:outline-none focus:border-purple-500 transition-colors text-sm"
-                                />
-                            </div>
-
-                            {canCreate && (
-                                <label className="flex items-center gap-3 cursor-pointer mt-2 p-4 border border-themeBorder dark:border-white/5 rounded-xl bg-themeElevated/90 backdrop-blur-2xl shadow-premiumElevated">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={isPublic} 
-                                        onChange={(e) => setIsPublic(e.target.checked)} 
-                                        className="w-5 h-5 accent-purple-500"
-                                    />
+                        <button type="button" onClick={() => setIsCreateModalOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-themeText transition-colors shrink-0">
+                            <i className="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                    
+                    {/* Form Scroll Area */}
+                    <div className="flex-1 overflow-y-auto p-6 lg:p-12 relative z-10 no-scrollbar">
+                        <div className="max-w-4xl mx-auto w-full">
+                            <form onSubmit={handleCreateEvent} className="flex flex-col gap-8">
+                                
+                                <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 lg:p-8 flex flex-col gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
                                     <div>
-                                        <p className="text-sm font-bold text-themeText">Promote on Public Website</p>
-                                        <p className="text-[10px] text-themeTextSec tracking-normal">Show this event to external visitors</p>
+                                        <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Event Title</label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            placeholder="e.g. Annual Tech Symposium"
+                                            className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-5 py-4 text-base font-bold text-themeText focus:border-themeAccent outline-none transition-colors"
+                                        />
                                     </div>
-                                </label>
-                            )}
 
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full mt-4 bg-purple-600 hover:opacity-90 text-themeText dark:text-white rounded-xl py-4 text-[14px] font-medium tracking-normal transition-opacity flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <i className="fa-solid fa-circle-notch fa-spin"></i> Adding...
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="fa-solid fa-calendar-check"></i> Add Event
-                                    </>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Date & Time</label>
+                                            <input
+                                                type="datetime-local"
+                                                required
+                                                value={eventDate}
+                                                onChange={(e) => setEventDate(e.target.value)}
+                                                className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-5 py-4 text-base font-bold text-themeText focus:border-themeAccent outline-none transition-colors"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Location</label>
+                                            <input
+                                                type="text"
+                                                value={location}
+                                                onChange={(e) => setLocation(e.target.value)}
+                                                placeholder="e.g. Main Auditorium"
+                                                className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-5 py-4 text-base font-bold text-themeText focus:border-themeAccent outline-none transition-colors"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Detailed Description</label>
+                                        <textarea
+                                            required
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            placeholder="Enter comprehensive event details..."
+                                            rows={6}
+                                            className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-5 py-4 text-base font-bold text-themeText focus:border-themeAccent outline-none transition-colors resize-none"
+                                        ></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Banner Image URL (Optional)</label>
+                                        <input
+                                            type="url"
+                                            value={imageUrl}
+                                            onChange={(e) => setImageUrl(e.target.value)}
+                                            placeholder="https://example.com/banner.jpg"
+                                            className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-5 py-4 text-base font-bold text-themeText focus:border-themeAccent outline-none transition-colors"
+                                        />
+                                    </div>
+                                </div>
+
+                                {canCreate && (
+                                    <label className="flex items-center justify-between p-6 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl cursor-pointer shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+                                        <div>
+                                            <span className="text-base font-bold text-themeText block">Promote on Public Website</span>
+                                            <span className="text-sm font-medium text-themeTextSec">Make this event visible to external visitors on the public site.</span>
+                                        </div>
+                                        <div className={`w-12 h-7 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-black/10 dark:bg-white/10'}`}>
+                                            <div className={`w-5 h-5 bg-white rounded-full transition-transform ${isPublic ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                        </div>
+                                        <input 
+                                            type="checkbox" 
+                                            checked={isPublic} 
+                                            onChange={(e) => setIsPublic(e.target.checked)} 
+                                            className="hidden"
+                                        />
+                                    </label>
                                 )}
-                            </button>
-                        </form>
+
+                                <div className="flex justify-end gap-4 mt-4 pb-12">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCreateModalOpen(false)}
+                                        className="btn-erp-secondary px-8 py-4 text-base"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="btn-erp px-10 py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSubmitting ? (
+                                            <><i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Adding Event...</>
+                                        ) : (
+                                            <><i className="fa-solid fa-calendar-check mr-2"></i> Confirm & Add Event</>
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}

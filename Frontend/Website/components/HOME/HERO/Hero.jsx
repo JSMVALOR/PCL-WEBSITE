@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, GraduationCap, FileText, Landmark } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import campusImg from '../../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
 import outdoorImg from '../../../../Shared/Assets/CAMPUS/pcl_outdoor.webp';

@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
-import { generateCalendarICS } from "../../../lib/calendarGenerator";
-import WeeklyChart from "../../shared/WeeklyChart";
 import WeeklyList from "../../shared/WeeklyList";
 import SubjectFlipCard from "../../shared/SubjectFlipCard";
 import PageHeader from "../../shared/PageHeader/PageHeader";
@@ -29,21 +27,22 @@ export default function Timetable({ isEmbedded = false }) {
 
  const fetchSchedule = async () => {
         if (!userSession?.academic_batch) return;
-        const cached = sessionStorage.getItem(`jsmerp_stu_timetable_${userSession.academic_batch}`);
-        if (cached) {
-            setSchedule(JSON.parse(cached));
-            setLoading(false);
-        }
+        
         
         try {
             const batchStringName = userSession.academic_batch;
 
- const { data, error } = await supabase
+ 
+            // Fetch cohort color dynamically
+            const { data: batchData } = await supabase.from('academic_batches').select('theme_color, academic_programs(theme_color)').eq('name', batchStringName).single();
+            const fetchedCohortColor = batchData?.academic_programs?.theme_color || batchData?.theme_color || 'blue';
+
+            const { data, error } = await supabase
  .from('class_schedule')
  .select(`
  id, batch, day_of_week, start_time, end_time,
  subject:master_subjects(name, theme_color, credits),
- room:academic_classrooms(name),
+ 
  faculty:profiles(full_name)
  `)
  .eq('batch', batchStringName);
@@ -66,13 +65,8 @@ export default function Timetable({ isEmbedded = false }) {
  if (currentMins >= eMins) status = 'past';
  else if (currentMins >= sMins && currentMins < eMins) status = 'current';
 
- // Sync cohort color for generic subjects
- let cohortColor = 'blue';
- const bName = batchStringName.toUpperCase();
- if (bName.includes('BA LLB')) cohortColor = 'rose';
- else if (bName.includes('BBA LLB')) cohortColor = 'emerald';
- else if (bName.includes('LLM')) cohortColor = 'purple';
- else if (bName.includes('LLB')) cohortColor = 'blue';
+ // Use dynamic cohort color fetched from DB
+ const cohortColor = fetchedCohortColor;
 
  return {
  id: s.id,
@@ -82,7 +76,7 @@ export default function Timetable({ isEmbedded = false }) {
  subject: s.subject?.name || 'Unknown',
  color: s.subject?.theme_color || cohortColor,
  credits: s.subject?.credits || 4,
- room: s.room?.name || 'TBA',
+ 
  faculty: s.faculty?.full_name || 'TBA',
  status
  };
@@ -165,8 +159,7 @@ export default function Timetable({ isEmbedded = false }) {
                 `RRULE:${rrule}`,
                 `SUMMARY:${curr.subject}`,
                 `DESCRIPTION:Faculty: ${curr.faculty}`,
-                `LOCATION:${curr.room}`,
-                "END:VEVENT"
+                                "END:VEVENT"
             ].join("\r\n");
         }).join("\r\n");
 
@@ -244,7 +237,7 @@ export default function Timetable({ isEmbedded = false }) {
  <div className={`w-2.5 h-2.5 rounded-full shadow-sm ${c.solid}`}></div>
  <h3 className={`text-[17px] font-black tracking-tight ${isCurrent ? c.text : 'text-themeText dark:text-white'}`}>{lec.subject}</h3>
  </div>
- <span className="text-[11px] font-bold uppercase tracking-widest bg-black/5 dark:bg-white/10 backdrop-blur-3xl px-3 py-1.5 rounded-xl text-themeTextSec dark:text-white/70 border border-black/5 dark:border-white/5">{lec.room}</span>
+ 
  </div>
  <div className="flex items-center gap-5 mt-4 border-t border-black/5 dark:border-white/5 pt-4">
  <span className="text-[12px] font-bold text-themeTextSec dark:text-white/60 flex items-center gap-1.5"><i className="fa-regular fa-user opacity-70"></i> {lec.faculty}</span>
@@ -269,7 +262,7 @@ export default function Timetable({ isEmbedded = false }) {
  subject: c.subject,
  faculty: c.faculty,
  color: c.color,
- nextClass: { day: c.day, time: c.time, endTime: c.endTime, room: c.room }
+ nextClass: { day: c.day, time: c.time, endTime: c.endTime }
  });
  }
  });
@@ -359,7 +352,7 @@ export default function Timetable({ isEmbedded = false }) {
  <h2 className={`text-2xl font-semibold tracking-tight tracking-tight mb-2 ${c.text} relative z-10`}>{selectedLecture.subject}</h2>
  <div className="flex items-center gap-4 text-xs font-bold text-themeTextSec dark:text-white/50 relative z-10">
  <span className="flex items-center gap-1.5"><i className="fa-regular fa-user"></i> {selectedLecture.faculty}</span>
- <span className="flex items-center gap-1.5"><i className="fa-solid fa-location-dot"></i> {selectedLecture.room}</span>
+ 
  </div>
  </div>
 
@@ -471,7 +464,7 @@ export default function Timetable({ isEmbedded = false }) {
  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
  <div>
  <p className="text-[15px] font-semibold text-themeText dark:text-white">{upcoming.subject}</p>
- <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{upcoming.room} at {upcoming.time}</p>
+ <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{upcoming.time}</p>
  </div>
  </div>
    ) : (

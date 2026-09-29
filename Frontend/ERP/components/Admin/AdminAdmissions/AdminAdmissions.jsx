@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { createClient } from '@supabase/supabase-js';
-import { sendSystemEmail } from '../../../lib/EmailService';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ;

@@ -129,7 +129,7 @@ export default function FacilityDetail() {
                 {facility.category_title}
               </span>
               <h1
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--text-color)] drop-shadow-2xl max-w-4xl leading-tight"
+                className="text-4xl md:text-5xl lg:text-6xl  text-[var(--text-color)] drop-shadow-2xl max-w-4xl leading-tight font-serif tracking-tight font-bold"
                
               >
                 {facility.title}

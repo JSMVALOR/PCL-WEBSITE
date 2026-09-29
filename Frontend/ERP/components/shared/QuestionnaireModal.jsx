@@ -258,6 +258,20 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                                             <input type="url" name="linkedInProfile" required placeholder="https://linkedin.com/in/..." value={formData.linkedInProfile} onChange={handleChange} className="w-full bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] rounded-2xl shadow-inner px-4 py-3 text-themeText focus:border-themeAccent focus:ring-1 focus:ring-themeAccent outline-none" />
                                         </div>
                                     </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Bank Name</label>
+                                            <input type="text" name="bankName" placeholder="e.g. HDFC Bank" value={formData.bankName || ''} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Bank Account Number</label>
+                                            <input type="text" name="bankAccount" placeholder="e.g. 50100200300400" value={formData.bankAccount || ''} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">IFSC Code</label>
+                                            <input type="text" name="bankIfsc" placeholder="e.g. HDFC0001234" value={formData.bankIfsc || ''} onChange={handleChange} className="w-full bg-black/5 dark:bg-themeApp border border-black/[0.04] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-themeAccent transition" />
+                                        </div>
+                                    </div>
                                 </>
                             ) : (
                                 <>

@@ -1,9 +1,8 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUp, Activity } from 'lucide-react';
+import { ArrowUp } from 'lucide-react';
 import styles from './PremiumFooter.module.css';
-import ValorLogo from '../../../../ERP/components/shared/ValorLogo';
 
 
 export default function BottomStrip() {

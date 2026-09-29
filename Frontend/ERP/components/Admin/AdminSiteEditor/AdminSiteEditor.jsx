@@ -722,6 +722,12 @@ export default function AdminSiteEditor({ isHubView = false }) {
                              type={field.type}
                              value={contentData[field.key] || ""}
                              onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                             onKeyDown={(e) => {
+                                 if (e.key === 'Enter') {
+                                     e.preventDefault();
+                                     handleSave();
+                                 }
+                             }}
                              placeholder={field.placeholder || ""}
                              maxLength={field.maxLength || 80}
                              className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"

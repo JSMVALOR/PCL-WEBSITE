@@ -1,4 +1,4 @@
-import { isBefore, isAfter, differenceInMinutes, parse, getDay, getDate } from 'date-fns';
+import { differenceInMinutes, getDay, getDate } from 'date-fns';
 
 export const FACULTY_ATTENDANCE_RULES = {
     GRACE_PERIOD_MINUTES: 10,

@@ -14,6 +14,7 @@ import AdminStudentCVModal from './AdminStudentCVModal';
 import AdminUserEditorModal from './AdminUserEditorModal';
 import AdminUserProfileModal from './AdminUserProfileModal';
 import AdminPasswordResetsModal from './AdminPasswordResetsModal';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 // Safe provisioning client so admin doesn't get logged out
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ;
@@ -31,6 +32,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  const [provisionSuccess, setProvisionSuccess] = useState(false);
  const [searchQuery, setSearchQuery] = useState("");
  const [sortBy, setSortBy] = useState("name_asc"); // name_asc, name_desc, id_asc, id_desc, status
+ const [viewMode, setViewMode] = useState("list"); // 'list' or 'grid'
 
  const [selectedQuestionnaireUser, setSelectedQuestionnaireUser] = useState(null);
     const [editBasicUserId, setEditBasicUserId] = useState(null);
@@ -51,6 +53,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  
  // Feature state
  const [showPasswordResetsModal, setShowPasswordResetsModal] = useState(false);
+ const [transferModalState, setTransferModalState] = useState({ isOpen: false, sourceUser: null, classes: 0, subjects: 0, isDeactivating: false, selectedTarget: '' });
 
  // Actual Data
  const [usersData, setUsersData] = useState(() => {
@@ -117,12 +120,44 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  // --- ADMIN ACTIONS ---
  const handleToggleStatus = async (user) => {
- const newStatus = user.status === 'Active' ? 'Suspended' : 'Active';
- const confirmMsg = newStatus === 'Suspended' 
- ? `Are you sure you want to suspend ${user.name}? They will lose access to the portal.`
- : `Reactivate account for ${user.name}?`;
- 
- if (!(await window.erpDialog.confirm(confirmMsg))) return;
+    const isRestricting = user.status === 'Active';
+    const newStatus = isRestricting ? 'Suspended' : 'Active';
+    
+    if (isRestricting) {
+        if (user.role === 'faculty') {
+            const { data: scheduleCount } = await supabase.from('class_schedule').select('id', { count: 'exact' }).eq('faculty_id', user.db_id);
+            const { data: subjectCount } = await supabase.from('cohort_subjects').select('id', { count: 'exact' }).eq('faculty_id', user.db_id);
+            
+            if (scheduleCount?.length > 0 || subjectCount?.length > 0) {
+                setTransferModalState({
+                    isOpen: true,
+                    sourceUser: user,
+                    classes: scheduleCount.length,
+                    subjects: subjectCount.length,
+                    isDeactivating: true,
+                    selectedTarget: ''
+                });
+                return;
+            }
+        }
+
+        const input = await window.erpDialog.prompt(
+            `You are about to suspend access for ${user.name}.\n\n` + 
+            `If suspended:\n` +
+            `• They will be immediately blocked from logging into the ERP.\n` +
+            `• Their account will not appear in allocations (Mentorship, etc.).\n\n` +
+            `Type "SUSPEND" below to confirm this action.`,
+            "Account Restriction Warning",
+            "",
+            true
+        );
+        if (input !== 'SUSPEND') {
+            if (input !== null) window.erpDialog.alert("Action cancelled. You must type SUSPEND exactly.");
+            return;
+        }
+    } else {
+        if (!(await window.erpDialog.confirm(`Reactivate account for ${user.name}?`))) return;
+    }
 
  try {
  // Optimistic update
@@ -157,6 +192,75 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  } catch (error) {
  window.erpDialog.alert("Failed to update status: " + error.message);
  }
+ };
+
+ const handleOpenTransfer = async (user) => {
+     try {
+         setIsLoading(true);
+         const { data: scheduleCount } = await supabase.from('class_schedule').select('id', { count: 'exact' }).eq('faculty_id', user.db_id);
+         const { data: subjectCount } = await supabase.from('cohort_subjects').select('id', { count: 'exact' }).eq('faculty_id', user.db_id);
+         
+         setTransferModalState({
+             isOpen: true,
+             sourceUser: user,
+             classes: scheduleCount?.length || 0,
+             subjects: subjectCount?.length || 0,
+             isDeactivating: false,
+             selectedTarget: ''
+         });
+     } catch (e) {
+         window.erpDialog.alert("Failed to load workload stats: " + e.message);
+     } finally {
+         setIsLoading(false);
+     }
+ };
+
+ const handleWorkloadTransferSubmit = async () => {
+    const { sourceUser, isDeactivating, selectedTarget } = transferModalState;
+    if (!selectedTarget) return window.erpDialog.alert("Please select a target faculty member.");
+    
+    setIsLoading(true);
+    setTransferModalState({ ...transferModalState, isOpen: false });
+
+    try {
+        const { error } = await supabase.rpc('admin_reassign_faculty_workload', {
+            old_faculty_id: sourceUser.db_id,
+            new_faculty_id: selectedTarget
+        });
+        if (error) throw error;
+
+        window.erpDialog.alert("Workload successfully reassigned.");
+        
+        if (isDeactivating) {
+            const input = await window.erpDialog.prompt(
+                `Workload transferred. Now you can suspend access for ${sourceUser.name}.\n\n` + 
+                `Type "SUSPEND" below to confirm this action.`,
+                "Account Restriction Warning",
+                "",
+                true
+            );
+            if (input === 'SUSPEND') {
+                const newStatus = 'Suspended';
+                const { error: restrictError } = await supabase.from('profiles').update({ status: newStatus }).eq('id', sourceUser.db_id);
+                if (restrictError) throw restrictError;
+                
+                const updatedUsers = { ...usersData };
+                const list = updatedUsers.faculty;
+                const index = list.findIndex(u => u.db_id === sourceUser.db_id);
+                if (index !== -1) list[index].status = newStatus;
+                updatedUsers.disciplinary.push({...list[index], status: newStatus});
+                setUsersData(updatedUsers);
+                
+                try {
+                    await sendSystemEmail('ACCOUNT_LOCKED', { to_email: sourceUser.email, name: sourceUser.name });
+                } catch(e) {}
+            }
+        }
+    } catch (err) {
+        window.erpDialog.alert("Transfer failed: " + err.message);
+    } finally {
+        setIsLoading(false);
+    }
  };
 
  const handleResetPassword = async (user) => {
@@ -256,7 +360,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
     }
 
     try {
-      const prefix = newUserRole === "student" ? `${yearPrefix}${shortcut}` : "FAC-";
+      const prefix = newUserRole === "student" ? `${yearPrefix}${shortcut}` : "FAC";
       
       const { data: highestIdData } = await supabase
         .from('profiles')
@@ -268,9 +372,9 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
       let nextNum = 1;
       if (highestIdData && highestIdData.length > 0 && highestIdData[0].erp_id) {
         const lastId = highestIdData[0].erp_id;
-        const numPart = lastId.replace(prefix, '');
-        const parsedNum = parseInt(numPart, 10);
-        if (!isNaN(parsedNum)) nextNum = parsedNum + 1;
+        const numMatch = lastId.match(/\d+$/);
+        const parsedNum = numMatch ? parseInt(numMatch[0], 10) : 0;
+        if (!isNaN(parsedNum) && parsedNum > 0) nextNum = parsedNum + 1;
       }
       
       const generatedId = `${prefix}${nextNum.toString().padStart(4, '0')}`;
@@ -283,59 +387,30 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
       setProvisionLogs(prev => [...prev, `[INIT] Provisioning ${generatedId} for ${newUserEmail}...`]);
 
-      const { data: authData, error: authError } = await provisionClient.auth.signUp({
-        email: newUserEmail,
-        password: generatedPassword,
-        
-        options: { data: { role: newUserRole, erp_id: generatedId, name: newUserName } }
+      const { data: newUserId, error: rpcError } = await supabase.rpc('admin_create_user', {
+          new_email: newUserEmail,
+          new_password: generatedPassword,
+          new_role: newUserRole,
+          new_erp_id: generatedId,
+          new_name: newUserName,
+          new_assignment: assignment
       });
 
-      if (authError) throw authError;
+      if (rpcError) throw rpcError;
 
-      const profilePayload = {
-        id: authData.user.id,
-        role: newUserRole,
-        erp_id: generatedId,
-        email: newUserEmail,
-        full_name: newUserName,
-        status: 'Active'
-      };
-
-      if (newUserRole === "student") {
-        profilePayload.academic_batch = assignment;
-      } else {
-        profilePayload.department = assignment;
-      }
-
-      const { error: profileError } = await provisionClient.from('profiles').upsert([profilePayload]);
-      if (profileError) throw profileError;
-
-      setProvisionLogs(prev => [...prev, `[SUCCESS] Profile generated. Syncing with platforms...`]);
-
-      // Website sync for faculty
-      if (newUserRole === "faculty") {
-         const { error: websiteError } = await provisionClient.from('faculty_profiles').upsert({
-            id: authData.user.id,
-            designation: "Assistant Professor",
-            department: assignment,
-            is_public: true
-         });
-         if (websiteError) {
-             setProvisionLogs(prev => [...prev, `[WARNING] Website sync failed: ${websiteError.message}`]);
-         } else {
-             setProvisionLogs(prev => [...prev, `[SYNC] Added to public website faculty directory.`]);
-         }
-      }
+      setProvisionLogs(prev => [...prev, `[SUCCESS] Profile generated and activated.`]);
 
       // Dispatch Email
       try {
-        const { error: resetError } = await provisionClient.auth.resetPasswordForEmail(newUserEmail, {
-          redirectTo: window.location.origin
+        await sendSystemEmail('ERP_NEW_ACCOUNT', {
+            to_email: newUserEmail,
+            name: newUserName,
+            erp_id: generatedId,
+            password: generatedPassword
         });
-        if (resetError) throw resetError;
-        setProvisionLogs(prev => [...prev, `[EMAIL SUCCESS] Supabase Setup Link securely dispatched to ${newUserEmail}`]);
+        setProvisionLogs(prev => [...prev, `[EMAIL SUCCESS] Credentials securely dispatched to ${newUserEmail}`]);
       } catch (emailErr) {
-         setProvisionLogs(prev => [...prev, `[WARNING] Link dispatch failed: ${emailErr.message}. Manual share required: ${generatedPassword}`]);
+         setProvisionLogs(prev => [...prev, `[WARNING] Email dispatch failed: ${emailErr.message}. Manual share required: ${generatedPassword}`]);
       }
 
       setIsProvisioning(false);
@@ -435,7 +510,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  
  </div>
 
- <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
+ <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 items-center">
  {/* Search */}
  <div className="relative w-full sm:w-64 group">
  <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/50 opacity-70 group-focus-within:text-amber-500 transition-colors text-sm"></i>
@@ -463,6 +538,16 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </select>
  <i className="fa-solid fa-arrow-down-a-z absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/50 opacity-70 pointer-events-none text-sm"></i>
  </div>
+ 
+ {/* View Mode Toggle */}
+ <div className="hidden lg:flex items-center gap-1 bg-black/5 dark:bg-themeApp p-1 rounded-xl border border-black/[0.04] dark:border-white/[0.08]">
+    <button type="button" onClick={() => setViewMode('list')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${viewMode === 'list' ? 'bg-white dark:bg-white/10 text-themeText dark:text-white shadow-sm' : 'text-themeTextSec opacity-50 hover:opacity-100'}`} title="List View">
+        <i className="fa-solid fa-list text-xs"></i>
+    </button>
+    <button type="button" onClick={() => setViewMode('grid')} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${viewMode === 'grid' ? 'bg-white dark:bg-white/10 text-themeText dark:text-white shadow-sm' : 'text-themeTextSec opacity-50 hover:opacity-100'}`} title="Grid View">
+        <i className="fa-solid fa-border-all text-xs"></i>
+    </button>
+ </div>
  </div>
  </div>
 
@@ -471,6 +556,53 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  
  {/* Desktop Table View */}
  <div className="hidden md:block overflow-x-auto no-scrollbar">
+ {viewMode === 'grid' ? (
+    <div className="p-6">
+        {isLoading ? (
+            <div className="py-12 text-center text-themeTextSec dark:text-white/50 opacity-70 font-bold text-sm">
+                <i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Loading directory...
+            </div>
+        ) : currentList.length === 0 ? (
+            <div className="py-12 text-center text-themeTextSec dark:text-white/50 opacity-70 font-bold text-sm">
+                No users found matching your criteria.
+            </div>
+        ) : (
+            <div className="flex flex-col gap-8">
+                {Object.entries(
+                    currentList.reduce((acc, user) => {
+                        const group = user.batch || user.department || "Unassigned";
+                        if (!acc[group]) acc[group] = [];
+                        acc[group].push(user);
+                        return acc;
+                    }, {})
+                ).map(([group, users]) => (
+                    <div key={group} className="flex flex-col gap-4">
+                        <h3 className="text-[11px] font-black uppercase tracking-widest text-themeTextSec/80 border-b border-black/[0.04] dark:border-white/[0.08] pb-2 pl-2">{group} <span className="ml-2 px-1.5 py-0.5 bg-black/5 dark:bg-white/5 rounded-md text-[9px]">{users.length}</span></h3>
+                        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                            {users.map(user => (
+                                <div key={user.db_id} className="flex flex-col items-center p-5 rounded-3xl border border-black/[0.04] dark:border-white/[0.08] bg-themeApp hover:shadow-lg transition-all group relative cursor-pointer" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
+                                    <div className={`absolute top-4 left-4 w-2.5 h-2.5 rounded-full border-2 ${user.status === 'Active' ? 'bg-emerald-500 border-emerald-900' : 'bg-rose-500 border-rose-900'}`} title={user.status}></div>
+                                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-black/10 dark:bg-white/10 rounded-xl p-1 backdrop-blur-sm z-10" onClick={(e) => e.stopPropagation()}>
+                                        <button type="button" onClick={() => setEditBasicUserId(user)} className="w-7 h-7 rounded-lg flex items-center justify-center text-themeText dark:text-white hover:text-emerald-500 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i className="fa-solid fa-pen text-[10px]"></i></button>
+                                        <button type="button" onClick={() => handleToggleStatus(user)} className="w-7 h-7 rounded-lg flex items-center justify-center text-themeText dark:text-white hover:text-rose-500 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i className="fa-solid fa-ban text-[10px]"></i></button>
+                                    </div>
+                                    {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+                                        <img src={getLocalAvatar(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                                    ) : (
+                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                                    )}
+                                    <h4 className="text-[14px] font-bold text-center text-themeText dark:text-white truncate w-full px-2">{user.name}</h4>
+                                    <span className="text-[11px] font-bold text-themeTextSec tracking-widest mt-1 uppercase">{user.id}</span>
+                                    <span className="text-[10px] font-medium text-amber-500/80 truncate w-full text-center mt-1 px-2">{user.email}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )}
+    </div>
+ ) : (
  <table className="w-full text-left border-collapse min-w-[800px]">
  <thead>
  <tr className="bg-themeApp border-b border-themeBorder dark:border-white/5">
@@ -494,12 +626,10 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </td>
  <td className="p-4 lg:p-5">
  <div className="flex items-center gap-4 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
- {user.avatar_url ? (
- <img src={user.avatar_url} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
+ {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+ <img src={getLocalAvatar(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  ) : (
- <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border border-black/[0.04] dark:border-white/[0.08] shrink-0 group-hover/profile:shadow-lg transition-shadow ${activeTab === 'students' ? 'bg-black/5 dark:bg-themeApp text-amber-500' : 'bg-black/5 dark:bg-themeApp text-blue-400'}`}>
- {user.name.charAt(0)}
- </div>
+ <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  )}
  <div className="min-w-0">
  <p className="text-[15px] font-semibold text-themeText dark:text-white group-hover/profile:text-amber-500 transition-colors truncate">{user.name}</p>
@@ -524,6 +654,11 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
+ {user.role === 'faculty' && (
+ <button type="button" onClick={() => handleOpenTransfer(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/[0.04] dark:border-white/[0.08] hover:border-blue-500 hover:text-blue-500 text-themeTextSec dark:text-white/50 flex items-center justify-center transition-colors" title="Transfer Workload">
+ <i className="fa-solid fa-exchange-alt text-[10px]"></i>
+ </button>
+ )}
  <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-black/[0.04] dark:border-white/[0.08] hover:border-indigo-500 hover:text-amber-500 text-themeTextSec dark:text-white/50 flex items-center justify-center transition-colors" title="Reset Password">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
@@ -543,6 +678,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  )}
  </tbody>
  </table>
+ )}
  </div>
 
  {/* Mobile Card View */}
@@ -555,12 +691,10 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div key={i} className="p-4 flex flex-col gap-4">
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-center gap-3 min-w-0 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
- {user.avatar_url ? (
- <img src={user.avatar_url} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
+ {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+ <img src={getLocalAvatar(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  ) : (
- <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm border border-black/[0.04] dark:border-white/[0.08] shrink-0 group-hover/profile:shadow-lg transition-shadow ${activeTab === 'students' ? 'bg-black/5 dark:bg-themeApp text-amber-500' : 'bg-black/5 dark:bg-themeApp text-blue-400'}`}>
- {user.name.charAt(0)}
- </div>
+ <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  )}
  <div className="min-w-0">
  <p className="text-[15px] font-semibold text-themeText dark:text-white group-hover/profile:text-amber-500 transition-colors truncate">{user.name}</p>
@@ -893,6 +1027,59 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
       )}
       {showPasswordResetsModal && (
  <AdminPasswordResetsModal onClose={() => setShowPasswordResetsModal(false)} />
+ )}
+
+ {transferModalState.isOpen && transferModalState.sourceUser && (
+ <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+    <div className="bg-white dark:bg-themePanel w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-black/[0.04] dark:border-white/[0.08] flex flex-col animate-scale-up">
+        <div className="p-6 border-b border-black/[0.04] dark:border-white/[0.05] relative">
+            <h3 className="text-lg font-black text-themeText dark:text-white tracking-tight">Transfer Faculty Workload</h3>
+            <p className="text-xs text-themeTextSec mt-1">
+                {transferModalState.sourceUser.name} is currently assigned to <strong>{transferModalState.subjects} subjects</strong> and <strong>{transferModalState.classes} classes</strong>.
+            </p>
+            <p className="text-[10px] text-amber-600 dark:text-amber-500 mt-2 bg-amber-50 dark:bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
+                <strong>Important:</strong> Transferring workload will permanently merge these classes into the target faculty's schedule. If you are hiring a dedicated replacement later, it is recommended to cancel this and leave the workload on this deactivated account, then transfer directly to the new hire when they join.
+            </p>
+            <button onClick={() => setTransferModalState({ ...transferModalState, isOpen: false })} className="absolute top-6 right-6 text-themeTextSec hover:text-themeText transition-colors">
+                <i className="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <div className="p-6 flex flex-col gap-4 bg-black/[0.02] dark:bg-black/20">
+            <label className="text-[11px] font-black tracking-widest text-themeTextSec uppercase">Select Substitute Faculty</label>
+            <select
+                value={transferModalState.selectedTarget}
+                onChange={(e) => setTransferModalState({ ...transferModalState, selectedTarget: e.target.value })}
+                className="w-full bg-white dark:bg-themeApp border border-black/[0.08] dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-medium text-themeText dark:text-white outline-none focus:border-blue-500 transition-colors"
+            >
+                <option value="" disabled>Select a faculty member...</option>
+                {usersData.faculty
+                    .filter(f => f.status === 'Active' && f.db_id !== transferModalState.sourceUser.db_id)
+                    .map(f => (
+                        <option key={f.db_id} value={f.db_id}>{f.name} ({f.id})</option>
+                    ))
+                }
+            </select>
+        </div>
+        
+        <div className="p-6 border-t border-black/[0.04] dark:border-white/[0.05] flex justify-end gap-3 bg-white dark:bg-themePanel">
+            <button 
+                onClick={() => setTransferModalState({ ...transferModalState, isOpen: false })}
+                className="px-5 py-2.5 rounded-xl font-semibold text-xs text-themeTextSec hover:text-themeText hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            >
+                Cancel
+            </button>
+            <button 
+                onClick={handleWorkloadTransferSubmit}
+                disabled={!transferModalState.selectedTarget}
+                className="px-5 py-2.5 rounded-xl font-bold text-xs bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 transition-colors flex items-center gap-2 shadow-sm"
+            >
+                <i className="fa-solid fa-exchange-alt"></i>
+                Transfer Workload
+            </button>
+        </div>
+    </div>
+ </div>
  )}
  </div>
  </div>

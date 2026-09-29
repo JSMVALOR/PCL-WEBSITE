@@ -20,7 +20,7 @@ const Affiliations = () => {
   };
 
   return (
-    <div className="w-full min-h-screen pt-[120px] md:pt-[160px] pb-12 px-6 md:px-12 relative flex flex-col items-center overflow-hidden bg-[var(--bg-color)] transition-colors duration-300">
+    <div className="w-full min-h-screen pt-[120px] md:pt-[160px] pb-[100px] px-6 md:px-12 relative flex flex-col items-center overflow-hidden bg-[var(--bg-color)] transition-colors duration-300">
       
       <div className="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col items-center">
       <motion.div 
@@ -32,7 +32,7 @@ const Affiliations = () => {
         <span className="text-[var(--primary-color)] font-bold tracking-[0.2em] uppercase text-sm mb-4 block">
           Accreditations & Recognition
         </span>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl  mb-6 tracking-tight font-serif tracking-tight font-bold">
           Institutional <span className="text-[var(--primary-color)] italic font-medium pr-2">Affiliations.</span>
         </h1>
         <p className="text-[var(--text-muted)] max-w-2xl mx-auto text-lg leading-relaxed text-justify">

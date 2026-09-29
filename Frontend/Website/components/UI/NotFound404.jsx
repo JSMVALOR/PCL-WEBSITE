@@ -1,6 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import img1 from '../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
 import img2 from '../../../Shared/Assets/CAMPUS/pcl_library.webp';

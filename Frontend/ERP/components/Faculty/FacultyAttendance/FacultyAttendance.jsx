@@ -6,8 +6,6 @@ import SwipeRow from '../../../../Shared/components/ReactBits/SwipeRow/SwipeRow'
 import SlideCommit from '../../../../Shared/components/ReactBits/SlideCommit/SlideCommit';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CheckmarkBadge01Icon, Cancel01Icon, Add01Icon } from '@hugeicons/core-free-icons';
-import { GlassSurface } from "../../ui/GlassSurface";
-import { Badge } from "../../ui/Badge";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import QRCode from 'react-qr-code';

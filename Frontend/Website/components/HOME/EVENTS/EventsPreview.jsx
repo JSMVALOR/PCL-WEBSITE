@@ -65,7 +65,7 @@ const EventsPreview = React.forwardRef((props, ref) => {
       <div className="container mx-auto px-6 max-w-[1400px]">
         
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
-          <h2 className="text-4xl md:text-6xl font-bold text-[var(--text-color)] tracking-tight">
+          <h2 className="text-4xl md:text-6xl  text-[var(--text-color)] tracking-tight font-serif tracking-tight font-bold">
             Campus <span className="italic font-medium text-[var(--primary-color)]">Events</span> & Happenings
           </h2>
           
@@ -117,7 +117,7 @@ const EventsPreview = React.forwardRef((props, ref) => {
 
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   <div>
-                    <h3 className="text-2xl md:text-[26px]  font-medium leading-snug text-[var(--text-color)] group-hover:text-black mb-4 transition-colors duration-500">
+                    <h3 className="text-2xl md:text-[26px]  font-medium leading-snug text-[var(--text-color)] group-hover:text-black mb-4 transition-colors duration-500 font-serif tracking-tight font-bold">
                       {event.title}
                     </h3>
                     {event.description && (
@@ -149,7 +149,7 @@ const EventsPreview = React.forwardRef((props, ref) => {
 
                 <div className="relative z-10 flex flex-col h-full justify-between">
                   <div>
-                    <h3 className="text-2xl md:text-[26px]  font-medium leading-snug text-[var(--text-color)] group-hover:text-white mb-4 transition-colors duration-500">
+                    <h3 className="text-2xl md:text-[26px]  font-medium leading-snug text-[var(--text-color)] group-hover:text-white mb-4 transition-colors duration-500 font-serif tracking-tight font-bold">
                       View All Events
                     </h3>
                     <p className="text-[var(--text-muted)] group-hover:text-gray-300 text-sm transition-colors duration-500">

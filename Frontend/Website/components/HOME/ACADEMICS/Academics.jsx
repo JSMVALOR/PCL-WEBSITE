@@ -84,7 +84,7 @@ const Academics = forwardRef(({ windowWidth, academicGridRef, ...props }, ref) =
           className="text-center mb-2 md:mb-4 z-20 shrink-0"
         >
           <span className="block text-[9px] uppercase tracking-[0.3em] text-[var(--primary-color)] font-bold mb-2">Our Programs</span>
-          <h2 className="text-3xl md:text-4xl lg:text-[42px] font-bold text-[var(--text-color)] leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-[42px]  text-[var(--text-color)] leading-tight font-serif tracking-tight font-bold">
             {heading} <span className="italic font-medium text-[var(--primary-color)]">Excellence.</span>
           </h2>
           <div className="h-[2px] w-12 bg-[var(--primary-color)] mx-auto mt-6"></div>
@@ -187,7 +187,7 @@ const Academics = forwardRef(({ windowWidth, academicGridRef, ...props }, ref) =
                     
                     {/* Bottom Content Half */}
                     <div className="relative flex flex-col p-4 lg:p-5 h-[55%] grow">
-                      <h3 className="text-xl lg:text-[24px] font-bold leading-tight mb-2 text-[var(--text-color)] group-hover:text-[var(--primary-color)] transition-colors">
+                      <h3 className="text-xl lg:text-[24px]  leading-tight mb-2 text-[var(--text-color)] group-hover:text-[var(--primary-color)] transition-colors font-serif tracking-tight font-bold">
                         {prog.title} <span className="italic font-medium">{prog.focus}</span>
                       </h3>
                       

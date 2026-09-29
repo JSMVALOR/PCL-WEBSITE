@@ -27,6 +27,8 @@ CREATE TABLE public.profiles (
   programme text,
   section text,
   batch text,
+  base_salary numeric,
+  salary_structure jsonb,
   CONSTRAINT profiles_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.user_sessions (
@@ -1365,3 +1367,43 @@ ALTER TABLE public.faculty_courses ADD CONSTRAINT faculty_courses_faculty_id_fke
 ALTER TABLE public.campus_activity_logs ADD CONSTRAINT campus_activity_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(id);
 ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.profiles(id);
+
+CREATE TABLE public.faculty_payroll (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    faculty_id uuid,
+    base_pay numeric,
+    base_salary numeric,
+    deductions numeric,
+    net_pay numeric,
+    final_net_pay numeric,
+    professional_tax numeric,
+    tds_amount numeric,
+    tds_percentage numeric,
+    transaction_id character varying,
+    payment_mode character varying,
+    month character varying,
+    year character varying,
+    payment_date timestamp with time zone,
+    lop_days numeric,
+    lop_waived_days numeric,
+    lop_waived_amount numeric,
+    lop_waiver_reason text,
+    salary_structure jsonb,
+    gross_lop_amount numeric,
+    created_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT faculty_payroll_pkey PRIMARY KEY (id)
+);
+
+ALTER TABLE public.faculty_payroll ADD CONSTRAINT faculty_payroll_faculty_id_fkey FOREIGN KEY (faculty_id) REFERENCES public.profiles(id);
+
+CREATE TABLE public.faculty_daily_presence (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    faculty_id uuid,
+    date date NOT NULL,
+    status character varying,
+    total_missed_minutes integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT faculty_daily_presence_pkey PRIMARY KEY (id)
+);
+
+ALTER TABLE public.faculty_daily_presence ADD CONSTRAINT faculty_daily_presence_faculty_id_fkey FOREIGN KEY (faculty_id) REFERENCES public.profiles(id);

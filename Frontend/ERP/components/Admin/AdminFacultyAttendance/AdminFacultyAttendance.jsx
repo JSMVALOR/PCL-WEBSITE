@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
-
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 import { useERP } from '../../../context/ErpContext';
 
 export default function AdminFacultyAttendance({ isEmbedded = false }) {
@@ -27,8 +27,8 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             // 1. Get all faculty profiles
             const { data: faculty } = await supabase
                 .from('profiles')
-                .select('id, full_name, erp_id, avatar_url')
-                .eq('role', 'faculty')
+                .select('id, full_name, erp_id, profile_picture_url')
+                .ilike('role', 'faculty')
                 .order('full_name', { ascending: true });
 
             if (!faculty) return;
@@ -61,8 +61,13 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                 let source = '';
 
                 if (manualLog) {
-                    status = manualLog.status; // 'absent' or 'present'
-                    source = 'admin_override';
+                    if (manualLog.status === 'On Time' || manualLog.status === 'Late') {
+                        status = 'present';
+                        source = `WebClock (${manualLog.status})`;
+                    } else {
+                        status = manualLog.status; // 'absent' or 'present'
+                        source = 'admin_override';
+                    }
                 } else if (tookClass) {
                     status = 'present';
                     source = 'auto_class';
@@ -188,7 +193,15 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                                     
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center font-bold overflow-hidden border border-themeAccent/20 shrink-0">
-                                            {fac.avatar_url ? <img src={fac.avatar_url} className="w-full h-full object-cover" /> : <i className="fa-solid fa-user-tie text-xl"></i>}
+                                            <img 
+                                                src={
+                                                    fac.profile_picture_url || getLocalAvatar(fac.full_name) 
+                                                    ? (fac.profile_picture_url || getLocalAvatar(fac.full_name))
+                                                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(fac.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                                } 
+                                                alt={fac.full_name} 
+                                                className="w-full h-full object-cover" 
+                                            />
                                         </div>
                                         <div>
                                             <h4 className="text-sm font-black text-themeText mb-0.5">{fac.full_name}</h4>

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactDOM from 'react-dom';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../../context/ErpContext';
-import defaultAvatar from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 export default function DirectorySidebarWidget({ role = 'student' }) {
     const { userSession } = useERP();
@@ -70,7 +70,11 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                     
                     <div className="w-20 h-20 rounded-full bg-white dark:bg-black/20 p-1 border border-black/5 dark:border-white/10 overflow-hidden mb-4 shadow-none relative z-10">
                         <img 
-                            src={(userSession?.profile_picture_url || userSession?.avatar_url) || defaultAvatar} 
+                            src={
+                                userSession?.profile_picture_url || userSession?.avatar_url || getLocalAvatar(userSession?.full_name || userSession?.name) 
+                                ? (userSession?.profile_picture_url || userSession?.avatar_url || getLocalAvatar(userSession?.full_name || userSession?.name))
+                                : `https://ui-avatars.com/api/?name=${encodeURIComponent((userSession?.full_name || userSession?.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                            } 
                             alt="Profile" 
                             className="w-full h-full object-cover rounded-full"
                         />
@@ -92,7 +96,15 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                     </p>
                     <div className="flex items-center gap-3 w-full">
                         <div className="w-10 h-10 rounded-full bg-white dark:bg-black/20 p-0.5 border border-black/5 dark:border-white/10 shrink-0 shadow-none">
-                            <img src={(reportingTo?.profile_picture_url || reportingTo?.avatar_url) || defaultAvatar} alt="Reporting" className="w-full h-full object-cover rounded-full opacity-90" />
+                            <img 
+                                src={
+                                    reportingTo?.profile_picture_url || reportingTo?.avatar_url || getLocalAvatar(reportingTo?.full_name || reportingTo?.name) 
+                                    ? (reportingTo?.profile_picture_url || reportingTo?.avatar_url || getLocalAvatar(reportingTo?.full_name || reportingTo?.name))
+                                    : `https://ui-avatars.com/api/?name=${encodeURIComponent((reportingTo?.full_name || reportingTo?.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                } 
+                                alt="Reporting" 
+                                className="w-full h-full object-cover rounded-full opacity-90" 
+                            />
                         </div>
                         <div className="flex-1 min-w-0">
                             <h3 className="text-[13px] font-bold text-themeText truncate">
@@ -117,7 +129,15 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                         {members.length > 0 ? members.map((member, idx) => (
                             <div key={idx} className="flex items-center gap-3 px-6 py-2.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors group cursor-pointer">
                                 <div className="w-9 h-9 rounded-full bg-white dark:bg-black/20 p-0.5 border border-black/5 dark:border-white/10 shrink-0 shadow-none">
-                                    <img src={(member.profile_picture_url || member.avatar_url) || defaultAvatar} alt={(member.full_name || member.name)} className="w-full h-full object-cover rounded-full" />
+                                    <img 
+                                        src={
+                                            member.profile_picture_url || member.avatar_url || getLocalAvatar(member.full_name || member.name) 
+                                            ? (member.profile_picture_url || member.avatar_url || getLocalAvatar(member.full_name || member.name))
+                                            : `https://ui-avatars.com/api/?name=${encodeURIComponent((member.full_name || member.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                        } 
+                                        alt={(member.full_name || member.name)} 
+                                        className="w-full h-full object-cover rounded-full" 
+                                    />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <h4 className="text-[12px] font-bold text-themeText truncate group-hover:text-themeAccent transition-colors">{(member.full_name || member.name)}</h4>
@@ -280,7 +300,15 @@ function FullDirectoryModal({ onClose, allUsers, role, menteeIds, getPresenceSta
                                     {users.map(u => (
                                         <div key={u.id} className="bg-themeElevated border border-black/5 dark:border-white/5 shadow-none rounded-2xl p-4 flex items-center gap-4 hover:border-themeAccent/30 hover:shadow-none transition-all cursor-pointer group">
                                             <div className="w-12 h-12 rounded-full bg-black/5 dark:bg-black/20 p-0.5 border border-black/5 dark:border-white/10 shrink-0 shadow-inner">
-                                                <img src={(u.profile_picture_url || u.avatar_url) || defaultAvatar} alt={(u.full_name || u.name)} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform" />
+                                                <img 
+                                                    src={
+                                                        u.profile_picture_url || u.avatar_url || getLocalAvatar(u.full_name || u.name) 
+                                                        ? (u.profile_picture_url || u.avatar_url || getLocalAvatar(u.full_name || u.name))
+                                                        : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.full_name || u.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                                    } 
+                                                    alt={(u.full_name || u.name)} 
+                                                    className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform" 
+                                                />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="text-sm font-bold text-themeText truncate group-hover:text-themeAccent transition-colors">{(u.full_name || u.name) || 'Unknown User'}</h4>

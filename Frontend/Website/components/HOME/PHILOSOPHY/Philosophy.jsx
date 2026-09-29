@@ -60,7 +60,7 @@ const Philosophy = forwardRef((props, ref) => {
             <span className="block text-[10px] uppercase tracking-[0.3em] text-[var(--primary-color)] font-bold">{tagline}</span>
           </motion.div>
 
-          <motion.h2 variants={textVariants} className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[54px] font-bold text-[var(--text-color)] leading-[1.1] mb-4 md:mb-6">
+          <motion.h2 variants={textVariants} className="text-[2.25rem] sm:text-4xl md:text-5xl lg:text-[54px]  text-[var(--text-color)] leading-[1.1] mb-4 md:mb-6 font-serif tracking-tight font-bold">
             {heading1} <br/>
             <span className="italic font-medium text-[var(--primary-color)]">
               {heading2}

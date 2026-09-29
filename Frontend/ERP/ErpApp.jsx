@@ -398,14 +398,14 @@ export default function App() {
                 {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
                 <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
 
-                <div className="flex-1 p-4 pt-[calc(1rem+env(safe-area-inset-top))] lg:p-6 lg:pt-6 flex flex-col relative z-10">
+                <div className="flex-1 p-2 pb-[110px] lg:pb-0 lg:p-6 lg:pt-0 flex flex-col relative z-10">
                   <ErrorBoundary>
                     {renderContent()}
                   </ErrorBoundary>
                 </div>
 
               {/* ERP Footer with Privacy & Terms */}
-              <div className="w-full shrink-0 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder dark:border-white/5Border bg-white dark:bg-[#121212]/30 text-xs font-medium text-themeTextSec dark:text-white/50 mt-auto z-10 relative">
+              <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212]/30 text-xs font-medium text-themeTextSec dark:text-white/50 mt-auto z-10 relative">
                 <div className="flex gap-4 mb-2 sm:mb-0">
                   <a href="/privacy" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Privacy Policy</a>
                   <a href="/terms" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Terms of Service</a>

@@ -34,6 +34,7 @@ export default function CohortManager() {
     const [batchProgId, setBatchProgId] = useState('');
     const [batchStart, setBatchStart] = useState(new Date().getFullYear());
     const [batchSection, setBatchSection] = useState('');
+    const [campusStartDate, setCampusStartDate] = useState('');
     const [editingBatchId, setEditingBatchId] = useState(null);
 
     const fetchData = async () => {
@@ -107,13 +108,19 @@ export default function CohortManager() {
         if (!prog) return;
 
         const endYear = Number(batchStart) + Number(prog.duration_years);
-        const autoName = batchSection ? `${prog.code} (Class of ${endYear}) - Section ${batchSection}` : `${prog.code} (Class of ${endYear})`;
+        const autoName = batchSection ? `${prog.code} (Class of ${endYear}) - ${batchSection}` : `${prog.code} (Class of ${endYear})`;
+
+        // Duplicate Cohort Check
+        if (!editingBatchId && batches.some(b => b.name.toLowerCase() === autoName.toLowerCase())) {
+            window.erpDialog?.alert(`⚠️ Duplicate Cohort Detected!\nA cohort named "${autoName}" already exists. Please check your existing cohorts or add a Section to differentiate it.`);
+            return;
+        }
 
         const payload = { 
             name: autoName, 
             program_id: batchProgId, 
             start_year: Number(batchStart), 
-            end_year: endYear };
+            end_year: endYear, campus_start_date: campusStartDate ? campusStartDate : null };
 
         let error;
         if (editingBatchId) {
@@ -132,7 +139,7 @@ export default function CohortManager() {
             return;
         }
         
-        setIsCreatingBatch(false); setEditingBatchId(null); setBatchProgId(''); setBatchSection(''); fetchData();
+        setIsCreatingBatch(false); setEditingBatchId(null); setBatchProgId(''); setBatchSection(''); setCampusStartDate(''); fetchData();
         window.erpDialog?.alert(`✅ Successfully ${editingBatchId ? 'updated' : 'generated'} ${autoName}`);
     };
 
@@ -140,6 +147,7 @@ export default function CohortManager() {
         setEditingBatchId(b.id);
         setBatchProgId(b.program_id);
         setBatchStart(b.start_year);
+        setCampusStartDate(b.campus_start_date || '');
         setIsCreatingBatch(true);
     };
 
@@ -149,14 +157,13 @@ export default function CohortManager() {
         fetchData();
     };
 
-    const handlePromoteBatch = async (batch) => {
+    const handlePromoteAll = async (currentSemester, batchesToPromote) => {
+        if(!(await window.erpDialog?.confirm(`Are you sure you want to promote ALL ${batchesToPromote.length} cohorts in Semester ${currentSemester} to Semester ${Number(currentSemester) + 1}?`))) return;
         
-        const { error } = await supabase.from('academic_batches').update({ current_semester: batch.current_semester + 1 }).eq('id', batch.id);
-        if (error) {
-            window.erpDialog?.alert("Failed to promote cohort.");
-            return;
-        }
-        window.erpDialog?.alert(`✅ ${batch.name} officially promoted to Semester ${batch.current_semester + 1}. You can now assign faculty in the Allocator.`);
+        const updates = batchesToPromote.map(b => supabase.from('academic_batches').update({ current_semester: Number(currentSemester) + 1 }).eq('id', b.id));
+        await Promise.all(updates);
+        
+        window.erpDialog?.alert(`✅ Successfully promoted ${batchesToPromote.length} cohorts to Semester ${Number(currentSemester) + 1}!`);
         fetchData();
     };
 
@@ -250,7 +257,7 @@ export default function CohortManager() {
 
                 {isCreatingBatch && (
                     <form onSubmit={handleCreateBatch} className="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 p-6 rounded-2xl flex flex-col gap-6 shadow-sm">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
                                 <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1.5">1. Select Program</label>
                                 <select required value={batchProgId} onChange={e => setBatchProgId(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-blue-500 appearance-none shadow-sm">
@@ -271,11 +278,15 @@ export default function CohortManager() {
                                 <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1.5">3. Section (Optional)</label>
                                 <select value={batchSection} onChange={e => setBatchSection(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-blue-500 appearance-none shadow-sm">
                                     <option value="">No Section</option>
-                                    <option value="1">Section 1</option>
-                                    <option value="2">Section 2</option>
-                                    <option value="3">Section 3</option>
-                                    <option value="4">Section 4</option>
+                                    <option value="Section I">Section I</option>
+                                    <option value="Section II">Section II</option>
+                                    <option value="Section III">Section III</option>
+                                    <option value="Section IV">Section IV</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest block mb-1.5">4. Campus Start Date</label>
+                                <input required type="date" value={campusStartDate} onChange={e => setCampusStartDate(e.target.value)} className="w-full bg-white dark:bg-black border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-white outline-none focus:border-blue-500 shadow-sm" />
                             </div>
                         </div>
                         <div className="mt-2">
@@ -286,39 +297,59 @@ export default function CohortManager() {
                     </form>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {batches.map(b => {
-                        const theme = AVAILABLE_COLORS.find(c => c.value === b.academic_programs?.theme_color) || AVAILABLE_COLORS[0];
+                <div>
+                    {Object.keys(batches.reduce((acc, b) => { const s = b.current_semester || 1; if(!acc[s]) acc[s] = []; acc[s].push(b); return acc; }, {})).sort((a,b)=>b-a).map(sem => {
+                        const semBatches = batches.filter(b => (b.current_semester || 1) == sem);
                         return (
-                            <div key={b.id} className={`bg-white dark:bg-[#121212] border ${theme.border} rounded-2xl p-5 relative overflow-hidden group hover:border-black/10 dark:hover:border-white/20 transition shadow-sm`}>
-                                <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 -z-10 ${theme.solid}`}></div>
-                                
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase ${theme.bg} ${theme.text}`}>
-                                        Semester {b.current_semester}
+                            <div key={sem} className="mb-8">
+                                <div className="flex justify-between items-center bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/10 mb-4 shadow-sm">
+                                    <div>
+                                        <h3 className="font-black text-themeText dark:text-white">Semester {sem} Cohorts</h3>
+                                        <p className="text-[10px] text-themeTextSec dark:text-white/50 font-bold uppercase tracking-widest mt-0.5">{semBatches.length} Cohort(s)</p>
                                     </div>
-                                    <div className="flex items-center gap-2 relative z-10 shrink-0">
-                                        <button onClick={() => handlePromoteBatch(b)} className={`px-3 py-1.5 rounded-lg ${theme.bg} ${theme.text} font-bold text-[10px] uppercase tracking-wider hover:${theme.solid} hover:text-white transition`}>
-                                            Promote
-                                        </button>
-                                        <button onClick={() => handleEditBatch(b)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-themeTextSec dark:text-white/70 opacity-0 group-hover:opacity-100 transition hover:bg-amber-500 hover:text-white flex items-center justify-center shrink-0">
-                                            <i className="fa-solid fa-pen text-xs"></i>
-                                        </button>
-                                        <HoldButton size="sm" onHold={() => handleDeleteBatch(b.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
-                null
-            </HoldButton>
-                                    </div>
+                                    <button onClick={() => handlePromoteAll(sem, semBatches)} className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-xs font-black uppercase tracking-wider transition shadow-lg shadow-emerald-500/20">
+                                        Promote All to Semester {Number(sem) + 1}
+                                    </button>
                                 </div>
-                                
-                                <h3 className="text-xl font-black tracking-tight text-themeText dark:text-white mb-3">{b.name}</h3>
-                                
-                                <div className="space-y-2">
-                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
-                                        <i className="fa-solid fa-graduation-cap w-4"></i> {b.academic_programs?.name} ({b.academic_programs?.duration_years} Years)
-                                    </div>
-                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
-                                        <i className="fa-solid fa-calendar w-4"></i> Batch of {b.start_year} - {b.end_year}
-                                    </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                    {semBatches.map(b => {
+                                        const theme = AVAILABLE_COLORS.find(c => c.value === b.academic_programs?.theme_color) || AVAILABLE_COLORS[0];
+                                        return (
+                                            <div key={b.id} className={`bg-white dark:bg-[#121212] border ${theme.border} rounded-2xl p-5 relative overflow-hidden group hover:border-black/10 dark:hover:border-white/20 transition shadow-sm`}>
+                                                <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 -z-10 ${theme.solid}`}></div>
+                                                
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className={`px-3 py-1.5 rounded-lg text-[10px] font-black tracking-widest uppercase ${theme.bg} ${theme.text}`}>
+                                                        Semester {b.current_semester}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 relative z-10 shrink-0">
+                                                        <button onClick={() => handleEditBatch(b)} className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 text-themeTextSec dark:text-white/70 opacity-0 group-hover:opacity-100 transition hover:bg-amber-500 hover:text-white flex items-center justify-center shrink-0">
+                                                            <i className="fa-solid fa-pen text-xs"></i>
+                                                        </button>
+                                                        <HoldButton size="sm" onHold={() => handleDeleteBatch(b.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
+                                null
+                            </HoldButton>
+                                                    </div>
+                                                </div>
+                                                
+                                                <h3 className="text-xl font-black tracking-tight text-themeText dark:text-white mb-3">{b.name}</h3>
+                                                
+                                                <div className="space-y-2">
+                                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
+                                                        <i className="fa-solid fa-graduation-cap w-4"></i> {b.academic_programs?.name} ({b.academic_programs?.duration_years} Years)
+                                                    </div>
+                                                    <div className="text-[11px] font-bold text-themeTextSec dark:text-white/50 flex items-center gap-2">
+                                                        <i className="fa-solid fa-calendar w-4"></i> Batch of {b.start_year} - {b.end_year}
+                                                    </div>
+                                                    {b.campus_start_date && (
+                                                        <div className="text-[11px] font-bold text-blue-500 dark:text-blue-400 flex items-center gap-2">
+                                                            <i className="fa-solid fa-play w-4"></i> Starts: {new Date(b.campus_start_date).toLocaleDateString()}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         );

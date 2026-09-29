@@ -1,7 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useERP } from '../../../context/ErpContext';
 import { formatDistanceToNow } from 'date-fns';
 

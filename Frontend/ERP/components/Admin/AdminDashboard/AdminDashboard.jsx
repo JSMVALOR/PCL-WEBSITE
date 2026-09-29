@@ -1,12 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import UpdatesCarousel from "../../shared/UpdatesCarousel/UpdatesCarousel";
 
 import React, { useState } from "react";
-import BirthdayWidget from "../../shared/BirthdayWidget";
 import { DashboardGreetingBanner } from "../../shared/DashboardWidgets";
-import { AdminCampusPulse, AdminSystemVitals } from "../../shared/DashboardWidgets";
+import { AdminSystemVitals } from "../../shared/DashboardWidgets";
 import AdminKPIGrid from "./AdminKPIGrid";
-import OrganizationDirectory from "../../shared/OrganizationDirectory/OrganizationDirectory";
 
 import AdminRightSidebar from "./AdminRightSidebar";
 // AdminFAB removed to prevent overlap with IntelligentBot

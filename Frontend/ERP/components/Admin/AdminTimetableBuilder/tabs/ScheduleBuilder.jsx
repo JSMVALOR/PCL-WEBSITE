@@ -10,7 +10,6 @@ import WeeklyChart from '../../../shared/WeeklyChart';
 export default function ScheduleBuilder({}) {
  const [schedule, setSchedule] = useState([]);
  const [subjects, setSubjects] = useState([]);
- const [rooms, setRooms] = useState([]);
  const [batches, setBatches] = useState([]);
  const [faculties, setFaculties] = useState([]);
  
@@ -31,17 +30,12 @@ export default function ScheduleBuilder({}) {
 
  // Brush State
  const [subjectId, setSubjectId] = useState('');
- const [roomId, setRoomId] = useState('');
  const [facultyId, setFacultyId] = useState('');
+ const [cohortColor, setCohortColor] = useState('blue');
 
  const fetchData = async () => {
  setLoading(true);
  try {
- // 1. Fetch Classrooms
- const { data: roomData } = await supabase.from('academic_classrooms').select('id, name').eq('status', 'Active');
- setRooms(roomData || []);
- if (roomData?.length > 0 && !roomId) setRoomId(roomData[0].id);
-
  // 1.5 Fetch Faculties
  const { data: facData } = await supabase.from('profiles').select('id, full_name').eq('role', 'faculty');
  setFaculties(facData || []);
@@ -58,6 +52,16 @@ export default function ScheduleBuilder({}) {
 
  const activeBatchObj = (semData || []).find(s => s.name === currentBatchString);
  const activeBatchId = activeBatchObj ? activeBatchObj.id : null;
+
+ // Fetch the selected cohort's theme color to use as fallback
+ let fetchedCohortColor = 'blue';
+ if (currentBatchString) {
+    const { data: batchData } = await supabase.from('academic_batches').select('theme_color, academic_programs(theme_color)').eq('name', currentBatchString).single();
+    if (batchData) {
+        fetchedCohortColor = batchData.academic_programs?.theme_color || batchData.theme_color || 'blue';
+    }
+ }
+ setCohortColor(fetchedCohortColor);
 
  // 3. Fetch Subjects ONLY for this specific batch
  if (activeBatchId) {
@@ -92,7 +96,7 @@ export default function ScheduleBuilder({}) {
  .select(`
  id, batch, day_of_week, start_time, end_time,
  subject:master_subjects(name, theme_color),
- room:academic_classrooms(name),
+ 
  faculty:profiles(full_name)
  `)
  .eq('batch', selectedBatch);
@@ -107,8 +111,8 @@ export default function ScheduleBuilder({}) {
  time: s.start_time.slice(0, 5),
  endTime: s.end_time.slice(0, 5),
  subject: s.subject?.name,
- color: s.subject?.theme_color,
- room: s.room?.name,
+ color: fetchedCohortColor || s.subject?.theme_color,
+ 
  faculty: s.faculty?.full_name || s.subject?.faculty?.full_name,
  raw: s
  }));
@@ -136,7 +140,7 @@ export default function ScheduleBuilder({}) {
  }, [subjectId, subjects]);
 
  // Check for double booking
- const checkConflicts = async (faculty, room, d, sTime, eTime) => {
+ const checkConflicts = async (faculty, d, sTime, eTime) => {
  try {
  // Check against Database
  // Check if faculty is busy
@@ -154,26 +158,11 @@ export default function ScheduleBuilder({}) {
  }
  }
 
- // Check if room is busy
- if (room) {
- const { data: roomConflict } = await supabase
- .from('class_schedule')
- .select('id, batch')
- .eq('room_id', room)
- .eq('day_of_week', d)
- .lt('start_time', eTime)
- .gt('end_time', sTime);
- 
- if (roomConflict && roomConflict.length > 0) {
- return `Room is already booked for another batch (${roomConflict[0].batch}) at this time.`;
- }
- }
-
  // Check against Pending Local Drafts
  for (let draft of pendingDraws) {
  if (draft.raw.day_of_week === d && draft.raw.start_time < eTime && draft.raw.end_time > sTime) {
  if (faculty && draft.raw.faculty_id === faculty) return `Faculty is already booked in your unsaved drafts.`;
- if (room && draft.raw.room_id === room) return `Room is already booked in your unsaved drafts.`;
+ 
  if (selectedBatch === draft.raw.batch) return `Batch is already booked in your unsaved drafts.`;
  }
  }
@@ -184,8 +173,8 @@ export default function ScheduleBuilder({}) {
 
  const handleSlotClick = async (dayString, timeStr, explicitEndTime) => {
  if (!isDrawMode) return;
- if (!subjectId || !roomId) {
- window.erpDialog?.alert("Please select a Subject and Room in the Draw Toolbar first.");
+ if (!subjectId) {
+ window.erpDialog?.alert("Please select a Subject in the Draw Toolbar first.");
  return;
  }
 
@@ -200,14 +189,14 @@ export default function ScheduleBuilder({}) {
    endTimeStr = `${String(endHour).padStart(2, '0')}:${m}`;
  }
 
- const conflictMsg = await checkConflicts(facultyId, roomId, d, timeStr + ':00', endTimeStr + ':00');
+ const conflictMsg = await checkConflicts(facultyId, d, timeStr + ':00', endTimeStr + ':00');
  if (conflictMsg) {
  alert(`Conflict Detected: ${conflictMsg}`);
  return;
  }
 
  const selectedSub = subjects.find(s => s.id === subjectId);
- const selectedRoom = rooms.find(r => r.id === roomId);
+ 
  const selectedFac = faculties.find(f => f.id === facultyId);
 
  const draftObj = {
@@ -216,14 +205,14 @@ export default function ScheduleBuilder({}) {
  time: timeStr,
  endTime: endTimeStr,
  subject: selectedSub?.name,
- color: selectedSub?.theme_color,
- room: selectedRoom?.name,
+ color: cohortColor || selectedSub?.theme_color,
+ 
  faculty: selectedFac?.full_name || selectedSub?.faculty?.full_name,
  isDraft: true,
  raw: {
  batch: selectedBatch,
  subject_id: subjectId,
- room_id: roomId,
+ 
  faculty_id: facultyId || null,
  day_of_week: d,
  start_time: timeStr + ':00',
@@ -322,9 +311,7 @@ export default function ScheduleBuilder({}) {
  <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={subjectId} onChange={e => setSubjectId(e.target.value)}>
  {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
  </select>
- <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={roomId} onChange={e => setRoomId(e.target.value)}>
- {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
- </select>
+ 
  <select className="flex-1 min-w-0 truncate bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={facultyId} onChange={e => setFacultyId(e.target.value)}>
  <option value="">No Faculty</option>
  {faculties.map(f => <option key={f.id} value={f.id}>{f.full_name}</option>)}
@@ -385,12 +372,7 @@ export default function ScheduleBuilder({}) {
  )}
  </div>
 
- <div className="col-span-2">
- <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Classroom</label>
- <select value={roomId} onChange={e => setRoomId(e.target.value)} required className="w-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none appearance-none transition-colors">
- {rooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
- </select>
- </div>
+ 
  </div>
 
  <div className="grid grid-cols-3 gap-4 border-t border-themeBorder dark:border-white/5 pt-5">
@@ -444,11 +426,7 @@ export default function ScheduleBuilder({}) {
  <span className="text-[13px] font-medium text-themeTextSec">Faculty</span>
  <span className="text-xs font-bold text-themeText">{selectedClass.faculty}</span>
  </div>
- <div className="w-full h-px bg-themeBorder my-1"></div>
- <div className="flex justify-between items-center">
- <span className="text-[13px] font-medium text-themeTextSec">Room</span>
- <span className="text-xs font-bold text-themeText">{selectedClass.room}</span>
- </div>
+ 
  </div>
  
  <HoldButton size="sm" onHold={handleDeleteClass} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>

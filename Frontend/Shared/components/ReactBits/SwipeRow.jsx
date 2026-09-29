@@ -102,11 +102,11 @@ export default function SwipeRow({
   const commitPoint = () => Math.max(commitAt * w.current, D + A / 2);
   const canCommit = () => fullSwipe && n > 0 && commitPoint() <= w.current;
   const exposed = useTransform(x, v => s * v);
-  const surfaceXf = useTransform(x, v => \`translateX(\${v}px)\`);
-  const railXf = useTransform(exposed, e => \`translateX(\${-s * Math.max(0, D - e)}px)\`);
+  const surfaceXf = useTransform(x, v => `translateX(${v}px)`);
+  const railXf = useTransform(exposed, e => `translateX(${-s * Math.max(0, D - e)}px)`);
   const shift = useTransform([exposed, spread], ([e, p]) => p * Math.max(0, e - A));
-  const blockXf = useTransform(shift, v => \`translateX(\${s * v}px)\`);
-  const glyphXf = useTransform([shift, landed], ([v, l]) => \`translateX(\${-s * l * (v - (w.current - A) / 2)}px)\`);
+  const blockXf = useTransform(shift, v => `translateX(${s * v}px)`);
+  const glyphXf = useTransform([shift, landed], ([v, l]) => `translateX(${-s * l * (v - (w.current - A) / 2)}px)`);
 
   const map = raw => {
     const W = w.current;
@@ -171,7 +171,7 @@ export default function SwipeRow({
     if (reduce) spread.set(on ? 1 : 0);
     else animate(spread, on ? 1 : 0, SPRING_UI);
     if (on && primary) {
-      setSay(\`Release to \${primary.label}\`);
+      setSay(`Release to ${primary.label}`);
       if (haptic && grip.current?.touch) navigator.vibrate?.(8);
     }
   };
@@ -297,7 +297,7 @@ export default function SwipeRow({
     heading.current = D;
     x.set(s * D);
     setOpen(true);
-    setSay(\`\${n} actions revealed\`);
+    setSay(`${n} actions revealed`);
   };
   const closeNow = () => {
     heading.current = 0;
@@ -326,28 +326,28 @@ export default function SwipeRow({
     else openNow();
   };
 
-  const railId = \`\${uid}-rail\`;
+  const railId = `${uid}-rail`;
   return (
     <div
       ref={root}
       role="group"
       aria-label={label}
-      className={\`swipe-row\${className ? \` \${className}\` : ''}\`}
+      className={`swipe-row${className ? ` ${className}` : ''}`}
       data-direction={direction}
       data-open={open ? '' : undefined}
       data-phase={phase}
       data-disabled={disabled ? '' : undefined}
       style={{
-        '--sr-h': \`\${height}px\`,
-        '--sr-r': \`\${radius}px\`,
-        '--sr-a': \`\${A}px\`,
+        '--sr-h': `${height}px`,
+        '--sr-r': `${radius}px`,
+        '--sr-a': `${A}px`,
         '--sr-row': rowColor,
         '--sr-text': textColor,
         '--sr-drawer': drawerColor,
         '--sr-on-drawer': onColor(drawerColor),
         '--sr-action': actionColor,
         '--sr-on-action': onColor(actionColor),
-        '--sr-collapse': \`\${collapseMs}ms\`,
+        '--sr-collapse': `${collapseMs}ms`,
         ...style
       }}
     >

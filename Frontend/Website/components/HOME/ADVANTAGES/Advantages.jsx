@@ -161,7 +161,7 @@ const Advantages = forwardRef(({ windowWidth, ...props }, ref) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7 }}
-                className="text-3xl md:text-[2.75rem] font-bold mb-2 text-white"
+                className="text-3xl md:text-[2.75rem]  mb-2 text-white font-serif tracking-tight font-bold"
                
               >
                 {heading1}

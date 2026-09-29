@@ -51,15 +51,15 @@ export default function AcademicCalendarGrid() {
         setRows([...rows, { id: Date.now().toString(), data: emptyData }]);
     };
 
-    const addColumn = () => {
-        const name = prompt("Enter new column name:");
+    const addColumn = async () => {
+        const name = await window.erpDialog.prompt("Enter new column name:", "Add Column");
         if (!name || columns.includes(name)) return;
         setColumns([...columns, name]);
         setRows(rows.map(r => ({ ...r, data: { ...r.data, [name]: '' } })));
     };
 
-    const deleteColumn = (colName) => {
-        if (!confirm(`Delete column "${colName}"?`)) return;
+    const deleteColumn = async (colName) => {
+        if (!(await window.erpDialog.confirm(`Delete column "${colName}"?`))) return;
         setColumns(columns.filter(c => c !== colName));
         setRows(rows.map(r => {
             const newData = { ...r.data };

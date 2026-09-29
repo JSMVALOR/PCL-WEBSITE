@@ -58,7 +58,7 @@ export default function Library() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+            className="text-5xl md:text-6xl lg:text-7xl  text-white mb-6 leading-tight font-serif tracking-tight font-bold"
            
           >
             Library & <span className="text-[#FFBF00] italic">Infrastructure</span>

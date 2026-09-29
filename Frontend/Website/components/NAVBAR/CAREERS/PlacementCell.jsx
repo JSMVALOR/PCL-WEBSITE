@@ -84,7 +84,7 @@ Requirements: ${formData.message}`,
                     <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
                         Corporate Relations
                     </span>
-                    <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-[var(--text-color)] mb-8 leading-tight font-['Outfit']">
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
                         Placement <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Cell</span>
                     </h1>
                     <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-center">

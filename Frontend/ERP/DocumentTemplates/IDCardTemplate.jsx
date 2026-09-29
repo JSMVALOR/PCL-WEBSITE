@@ -11,7 +11,7 @@ const IDCardTemplate = React.forwardRef(({ profileData, roleTitle, userSession }
     const getThemeColor = () => {
         if (roleTitle === 'Faculty' || roleTitle === 'Admin') return { main: '#007AFF', light: 'rgba(0,122,255,0.1)', grad: 'from-blue-500' };
         
-        const prog = (profileData?.programme || profileData?.department || '').toLowerCase().replace(/[\.\s]/g, '');
+        const prog = (profileData?.programme || profileData?.department || '').toLowerCase().replace(/[.\s]/g, '');
         
         if (prog.includes('bballb') || prog.includes('bba')) return { main: '#F59E0B', light: 'rgba(245,158,11,0.1)', grad: 'from-amber-400' };
         if (prog.includes('ballb') || prog.includes('ba')) return { main: '#34C759', light: 'rgba(52,199,89,0.1)', grad: 'from-green-400' };

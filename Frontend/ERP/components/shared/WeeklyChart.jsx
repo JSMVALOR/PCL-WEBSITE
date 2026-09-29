@@ -16,12 +16,25 @@ const TIME_SLOTS = [
 ];
 
 const SUBJECT_COLORS = {
-    blue: { bg: 'bg-blue-500/10', text: 'text-blue-500', border: 'border-blue-500/20', solid: 'bg-blue-500', shadow: 'shadow-blue-500/20' },
-    emerald: { bg: 'bg-emerald-500/10', text: 'text-emerald-500', border: 'border-emerald-500/20', solid: 'bg-emerald-500', shadow: 'shadow-emerald-500/20' },
-    purple: { bg: 'bg-purple-500/10', text: 'text-purple-500', border: 'border-purple-500/20', solid: 'bg-purple-500', shadow: 'shadow-purple-500/20' },
-    orange: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/20', solid: 'bg-orange-500', shadow: 'shadow-orange-500/20' },
-    rose: { bg: 'bg-rose-500/10', text: 'text-rose-500', border: 'border-rose-500/20', solid: 'bg-rose-500', shadow: 'shadow-rose-500/20' },
-    amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', border: 'border-amber-500/20', solid: 'bg-amber-500', shadow: 'shadow-amber-500/20' } 
+    slate: { bg: 'bg-slate-500/10 dark:bg-slate-400/10', text: 'text-slate-700 dark:text-slate-300', border: 'border-slate-500/20 dark:border-slate-400/20', solid: 'bg-slate-500 dark:bg-slate-400', shadow: 'shadow-slate-500/20 dark:shadow-slate-400/20' },
+    zinc: { bg: 'bg-zinc-500/10 dark:bg-zinc-400/10', text: 'text-zinc-700 dark:text-zinc-300', border: 'border-zinc-500/20 dark:border-zinc-400/20', solid: 'bg-zinc-500 dark:bg-zinc-400', shadow: 'shadow-zinc-500/20 dark:shadow-zinc-400/20' },
+    red: { bg: 'bg-red-500/10 dark:bg-red-400/10', text: 'text-red-700 dark:text-red-300', border: 'border-red-500/20 dark:border-red-400/20', solid: 'bg-red-500 dark:bg-red-400', shadow: 'shadow-red-500/20 dark:shadow-red-400/20' },
+    orange: { bg: 'bg-orange-500/10 dark:bg-orange-400/10', text: 'text-orange-700 dark:text-orange-300', border: 'border-orange-500/20 dark:border-orange-400/20', solid: 'bg-orange-500 dark:bg-orange-400', shadow: 'shadow-orange-500/20 dark:shadow-orange-400/20' },
+    amber: { bg: 'bg-amber-500/10 dark:bg-amber-400/10', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-500/20 dark:border-amber-400/20', solid: 'bg-amber-500 dark:bg-amber-400', shadow: 'shadow-amber-500/20 dark:shadow-amber-400/20' },
+    yellow: { bg: 'bg-yellow-500/10 dark:bg-yellow-400/10', text: 'text-yellow-700 dark:text-yellow-300', border: 'border-yellow-500/20 dark:border-yellow-400/20', solid: 'bg-yellow-500 dark:bg-yellow-400', shadow: 'shadow-yellow-500/20 dark:shadow-yellow-400/20' },
+    lime: { bg: 'bg-lime-500/10 dark:bg-lime-400/10', text: 'text-lime-700 dark:text-lime-300', border: 'border-lime-500/20 dark:border-lime-400/20', solid: 'bg-lime-500 dark:bg-lime-400', shadow: 'shadow-lime-500/20 dark:shadow-lime-400/20' },
+    green: { bg: 'bg-green-500/10 dark:bg-green-400/10', text: 'text-green-700 dark:text-green-300', border: 'border-green-500/20 dark:border-green-400/20', solid: 'bg-green-500 dark:bg-green-400', shadow: 'shadow-green-500/20 dark:shadow-green-400/20' },
+    emerald: { bg: 'bg-emerald-500/10 dark:bg-emerald-400/10', text: 'text-emerald-700 dark:text-emerald-300', border: 'border-emerald-500/20 dark:border-emerald-400/20', solid: 'bg-emerald-500 dark:bg-emerald-400', shadow: 'shadow-emerald-500/20 dark:shadow-emerald-400/20' },
+    teal: { bg: 'bg-teal-500/10 dark:bg-teal-400/10', text: 'text-teal-700 dark:text-teal-300', border: 'border-teal-500/20 dark:border-teal-400/20', solid: 'bg-teal-500 dark:bg-teal-400', shadow: 'shadow-teal-500/20 dark:shadow-teal-400/20' },
+    cyan: { bg: 'bg-cyan-500/10 dark:bg-cyan-400/10', text: 'text-cyan-700 dark:text-cyan-300', border: 'border-cyan-500/20 dark:border-cyan-400/20', solid: 'bg-cyan-500 dark:bg-cyan-400', shadow: 'shadow-cyan-500/20 dark:shadow-cyan-400/20' },
+    sky: { bg: 'bg-sky-500/10 dark:bg-sky-400/10', text: 'text-sky-700 dark:text-sky-300', border: 'border-sky-500/20 dark:border-sky-400/20', solid: 'bg-sky-500 dark:bg-sky-400', shadow: 'shadow-sky-500/20 dark:shadow-sky-400/20' },
+    blue: { bg: 'bg-blue-500/10 dark:bg-blue-400/10', text: 'text-blue-700 dark:text-blue-300', border: 'border-blue-500/20 dark:border-blue-400/20', solid: 'bg-blue-500 dark:bg-blue-400', shadow: 'shadow-blue-500/20 dark:shadow-blue-400/20' },
+    indigo: { bg: 'bg-indigo-500/10 dark:bg-indigo-400/10', text: 'text-indigo-700 dark:text-indigo-300', border: 'border-indigo-500/20 dark:border-indigo-400/20', solid: 'bg-indigo-500 dark:bg-indigo-400', shadow: 'shadow-indigo-500/20 dark:shadow-indigo-400/20' },
+    violet: { bg: 'bg-violet-500/10 dark:bg-violet-400/10', text: 'text-violet-700 dark:text-violet-300', border: 'border-violet-500/20 dark:border-violet-400/20', solid: 'bg-violet-500 dark:bg-violet-400', shadow: 'shadow-violet-500/20 dark:shadow-violet-400/20' },
+    purple: { bg: 'bg-purple-500/10 dark:bg-purple-400/10', text: 'text-purple-700 dark:text-purple-300', border: 'border-purple-500/20 dark:border-purple-400/20', solid: 'bg-purple-500 dark:bg-purple-400', shadow: 'shadow-purple-500/20 dark:shadow-purple-400/20' },
+    fuchsia: { bg: 'bg-fuchsia-500/10 dark:bg-fuchsia-400/10', text: 'text-fuchsia-700 dark:text-fuchsia-300', border: 'border-fuchsia-500/20 dark:border-fuchsia-400/20', solid: 'bg-fuchsia-500 dark:bg-fuchsia-400', shadow: 'shadow-fuchsia-500/20 dark:shadow-fuchsia-400/20' },
+    pink: { bg: 'bg-pink-500/10 dark:bg-pink-400/10', text: 'text-pink-700 dark:text-pink-300', border: 'border-pink-500/20 dark:border-pink-400/20', solid: 'bg-pink-500 dark:bg-pink-400', shadow: 'shadow-pink-500/20 dark:shadow-pink-400/20' },
+    rose: { bg: 'bg-rose-500/10 dark:bg-rose-400/10', text: 'text-rose-700 dark:text-rose-300', border: 'border-rose-500/20 dark:border-rose-400/20', solid: 'bg-rose-500 dark:bg-rose-400', shadow: 'shadow-rose-500/20 dark:shadow-rose-400/20' },
 };
 
 export default function WeeklyChart({ schedule = [], onLectureClick, role = 'student', isDrawMode = false, onSlotClick, batchName = '' }) {
@@ -116,7 +129,6 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
                                                     <h4 className={`text-xs font-bold leading-snug line-clamp-2 ${cls.color ? SUBJECT_COLORS[cls.color]?.text : 'text-themeText'}`}>{cls.subject}</h4>
                                                     <div className="mt-auto pt-2 flex justify-between items-end">
                                                         <div className="flex flex-col gap-0.5">
-                                                            <span className="text-[9px] font-bold text-themeTextSec"><i className="fa-solid fa-door-open mr-1 opacity-70"></i>{cls.room || 'TBD'}</span>
                                                             {role !== 'faculty' && <span className="text-[9px] font-bold text-themeTextSec"><i className="fa-solid fa-user-tie mr-1 opacity-70"></i>{cls.faculty || 'TBD'}</span>}
                                                         </div>
                                                         {cls.isDraft && <i className="fa-solid fa-pen text-amber-500/50 text-xs"></i>}

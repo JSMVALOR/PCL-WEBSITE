@@ -7,7 +7,6 @@ import FacultyActionItems from "../../shared/DashboardWidgets/FacultyActionItems
 import DashboardWorkSchedule from "../../shared/DashboardWidgets/DashboardWorkSchedule";
 import FacultyWebClock from "../../shared/DashboardWidgets/FacultyWebClock";
 
-import OrganizationDirectory from '../../shared/OrganizationDirectory/OrganizationDirectory';
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 

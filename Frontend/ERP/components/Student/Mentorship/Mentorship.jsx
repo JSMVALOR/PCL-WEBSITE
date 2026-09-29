@@ -4,6 +4,7 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
 import MentorshipChatHub from '../../shared/MentorshipChatHub';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 export default function Mentorship() {
     const { userSession } = useERP();
@@ -132,11 +133,15 @@ export default function Mentorship() {
                                 <div className="relative w-28 h-28 mb-6">
                                     <div className="absolute inset-0 bg-themeAccent/10 rounded-full blur-xl animate-pulse"></div>
                                     <div className="relative w-full h-full rounded-full bg-themeElevated border-2 border-themeBorder shadow-lg text-themeTextSec flex items-center justify-center text-4xl font-black overflow-hidden ring-4 ring-themeApp">
-                                        {mentorData.profile_picture_url ? (
-                                            <img src={mentorData.profile_picture_url} alt={mentorData.full_name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="bg-gradient-to-br from-themeText to-themeTextSec bg-clip-text text-transparent drop-shadow-sm">{mentorData.full_name.charAt(0)}</span>
-                                        )}
+                                        <img 
+                                            src={
+                                                mentorData.profile_picture_url || getLocalAvatar(mentorData.full_name) 
+                                                ? (mentorData.profile_picture_url || getLocalAvatar(mentorData.full_name))
+                                                : `https://ui-avatars.com/api/?name=${encodeURIComponent(mentorData.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                            } 
+                                            alt={mentorData.full_name} 
+                                            className="w-full h-full object-cover" 
+                                        />
                                     </div>
                                     <div className="absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 border-4 border-themeApp rounded-full shadow-sm"></div>
                                 </div>

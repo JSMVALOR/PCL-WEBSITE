@@ -62,12 +62,6 @@ export default function AdminSystemVitals() {
             </h3>
             <p className="text-[10px] text-themeTextSec tracking-normal mt-1">Real-time health & utilization</p>
           </div>
-          <button type="button" 
-            onClick={() => window.location.href = '#sql'} 
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white rounded-lg text-[12px] font-medium transition"
-          >
-            SQL Console <i className="fa-solid fa-arrow-up-right-from-square"></i>
-          </button>
       </div>
       
       {/* 1. Supabase Exact Metrics */}

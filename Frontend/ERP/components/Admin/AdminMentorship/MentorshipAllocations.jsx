@@ -7,6 +7,7 @@ import { Delete02Icon } from '@hugeicons/core-free-icons';
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 export default function MentorshipAllocations({}) {
  const [maxCapacity, setMaxCapacity] = useState(5);
@@ -47,8 +48,8 @@ export default function MentorshipAllocations({}) {
  { data: facultyData, error: facultyError },
  { data: mentorships, error: mentorshipsError }
  ] = await Promise.all([
- supabase.from('profiles').select('id, full_name, erp_id, programme, semester, section, batch').eq('role', 'student'),
- supabase.from('profiles').select('id, full_name, department').eq('role', 'faculty'),
+ supabase.from('profiles').select('id, full_name, erp_id, programme, semester, section, batch, profile_picture_url').eq('role', 'student').neq('status', 'Restricted'),
+ supabase.from('profiles').select('id, full_name, department, profile_picture_url').eq('role', 'faculty').neq('status', 'Restricted'),
  supabase.from('mentorship').select('id, faculty_id, student_id')
  ]);
 
@@ -67,7 +68,8 @@ export default function MentorshipAllocations({}) {
  programme: s.programme || 'Unknown',
  semester: s.semester || 'Unknown',
  section: s.section || 'Unknown',
- batch: s.batch || 'Unknown'
+ batch: s.batch || 'Unknown',
+ profile_picture_url: s.profile_picture_url || getLocalAvatar(s.full_name)
  }));
 
  const facultyState = (facultyData || []).map(f => {
@@ -82,13 +84,15 @@ export default function MentorshipAllocations({}) {
  programme: s.programme || 'Unknown',
  semester: s.semester || 'Unknown',
  section: s.section || 'Unknown',
- batch: s.batch || 'Unknown'
+ batch: s.batch || 'Unknown',
+ profile_picture_url: s.profile_picture_url || getLocalAvatar(s.full_name)
  }));
 
  return {
  id: f.id,
  name: f.full_name || 'Unknown Faculty',
  department: f.department || 'Law',
+ profile_picture_url: f.profile_picture_url || getLocalAvatar(f.full_name),
  mentees: mentees
  };
  });
@@ -469,9 +473,18 @@ export default function MentorshipAllocations({}) {
  className={`bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-3 rounded-2xl shadow-none dark:shadow-none border flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  <div className="flex items-start justify-between mb-2">
- <div className="min-w-0 pr-2">
+ <div className="flex items-center gap-2 min-w-0 pr-2">
+ {student.profile_picture_url ? (
+     <img src={student.profile_picture_url} alt={student.name} className="w-8 h-8 rounded-xl object-cover shrink-0 border border-black/5 dark:border-white/5" />
+ ) : (
+     <div className="w-8 h-8 rounded-xl bg-themeText/5 text-themeText flex items-center justify-center font-bold text-[10px] shrink-0 border border-black/5 dark:border-white/5">
+         {student.name.charAt(0)}
+     </div>
+ )}
+ <div>
  <p className="text-xs lg:text-[15px] font-semibold text-themeText mb-0.5 truncate">{student.name}</p>
  <p className="text-[9px] lg:text-[10px] font-bold text-indigo-500">{student.erp_id}</p>
+ </div>
  </div>
  <i className="fa-solid fa-grip-vertical text-themeTextSec opacity-30 group-hover:opacity-100 transition-opacity mt-1"></i>
  </div>
@@ -521,9 +534,13 @@ export default function MentorshipAllocations({}) {
 
  <div className="p-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl shrink-0">
  <div className="flex justify-between items-start mb-3">
- <div className="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center font-black text-base border border-indigo-500/20 shrink-0">
- {fac.name.charAt(0)}
- </div>
+ {fac.profile_picture_url ? (
+     <img src={fac.profile_picture_url} alt={fac.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 border border-black/5 dark:border-white/5" />
+ ) : (
+     <div className="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center font-black text-base border border-indigo-500/20 shrink-0">
+         {fac.name.charAt(0)}
+     </div>
+ )}
  <span className={`text-[12px] font-medium px-2.5 py-1 rounded-md border ${isFull ? 'bg-themeElevated/90 backdrop-blur-2xl text-indigo-500 border-indigo-500/30' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10'}`}>
  {currentLoad} / {maxCapacity}
  </span>
@@ -560,9 +577,18 @@ export default function MentorshipAllocations({}) {
  {...provided.dragHandleProps}
  className={`bg-white dark:bg-[#121212] backdrop-blur-2xl border p-2 lg:p-2.5 rounded-2xl shadow-none dark:shadow-none flex items-center justify-between group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
- <div className="min-w-0 pr-2">
+ <div className="flex items-center gap-2 min-w-0 pr-2">
+ {student.profile_picture_url ? (
+     <img src={student.profile_picture_url} alt={student.name} className="w-8 h-8 rounded-[10px] object-cover shrink-0 border border-black/5 dark:border-white/5" />
+ ) : (
+     <div className="w-8 h-8 rounded-[10px] bg-themeText/5 text-themeText flex items-center justify-center font-bold text-[9px] shrink-0 border border-black/5 dark:border-white/5">
+         {student.name.charAt(0)}
+     </div>
+ )}
+ <div>
  <p className="text-[10px] lg:text-[14px] font-medium text-themeText truncate">{student.name}</p>
  <p className="text-[8px] lg:text-[9px] font-bold text-themeTextSec opacity-70 mt-0.5 truncate">{student.erp_id} • {student.programme}</p>
+ </div>
  </div>
  <div className="flex gap-2 shrink-0">
  <i className="fa-solid fa-grip-vertical text-themeTextSec opacity-30 group-hover:opacity-100 transition-opacity"></i>

@@ -41,6 +41,15 @@
 }
 
 
+/* Fix overflowing headers on small screens */
+@media (max-width: 768px) {
+  h1, h2, h3, h4, h5, h6, .text-4xl, .text-5xl, .text-6xl, .text-7xl {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
 /* Stack Scrolling Container */
 .snap-container {
   width: 100vw;

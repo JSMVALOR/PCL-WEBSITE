@@ -5,7 +5,6 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
 import { Badge } from "../../ui/Badge";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { generatePDF } from "../../../DocumentTemplates/pdfGenerator";
 
 
 

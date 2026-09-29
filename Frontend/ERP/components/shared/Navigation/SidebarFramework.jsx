@@ -1,10 +1,9 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import { motion, AnimatePresence } from "framer-motion";
-import { createPortal } from "react-dom";
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useERP } from '../../../context/ErpContext';
-import { Dialog } from '../../../utils/DialogManager';
 import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
+import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 // --- Constants & Config ---
 const SIDEBAR_MIN_WIDTH = 80; // Compact width
@@ -273,11 +272,15 @@ export default function SidebarFramework({
                                 className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 p-1.5 rounded-lg transition-colors"
                             >
                                 <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-black/10 dark:border-white/10 flex items-center justify-center font-black text-xs text-themeText relative shrink-0 overflow-hidden">
-                                    {userSession?.profile_picture_url ? (
-                                        <img src={userSession.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
-                                    ) : (
-                                        initials
-                                    )}
+                                    <img 
+                                        src={
+                                            userSession?.profile_picture_url || getLocalAvatar(userSession?.name) 
+                                            ? (userSession.profile_picture_url || getLocalAvatar(userSession.name))
+                                            : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                        } 
+                                        alt="Profile" 
+                                        className="w-full h-full object-cover" 
+                                    />
                                     <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-themeApp z-10"></div>
                                 </div>
                                 <div className="flex flex-col min-w-0 flex-1">
@@ -387,11 +390,15 @@ export default function SidebarFramework({
                     >
                         <div className="p-6 pt-10 flex items-center gap-4 border-b border-black/10 dark:border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/20 sticky top-0 backdrop-blur-2xl z-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
                             <div className="w-14 h-14 rounded-2xl bg-black/5 dark:bg-white/10 backdrop-blur-xl border border-black/20 dark:border-black/10 dark:border-white/20 flex items-center justify-center font-black text-xl text-black dark:text-white relative shadow-lg overflow-hidden">
-                                {userSession?.profile_picture_url ? (
-                                    <img src={userSession.profile_picture_url} alt="Profile" className="w-full h-full object-cover relative z-0" />
-                                ) : (
-                                    initials
-                                )}
+                                <img 
+                                    src={
+                                        userSession?.profile_picture_url || getLocalAvatar(userSession?.name) 
+                                        ? (userSession.profile_picture_url || getLocalAvatar(userSession.name))
+                                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+                                    } 
+                                    alt="Profile" 
+                                    className="w-full h-full object-cover relative z-0" 
+                                />
                                 <div className="absolute top-1 right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-transparent z-20 shadow-[0_0_10px_#10b981]"></div>
                             </div>
                             <div className="relative z-10 flex-1">

@@ -16,7 +16,20 @@ export default function ParentLogin({ onBack, onLoginSuccess }) {
         e.preventDefault();
         setLoading(true);
         setError('');
-        try {// Profile check bypassed for testing            
+        try {
+            const { data: profileCheck, error: pErr } = await supabase
+                .from('profiles')
+                .select('id')
+                .eq('email', email)
+                .eq('role', 'parent')
+                .maybeSingle();
+
+            if (!profileCheck) {
+                setError("No such account exists. Please ask your child to update their parent email in their profile.");
+                setLoading(false);
+                return;
+            }
+            
             // Generate OTP
             const code = Math.floor(1000 + Math.random() * 9000).toString();
             setGeneratedOtp(code);

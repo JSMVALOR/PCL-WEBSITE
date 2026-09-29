@@ -22,6 +22,10 @@ export const EMAIL_TEMPLATES = {
     ERP_LOGIN_OTP: (params) => ({
         subject: `Your ERP Login Passcode`,
         message_body: HTML_EMAIL_TEMPLATES.ERP_LOGIN_OTP(params) }),
+
+    PASSCODE_RESET: (params) => ({
+        subject: `Your ERP Password has been Reset`,
+        message_body: HTML_EMAIL_TEMPLATES.PASSCODE_RESET(params) }),
         
     APPLICATION_RECEIVED: (params) => ({
         subject: `Application Received - Ticket #${params.ticket_id}`,

@@ -1,6 +1,5 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { PDFDocument } from "pdf-lib";
 
 export const generateNativePayslip = async (payload, facultyName, erpId, department) => {
     // 1. Create a new A4 PDF
