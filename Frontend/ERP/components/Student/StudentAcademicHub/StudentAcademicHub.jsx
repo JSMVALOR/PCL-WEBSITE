@@ -19,7 +19,7 @@ export default function StudentAcademicHub({ isEmbedded = false, }) {
 
     return (
         <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
-            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
                 
                 {/* 360-Degree Main Panel */}
                 <div className="flex-1 flex flex-col bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_30px_rgb(0,0,0,0.04)] dark:shadow-none rounded-3xl overflow-hidden relative">

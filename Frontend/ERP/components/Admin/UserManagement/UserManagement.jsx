@@ -14,7 +14,7 @@ import AdminStudentCVModal from './AdminStudentCVModal';
 import AdminUserEditorModal from './AdminUserEditorModal';
 import AdminUserProfileModal from './AdminUserProfileModal';
 import AdminPasswordResetsModal from './AdminPasswordResetsModal';
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 // Safe provisioning client so admin doesn't get logged out
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ;
@@ -451,7 +451,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  return (
  <div className={`w-full animate-fade-in selection:bg-black/5 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText dark:text-white" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
 
  {/* 1. MASTER HEADER */}
  {!isHubView && (
@@ -587,7 +587,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
                                         <button type="button" onClick={() => handleToggleStatus(user)} className="w-7 h-7 rounded-lg flex items-center justify-center text-themeText dark:text-white hover:text-rose-500 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"><i className="fa-solid fa-ban text-[10px]"></i></button>
                                     </div>
                                     {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
-                                        <img src={getLocalAvatar(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                                        <img src={getAvatarUrl(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
                                     ) : (
                                         <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-black/5 dark:border-white/5 shadow-sm group-hover:scale-105 transition-transform duration-300" />
                                     )}
@@ -627,7 +627,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <td className="p-4 lg:p-5">
  <div className="flex items-center gap-4 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
  {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
- <img src={getLocalAvatar(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
+ <img src={getAvatarUrl(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  ) : (
  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  )}
@@ -692,7 +692,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex items-start justify-between gap-3">
  <div className="flex items-center gap-3 min-w-0 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
  {user.avatar_url && user.avatar_url !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
- <img src={getLocalAvatar(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
+ <img src={getAvatarUrl(user.db_id, user.avatar_url)} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  ) : (
  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`} alt={user.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-black/[0.04] dark:border-white/[0.08]" />
  )}

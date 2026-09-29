@@ -129,17 +129,17 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
     };
 
     return (
-        <div className="w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-5 flex flex-col relative shrink-0">
-            <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center text-sm shrink-0">
+        <div className="w-full flex flex-col relative shrink-0 py-4">
+            <div className="flex items-center gap-3 mb-6 border-b border-black/[0.04] dark:border-white/[0.04] pb-4">
+                <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg shrink-0">
                     <i className="fa-solid fa-business-time"></i>
                 </div>
                 <div className="flex-1 flex justify-between items-center">
                     <div>
-                        <h2 className="text-sm font-black text-themeText tracking-tight">Work Schedule</h2>
-                        <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">{selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                        <h2 className="text-xl font-black text-themeText tracking-tight">Work Schedule</h2>
+                        <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest mt-1">{selectedDate.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                     </div>
-                    {loading && <div className="w-4 h-4 border-2 border-themeAccent border-t-transparent rounded-full animate-spin"></div>}
+                    {loading && <div className="w-5 h-5 border-2 border-themeAccent border-t-transparent rounded-full animate-spin"></div>}
                 </div>
             </div>
 

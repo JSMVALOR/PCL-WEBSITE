@@ -119,12 +119,12 @@ export default function StudentActivityRings() {
   }, [userSession]);
 
   return (
-    <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-none rounded-[20px] p-4 sm:p-6 relative flex-[1] min-w-0 w-full flex flex-col justify-between">
-      <div className="mb-2 shrink-0">
-        <h3 className="text-[14px] font-medium tracking-normal text-themeText mb-1 flex items-center gap-2">
+    <div className="relative flex-[1] min-w-0 w-full flex flex-col justify-between py-6">
+      <div className="mb-6 shrink-0 border-b border-black/[0.04] dark:border-white/[0.04] pb-3">
+        <h3 className="text-sm font-black tracking-tight text-themeText uppercase flex items-center gap-2">
             <i className="fa-solid fa-bullseye text-[#FF2D55]"></i> Activity Rings
         </h3>
-        <p className="text-[10px] text-themeTextSec tracking-normal">Your Academic Pulse</p>
+        <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Your Academic Pulse</p>
       </div>
       
       <div className="flex-1 flex flex-col justify-center items-center relative py-4">

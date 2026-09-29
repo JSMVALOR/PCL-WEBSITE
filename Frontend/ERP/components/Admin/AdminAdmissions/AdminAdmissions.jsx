@@ -221,7 +221,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeAccent/30 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-transparent text-themeText dark:text-white" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 xl:pb-8" : "pb-10"}`}>
  {/* Header and Tabs */}
  {!isHubView && (
  <PageHeader icon="fa-solid fa-user-graduate" title="Admissions Command Center" subtitle="Review and process incoming website applications." rightContent={

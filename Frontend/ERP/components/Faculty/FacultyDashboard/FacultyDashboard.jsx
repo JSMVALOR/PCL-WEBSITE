@@ -72,17 +72,17 @@ export default function FacultyDashboard({ setActiveTab }) {
     }, [userSession]);
 
     return (
-        <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 xl:overflow-hidden font-sans flex flex-col">
+        <div className="w-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 font-sans flex flex-col min-h-0">
             
-            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 xl:pb-12 h-auto">
                 
-                {/* LEFT SIDEBAR */}
-                <div className="w-full xl:w-[280px] shrink-0 h-auto xl:h-full pb-6 xl:pb-0 overflow-y-auto custom-scrollbar pr-2 lg:pr-4 xl:sticky xl:top-0 z-30 self-start xl:self-auto">
+                {/* LEFT SIDEBAR (Sticky on Desktop) */}
+                <div className="w-full xl:w-[280px] shrink-0 pb-6 xl:pb-0 pr-2 lg:pr-4 xl:sticky xl:top-24 z-30 self-start xl:max-h-[calc(100vh-120px)] xl:overflow-y-auto custom-scrollbar">
                     <DirectorySidebarWidget role="faculty" />
                 </div>
 
                 {/* MAIN CONTENT AREA */}
-                <div className="flex-1 flex flex-col gap-6 lg:gap-8 overflow-y-auto custom-scrollbar pb-10 xl:pb-0 pr-2 lg:pr-4">
+                <div className="flex-1 flex flex-col gap-6 lg:gap-8 pr-2 lg:pr-4">
                     
                     <DashboardGreetingBanner role="faculty" />
                     
@@ -91,20 +91,22 @@ export default function FacultyDashboard({ setActiveTab }) {
                         <div className="flex-1 min-w-0"><FacultyWebClock /></div>
                     </div>
 
-                    {/* Quick Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 shrink-0">
+                    {/* Quick Stats Ribbon (Unboxed) */}
+                    <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0 py-2 border-b border-black/[0.04] dark:border-white/[0.04]">
                         {[
                             { label: 'Pending Grading', value: dashboardData.stats.pendingGrading, icon: 'fa-pen-to-square', color: 'text-amber-500' },
                             { label: 'Avg Attendance', value: `${dashboardData.stats.avgAttendance}%`, icon: 'fa-user-check', color: 'text-emerald-500' },
                             { label: 'Classes Today', value: dashboardData.stats.classesToday, icon: 'fa-chalkboard-user', color: 'text-indigo-500' },
                             { label: 'Active Mentees', value: dashboardData.stats.mentees, icon: 'fa-users', color: 'text-blue-500' }
                         ].map((stat, i) => (
-                            <div key={i} className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-4 flex flex-col justify-center relative group">
-                                <div className={`w-8 h-8 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center ${stat.color} mb-3`}>
+                            <div key={i} className="flex-1 min-w-[140px] flex items-center gap-4 relative group">
+                                <div className={`w-12 h-12 rounded-xl bg-black/5 dark:bg-white/5 flex items-center justify-center text-xl ${stat.color}`}>
                                     <i className={`fa-solid ${stat.icon}`}></i>
                                 </div>
-                                <h3 className="text-xl font-black text-themeText mb-0.5">{stat.value}</h3>
-                                <p className="text-[9px] font-bold uppercase tracking-widest text-themeTextSec">{stat.label}</p>
+                                <div className="flex flex-col">
+                                    <h3 className="text-2xl font-black tracking-tight text-themeText leading-none">{stat.value}</h3>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-1">{stat.label}</p>
+                                </div>
                             </div>
                         ))}
                     </div>

@@ -86,7 +86,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  );
 
  return (
- <div className={`w-full ${isHubView ? 'bg-transparent text-themeText font-sans' : 'min-h-screen bg-themeApp text-themeText font-sans pb-32'}`}>
+ <div className={`w-full ${isHubView ? 'bg-transparent text-themeText font-sans' : 'min-h-screen bg-themeApp text-themeText font-sans pb-10'}`}>
  
  {/* Top Navigation Hub */}
  <div className={`${isHubView ? '' : 'w-full mx-auto px-4 lg:px-8 py-6'}`}>

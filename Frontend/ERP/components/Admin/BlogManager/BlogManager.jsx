@@ -363,7 +363,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
         </div>
     )}
     
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  <PageHeader icon="fa-solid fa-newspaper" title="Blog Manager" subtitle="Review submissions, publish, and notify authors." />
 
  <div className="flex justify-between items-center mb-6">

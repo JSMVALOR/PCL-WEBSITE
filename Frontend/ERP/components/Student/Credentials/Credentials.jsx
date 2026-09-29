@@ -117,7 +117,7 @@ export default function Credentials() {
  const roleTitle = userSession?.role === 'admin' ? 'Admin' : userSession?.role === 'faculty' ? 'Faculty' : 'Student';
 
  return (
- <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in selection:bg-themeElevated relative">
+ <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-12 animate-fade-in selection:bg-themeElevated relative">
  
  {/* Top Action & Navigation Bar */}
  <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] px-6 py-4 rounded-[2rem] gap-4">

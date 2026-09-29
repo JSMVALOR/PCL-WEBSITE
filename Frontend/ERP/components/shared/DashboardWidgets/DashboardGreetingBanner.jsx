@@ -39,29 +39,24 @@ export default function DashboardGreetingBanner({ role = 'student' }) {
         <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-3xl p-6 sm:p-8 flex items-center justify-between relative overflow-hidden group"
+            className="w-full flex items-center justify-between relative overflow-hidden group pb-4 sm:pb-6 border-b border-black/[0.04] dark:border-white/[0.04]"
         >
-            
-
-            <div className="flex items-center gap-6 z-10">
-                {/* Left Insignia Box */}
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[20px] bg-white dark:bg-themeElevated p-1 shadow-none border border-black/5 dark:border-white/10 shrink-0 relative overflow-hidden flex items-center justify-center text-3xl sm:text-4xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent dark:from-white/5 pointer-events-none"></div>
+            <div className="flex items-center gap-4 sm:gap-6 z-10 w-full">
+                {/* Left Insignia Box - Kept for accent, but made more subtle */}
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-black/5 dark:bg-white/5 text-themeTextSec flex items-center justify-center text-xl sm:text-2xl shrink-0">
                     {getRoleInsignia()}
                 </div>
 
                 {/* Text Content */}
-                <div className="flex flex-col">
-                    <h1 className="text-xl sm:text-3xl font-black text-themeText tracking-tight flex items-center gap-3">
-                        {greeting}, <span className="text-themeAccent">{userName}</span>
+                <div className="flex flex-col flex-1 min-w-0">
+                    <h1 className="text-2xl sm:text-4xl font-black text-themeText tracking-tight flex items-center gap-2 flex-wrap leading-none">
+                        {greeting}, <span className="text-themeAccent truncate">{userName}</span>
                     </h1>
-                    <p className="text-[11px] sm:text-xs font-bold text-themeTextSec uppercase tracking-widest mt-1.5 opacity-80">
+                    <p className="text-[10px] sm:text-xs font-bold text-themeTextSec uppercase tracking-widest mt-1.5 sm:mt-2 opacity-80 truncate">
                         {subtitle}
                     </p>
                 </div>
             </div>
-
-
         </motion.div>
     );
 }

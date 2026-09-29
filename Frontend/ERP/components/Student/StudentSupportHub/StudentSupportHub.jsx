@@ -29,7 +29,7 @@ export default function StudentSupportHub() {
 
  return (
  <div className="w-full h-auto min-h-screen relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 font-sans flex flex-col">
- <div className="relative z-20 w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32">
+ <div className="relative z-20 w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10">
  <div className="w-full flex flex-col gap-6 lg:gap-8 animate-fade-in">
  {/* ═══ MASTER HUB HEADER ═══ */}
  <div className={`w-full relative overflow-hidden rounded-[2rem] p-6 lg:p-8 flex flex-col gap-6 bg-white/10 backdrop-blur-[80px] border border-white/20`}>

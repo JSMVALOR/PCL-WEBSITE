@@ -467,7 +467,7 @@ export default function App() {
 
 function ModuleUnderConstruction({ tabName, role }) {
   return (
-    <div className="w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-32 lg:pb-12 animate-fade-in">
+    <div className="w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-12 animate-fade-in">
       <div className={`${theme.layout.panel} rounded-2xl p-8`}>
       <div className="flex items-center gap-4 mb-6">
         <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorder dark:border-white/5BorderStrong bg-white dark:bg-[#121212]`}>

@@ -836,7 +836,7 @@ export default function FacultyAttendance({ subjectContext }) {
 
  return (
  <div className={`w-full ${!subjectContext ? 'animate-fade-in' : ''}`}>
- <div className={`${!subjectContext ? 'w-full max-w-[1800px] mx-auto flex flex-col gap-8 pb-32 xl:pb-8' : 'flex flex-col gap-4'}`}>
+ <div className={`${!subjectContext ? 'w-full max-w-[1800px] mx-auto flex flex-col gap-8 pb-10 xl:pb-8' : 'flex flex-col gap-4'}`}>
  
  {/* 1. HEADER (Liquid Glass) */}
  {(!subjectContext) && (

@@ -4,7 +4,7 @@ import { STUDENT_NAV_MEGA as STUDENT_SIDEBAR_CONFIG } from '../Student/sidebar/S
 import { FACULTY_NAV_MEGA as FACULTY_SIDEBAR_CONFIG } from '../Faculty/FacultySidebar/FacultySidebar';
 import { ADMIN_NAV_MEGA as ADMIN_SIDEBAR_CONFIG } from '../Admin/AdminSidebar/AdminSidebar';
 import { useERP } from '../../context/ErpContext';
-import { getLocalAvatar } from '../../utils/avatarUtils';
+import { getAvatarUrl } from '../../utils/avatarUtils';
 import { useNotification } from '../../../Shared/context/NotificationContext';
 import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo.svg';
 import { GlobalSearch } from './LiveHeaderComponents';
@@ -241,8 +241,8 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                             className="flex items-center gap-3 hover:bg-black/5 dark:hover:bg-white/5 p-1 pr-1 xl:pr-3 rounded-xl transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-themeAccent focus-visible:ring-offset-2"
                         >
                             <div className="w-9 h-9 rounded-lg bg-themeElevated flex items-center justify-center font-black text-[11px] text-themeText shadow-inner border border-black/5 dark:border-white/5 group-hover/profile:border-themeAccent/30 transition-colors overflow-hidden relative">
-                                {(userSession?.profile_picture_url || getLocalAvatar(userSession?.name)) && (userSession.profile_picture_url || getLocalAvatar(userSession?.name)) !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
-                                    <img src={((userSession.profile_picture_url || getLocalAvatar(userSession?.name)) || getLocalAvatar(userSession?.name)).match(/^(\/|http|data)/) ? (userSession.profile_picture_url || getLocalAvatar(userSession?.name)) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession.name || 'US')}&background=random&color=fff&rounded=true&bold=true`} alt="Profile" className="w-full h-full object-cover relative z-10" />
+                                {(userSession?.profile_picture_url || getAvatarUrl(userSession)) && (userSession.profile_picture_url || getAvatarUrl(userSession)) !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+                                    <img src={((userSession.profile_picture_url || getAvatarUrl(userSession)) || getAvatarUrl(userSession)).match(/^(\/|http|data)/) ? (userSession.profile_picture_url || getAvatarUrl(userSession)) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession.name || 'US')}&background=random&color=fff&rounded=true&bold=true`} alt="Profile" className="w-full h-full object-cover relative z-10" />
                                 ) : (
                                     <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`} alt="Profile" className="w-full h-full object-cover relative z-10" />
                                 )}
@@ -270,8 +270,8 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                     <div className="bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
                                         <div className="p-3 mb-2 border-b border-black/5 dark:border-white/5 flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-themeElevated flex items-center justify-center font-black text-themeText shadow-inner overflow-hidden border border-black/5 dark:border-white/5">
-                                                {(userSession?.profile_picture_url || getLocalAvatar(userSession?.name)) && (userSession.profile_picture_url || getLocalAvatar(userSession?.name)) !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
-                                                    <img src={((userSession.profile_picture_url || getLocalAvatar(userSession?.name)) || getLocalAvatar(userSession?.name)).match(/^(\/|http|data)/) ? (userSession.profile_picture_url || getLocalAvatar(userSession?.name)) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession.name || 'US')}&background=random&color=fff&rounded=true&bold=true`} alt="Profile" className="w-full h-full object-cover" />
+                                                {(userSession?.profile_picture_url || getAvatarUrl(userSession)) && (userSession.profile_picture_url || getAvatarUrl(userSession)) !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (
+                                                    <img src={((userSession.profile_picture_url || getAvatarUrl(userSession)) || getAvatarUrl(userSession)).match(/^(\/|http|data)/) ? (userSession.profile_picture_url || getAvatarUrl(userSession)) : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession.name || 'US')}&background=random&color=fff&rounded=true&bold=true`} alt="Profile" className="w-full h-full object-cover" />
                                                 ) : (
                                                     <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`} alt="Profile" className="w-full h-full object-cover" />
                                                 )}

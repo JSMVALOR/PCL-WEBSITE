@@ -257,7 +257,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
-            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8" : "pb-10"}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
                 
                 {/* Header (Hidden if embedded or in subject context) */}
                 {!subjectContext && (
@@ -423,12 +423,17 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  </div>
  )}
 
- {/* ASSIGNMENTS LIST */}
- <div className="flex flex-col gap-4">
- <h2 className="text-xl font-semibold tracking-tight text-themeText dark:text-white tracking-tight">Active Assignments</h2>
- 
- {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).length === 0 ? (
- <div className="w-full py-16 flex flex-col items-center justify-center bg-transparent rounded-[2rem] text-center px-4 border border-themeBorder border-dashed shadow-sm">
+    {/* ASSIGNMENTS LIST */}
+    <div className="flex flex-col gap-6 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-3xl p-6 lg:p-8">
+        <h2 className="text-xl font-bold tracking-tight text-themeText dark:text-white flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center">
+                <i className="fa-solid fa-list-check text-sm"></i>
+            </div>
+            Active Assignments
+        </h2>
+        
+        {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).length === 0 ? (
+            <div className="w-full py-16 flex flex-col items-center justify-center bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
  <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
  <h3 className="text-lg lg:text-xl text-themeText font-black">No Assignments Issued</h3>
  <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>

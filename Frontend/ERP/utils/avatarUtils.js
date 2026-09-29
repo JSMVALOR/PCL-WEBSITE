@@ -12,3 +12,33 @@ export const getLocalAvatar = (name) => {
     
     return null;
 };
+
+export const getAvatarUrl = (userOrName) => {
+    if (!userOrName) return `https://ui-avatars.com/api/?name=US&background=random&color=fff&rounded=true&bold=true`;
+    
+    let name = 'User';
+    let url = null;
+
+    if (typeof userOrName === 'string') {
+        name = userOrName;
+    } else {
+        name = userOrName.full_name || userOrName.name || 'User';
+        url = userOrName.profile_picture_url || userOrName.avatar_url;
+    }
+    
+    // Ignore the generic flaticon dummy image so it falls back to a nice letter avatar
+    if (url && url.includes('flaticon.com')) {
+        url = null;
+    }
+
+    if (!url) {
+        url = getLocalAvatar(name);
+    }
+    
+    // Ensure the URL is valid, else fallback
+    if (url && url.match(/^(\/|http|data)/)) {
+        return url;
+    }
+    
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&rounded=true&bold=true`;
+};

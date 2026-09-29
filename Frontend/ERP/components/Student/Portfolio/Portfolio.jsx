@@ -9,7 +9,7 @@ export default function Portfolio() {
 
     return (
         <div className="w-full h-auto xl:h-full min-h-full relative flex-1 bg-themeApp text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
-            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
+            <div className="flex-1 w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 xl:pb-8 h-auto xl:h-full overflow-visible xl:overflow-hidden">
                 
                 {/* Header & Tabs */}
                 <div className="shrink-0 flex flex-col gap-6 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-[2rem] p-6 lg:p-8">

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactDOM from 'react-dom';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../../context/ErpContext';
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 export default function DirectorySidebarWidget({ role = 'student' }) {
     const { userSession } = useERP();
@@ -66,13 +66,13 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                 className="w-full bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex flex-col relative overflow-hidden"
             >
                 {/* 1. Profile Section */}
-                <div className="flex flex-col items-center pt-8 pb-6 px-6 relative">
+                <div className="flex flex-col items-center pt-8 pb-4 px-6 relative">
                     
                     <div className="w-20 h-20 rounded-full bg-white dark:bg-black/20 p-1 border border-black/5 dark:border-white/10 overflow-hidden mb-4 shadow-none relative z-10">
                         <img 
                             src={
-                                userSession?.profile_picture_url || userSession?.avatar_url || getLocalAvatar(userSession?.full_name || userSession?.name) 
-                                ? (userSession?.profile_picture_url || userSession?.avatar_url || getLocalAvatar(userSession?.full_name || userSession?.name))
+                                userSession?.profile_picture_url || userSession?.avatar_url || getAvatarUrl(userSession?.full_name || userSession?.name) 
+                                ? (userSession?.profile_picture_url || userSession?.avatar_url || getAvatarUrl(userSession?.full_name || userSession?.name))
                                 : `https://ui-avatars.com/api/?name=${encodeURIComponent((userSession?.full_name || userSession?.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
                             } 
                             alt="Profile" 
@@ -82,9 +82,25 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                     <h2 className="text-[15px] font-black text-themeText tracking-tight text-center mt-1 relative z-10">
                         {(userSession?.full_name || userSession?.name) || 'Unknown User'}
                     </h2>
-                    <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-1 relative z-10">
+                    <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-1 mb-4 relative z-10">
                         {userSession?.role || role}
                     </p>
+
+                    <button 
+                        onClick={async () => {
+                            if(window.erpDialog) {
+                                const confirmed = await window.erpDialog.confirm("Are you sure you want to securely sign out?", "End Session");
+                                if (confirmed && window.erpLogout) window.erpLogout();
+                                else if (confirmed) window.location.href = '/login';
+                            } else {
+                                window.location.href = '/login';
+                            }
+                        }}
+                        className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-xs font-bold transition-colors"
+                    >
+                        <i className="fa-solid fa-power-off"></i>
+                        Sign Out
+                    </button>
                 </div>
 
                 <div className="w-full h-px bg-black/5 dark:bg-white/5"></div>
@@ -98,8 +114,8 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                         <div className="w-10 h-10 rounded-full bg-white dark:bg-black/20 p-0.5 border border-black/5 dark:border-white/10 shrink-0 shadow-none">
                             <img 
                                 src={
-                                    reportingTo?.profile_picture_url || reportingTo?.avatar_url || getLocalAvatar(reportingTo?.full_name || reportingTo?.name) 
-                                    ? (reportingTo?.profile_picture_url || reportingTo?.avatar_url || getLocalAvatar(reportingTo?.full_name || reportingTo?.name))
+                                    reportingTo?.profile_picture_url || reportingTo?.avatar_url || getAvatarUrl(reportingTo?.full_name || reportingTo?.name) 
+                                    ? (reportingTo?.profile_picture_url || reportingTo?.avatar_url || getAvatarUrl(reportingTo?.full_name || reportingTo?.name))
                                     : `https://ui-avatars.com/api/?name=${encodeURIComponent((reportingTo?.full_name || reportingTo?.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
                                 } 
                                 alt="Reporting" 
@@ -131,8 +147,8 @@ export default function DirectorySidebarWidget({ role = 'student' }) {
                                 <div className="w-9 h-9 rounded-full bg-white dark:bg-black/20 p-0.5 border border-black/5 dark:border-white/10 shrink-0 shadow-none">
                                     <img 
                                         src={
-                                            member.profile_picture_url || member.avatar_url || getLocalAvatar(member.full_name || member.name) 
-                                            ? (member.profile_picture_url || member.avatar_url || getLocalAvatar(member.full_name || member.name))
+                                            member.profile_picture_url || member.avatar_url || getAvatarUrl(member.full_name || member.name) 
+                                            ? (member.profile_picture_url || member.avatar_url || getAvatarUrl(member.full_name || member.name))
                                             : `https://ui-avatars.com/api/?name=${encodeURIComponent((member.full_name || member.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
                                         } 
                                         alt={(member.full_name || member.name)} 
@@ -302,8 +318,8 @@ function FullDirectoryModal({ onClose, allUsers, role, menteeIds, getPresenceSta
                                             <div className="w-12 h-12 rounded-full bg-black/5 dark:bg-black/20 p-0.5 border border-black/5 dark:border-white/10 shrink-0 shadow-inner">
                                                 <img 
                                                     src={
-                                                        u.profile_picture_url || u.avatar_url || getLocalAvatar(u.full_name || u.name) 
-                                                        ? (u.profile_picture_url || u.avatar_url || getLocalAvatar(u.full_name || u.name))
+                                                        u.profile_picture_url || u.avatar_url || getAvatarUrl(u.full_name || u.name) 
+                                                        ? (u.profile_picture_url || u.avatar_url || getAvatarUrl(u.full_name || u.name))
                                                         : `https://ui-avatars.com/api/?name=${encodeURIComponent((u.full_name || u.name) || 'US')}&background=random&color=fff&rounded=true&bold=true`
                                                     } 
                                                     alt={(u.full_name || u.name)} 

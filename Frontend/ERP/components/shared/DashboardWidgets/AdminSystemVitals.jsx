@@ -54,13 +54,16 @@ export default function AdminSystemVitals() {
   ];
 
   return (
-    <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-none rounded-[20px] p-4 sm:p-6 relative flex-1 min-w-0 w-full flex flex-col">
+    <div className="w-full relative flex-1 min-w-0 flex flex-col py-6 border-b border-black/[0.04] dark:border-white/[0.04]">
       <div className="flex justify-between items-start mb-6">
           <div>
-            <h3 className="text-[14px] font-medium tracking-normal text-themeText flex items-center gap-2">
-              <i className="fa-solid fa-server text-emerald-500"></i> Supabase Infrastructure
+            <h3 className="text-xl font-black tracking-tight text-themeText flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                <i className="fa-solid fa-server"></i>
+              </div>
+              Supabase Infrastructure
             </h3>
-            <p className="text-[10px] text-themeTextSec tracking-normal mt-1">Real-time health & utilization</p>
+            <p className="text-[11px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Real-time health & utilization</p>
           </div>
       </div>
       

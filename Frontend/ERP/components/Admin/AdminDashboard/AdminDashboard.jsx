@@ -14,7 +14,7 @@ export default function AdminDashboard({ isEmbedded = false,  setActiveTab }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-32 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 xl:pb-8" : "pb-10"}`}>
  
  {/* Mobile Utility Toggle */}
  <div className="xl:hidden w-full flex justify-between items-center mb-4 bg-themePanel/85 backdrop-blur-2xl p-3 rounded-2xl border border-themeBorder dark:border-white/5 animate-fade-in">
@@ -32,7 +32,7 @@ export default function AdminDashboard({ isEmbedded = false,  setActiveTab }) {
  
 
  {/* Main Content Area (9 Columns) */}
- <div className="xl:col-span-9 flex flex-col gap-8 pb-32 xl:pb-12 min-w-0 animate-fade-in">
+ <div className="xl:col-span-9 flex flex-col gap-8 pb-10 xl:pb-12 min-w-0 animate-fade-in">
  
  <DashboardGreetingBanner role="admin" />
 

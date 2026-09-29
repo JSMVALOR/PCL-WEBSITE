@@ -21,7 +21,7 @@ export default function FacultyAcademicHub() {
 
     return (
         <div className="w-full min-h-screen bg-themeApp text-themeText dark:text-themeText animate-fade-in">
-            <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-32 lg:pb-32 xl:pb-8">
+            <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8">
                 
                 {/* Premium Vibrant Header */}
                 <div className="relative overflow-hidden rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl p-6 lg:p-8 z-10 flex flex-col gap-6">
