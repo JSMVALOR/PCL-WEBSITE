@@ -57,7 +57,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  };
 
  return (
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-[2rem] shadow-2xl overflow-hidden animate-fade-in relative flex flex-col h-full">
+ <div className="animate-fade-in relative flex flex-col h-full">
  <div className="p-6 lg:p-8 border-b border-black/5 dark:border-white/10 flex justify-between items-start bg-white/50 dark:bg-black/10 backdrop-blur-xl relative z-10 shrink-0">
  <div>
  <h2 className="text-xl lg:text-2xl font-black tracking-tight text-themeText dark:text-white mb-1">{userSession?.role === "admin" ? "Administrative Broadcast" : "Faculty Broadcast"}</h2>

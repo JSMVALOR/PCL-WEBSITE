@@ -180,7 +180,7 @@ export default function AdminNotices({ isHubView = false }) {
  const renderBroadcastTab = () => (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
  {/* Form */}
- <div className="lg:col-span-5 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 h-max">
+ <div className="lg:col-span-5 h-max py-4">
  <h2 className="text-xl font-semibold tracking-tight text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-satellite-dish text-themeAccent"></i> New Broadcast
  </h2>
@@ -251,7 +251,7 @@ export default function AdminNotices({ isHubView = false }) {
  <div className="lg:col-span-7 flex flex-col gap-4">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Active Broadcasts</h3>
  {notices.map(n => (
- <div key={n.id} className="p-6 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex flex-col gap-3 relative overflow-hidden group">
+ <div key={n.id} className="py-5 border-b border-black/[0.04] dark:border-white/[0.04] flex flex-col gap-3 relative overflow-hidden group transition-opacity hover:opacity-80">
  {n.priority === 'urgent' && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
  <div className="flex justify-between items-start">
  <div className="flex gap-2">

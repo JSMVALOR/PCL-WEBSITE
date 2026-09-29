@@ -187,7 +187,7 @@ export default function Notices({ setActiveTab }) {
                             setSelectedNotice(notice);
                             setNotices(notices.map(n => n.id === notice.id ? { ...n, isUnread: false } : n));
                         }}
-                        className={`bg-black/5 dark:bg-white/5 backdrop-blur-[30px] shadow-none border ${notice.isUnread ? 'border-black/5 dark:border-white/10' : 'border-black/10 dark:border-white/20'} hover:bg-white/10 rounded-[1.5rem] p-6 cursor-pointer flex flex-col group relative overflow-hidden`}
+                        className={`py-5 border-b border-black/[0.04] dark:border-white/[0.04] cursor-pointer flex flex-col group relative overflow-hidden transition-opacity hover:opacity-80`}
                     >
                         {/* Specular Highlight */}
                         {/* Glow effect for unread/pinned */}
