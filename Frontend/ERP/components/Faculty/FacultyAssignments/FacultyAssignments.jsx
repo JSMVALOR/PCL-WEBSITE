@@ -257,26 +257,32 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
 
     return (
         <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
-            <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
+            <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
                 
                 {/* Header (Hidden if embedded or in subject context) */}
                 {!subjectContext && (
-    <div className="flex justify-between items-center bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-2xl p-4 lg:p-6 mb-2 shadow-sm">
-        <div>
-            <h2 className="text-xl font-bold tracking-tight text-themeText dark:text-white">Assignment Engine</h2>
-            <p className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Manage all offline submissions</p>
+    <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-themeAccent/5 via-transparent to-transparent py-8 shrink-0">
+        <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-themeAccent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
+            <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-themeAccent shadow-sm">
+                    <i className="fa-solid fa-file-signature"></i>
+                </div>
+                <div>
+                    <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Assignment Engine</h1>
+                    <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Manage offline submissions</p>
+                </div>
+            </div>
+            <button type="button" 
+                onClick={() => setShowForm(!showForm)}
+                className={`px-6 py-3 rounded-xl text-white text-[13px] font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${showForm ? 'bg-neutral-600 hover:bg-neutral-700 shadow-neutral-600/20' : 'bg-themeAccent hover:bg-themeAccent/90 shadow-themeAccent/20'}`}
+            >
+                <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-plus'}`}></i> 
+                {showForm ? 'Cancel Creation' : 'New Assignment'}
+            </button>
         </div>
-        <button type="button" 
-        onClick={() => setShowForm(!showForm)}
-        className={`px-6 py-3 rounded-xl text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 shadow-sm ${
-        showForm ? 'bg-neutral-600 hover:bg-neutral-700' : 'bg-amber-500 hover:bg-amber-600'
-        }`}
-        >
-        <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-plus'} text-sm`}></i> 
-        {showForm ? 'Cancel' : 'New Assignment'}
-        </button>
     </div>
- )}
+)}
  
  {subjectContext && (
  <button type="button" 
@@ -289,7 +295,8 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  )}
 
  {/* CREATE FORM */}
- {showForm && (
+ <div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
+{showForm && (
  <div className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
  <div className="flex items-center gap-3 mb-2">
  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: tColor.bg, color: tColor.primary }}>
@@ -497,6 +504,7 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  </div>
  )}
  </div>
+</div>
  </div>
  </div>
  );

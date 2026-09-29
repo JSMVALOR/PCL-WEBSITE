@@ -403,17 +403,29 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
 
  return (
     <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
-        <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
+        <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
             
             {!subjectContext && !isEmbedded && (
-                <PageHeader 
-                    icon="fa-solid fa-file-pen" 
-                    title="Marks & Assignments" 
-                    subtitle="Select a subject to grade active assignments and internal marks." 
-                />
+                <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-emerald-500/5 via-transparent to-transparent py-8 shrink-0">
+    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-emerald-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
+        <div className="flex items-center gap-5">
+            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-emerald-500 shadow-sm">
+                <i className="fa-solid fa-file-pen"></i>
+            </div>
+            <div>
+                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Marks & Assignments</h1>
+                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Grade active assignments & internal marks</p>
+            </div>
+        </div>
+    </div>
+</div>
             )}
+<div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
+<div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
 
-            {students.length > 0 && selectedAssessmentType && (
+            <div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
+{students.length > 0 && selectedAssessmentType && (
                 <div className="flex justify-between items-center bg-themePanel border border-themeBorder p-4 rounded-2xl animate-fade-in">
                     <button onClick={() => { setSelectedAssessmentType(""); setStudents([]); }} className="text-[13px] font-bold text-themeTextSec hover:text-themeText transition-colors flex items-center gap-2">
                         <i className="fa-solid fa-arrow-left"></i> Back to Assignments
@@ -706,6 +718,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
                 </div>
             )}
         </div>
+</div>
+</div>
+</div>
     </div>
  );
 }

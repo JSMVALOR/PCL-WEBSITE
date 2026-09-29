@@ -272,33 +272,39 @@ export default function AdminApprovals({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
  
  {/* Header and Tabs */}
- <PageHeader icon="fa-solid fa-scale-balanced" title="Central Approvals Center" subtitle="Manage student profile changes, mentor requests, faculty leaves, and document verifications." />
+ <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-themeAccent/5 via-transparent to-transparent py-8 shrink-0">
+    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-themeAccent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
+        <div className="flex items-center gap-5">
+            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-themeAccent shadow-sm">
+                <i className="fa-solid fa-scale-balanced"></i>
+            </div>
+            <div>
+                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Central Approvals</h1>
+                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Manage requests, mentors & reschedules</p>
+            </div>
+        </div>
+    </div>
+</div>
  
  {/* Tabs */}
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium">
- <button type="button" 
- onClick={() => setActiveTab('profile_updates')}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'profile_updates' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
- >
- Profile & Mentors
- </button>
- <button type="button" 
- onClick={() => setActiveTab('timetable_reschedules')}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'timetable_reschedules' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
- >
- Timetable Reschedules
- </button>
- <button type="button" 
- onClick={() => setActiveTab('escalated_grievances')}
- className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${activeTab === 'escalated_grievances' ? 'bg-themeAccent text-themeApp border border-themeAccent scale-100 shadow-[0_0_15px_rgba(var(--accent-rgb),0.3)]' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'}`}
- >
- Escalated Grievances
- </button>
- 
- </div>
+ <div className="flex w-full border-b border-black/[0.04] dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6 mt-4">
+    <button type="button" 
+        onClick={() => setActiveTab('profile_updates')}
+        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'profile_updates' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
+    >
+        Profile & Mentors
+    </button>
+    <button type="button" 
+        onClick={() => setActiveTab('timetable_reschedules')}
+        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'timetable_reschedules' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
+    >
+        Timetable Reschedules
+    </button>
+</div>
 
 
  {isLoading ? (
@@ -477,8 +483,8 @@ export default function AdminApprovals({ isEmbedded = false }) {
  )}
 
  </div>
- )}
- </div>
- </div>
+ ) }
+</div>
+</div>
  );
 }

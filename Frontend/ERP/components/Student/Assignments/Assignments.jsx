@@ -161,42 +161,44 @@ export default function Assignments({ isEmbedded = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
 
  {/* ═══════════════ HEADER ═══════════════ */}
- <PageHeader 
- icon="fa-solid fa-file-signature" 
- title="Assignment Portal" 
- subtitle="Draft your coursework and submit securely to faculty." 
- isEmbedded={isEmbedded}
- rightContent={
- <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-2xl w-full lg:w-auto overflow-x-auto no-scrollbar">
- <button type="button"
- onClick={() => setView("pending")}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "pending"
- ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent border border-black/5 dark:border-white/10"
- : "text-themeTextSec opacity-80 hover:text-themeText"
- }`}
- >
- <span className={`w-2 h-2 rounded-full ${view === "pending" && pendingAssignments.length > 0 ? 'bg-rose-500 animate-pulse' : 'bg-neutral-600'}`}></span>
- Pending ({pendingAssignments.length})
- </button>
- <button type="button"
- onClick={() => setView("completed")}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === "completed"
- ? "bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent border border-black/5 dark:border-white/10"
- : "text-themeTextSec opacity-80 hover:text-themeText"
- }`}
- >
- <i className="fa-solid fa-check-double text-[10px]"></i>
- Completed ({completedAssignments.length})
- </button>
- </div>
- }
- />
+ <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-indigo-500/5 via-transparent to-transparent py-8 shrink-0">
+    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+    <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 px-4 lg:px-8">
+        <div className="flex items-center gap-5">
+            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-indigo-500 shadow-sm">
+                <i className="fa-solid fa-file-signature"></i>
+            </div>
+            <div>
+                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Assignment Portal</h1>
+                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Draft & submit coursework</p>
+            </div>
+        </div>
+        
+        <div className="flex w-full xl:w-auto border-b xl:border-b-0 xl:bg-black/5 xl:dark:bg-white/5 xl:border border-black/10 dark:border-white/10 xl:rounded-xl overflow-x-auto no-scrollbar gap-2">
+            <button type="button"
+                onClick={() => setView("pending")}
+                className={`flex-1 xl:flex-none px-6 py-4 xl:py-2.5 rounded-none xl:rounded-lg text-[13px] font-bold tracking-tight transition whitespace-nowrap flex items-center justify-center gap-2 border-b-2 xl:border-b-0 ${view === "pending" ? "text-indigo-600 border-indigo-600 xl:bg-white xl:dark:bg-themeElevated shadow-sm" : "text-themeTextSec border-transparent hover:text-themeText"}`}
+            >
+                <span className={`w-2 h-2 rounded-full ${view === "pending" && pendingAssignments.length > 0 ? 'bg-rose-500 animate-pulse' : 'bg-neutral-600'}`}></span>
+                Pending ({pendingAssignments.length})
+            </button>
+            <button type="button"
+                onClick={() => setView("completed")}
+                className={`flex-1 xl:flex-none px-6 py-4 xl:py-2.5 rounded-none xl:rounded-lg text-[13px] font-bold tracking-tight transition whitespace-nowrap flex items-center justify-center gap-2 border-b-2 xl:border-b-0 ${view === "completed" ? "text-indigo-600 border-indigo-600 xl:bg-white xl:dark:bg-themeElevated shadow-sm" : "text-themeTextSec border-transparent hover:text-themeText"}`}
+            >
+                <i className="fa-solid fa-check-circle"></i>
+                Completed
+            </button>
+        </div>
+    </div>
+</div>
 
  {/* ═══════════════ PENDING VIEW ═══════════════ */}
- {view === "pending" && (
+ <div className={`flex flex-col p-4 sm:p-6 lg:p-10 gap-8 lg:gap-12 ${isEmbedded ? "p-0" : ""}`}>
+{view === "pending" && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 animate-fade-in">
  {pendingAssignments.length === 0 ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
@@ -404,5 +406,6 @@ export default function Assignments({ isEmbedded = false }) {
  )}
  </div>
  </div>
+</div>
  );
 }
