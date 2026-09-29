@@ -55,7 +55,7 @@ export default function FacultyWebClock() {
                 late_minutes: lateMins
             };
 
-            const { data, error } = await supabase.from('faculty_daily_presence').insert([payload]).select().single();
+            const { data, error } = await supabase.from('faculty_daily_presence').upsert(payload, { onConflict: 'faculty_id,date' }).select().single();
             
             if (error) {
                 // If table doesn't exist, we'll just mock it for UI purposes until DB is synced
@@ -84,8 +84,7 @@ export default function FacultyWebClock() {
 
             const { data, error } = await supabase
                 .from('faculty_daily_presence')
-                .update(payload)
-                .eq('id', attendanceRecord.id)
+                .update(payload).eq('faculty_id', userSession.db_id).eq('date', format(new Date(), 'yyyy-MM-dd'))
                 .select()
                 .single();
             

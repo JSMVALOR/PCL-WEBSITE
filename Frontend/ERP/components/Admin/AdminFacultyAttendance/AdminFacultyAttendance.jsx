@@ -99,7 +99,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             const payload = {
                 faculty_id: facultyId,
                 date: selectedDate,
-                status: status,
+                status: newStatus,
                 // if they are marked absent, we count the full day as late_minutes so payroll deducts it
                 // OR we just rely on the status 'absent' in the payroll module.
             };
@@ -112,7 +112,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                 // If the constraint isn't set up, fallback to simple insert/update manually
                 const { data: existing } = await supabase.from('faculty_daily_presence').select('id').eq('faculty_id', facultyId).eq('date', selectedDate).maybeSingle();
                 if (existing) {
-                    await supabase.from('faculty_daily_presence').update({ status }).eq('id', existing.id);
+                    await supabase.from('faculty_daily_presence').update({ status: newStatus }).eq('id', existing.id);
                 } else {
                     await supabase.from('faculty_daily_presence').insert([payload]);
                 }
