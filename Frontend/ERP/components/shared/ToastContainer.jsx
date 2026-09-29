@@ -10,6 +10,7 @@ export default function ToastContainer() {
         registerToastContainer((toast) => {
             setToasts(prev => [...prev, toast]);
         });
+        return () => registerToastContainer(null);
     }, []);
 
     const removeToast = useCallback((id) => {

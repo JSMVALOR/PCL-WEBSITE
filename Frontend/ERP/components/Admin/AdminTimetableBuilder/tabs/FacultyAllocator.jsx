@@ -53,14 +53,19 @@ export default function FacultyAllocator() {
     }, [selectedBatchId, batches]);
 
     const handleAssign = async (masterId, facultyId) => {
-        const existing = cohortSubjects.find(c => c.master_subject_id === masterId);
-        
+        if (!masterId) return;
+
         try {
-            const master = masterSubjects.find(m => m.id === masterId);
+            const existing = cohortSubjects.find(cs => cs.master_subject_id === masterId);
+            const master = masterSubjects.find(s => s.id === masterId);
             const batch = batches.find(b => b.id === selectedBatchId);
             const newName = faculties.find(f => f.id === facultyId)?.full_name || 'Unassigned';
             
-            // If picking a brand new assignment or overwriting an existing one to a new faculty
+            // Backup the original faculty_id for undo purposes
+            const originalFacultyId = existing ? existing.faculty_id : null;
+            const originalExistingId = existing ? existing.id : null;
+
+            // Confirmations
             if (facultyId && (!existing || existing.faculty_id !== facultyId)) {
                 const confirmed = await window.erpDialog?.confirm(
                     `You are about to formally bind ${newName} to ${master?.name}. This action will automatically update their academic dashboard and dispatch an official allocation notice. Proceed?`, 
@@ -83,6 +88,7 @@ export default function FacultyAllocator() {
                 }
             }
 
+            // Perform DB action
             if (existing) {
                 if (!facultyId) {
                     const { error } = await supabase.from('cohort_subjects').delete().eq('id', existing.id);
@@ -94,35 +100,63 @@ export default function FacultyAllocator() {
             } else if (facultyId) {
                 const { error } = await supabase.from('cohort_subjects').insert([{
                     master_subject_id: masterId,
-                    batch_id: selectedBatchId,
-                    faculty_id: facultyId
+                    faculty_id: facultyId,
+                    batch_id: selectedBatchId
                 }]);
                 if (error) throw error;
             }
-            
-            // Dual-Mail Dispatch System
-            if (existing && existing.faculty_id && facultyId && existing.faculty_id !== facultyId) {
-                // CASE 1: True Reassignment (Swap)
-                const oldName = faculties.find(f => f.id === existing.faculty_id)?.full_name || 'Unknown';
-                window.erpDialog?.alert(`✅ Reassignment Complete. Automated emails have been dispatched to both ${oldName} and ${newName}.`);
-            } 
-            else if (existing && existing.faculty_id && !facultyId) {
-                // CASE 2: Unassigned Completely
-                const oldName = faculties.find(f => f.id === existing.faculty_id)?.full_name || 'Unknown';
-                window.erpDialog?.alert(`✅ Revocation Confirmed. An automated notification email has been dispatched to ${oldName}.`);
-            } 
-            else if (facultyId && (!existing || !existing.faculty_id)) {
-                // CASE 3: Brand New Assignment
-                window.erpDialog?.alert(`Faculty allocation securely recorded. The academic feeds have been seamlessly synchronized.`);
-            }
-            
-            // Force completely fresh fetch to guarantee state sync
+
+            // Force completely fresh fetch
             const { data: freshData } = await supabase.from('cohort_subjects').select('*').eq('batch_id', selectedBatchId);
             setCohortSubjects(freshData || []);
-            
+
+            // Toasts and Undo
+            if (!facultyId && existing) {
+                // Unassigned
+                if (window.erpToast?.undoable) {
+                    window.erpToast.undoable(
+                        `Unassigned ${master?.name}.`,
+                        () => {},
+                        async () => {
+                            await supabase.from('cohort_subjects').insert([{
+                                id: originalExistingId,
+                                master_subject_id: masterId,
+                                faculty_id: originalFacultyId,
+                                batch_id: selectedBatchId
+                            }]);
+                            const { data: fData } = await supabase.from('cohort_subjects').select('*').eq('batch_id', selectedBatchId);
+                            setCohortSubjects(fData || []);
+                            window.erpToast.show(`Restored ${master?.name} assignment.`, "success");
+                        }
+                    );
+                } else {
+                    window.erpToast?.show(`Unassigned ${master?.name} successfully.`, "success");
+                }
+            } else if (facultyId) {
+                // Assigned or Changed
+                if (window.erpToast?.undoable && existing) {
+                    window.erpToast.undoable(
+                        `Changed ${master?.name} to ${newName}.`,
+                        () => {},
+                        async () => {
+                            if (originalFacultyId) {
+                                await supabase.from('cohort_subjects').update({ faculty_id: originalFacultyId }).eq('id', originalExistingId);
+                            } else {
+                                await supabase.from('cohort_subjects').delete().eq('master_subject_id', masterId).eq('batch_id', selectedBatchId);
+                            }
+                            const { data: fData } = await supabase.from('cohort_subjects').select('*').eq('batch_id', selectedBatchId);
+                            setCohortSubjects(fData || []);
+                            window.erpToast.show("Assignment change undone.", "success");
+                        }
+                    );
+                } else {
+                    window.erpToast?.show(`Officially assigned ${newName} to ${master?.name}.`, "success");
+                }
+            }
+
         } catch (err) {
             console.error("Assignment Error:", err);
-            window.erpDialog?.alert(`Failed to assign faculty: ${err.message}`);
+            window.erpToast?.show(`Failed to update allocation: ${err.message}`, "error");
         }
     };
 

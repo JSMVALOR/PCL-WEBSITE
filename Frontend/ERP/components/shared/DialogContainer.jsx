@@ -15,6 +15,7 @@ export default function DialogContainer() {
 
     useEffect(() => {
         registerDialogContainer(setDialogState);
+        return () => registerDialogContainer(null);
     }, []);
 
     const isConfirm = dialogState.type === 'confirm';
