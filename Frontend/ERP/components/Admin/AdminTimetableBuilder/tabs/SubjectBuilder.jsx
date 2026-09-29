@@ -103,14 +103,43 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             if (error) throw error;
             resetForm();
             fetchData();
-            window.erpDialog?.alert(`✅ Master Syllabus ${editingId ? 'Updated' : 'Deployed'}`);
+            window.erpToast?.show(`Master Syllabus ${editingId ? "Updated" : "Deployed"} Successfully`, "success");
         } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
     };
 
     const handleDelete = async (id) => {
-        
+        // Find the subject before deleting so we can undo
+        const sub = subjects.find(s => s.id === id);
+        if (!sub) return;
+
+        // Perform deletion
         await supabase.from('master_subjects').delete().eq('id', id);
         fetchData();
+
+        // Show undoable toast
+        if (window.erpToast?.undoable) {
+            window.erpToast.undoable(
+                `Subject "${sub.name}" deleted.`,
+                () => {}, // Execute is already done
+                async () => {
+                    // Undo function: re-insert the subject
+                    await supabase.from('master_subjects').insert([{
+                        id: sub.id,
+                        code: sub.code,
+                        name: sub.name,
+                        credits: sub.credits,
+                        target_semester: sub.target_semester,
+                        theme_color: sub.theme_color,
+                        program_id: sub.program_id,
+                        syllabus: sub.syllabus
+                    }]);
+                    fetchData();
+                    window.erpToast.show(`Subject "${sub.name}" restored.`, 'success');
+                }
+            );
+        } else if (window.erpToast) {
+            window.erpToast.show("Subject deleted successfully.", "success");
+        }
     };
 
     return (
