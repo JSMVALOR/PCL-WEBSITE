@@ -6,14 +6,14 @@ import { useERP } from "../../../context/ErpContext";
 export default function AppearanceSettings() {
     const { activeTheme, changeTheme, navLayout, changeNavLayout, sidebarMode, changeSidebarMode } = useERP();
 
-    const themes = [
-        { id: 'apple-hig-light', name: 'Cupertino Glass', desc: 'Native Apple Aesthetic', icon: 'fa-apple', gradient: 'bg-gradient-to-br from-[#F2F2F7] via-white to-[#E5E5EA]', accent: 'bg-[#007AFF]' },
-        { id: 'dark-luxury', name: 'Obsidian Glass', desc: 'Ultra-Dark Slate & Gold', icon: 'fa-moon', gradient: 'bg-gradient-to-br from-neutral-800 via-[#0a0a0a] to-black', accent: 'bg-[#D4AF37]' },
-        { id: 'marble-executive', name: 'Arctic Frost', desc: 'Bright Crystal & Blue', icon: 'fa-sun', gradient: 'bg-gradient-to-br from-slate-50 via-white to-slate-200', accent: 'bg-[#1E3A8A]' },
-        { id: 'midnight-justice', name: 'Midnight Sapphire', desc: 'Deep Ocean & Platinum', icon: 'fa-cloud-moon', gradient: 'bg-gradient-to-br from-slate-800 via-[#0B1120] to-blue-950', accent: 'bg-[#E2E8F0]' },
-        { id: 'emerald-chancery', name: 'Emerald Prism', desc: 'Abyssal Green & Brass', icon: 'fa-tree', gradient: 'bg-gradient-to-br from-[#0a1f18] via-[#061410] to-black', accent: 'bg-[#CBA86B]' },
-        { id: 'crimson-advocate', name: 'Ruby Quartz', desc: 'Smoked Crimson', icon: 'fa-droplet', gradient: 'bg-gradient-to-br from-[#1a0a0a] via-[#110707] to-black', accent: 'bg-[#FCA5A5]' },
-        { id: 'imperial-crown', name: 'Amethyst Shard', desc: 'Violet Glass & Gold', icon: 'fa-crown', gradient: 'bg-gradient-to-br from-[#1a0f2e] via-[#0B0710] to-black', accent: 'bg-[#FDE047]' }
+        const themes = [
+        { id: 'apple-hig-light', name: 'Pristine Alabaster', desc: 'Clean White & Red', icon: 'fa-sun', gradient: 'bg-gradient-to-br from-white via-white to-gray-100', accent: 'bg-[#E11D48]' },
+        { id: 'midnight-justice', name: 'Obsidian Crimson', desc: 'Deep Black & Red', icon: 'fa-moon', gradient: 'bg-gradient-to-br from-black via-zinc-900 to-black', accent: 'bg-[#DC2626]' },
+        { id: 'marble-executive', name: 'Nordic Slate', desc: 'Cool Slate & Rose', icon: 'fa-cloud-moon', gradient: 'bg-gradient-to-br from-slate-800 via-[#0B1120] to-slate-900', accent: 'bg-[#EF4444]' },
+        { id: 'emerald-chancery', name: 'Rosewood Executive', desc: 'Warm White & Mahogany', icon: 'fa-leaf', gradient: 'bg-gradient-to-br from-red-50 via-white to-orange-50', accent: 'bg-[#991B1B]' },
+        { id: 'crimson-advocate', name: 'Velvet Midnight', desc: 'Deep Plum & Ruby', icon: 'fa-gem', gradient: 'bg-gradient-to-br from-[#2E0A16] via-[#1A050C] to-black', accent: 'bg-[#FDA4AF]' },
+        { id: 'imperial-crown', name: 'Autumn Hearth', desc: 'Warm Sand & Orange', icon: 'fa-fire', gradient: 'bg-gradient-to-br from-orange-50 via-orange-100 to-orange-200', accent: 'bg-[#EA580C]' },
+        { id: 'structural-neo-brutalism', name: 'Neo-Brutalism', desc: 'High Contrast Red', icon: 'fa-cube', gradient: 'bg-white', accent: 'bg-[#FF0000]' }
     ];
 
     return (

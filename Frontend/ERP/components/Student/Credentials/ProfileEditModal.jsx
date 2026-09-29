@@ -184,6 +184,20 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  .single();
 
  if (error) throw error;
+
+                // Notify Admins
+                const { data: adminProfiles } = await supabase.from('profiles').select('id').eq('role', 'admin');
+                if(adminProfiles && adminProfiles.length > 0) {
+                    const notifs = adminProfiles.map(admin => ({
+                        recipient_id: admin.id,
+                        title: 'Profile Update Request',
+                        message: `${profileData.full_name || 'A student'} has requested a profile update.`,
+                        type: 'system',
+                        action_link: 'adminapprovals'
+                    }));
+                    await supabase.from('notifications').insert(notifs);
+                }
+
  window.erpDialog?.alert('Profile update request submitted for admin approval.');
  onSubmit(data, false);
  }
