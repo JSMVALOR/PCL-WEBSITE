@@ -9,6 +9,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon } from '@hugeicons/core-free-icons';
 import { useERP } from "../../context/ErpContext";
 import { theme } from '../../../Shared/theme';
+import PageHeader from "../shared/PageHeader/PageHeader";
 
 export default function EventsBoard() {
     const { userSession, events, addEvent, deleteEvent, updateEventGallery } = useERP();
@@ -96,40 +97,21 @@ export default function EventsBoard() {
     return (
         <div className="w-full flex flex-col gap-6 lg:gap-8 animate-[fadeIn_0.4s_ease-out]">
             {/* 1. HEADER BANNER */}
-            <div className="relative w-full overflow-hidden border border-black/[0.04] dark:border-white/[0.08] bg-gradient-to-r from-purple-500/5 via-transparent to-transparent py-8 rounded-3xl shrink-0">
-                <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-purple-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-2 md:px-6">
-                    <div className="flex items-center gap-5">
-                        <div className={`w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl shadow-sm ${currentTheme.iconBox}`}>
-                            <i className="fa-solid fa-calendar-star"></i>
-                        </div>
-                        <div>
-                            <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">College Events</h1>
-                            <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Upcoming & Past Campus Activities</p>
-                        </div>
-                    </div>
-                    {canCreate && (
-                        <button type="button"
-                            onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-purple-600 text-white px-6 py-3.5 rounded-xl font-bold text-[13px] tracking-wide hover:bg-purple-700 transition-colors flex items-center gap-2 shadow-lg shadow-purple-600/20"
-                        >
-                            <i className="fa-solid fa-calendar-plus"></i> Add Event
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            {/* 1.5 ACTION REQUIRED BANNER */}
-            {canCreate && events.some(e => new Date(e.event_date) < new Date() && (!e.image_urls || e.image_urls.length === 0)) && (
-                <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 animate-pulse">
-                    <div className="flex items-center gap-3">
-                        <i className="fa-solid fa-triangle-exclamation text-rose-500 text-xl"></i>
-                        <div>
-                            <h3 className="text-rose-500 font-bold text-sm tracking-wide">Action Required: Upload Event Photos</h3>
-                            <p className="text-themeTextSec text-xs">You have past events missing photo galleries. Click on a past event below to upload photos.</p>
-                        </div>
-                    </div>
-                </div>
+            <div className="w-full mb-2">
+    <PageHeader 
+        icon="fa-solid fa-calendar-star" 
+        title="College Events" 
+        subtitle="Upcoming & Past Campus Activities" 
+        rightContent={canCreate ? (
+            <button type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-purple-600 text-white px-6 py-3.5 rounded-xl font-bold text-[13px] tracking-wide hover:bg-purple-700 transition-colors flex items-center gap-2 shadow-lg shadow-purple-600/20"
+            >
+                <i className="fa-solid fa-plus"></i> New Event
+            </button>
+        ) : null}
+    />
+</div>
             )}
 
             {/* 2. EVENTS GRID */}

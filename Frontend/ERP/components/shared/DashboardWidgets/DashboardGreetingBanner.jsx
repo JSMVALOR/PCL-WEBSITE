@@ -35,24 +35,22 @@ export default function DashboardGreetingBanner({ role = 'student' }) {
         return <i className="fa-solid fa-graduation-cap text-emerald-500"></i>;
     };
 
-    return (
+        return (
         <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full flex items-center justify-between relative overflow-hidden group pb-3 sm:pb-4 border-b border-black/[0.04] dark:border-white/[0.04]"
+            className={`flex flex-col md:flex-row md:items-center justify-between gap-6 bg-themePanel/85 backdrop-blur-2xl border border-themeBorder shadow-premium rounded-themePanel p-4 md:p-6 lg:p-8 w-full z-10`}
         >
-            <div className="flex items-center gap-4 sm:gap-6 z-10 w-full">
-                {/* Left Insignia Box - Kept for accent, but made more subtle */}
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-black/5 dark:bg-white/5 text-themeTextSec flex items-center justify-center text-xl sm:text-2xl shrink-0">
-                    {getRoleInsignia()}
+            <div className="flex items-center gap-5 w-full">
+                <div className="w-14 h-14 lg:w-16 lg:h-16 bg-themeAccent/10 border border-themeAccent/20 rounded-xl flex items-center justify-center text-themeAccent text-2xl lg:text-3xl shrink-0 shadow-sm backdrop-blur-xl">
+                    <i className={`fa-solid ${icon}`}></i>
                 </div>
 
-                {/* Text Content */}
                 <div className="flex flex-col flex-1 min-w-0">
-                    <h1 className="text-2xl sm:text-4xl font-black text-themeText tracking-tight flex items-center gap-2 flex-wrap leading-none">
+                    <h1 className="text-[22px] lg:text-[28px] font-bold text-themeText mb-0.5 tracking-tight leading-tight flex items-center gap-2 flex-wrap">
                         {greeting}, <span className="text-themeAccent truncate">{userName}</span>
                     </h1>
-                    <p className="text-[10px] sm:text-xs font-bold text-themeTextSec uppercase tracking-widest mt-1.5 sm:mt-2 opacity-80 truncate">
+                    <p className="text-themeTextSec text-[13px] lg:text-[14px] font-medium tracking-tight truncate">
                         {subtitle}
                     </p>
                 </div>

@@ -150,20 +150,13 @@ export default function AdminMarksController() {
     return (
         <div className="w-full animate-fade-in pb-12 font-sans bg-themeApp min-h-screen text-themeText">
             <div className="w-full mx-auto pb-10">
-                <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-themeAccent/5 via-transparent to-transparent py-8 shrink-0">
-    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-themeAccent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
-        <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-themeAccent shadow-sm">
-                <i className="fa-solid fa-building-columns"></i>
-            </div>
-            <div>
-                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">OU Marks Dispatcher</h1>
-                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Track faculty submissions & generate exports</p>
-            </div>
-        </div>
+                <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
+        <PageHeader 
+            icon="fa-solid fa-building-columns" 
+            title="OU Marks Dispatcher" 
+            subtitle="Track faculty submissions & generate exports" 
+        />
     </div>
-</div>
 
                 <div className="px-4 lg:px-8"><div className="flex border-b border-themeBorder/50 mb-8 mt-6 overflow-x-auto no-scrollbar">
                     <button onClick={() => setActiveTab("submissions")} className={`px-6 py-4 text-sm font-bold tracking-widest uppercase transition border-b-2 whitespace-nowrap ${activeTab === "submissions" ? "border-themeAccent text-themeText" : "border-transparent text-themeTextSec hover:text-themeText"}`}>
