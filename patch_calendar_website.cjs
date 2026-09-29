@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+
+const content = `import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import SEO from '../../../components/SEO/SEO';
 import Navbar from '../Navbar';
@@ -66,7 +68,7 @@ export default function AcademicCalendar() {
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
             doc.text("ACADEMIC CALENDAR", 40, 75);
-            doc.text(`Generated: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.width - 40, 75, { align: 'right' });
+            doc.text(\`Generated: \${new Date().toLocaleDateString()}\`, doc.internal.pageSize.width - 40, 75, { align: 'right' });
 
             // Table Body
             const headers = [calendarData.columns];
@@ -181,7 +183,7 @@ export default function AcademicCalendar() {
                                             calendarData.rows.map((row, idx) => (
                                                 <tr key={row.id} className="group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
                                                     {calendarData.columns.map((col, cIdx) => (
-                                                        <td key={col} className={`px-6 py-5 text-[var(--text-primary)] ${cIdx === 0 ? 'font-bold' : ''}`}>
+                                                        <td key={col} className={\`px-6 py-5 text-[var(--text-primary)] \${cIdx === 0 ? 'font-bold' : ''}\`}>
                                                             {row.data[col] || '-'}
                                                         </td>
                                                     ))}
@@ -200,3 +202,6 @@ export default function AcademicCalendar() {
         </div>
     );
 }
+`;
+fs.writeFileSync('Frontend/Website/components/NAVBAR/ACADEMICS/AcademicCalendar.jsx', content);
+console.log("Website calendar patched.");
