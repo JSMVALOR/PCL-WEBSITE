@@ -112,7 +112,6 @@ export default function EventsBoard() {
         ) : null}
     />
 </div>
-            )}
 
             {/* 2. EVENTS GRID */}
             {(!events || events.length === 0) ? (

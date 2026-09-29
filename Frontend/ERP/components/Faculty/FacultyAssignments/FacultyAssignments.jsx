@@ -267,7 +267,241 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
             icon="fa-solid fa-file-signature" 
             title="Assignment Engine" 
             subtitle="Manage offline submissions" 
+            rightContent={
+                <button type="button" 
+                    onClick={() => setShowForm(!showForm)}
+                    className={`px-6 py-3 rounded-xl text-white text-[13px] font-bold transition-all shadow-lg flex items-center justify-center gap-2 ${showForm ? 'bg-neutral-600 hover:bg-neutral-700 shadow-neutral-600/20' : 'bg-themeAccent hover:bg-themeAccent/90 shadow-themeAccent/20'}`}
+                >
+                    <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-plus'}`}></i> 
+                    {showForm ? 'Cancel Creation' : 'New Assignment'}
+                </button>
+            }
         />
     </div>
+)}
+ 
+ {subjectContext && (
+ <button type="button" 
+ onClick={() => setShowForm(!showForm)}
+ className={`px-6 py-3 w-fit rounded-xl text-white text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 ${showForm ? "bg-neutral-600" : ""}`} style={{ backgroundColor: !showForm ? tColor.primary : undefined }}
+ >
+ <i className={`fa-solid ${showForm ? 'fa-xmark' : 'fa-plus'} text-sm`}></i> 
+ {showForm ? 'Cancel' : 'New Assignment'}
+ </button>
+ )}
+
+ {/* CREATE FORM */}
+ <div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
+{showForm && (
+ <div className="bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
+ <div className="flex items-center gap-3 mb-2">
+ <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: tColor.bg, color: tColor.primary }}>
+ <i className="fa-solid fa-file-signature"></i>
+ </div>
+ <div>
+ <h2 className="text-xl font-semibold tracking-tight text-themeText dark:text-white">{formData.id ? 'Edit Assignment' : 'Issue New Assignment'}</h2>
+ <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50 tracking-normal mt-0.5">Offline Submission Tracker</p>
+ </div>
+ </div>
+
+ <form onSubmit={handlePublish} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+ {!subjectContext && (
+ <div className="flex flex-col gap-2">
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Subject *</label>
+ <select autoComplete="off" className="!bg-transparent backdrop-blur-xl border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:ring-0 focus:border-amber-500 transition-colors appearance-none"
+ value={formData.subject_id}
+ onChange={(e) => setFormData({...formData, subject_id: e.target.value})}
+ required
+ >
+ <option value="">Select Subject</option>
+ {subjects.map(s => (
+ <option key={s.id} value={s.id}>{s.code} - {s.name}</option>
+ ))}
+ </select>
+ </div>
+ )}
+
+ {!subjectContext && (
+    <div className="flex flex-col gap-2">
+        <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Target Batch *</label>
+        <select autoComplete="off" className="!bg-transparent backdrop-blur-xl border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText outline-none focus:ring-0 focus:border-amber-500 transition-colors appearance-none"
+            value={formData.batch}
+            onChange={(e) => setFormData({...formData, batch: e.target.value})}
+            required
+        >
+            <option value="">Select Batch</option>
+            {availableBatches.map(b => (
+                <option key={b} value={b}>{b}</option>
+            ))}
+        </select>
+    </div>
+ )}
+
+ {/* Submission Type */}
+ <div className="flex flex-col gap-2">
+    <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Submission Type *</label>
+    <div className="flex bg-black/5 dark:bg-themePanel backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-xl p-1">
+        <button type="button" onClick={() => setFormData({...formData, submission_type: 'offline'})} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors ${formData.submission_type === 'offline' ? 'bg-amber-500 text-white shadow-sm' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5'}`}>Offline</button>
+        <button type="button" onClick={() => setFormData({...formData, submission_type: 'online'})} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors ${formData.submission_type === 'online' ? 'bg-indigo-500 text-white shadow-sm' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5'}`}>Online (ERP)</button>
+    </div>
+ </div>
+
+ {formData.submission_type === 'online' && (
+     <div className="flex flex-col gap-2 md:col-span-1">
+         <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Word Limit *</label>
+         <input 
+             type="number"
+             min="10"
+             max="5000"
+             className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
+             value={formData.word_limit}
+             onChange={(e) => setFormData({...formData, word_limit: e.target.value})}
+             required={formData.submission_type === 'online'}
+         />
+         <p className="text-[10px] text-themeTextSec px-1">Note: Limit should not cross ~3000 words.</p>
+     </div>
+ )}
+
+ {/* Title */}
+ <div className="flex flex-col gap-2 md:col-span-2">
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Assignment Title *</label>
+ <input 
+ type="text"
+ className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
+ placeholder="e.g., Constitutional Law Research Paper"
+ value={formData.title}
+ onChange={(e) => setFormData({...formData, title: e.target.value})}
+ required
+ />
+ </div>
+
+ {/* Description */}
+ <div className="flex flex-col gap-2 md:col-span-2">
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Instructions / Description</label>
+ <textarea 
+ className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors resize-none h-24"
+ placeholder="Optional instructions for the batch..."
+ value={formData.description}
+ onChange={(e) => setFormData({...formData, description: e.target.value})}
+ />
+ </div>
+
+ {/* Total Marks */}
+ <div className="flex flex-col gap-2">
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Max Marks *</label>
+ <input 
+ type="number"
+ min="1"
+ className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors"
+ value={formData.total_marks}
+ onChange={(e) => setFormData({...formData, total_marks: e.target.value})}
+ required
+ />
+ </div>
+
+ {/* Due Date */}
+ <div className="flex flex-col gap-2">
+ <label className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Offline Due Date *</label>
+ <input 
+ type="date"
+    className="bg-transparent border-b-2 border-black/10 dark:border-white/10 px-0 py-2.5 hover:border-black/20 focus:border-amber-500 rounded-none text-sm font-bold text-themeText dark:text-white outline-none focus:ring-0 focus:border-amber-500 dark:focus:border-amber-500 transition-colors [color-scheme:dark] cursor-pointer"
+    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+    onKeyDown={(e) => e.preventDefault()}
+ value={formData.due_date}
+ onChange={(e) => setFormData({...formData, due_date: e.target.value})}
+ required
+ />
+ </div>
+
+ <div className="md:col-span-2 pt-4">
+ <button 
+ type="submit"
+ disabled={isSubmitting}
+ className="btn-erp disabled:cursor-not-allowed"
+ >
+ {isSubmitting ? 'Saving...' : (formData.id ? 'Save Changes' : 'Issue Assignment')}
+ </button>
+ </div>
+ </form>
+ </div>
+ )}
+
+    {/* ASSIGNMENTS LIST */}
+    <div className="flex flex-col gap-6 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-3xl p-6 lg:p-8">
+        <h2 className="text-xl font-bold tracking-tight text-themeText dark:text-white flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center">
+                <i className="fa-solid fa-list-check text-sm"></i>
+            </div>
+            Active Assignments
+        </h2>
+        
+        {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).length === 0 ? (
+            <div className="w-full py-16 flex flex-col items-center justify-center bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl text-center px-4 border border-black/5 dark:border-white/5 border-dashed">
+ <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
+ <h3 className="text-lg lg:text-xl text-themeText font-black">No Assignments Issued</h3>
+ <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
+ </div>
+ ) : (
+ <div className="flex flex-col">
+ {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).map(assign => {
+ const dueDate = new Date(assign.due_date);
+ const isPastDue = dueDate < new Date();
+ 
+ return (
+ <div key={assign.id} className="py-5 border-b border-black/5 dark:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors flex flex-col gap-4 group px-4">
+ 
+ <div className="flex justify-between items-start">
+ <div>
+ <div className="flex items-center gap-2 mb-2">
+ <span className={`px-2 py-0.5 rounded text-[12px] font-medium ${isPastDue ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
+ {isPastDue ? 'Past Due' : 'Active'}
+ </span>
+ <span className="bg-indigo-500/10 text-indigo-500 px-2 py-0.5 rounded text-[12px] font-medium ml-2 uppercase tracking-wide">
+    {assign.submission_type === 'online' ? 'ONLINE' : 'OFFLINE'}
+ </span>
+ {assign.updated_at && <span className="text-[10px] font-bold text-themeTextSec bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded ml-2">Edited: {new Date(assign.updated_at).toLocaleDateString()} {new Date(assign.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>}
+ <span className="bg-black/5 dark:bg-white/5 backdrop-blur-xl px-2 py-0.5 rounded text-[12px] font-medium text-themeTextSec dark:text-white/50">
+ {assign.batch}
+ </span>
+ </div>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText dark:text-white leading-tight">{assign.title}</h3>
+ <p className="text-[11px] font-bold text-themeTextSec dark:text-white/50 mt-1">{assign.subject?.code} - {assign.subject?.name}</p>
+ </div>
+ 
+ <div className="flex gap-2">
+    <button onClick={() => { setFormData({ id: assign.id, subject_id: assign.subject_id, batch: assign.batch, title: assign.title, description: assign.description, total_marks: assign.total_marks, due_date: assign.due_date, submission_type: assign.submission_type || 'offline', word_limit: assign.word_limit || 3000 }); setShowForm(true); }} className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10 hover:bg-amber-500/10 text-themeTextSec hover:text-amber-500 transition">
+        <i className="fa-solid fa-pen text-xs"></i>
+    </button>
+    <HoldButton size="sm" onHold={() => handleDelete(assign.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
+</div>
+ </div>
+ 
+ {assign.description && (
+ <p className="text-xs text-themeTextSec dark:text-white/50 line-clamp-2 leading-relaxed bg-black/5 dark:bg-white/5 backdrop-blur-xl/50 p-3 rounded-xl border border-black/5 dark:border-white/5/50">
+ {assign.description}
+ </p>
+ )}
+ 
+ <div className="flex items-center justify-between mt-auto pt-2 border-t border-black/5 dark:border-white/5/50">
+ <div className="flex items-center gap-2 text-themeTextSec dark:text-white/50">
+ <i className="fa-regular fa-calendar text-sm"></i>
+ <span className="text-[13px] font-medium">
+ Due {dueDate.toLocaleDateString()}
+ </span>
+ </div>
+ <div className="flex items-center gap-2 text-themeText dark:text-white">
+ <i className="fa-solid fa-star text-amber-500 text-sm"></i>
+ <span className="text-[14px] font-medium">{assign.total_marks} Marks</span>
+ </div>
+ </div>
+ </div>
+ )
+ })}
+ </div>
+ )}
+ </div>
+</div>
+ </div>
+ </div>
  );
 }
