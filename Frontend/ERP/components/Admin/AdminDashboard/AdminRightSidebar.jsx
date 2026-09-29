@@ -36,7 +36,7 @@ export default function AdminRightSidebar({ setActiveTab }) {
  </div>
 
  {/* Notices Carousel */}
- <div className="w-full relative h-[360px]">
+ <div className="w-full relative h-[320px] overflow-hidden rounded-2xl">
     <UpdatesCarousel userSession={userSession} notices={notices || []} onNoticesClick={() => setActiveTab('notices')} />
  </div>
 

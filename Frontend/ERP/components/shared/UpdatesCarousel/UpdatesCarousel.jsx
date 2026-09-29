@@ -59,7 +59,7 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
     }, [slides.length]);
 
     return (
-        <div className="flex-1 w-full relative h-full group min-w-[280px] lg:max-w-[400px]">
+        <div className="flex-1 w-full relative h-full group min-w-0 overflow-hidden rounded-2xl border border-black/5 dark:border-white/5">
             <div 
                 className="w-full h-full flex transition-transform duration-700 ease-in-out"
                 style={{ transform: `translateX(-${activeIndex * 100}%)` }}
@@ -68,7 +68,7 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
             </div>
 
             {slides.length > 1 && (
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-gray-50 dark:bg-black/20 dark:bg-white/20 backdrop-blur-xl px-3 py-1.5 rounded-full">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20 bg-black/30 backdrop-blur-xl px-3 py-1.5 rounded-full">
                     {slides.map((_, idx) => (
                         <button type="button" 
                             key={idx}
