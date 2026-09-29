@@ -179,24 +179,7 @@ export default function EventsBoard({ isDashboardWidget = false }) {
                 )}
             </div>
 
-            {showSuccessModal && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
-                    <div className="bg-white dark:bg-themePanel/95 backdrop-blur-3xl border border-black/5 dark:border-white/10 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center transform animate-fade-in-up">
-                        <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
-                            <i className="fa-solid fa-check"></i>
-                        </div>
-                        <h3 className="text-xl font-bold text-themeText mb-2">Success!</h3>
-                        <p className="text-themeTextSec text-sm mb-6">Event published successfully to the calendar.</p>
-                        <button 
-                            type="button"
-                            onClick={() => setShowSuccessModal(false)}
-                            className="w-full bg-themeAccent hover:bg-themeAccent/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-themeAccent/20"
-                        >
-                            Continue
-                        </button>
-                    </div>
-                </div>
-            )}
+            
         </div>
     );
 }

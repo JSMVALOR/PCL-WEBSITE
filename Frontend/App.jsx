@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import { Routes, Route, useLocation } from 'react-router-dom';
 import SEO from './Website/components/SEO/SEO';
@@ -43,6 +43,11 @@ import CookieConsent from './Website/components/LEGAL/CookieConsent';
 import WebsiteTracker from './Website/components/UI/WebsiteTracker';
 
 function App() {
+  // Clear any ERP themes that might bleed into the main website
+  useEffect(() => {
+    document.documentElement.removeAttribute('data-theme');
+  }, []);
+
   const location = useLocation();
   const isHome = location.pathname === '/';
 
