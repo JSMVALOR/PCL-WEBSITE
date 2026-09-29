@@ -304,6 +304,18 @@ export default function AdminApprovals({ isEmbedded = false }) {
     >
         Timetable Reschedules
     </button>
+    <button type="button" 
+        onClick={() => setActiveTab('faculty_leaves')}
+        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'faculty_leaves' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
+    >
+        Faculty Leaves
+    </button>
+    <button type="button" 
+        onClick={() => setActiveTab('escalated_grievances')}
+        className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'escalated_grievances' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
+    >
+        Escalated Grievances
+    </button>
 </div>
 
 
@@ -316,14 +328,14 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <div className="relative z-10">
  
  {activeTab === 'faculty_leaves' && (
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+ <div className="flex flex-col">
  {facultyLeaves.length === 0 ? (
  <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending leave requests from Faculty.</p>
  </div>
  ) : (
  facultyLeaves.map(req => (
- <div key={req.id} className={`${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={req.id} className={`py-5 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors px-4`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -338,7 +350,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <span className="bg-themePanel/85 backdrop-blur-2xl border border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec">{req.days} Days</span>
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
+ <div className="py-2">
  <p className="text-xs text-themeText italic">"{req.reason}"</p>
  </div>
 
@@ -374,14 +386,14 @@ export default function AdminApprovals({ isEmbedded = false }) {
  )}
 
  {activeTab === 'escalated_grievances' && (
- <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+ <div className="flex flex-col">
  {grievances.length === 0 ? (
  <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No escalated grievances require admin attention.</p>
  </div>
  ) : (
  grievances.map(g => (
- <div key={g.id} className={"bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={g.id} className={"py-6 px-4 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -395,7 +407,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(g.status)}
  </div>
 
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
+ <div className="py-2">
  <p className="text-xs text-themeText">"{g.description}"</p>
  </div>
 
@@ -428,14 +440,14 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
  )}
  {activeTab === 'profile_updates' && (
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+ <div className="flex flex-col">
  {profileUpdates.length === 0 ? (
  <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending profile update requests.</p>
  </div>
  ) : (
  profileUpdates.map(req => (
- <div key={req.id} className={"bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl border-amber-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={req.id} className={"py-6 px-4 border-b border-black/5 dark:border-white/10 flex flex-col gap-4 relative overflow-hidden group hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -446,7 +458,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  {getStatusBadge(req.status)}
  </div>
  
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-3 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
+ <div className="py-2">
  <p className="text-[13px] font-medium text-themeTextSec mb-2 border-b border-black/5 dark:border-white/10 pb-1">Requested Changes</p>
  <ul className="text-xs text-themeText flex flex-col gap-1.5">
  {req.requested_changes?.phone && <li><span className="text-themeTextSec">Phone:</span> {req.requested_changes.phone}</li>}
