@@ -14,8 +14,7 @@ export default function Notices({ setActiveTab }) {
     const [selectedNotice, setSelectedNotice] = useState(null);
     const [activeFilter, setActiveFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
-    const [acknowledged, setAcknowledged] = useState(new Set());
-    const [saved, setSaved] = useState(new Set());
+        const [saved, setSaved] = useState(new Set());
     const [isBroadcasting, setIsBroadcasting] = useState(false);
 
     // Main Tab State
@@ -107,17 +106,7 @@ export default function Notices({ setActiveTab }) {
                     setNotices(applicableNotices.map(n => ({ ...n, isUnread: true })));
                     
                     // Fetch acknowledgements for this user
-                    if (userSession?.id) {
-                        const { data: ackData } = await supabase
-                            .from('notice_acknowledgements')
-                            .select('notice_id')
-                            .eq('user_id', userSession.db_id);
-                            
-                        if (ackData) {
-                            setAcknowledged(new Set(ackData.map(a => a.notice_id)));
-                        }
-                    }
-                } else {
+                    } else {
                     setNotices([]);
                 }
             } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
@@ -133,24 +122,7 @@ export default function Notices({ setActiveTab }) {
         setSaved(next);
     };
 
-    const handleAcknowledge = async (id) => {
-        if (!userSession?.id) return;
-        
-        try {
-            await supabase.from('notice_acknowledgements').insert([{
-                notice_id: id,
-                user_id: userSession.db_id
-            }]);
-            
-            const next = new Set(acknowledged);
-            next.add(id);
-            setAcknowledged(next);
-            
-            // Remove unread dot visually
-            setNotices(notices.map(n => n.id === id ? { ...n, isUnread: false } : n));
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
-    };
-
+    
     // Filter Logic
     let filtered = notices.filter(n => {
         if (activeFilter === 'Unread') return n.isUnread;
@@ -219,9 +191,7 @@ export default function Notices({ setActiveTab }) {
                         {/* Quick Action Footer */}
                         <div className="mt-5 flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-4 opacity-50 group-hover:opacity-100 transition-opacity relative z-10">
                             <span className="text-[13px] font-medium text-themeAccent">Read Full Notice →</span>
-                            {(notice.requires_acknowledgement && !acknowledged.has(notice.id)) && (
-                                <span className="text-[12px] font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-full shadow-inner">Action Required</span>
-                            )}
+                            
                         </div>
                     </motion.div>
                 );
@@ -273,7 +243,6 @@ export default function Notices({ setActiveTab }) {
 
     const renderDetailView = () => {
         const pConf = PRIORITIES[selectedNotice.priority] || PRIORITIES.normal;
-        const needsAck = selectedNotice.requires_acknowledgement && !acknowledged.has(selectedNotice.id);
         const sanitize = window.DOMPurify ? window.DOMPurify.sanitize : (s) => s;
 
         return (
@@ -351,25 +320,7 @@ export default function Notices({ setActiveTab }) {
                         )}
                     </div>
 
-                    {selectedNotice.requires_acknowledgement ? (
-                        <motion.button 
-                            whileHover={needsAck ? { scale: 1.05 } : {}}
-                            whileTap={needsAck ? { scale: 0.95 } : {}}
-                            onClick={() => handleAcknowledge(selectedNotice.id)}
-                            disabled={!needsAck}
-                            className={`px-8 py-3 rounded-xl text-[13px] font-medium transition-all shadow-lg flex items-center gap-2 ${
-                                needsAck 
-                                    ? 'bg-rose-500 text-themeText dark:text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]' 
-                                    : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 cursor-not-allowed shadow-inner'
-                            }`}
-                        >
-                            {needsAck ? (
-                                <><i className="fa-regular fa-square-check text-sm"></i> I HAVE READ THIS NOTICE</>
-                            ) : (
-                                <><i className="fa-solid fa-check-double text-sm"></i> ACKNOWLEDGED</>
-                            )}
-                        </motion.button>
-                    ) : null}
+                    
                     
                 </div>
             </motion.div>
@@ -502,14 +453,11 @@ export default function Notices({ setActiveTab }) {
                                             <span className="text-3xl font-semibold tracking-tight text-themeText">{notices.filter(n => n.isUnread).length}</span>
                                             <span className="text-[11px] font-medium text-themeTextSec">Unread</span>
                                         </div>
-                                        <div className="flex flex-col gap-1 items-center border-x border-black/5 dark:border-white/10">
+                                        <div className="flex flex-col gap-1 items-center border-l border-black/5 dark:border-white/10">
                                             <span className="text-3xl font-semibold tracking-tight text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">{saved.size}</span>
                                             <span className="text-[11px] font-medium text-themeTextSec">Saved</span>
                                         </div>
-                                        <div className="flex flex-col gap-1 items-center">
-                                            <span className="text-3xl font-semibold tracking-tight text-rose-400 drop-shadow-[0_0_15px_rgba(244,63,94,0.3)]">{notices.filter(n => n.requires_acknowledgement && !acknowledged.has(n.id)).length}</span>
-                                            <span className="text-[11px] font-medium text-rose-400/80 text-center leading-tight">Action<br/>Required</span>
-                                        </div>
+                                        
                                     </div>
                                 </div>
 

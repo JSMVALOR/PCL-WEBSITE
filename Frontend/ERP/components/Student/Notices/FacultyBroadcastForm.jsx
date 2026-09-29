@@ -14,8 +14,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  const [category, setCategory] = useState("Academic");
  const [priority, setPriority] = useState("normal");
  const [targetAudience, setTargetAudience] = useState([]);
- const [requiresAck, setRequiresAck] = useState(false);
-
+ 
  const handlePublish = async (e) => {
  e.preventDefault();
  if (targetAudience.length === 0) {
@@ -34,7 +33,6 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  category,
  priority,
  target_audience: targetAudience,
- requires_acknowledgement: requiresAck,
  author_id: userSession?.db_id,
  author_name: userSession?.name
  }]);
@@ -44,7 +42,6 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  setTitle("");
  setContent("");
  setPriority("normal");
- setRequiresAck(false);
  setTargetAudience([]);
  
  if (onNoticePublished) onNoticePublished();
@@ -105,13 +102,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  <textarea value={content} onChange={e => setContent(e.target.value)} required rows="6" className="w-full bg-gray-100 dark:bg-black/20 border border-black/5 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm font-medium text-themeText dark:text-white focus:border-blue-500 outline-none resize-none transition shadow-inner" placeholder="Draft your message here..."></textarea>
  </div>
  
- <label className="flex items-center gap-4 p-5 bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 rounded-2xl cursor-pointer hover:border-blue-500/40 transition-colors">
- <input type="checkbox" checked={requiresAck} onChange={e => setRequiresAck(e.target.checked)} className="w-5 h-5 accent-blue-500 rounded border-black/10" />
- <div>
- <span className="text-sm font-black tracking-tight text-themeText dark:text-white block mb-0.5">Require Digital Acknowledgement</span>
- <span className="text-[10px] font-bold uppercase tracking-widest text-blue-500/70">Forces students to sign upon reading. (Feature flagged)</span>
- </div>
- </label>
+ 
 
  </form>
  </div>

@@ -96,8 +96,8 @@ export default function EventsBoard() {
     return (
         <div className="w-full flex flex-col gap-6 lg:gap-8 animate-[fadeIn_0.4s_ease-out]">
             {/* 1. HEADER BANNER */}
-            <div className={`bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 lg:p-8 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-6`}>
-                <div className={`absolute top-0 right-0 w-full max-w-[16rem] md:w-64 h-64 ${currentTheme.glow} rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-50`}></div>
+            <div className="relative flex flex-col md:flex-row justify-between items-center gap-6 py-6 border-b border-black/[0.04] dark:border-white/[0.04] shrink-0">
+                
                 <div className="relative z-10 flex items-center justify-between w-full">
                     <div className="flex items-center gap-4">
                         <div className={`w-14 h-14 bg-themePanel/85 backdrop-blur-2xl shadow-premium rounded-xl flex items-center justify-center border border-black/5 dark:border-white/10 ${currentTheme.iconBox} text-2xl shrink-0`}>

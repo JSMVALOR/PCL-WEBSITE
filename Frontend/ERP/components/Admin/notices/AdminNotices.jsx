@@ -28,8 +28,7 @@ export default function AdminNotices({ isHubView = false }) {
  const [category, setCategory] = useState("General");
  const [priority, setPriority] = useState("normal");
  const [targetAudience, setTargetAudience] = useState(['All']);
- const [requiresAck, setRequiresAck] = useState(false);
- const [externalLink, setExternalLink] = useState("");
+  const [externalLink, setExternalLink] = useState("");
  const [isPublicWebsite, setIsPublicWebsite] = useState(false);
 
  // --- EVENTS STATE ---
@@ -85,7 +84,6 @@ export default function AdminNotices({ isHubView = false }) {
  category,
  priority,
  target_audience: targetAudience,
- requires_acknowledgement: requiresAck,
  author_id: userSession?.db_id,
  external_link: externalLink || null
  }]);
@@ -118,7 +116,6 @@ export default function AdminNotices({ isHubView = false }) {
  setTitle("");
  setContent("");
  setPriority("normal");
- setRequiresAck(false);
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
@@ -222,13 +219,7 @@ export default function AdminNotices({ isHubView = false }) {
  </div>
  </div>
 
- <label className="flex items-center gap-3 p-4 bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl cursor-pointer">
- <input type="checkbox" checked={requiresAck} onChange={e => setRequiresAck(e.target.checked)} className="accent-themeAccent w-4 h-4" />
- <div>
- <span className="text-sm font-bold text-themeText block">Require Acknowledgement</span>
- <span className="text-[10px] font-bold text-themeTextSec">Force recipients to digitally sign that they have read this.</span>
- </div>
- </label>
+ 
  
  <label className="flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl cursor-pointer">
  <div>
@@ -267,7 +258,7 @@ export default function AdminNotices({ isHubView = false }) {
  <div className="flex gap-4 mt-2 pt-3 border-t border-themeBorder dark:border-white/5">
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-regular fa-clock mr-1"></i> {new Date(n.created_at).toLocaleString()}</span>
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {Array.isArray(n.target_audience) && n.target_audience.join ? n.target_audience.join(', ') : typeof n.target_audience === 'string' ? n.target_audience : 'Unknown'}</span>
- {n.requires_acknowledgement && <span className="text-[10px] font-bold text-emerald-500"><i className="fa-solid fa-signature mr-1"></i> Requires Signature</span>}
+ 
  </div>
  </div>
  ))}

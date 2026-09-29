@@ -85,7 +85,7 @@ export default function AcademicCalendarGrid() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6">
+            <div className="flex justify-between items-center py-6 border-b border-black/[0.04] dark:border-white/[0.04] shrink-0">
                 <div>
                     <h2 className="text-xl font-semibold tracking-tight text-themeText mb-1 flex items-center gap-2">
                         <i className="fa-solid fa-table-cells text-themeAccent"></i> Academic Calendar Grid
@@ -105,7 +105,7 @@ export default function AcademicCalendarGrid() {
                 </div>
             </div>
 
-            <div className="overflow-x-auto bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl">
+            <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-black/[0.04] dark:border-white/[0.08]">
