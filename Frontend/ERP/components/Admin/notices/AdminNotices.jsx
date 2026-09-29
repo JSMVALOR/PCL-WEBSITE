@@ -79,6 +79,7 @@ export default function AdminNotices({ isHubView = false }) {
  setIsPublishing(true);
  try {
  const { error } = await supabase.from('notices').insert([{
+            
  title,
  content,
  category,
@@ -86,19 +87,26 @@ export default function AdminNotices({ isHubView = false }) {
  target_audience: targetAudience,
  author_id: userSession?.db_id,
  external_link: externalLink || null
- }]);
+ ,
+            notice_id: `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`,
+            author_name: userSession?.full_name || userSession?.name || 'Admin'
+        }]);
 
  if (error) throw error;
  
  if (isPublicWebsite) {
-    await supabase.from('admin_notices').insert([{
+            try {
+                await supabase.from('admin_notices').insert([{
+                    
         title,
         content,
         category: 'Notice',
         is_public: true,
         external_link: externalLink || null
-    }]);
- }
+    
+                }]);
+            } catch(e) { console.error("Could not insert to admin_notices", e); }
+        }
 
  // NOTIFICATIONS
  if (priority === 'urgent' || priority === 'high') {
@@ -175,18 +183,18 @@ export default function AdminNotices({ isHubView = false }) {
 
  // --- RENDERERS ---
  const renderBroadcastTab = () => (
- <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+ <div className="flex flex-col gap-12 w-full">
  {/* Form */}
- <div className="lg:col-span-5 h-max py-4">
+ <div className="w-full">
  <h2 className="text-xl font-semibold tracking-tight text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-satellite-dish text-themeAccent"></i> New Broadcast
  </h2>
- <form onSubmit={handlePublishNotice} className="flex flex-col gap-4">
- <div>
+ <form onSubmit={handlePublishNotice} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+ <div className="col-span-1 lg:col-span-2">
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Title</label>
  <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. End Semester Exam Schedule" />
  </div>
- <div className="grid grid-cols-2 gap-4">
+ <div className="col-span-1 lg:col-span-2 grid grid-cols-2 gap-4">
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Category</label>
  <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
@@ -204,24 +212,22 @@ export default function AdminNotices({ isHubView = false }) {
  </select>
  </div>
  </div>
- <div>
+ <div className="col-span-1 lg:col-span-2 relative z-[60]">
  <TargetAudienceSelector value={targetAudience} onChange={setTargetAudience} role="admin" />
  </div>
- <div>
+ <div className="col-span-1 lg:col-span-4">
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Content</label>
  <textarea value={content} onChange={e => setContent(e.target.value)} required rows="5" className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Draft the official notification here..."></textarea>
  </div>
  
- <div className="grid grid-cols-1 gap-4">
- <div>
+ <div className="col-span-1 lg:col-span-2">
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">External Link (Optional)</label>
  <input type="url" value={externalLink} onChange={e => setExternalLink(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
- </div>
  </div>
 
  
  
- <label className="flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl cursor-pointer">
+ <label className="col-span-1 lg:col-span-2 flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl cursor-pointer h-fit">
  <div>
  <span className="text-sm font-bold text-themeText block">Publish to Public Website</span>
  <span className="text-[10px] font-bold text-themeTextSec">Make this broadcast visible on the main website</span>
@@ -232,17 +238,20 @@ export default function AdminNotices({ isHubView = false }) {
  <input type="checkbox" checked={isPublicWebsite} onChange={e => setIsPublicWebsite(e.target.checked)} className="hidden" />
  </label>
 
- <button type="submit" disabled={isPublishing} className="btn-erp disabled:cursor-not-allowed">
+ <div className="col-span-1 lg:col-span-4 flex justify-end mt-2">
+ <button type="submit" disabled={isPublishing} className="btn-erp disabled:cursor-not-allowed w-full md:w-auto">
  {isPublishing ? 'Broadcasting...' : 'Publish Notice'}
  </button>
+ </div>
  </form>
  </div>
 
  {/* List */}
- <div className="lg:col-span-7 flex flex-col gap-4">
+ <div className="w-full flex flex-col gap-4">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Active Broadcasts</h3>
+ <div className="flex overflow-x-auto snap-x no-scrollbar gap-6 pb-6">
  {notices.map(n => (
- <div key={n.id} className="py-5 border-b border-black/[0.04] dark:border-white/[0.04] flex flex-col gap-3 relative overflow-hidden group transition-opacity hover:opacity-80">
+ <div key={n.id} className="min-w-[320px] max-w-[320px] snap-start bg-black/5 dark:bg-white/5 p-6 rounded-2xl border border-black/5 dark:border-white/10 flex flex-col gap-3 relative overflow-hidden group transition-opacity hover:opacity-80 shrink-0">
  {n.priority === 'urgent' && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
  <div className="flex justify-between items-start">
  <div className="flex gap-2">
@@ -262,6 +271,7 @@ export default function AdminNotices({ isHubView = false }) {
  </div>
  </div>
  ))}
+ </div>
  </div>
  </div>
  );

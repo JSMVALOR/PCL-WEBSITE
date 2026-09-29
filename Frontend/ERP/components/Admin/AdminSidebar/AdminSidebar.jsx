@@ -9,6 +9,7 @@ export const ADMIN_NAV_GROUPS = [
     links: [
       { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
       { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
+      { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
       { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" }
     ]
   },
@@ -36,7 +37,7 @@ export const ADMIN_NAV_GROUPS = [
       {
         id: "staff_ops", label: "Staff Operations", icon: "fa-solid fa-users",
         children: [
-          { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
+          
           { id: "leavemanagement", label: "Leave Approvals", icon: "fa-solid fa-mug-hot" },
           { id: "faculty_attendance", label: "Faculty Tracking", icon: "fa-solid fa-user-clock" }
         ]
@@ -131,14 +132,14 @@ export const ADMIN_NAV_MEGA = [
           {
             title: "Operations & Finance",
             children: [
-              { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
+              
               { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
               { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" }
             ]
           }
         ],
         children: [
-          { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" },
+          
           { id: "users", label: "User Management", icon: "fa-solid fa-user-gear" },
           { id: "adminadmissions", label: "Admissions", icon: "fa-solid fa-id-card-clip" },
           { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" },

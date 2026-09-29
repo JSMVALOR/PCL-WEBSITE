@@ -134,13 +134,13 @@ export default function EventsBoard() {
 
             {/* 2. EVENTS GRID */}
             {(!events || events.length === 0) ? (
-                <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+                <div className="w-full py-12 flex flex-col items-center justify-center border-b border-black/5 dark:border-white/10 text-center px-4">
                     <i className="fa-solid fa-calendar-xmark text-4xl text-themeTextSec opacity-50 mb-4"></i>
                     <h3 className={`${theme.text.heading} text-lg text-themeText`}>No upcoming events</h3>
                     <p className={`${theme.text.secondary} text-xs font-semibold mt-1`}>Check back later for exciting college events!</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex overflow-x-auto snap-x no-scrollbar gap-6 pb-6">
                     {events.map((evt) => {
                         const evtDate = new Date(evt.event_date);
                         const isPast = evtDate < new Date();
@@ -148,7 +148,7 @@ export default function EventsBoard() {
                         <div
                             key={evt.id}
                             onClick={() => setSelectedEvent(evt)}
-                            className={`bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl overflow-hidden cursor-pointer group transition-all hover:scale-[1.01]  overflow-hidden ${isPast ? 'opacity-60' : ''}`}
+                            className={`min-w-[320px] max-w-[320px] shrink-0 snap-start bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl overflow-hidden cursor-pointer group transition-all hover:scale-[1.01] ${isPast ? 'opacity-60' : ''}`}
                         >
                             {evt.image_url ? (
                                 <div className="h-40 w-full overflow-hidden border-b-theme border-themeBorder dark:border-white/5">
