@@ -1623,7 +1623,7 @@ html.home-snap {
     --bg-elevated: #1C1C1C;
     --text-primary: #F5F5F0;
     --text-secondary: #A1A1AA;
-    --accent: #EAB308;
+    --accent: #FFC107;
     --accent-muted: #C5A880;
     --border-color: rgba(255, 193, 7, 0.1);
     --border-strong: rgba(255, 193, 7, 0.2);
@@ -1648,7 +1648,7 @@ html.home-snap {
       --text-secondary: #475569;
       /* Website strictly keeps the Amber Gold accent in both modes */
       --accent: #EAB308;
-      --accent-muted: #CA8A04;
+      --accent-muted: #FFB300;
       --border-color: rgba(0, 0, 0, 0.08);
       --border-strong: rgba(0, 0, 0, 0.15);
       --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.08);

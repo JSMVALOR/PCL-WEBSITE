@@ -79,13 +79,13 @@ export default function UnifiedDisclaimer() {
               <div className={`pt-4 flex flex-col sm:flex-row gap-3 items-center justify-end border-t ${theme.layout.divider} mt-2`}>
                 <button 
                   onClick={handleRejectOptional}
-                  className={theme.action.btnSecondary}
+                  className="tlh-btn justify-center !py-3"
                 >
                   Reject Optional
                 </button>
                 <button 
                   onClick={handleAcceptAll}
-                  className={theme.action.btnPrimary}
+                  className="tlh-btn justify-center !py-3"
                 >
                   I Agree & Accept All
                 </button>
