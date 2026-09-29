@@ -3,8 +3,6 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import SEO from '../../../components/SEO/SEO';
 import Navbar from '../Navbar';
 import PremiumFooter from '../../UI/PremiumFooter/PremiumFooter';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 export default function AcademicCalendar() {
     const [calendarData, setCalendarData] = useState(null);
@@ -125,26 +123,7 @@ export default function AcademicCalendar() {
                             <p className="text-[var(--text-muted)] mt-4 max-w-2xl text-lg">Stay updated with important semester dates, examination schedules, and college holidays.</p>
                         </div>
                         
-                        <div className="flex gap-3">
-                            {calendarData?.columns && (
-                                <button 
-                                    onClick={generateLuxuryPDF}
-                                    disabled={isGenerating}
-                                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-black dark:bg-white text-white dark:text-black font-black tracking-normal text-sm rounded-xl transition-all shadow-lg hover:-translate-y-1 w-full md:w-auto shrink-0 disabled:opacity-50"
-                                >
-                                    {isGenerating ? (
-                                        <><i className="fa-solid fa-circle-notch fa-spin"></i> Generating...</>
-                                    ) : (
-                                        <><i className="fa-solid fa-file-pdf"></i> Download PDF Schedule</>
-                                    )}
-                                </button>
-                            )}
-                            {pdfUrl && !calendarData?.columns && (
-                                <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--accent)] hover:bg-[var(--accent)]/90 text-white font-black tracking-normal text-sm rounded-xl transition-all shadow-lg shadow-[var(--accent)]/20 hover:-translate-y-1 w-full md:w-auto shrink-0">
-                                    <i className="fa-solid fa-file-pdf"></i> Download Official PDF
-                                </a>
-                            )}
-                        </div>
+                        <div className="flex gap-3"></div>
                     </div>
 
                     {loading ? (

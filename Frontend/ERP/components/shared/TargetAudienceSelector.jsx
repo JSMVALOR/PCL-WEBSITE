@@ -78,7 +78,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                     <button 
                         key={m}
                         type="button" 
-                        onClick={() => setMode(m)} 
+                        onClick={() => { setMode(m); onChange(m === "Global" ? ["All"] : []); }} 
                         className={`flex-1 py-1.5 text-[11px] font-bold tracking-normal rounded-lg transition-all relative z-10 ${mode === m ? 'text-themeText dark:text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
                     >
                         {mode === m && (
@@ -111,7 +111,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
 
                     {mode === 'Roles' && (
                         <motion.div key="Roles" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2 justify-center">
-                            {['Student', 'Faculty', 'Staff', 'Alumni'].map(r => (
+                            {['Student', 'Faculty'].map(r => (
                                 <button 
                                     type="button"
                                     key={r} 
@@ -142,9 +142,9 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                     {mode === 'Individual' && (
                         <motion.div key="Individual" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center w-full max-w-sm mx-auto gap-3">
                             {/* Currently Selected Individuals */}
-                            {value.filter(v => v !== 'All' && !MOCK_BATCHES.includes(v) && !['Student','Faculty','Staff','Alumni'].includes(v)).length > 0 && (
+                            {value.filter(v => v !== 'All' && !MOCK_BATCHES.includes(v) && !['Student','Faculty'].includes(v)).length > 0 && (
                                 <div className="flex flex-wrap gap-2 justify-center mb-2">
-                                    {value.filter(v => v !== 'All' && !MOCK_BATCHES.includes(v) && !['Student','Faculty','Staff','Alumni'].includes(v)).map(v => (
+                                    {value.filter(v => v !== 'All' && !MOCK_BATCHES.includes(v) && !['Student','Faculty'].includes(v)).map(v => (
                                         <div key={v} className="flex items-center gap-2 bg-[#007AFF]/10 text-themeAccent px-3 py-1.5 rounded-lg border border-[#007AFF]/20 text-[11px] font-bold tracking-tight">
                                             <span>{v}</span>
                                             <button type="button" onClick={() => toggleItem(v)} className="hover:text-rose-500 transition-colors"><i className="fa-solid fa-xmark"></i></button>

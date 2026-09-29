@@ -1,4 +1,8 @@
-/* © 2026 JSM VALOR. All Rights Reserved. */
+const fs = require('fs');
+
+const file = 'Frontend/ERP/components/notices/EventsBoard.jsx';
+
+const newEventsBoard = `/* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 "use client";
 
@@ -115,8 +119,8 @@ export default function EventsBoard({ isDashboardWidget = false }) {
                                 <h4 className="text-[13px] font-bold text-themeText">Publish to Public Website</h4>
                                 <p className="text-[11px] font-medium text-themeTextSec mt-0.5">Make this event visible on the main website</p>
                             </div>
-                            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-black/10 dark:bg-white/10'}`}>
-                                <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                            <div className={\`w-10 h-6 rounded-full p-1 transition-colors \${isPublic ? 'bg-themeAccent' : 'bg-black/10 dark:bg-white/10'}\`}>
+                                <div className={\`w-4 h-4 bg-white rounded-full transition-transform \${isPublic ? 'translate-x-4' : 'translate-x-0'}\`}></div>
                             </div>
                             <input type="checkbox" className="hidden" checked={isPublic} onChange={() => setIsPublic(!isPublic)} />
                         </label>
@@ -151,7 +155,7 @@ export default function EventsBoard({ isDashboardWidget = false }) {
                                     )}
                                     <div className="p-6 flex-1 flex flex-col">
                                         <div className="flex justify-between items-start mb-3">
-                                            <span className={`text-[11px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider ${isPast ? 'bg-black/5 text-themeTextSec' : 'bg-themeAccent/10 text-themeAccent'}`}>
+                                            <span className={\`text-[11px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider \${isPast ? 'bg-black/5 text-themeTextSec' : 'bg-themeAccent/10 text-themeAccent'}\`}>
                                                 {isPast ? 'Past Event' : 'Upcoming'}
                                             </span>
                                             {canCreate && (
@@ -200,3 +204,6 @@ export default function EventsBoard({ isDashboardWidget = false }) {
         </div>
     );
 }
+`;
+
+fs.writeFileSync(file, newEventsBoard);

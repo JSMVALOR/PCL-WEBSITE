@@ -40,7 +40,7 @@ export default function AcademicCalendarGrid() {
                 .from('system_settings')
                 .upsert({ key: 'academic_calendar_grid', value: payload }, { onConflict: 'key' });
             if (upsertError) throw upsertError;
-            window.erpDialog?.alert("Calendar updated successfully!");
+            if (window.erpToast) window.erpToast.show("Calendar updated successfully!", "success"); else window.erpDialog?.alert("Calendar updated successfully!");
         } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
             setIsSaving(false);
         }
@@ -107,7 +107,8 @@ export default function AcademicCalendarGrid() {
                 />
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-sm rounded-3xl overflow-hidden px-2 py-4">
+<div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="border-b border-black/[0.04] dark:border-white/[0.08]">
@@ -160,6 +161,7 @@ export default function AcademicCalendarGrid() {
                         )}
                     </tbody>
                 </table>
+            </div>
             </div>
         </div>
     );

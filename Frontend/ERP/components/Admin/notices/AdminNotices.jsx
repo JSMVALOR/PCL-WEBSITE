@@ -23,6 +23,7 @@ export default function AdminNotices({ isHubView = false }) {
  const [isPublishing, setIsPublishing] = useState(false);
  
  // Broadcast Form
+ const [showSuccessModal, setShowSuccessModal] = useState(false);
  const [title, setTitle] = useState("");
  const [content, setContent] = useState("");
  const [category, setCategory] = useState("General");
@@ -108,6 +109,38 @@ export default function AdminNotices({ isHubView = false }) {
             } catch(e) { console.error("Could not insert to admin_notices", e); }
         }
 
+ 
+// NOTIFICATIONS INJECTION
+try {
+    const { data: users } = await supabase.from('profiles').select('id, erp_id, role, academic_batch');
+    if (users && users.length > 0) {
+        let recipientIds = [];
+        if (targetAudience.includes('All')) {
+            recipientIds = users.map(u => u.id);
+        } else {
+            users.forEach(u => {
+                if (targetAudience.includes('Student') && u.role === 'student') recipientIds.push(u.id);
+                else if (targetAudience.includes('Faculty') && u.role === 'faculty') recipientIds.push(u.id);
+                else if (u.academic_batch && targetAudience.includes(u.academic_batch)) recipientIds.push(u.id);
+                else if (targetAudience.includes(u.erp_id)) recipientIds.push(u.id);
+            });
+        }
+        
+        // Deduplicate
+        recipientIds = [...new Set(recipientIds)];
+        
+        if (recipientIds.length > 0) {
+            const notifs = recipientIds.map(rid => ({
+                recipient_id: rid,
+                title: 'New Broadcast: ' + title,
+                message: content.substring(0, 50) + '...',
+                type: 'notice'
+            }));
+            await supabase.from('notifications').insert(notifs);
+        }
+    }
+} catch(e) { console.error('Failed to send real-time notifications', e); }
+
  // NOTIFICATIONS
  if (priority === 'urgent' || priority === 'high') {
     // We send a mock general broadcast email to a representative group
@@ -127,7 +160,7 @@ export default function AdminNotices({ isHubView = false }) {
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
- if (window.toast) window.toast.success("Broadcast published successfully!"); else alert("Broadcast published successfully!");
+ if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success"); else setShowSuccessModal(true);
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsPublishing(false);
  }
@@ -373,20 +406,12 @@ export default function AdminNotices({ isHubView = false }) {
  
  {/* Header and Tabs */}
  {!isHubView && (
-    <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-themeAccent/5 via-transparent to-transparent py-8 shrink-0">
-        <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-themeAccent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
-            <div className="flex items-center gap-5">
-                <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-themeAccent shadow-sm">
-                    <i className="fa-solid fa-bullhorn"></i>
-                </div>
-                <div>
-                    <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">System Broadcast</h1>
-                    <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Publish notices & manage calendar</p>
-                </div>
-            </div>
-            {/* The right side content can be something if needed, maybe total broadcasts stat? */}
-        </div>
+    <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
+        <PageHeader 
+            icon="fa-solid fa-bullhorn" 
+            title="System Broadcast" 
+            subtitle="Publish notices & manage calendar" 
+        />
     </div>
 )}
 
@@ -407,6 +432,25 @@ export default function AdminNotices({ isHubView = false }) {
  {activeTab === 'broadcast' ? renderBroadcastTab() : activeTab === 'events' ? <EventsBoard /> : <AcademicCalendarGrid />}
  </div>
  </div>
- </div>
+ 
+    {showSuccessModal && (
+        <div id="success-modal" className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+            <div className="bg-white dark:bg-themePanel/95 backdrop-blur-3xl border border-black/5 dark:border-white/10 shadow-2xl rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center transform animate-fade-in-up">
+                <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i className="fa-solid fa-check"></i>
+                </div>
+                <h3 className="text-xl font-bold text-themeText mb-2">Success!</h3>
+                <p className="text-themeTextSec text-sm mb-6">Broadcast published successfully to the selected audience.</p>
+                <button 
+                    type="button"
+                    onClick={() => setShowSuccessModal(false)}
+                    className="w-full bg-themeAccent hover:bg-themeAccent/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-themeAccent/20"
+                >
+                    Continue
+                </button>
+            </div>
+        </div>
+    )}
+    </div>
  );
 }
