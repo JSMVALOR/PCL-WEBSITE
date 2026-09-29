@@ -50,10 +50,11 @@ export default function Programs() {
     const fetchEvents = async () => {
       try {
         const { data, error } = await supabase
-          .from('academic_events')
+          .from('admin_events')
           .select('*')
-          .eq('is_active', true)
-          .order('date', { ascending: true });
+          .eq('is_public', true)
+          .gte('event_date', new Date().toISOString())
+          .order('event_date', { ascending: true });
         
         if (error) throw error;
         setCalendarEvents(data || []);
@@ -331,13 +332,13 @@ export default function Programs() {
                               <div className="flex-1">
                                 <h4 className="text-[var(--primary-color)] font-bold text-lg">{item.title}</h4>
                                 <p className="text-[var(--text-color)] font-medium mt-1 mb-2">
-                                  {new Date(item.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                                  {new Date(item.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                                 </p>
                                 {item.description && (
                                   <p className="text-[var(--text-muted)] text-sm">{item.description}</p>
                                 )}
                                 <span className="inline-block mt-3 text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full border border-[var(--primary-color)]/30 text-[var(--primary-color)]">
-                                  {item.event_type}
+                                  {(item.location || "PCL Campus")}
                                 </span>
                               </div>
                               {item.image_url && (
@@ -357,12 +358,7 @@ export default function Programs() {
                     </div>
                   </div>
 
-                  <button onClick={() => alert("Syllabus PDF is currently being updated for the 2026 academic year.")} className="tlh-btn justify-center" style={{ maxWidth: '300px' }}>
-                    <span className="text-xs font-bold uppercase tracking-widest">Download PDF Calendar</span>
-                    <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M1.64453 0.972656L6.97897 6.3071L1.67567 11.6104" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </button>
+                  
                 </div>
               )}
 

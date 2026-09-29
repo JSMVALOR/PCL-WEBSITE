@@ -177,7 +177,7 @@ export default function LeadershipProfile({ overrideId }) {
                     {...fadeUp(0.3 + index * 0.1)}
                     className={
                       index === 0
-                        ? "text-justify first-letter:text-6xl first-letter:font-bold first-letter:text-[var(--primary-color)] first-letter:mr-3 first-letter:float-left first-letter:font-serif first-letter:drop-shadow-md first-letter:leading-[0.8] first-letter:mt-2"
+                        ? "text-justify "
                         : "text-justify"
                     }
                   >
