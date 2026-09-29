@@ -96,22 +96,22 @@ export default function EventsBoard() {
     return (
         <div className="w-full flex flex-col gap-6 lg:gap-8 animate-[fadeIn_0.4s_ease-out]">
             {/* 1. HEADER BANNER */}
-            <div className="relative flex flex-col md:flex-row justify-between items-center gap-6 py-6 border-b border-black/[0.04] dark:border-white/[0.04] shrink-0">
-                
-                <div className="relative z-10 flex items-center justify-between w-full">
-                    <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 bg-themePanel/85 backdrop-blur-2xl shadow-premium rounded-xl flex items-center justify-center border border-black/5 dark:border-white/10 ${currentTheme.iconBox} text-2xl shrink-0`}>
+            <div className="relative w-full overflow-hidden border border-black/[0.04] dark:border-white/[0.08] bg-gradient-to-r from-purple-500/5 via-transparent to-transparent py-8 rounded-3xl shrink-0">
+                <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-purple-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-2 md:px-6">
+                    <div className="flex items-center gap-5">
+                        <div className={`w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl shadow-sm ${currentTheme.iconBox}`}>
                             <i className="fa-solid fa-calendar-star"></i>
                         </div>
                         <div>
-                            <h1 className={`${theme.text.display} text-3xl text-themeText tracking-tight mb-1`}>College Events</h1>
-                            <p className={`${theme.text.secondary} text-sm font-medium`}>Upcoming extracurricular and academic events.</p>
+                            <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">College Events</h1>
+                            <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Upcoming & Past Campus Activities</p>
                         </div>
                     </div>
                     {canCreate && (
                         <button type="button"
                             onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-purple-600 text-themeText dark:text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide hover:opacity-90 transition-opacity flex items-center gap-2 shadow-lg"
+                            className="bg-purple-600 text-white px-6 py-3.5 rounded-xl font-bold text-[13px] tracking-wide hover:bg-purple-700 transition-colors flex items-center gap-2 shadow-lg shadow-purple-600/20"
                         >
                             <i className="fa-solid fa-calendar-plus"></i> Add Event
                         </button>
@@ -196,7 +196,7 @@ export default function EventsBoard() {
             {/* 3. READING MODAL */}
             {selectedEvent && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]">
-                    <div className="bg-themeApp w-full max-w-2xl rounded-xl overflow-hidden border border-black/5 dark:border-white/10 shadow-2xl flex flex-col max-h-[90vh]">
+                    <div className="bg-themeApp w-full h-[100dvh] md:h-auto md:max-h-[90vh] max-w-2xl md:rounded-2xl overflow-hidden border-0 md:border border-black/5 dark:border-white/10 shadow-2xl flex flex-col">
 
                         <div className={`p-6 text-themeText dark:text-white relative bg-purple-600`}>
                             <div className="flex justify-between items-start relative z-10">
@@ -324,7 +324,7 @@ export default function EventsBoard() {
                         <div className="max-w-4xl mx-auto w-full">
                             <form onSubmit={handleCreateEvent} className="flex flex-col gap-8">
                                 
-                                <div className="bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 lg:p-8 flex flex-col gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+                                <div className="flex flex-col gap-6">
                                     <div>
                                         <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Event Title</label>
                                         <input

@@ -359,29 +359,43 @@ export default function AdminNotices({ isHubView = false }) {
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${isHubView ? 'bg-transparent text-themeText font-sans' : ''}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-10 xl:pb-8 ${!isHubView && 'px-4 lg:px-8'}`}>
+ <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
  
  {/* Header and Tabs */}
  {!isHubView && (
- <PageHeader icon="fa-solid fa-bullhorn" title="Broadcast & Events Center" subtitle="Publish official notices across the ERP and manage the academic calendar." />
- )}
+    <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-themeAccent/5 via-transparent to-transparent py-8 shrink-0">
+        <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-themeAccent/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 px-4 lg:px-8">
+            <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-themeAccent shadow-sm">
+                    <i className="fa-solid fa-bullhorn"></i>
+                </div>
+                <div>
+                    <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">System Broadcast</h1>
+                    <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Publish notices & manage calendar</p>
+                </div>
+            </div>
+            {/* The right side content can be something if needed, maybe total broadcasts stat? */}
+        </div>
+    </div>
+)}
 
- <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
- <button type="button" onClick={() => setActiveTab('broadcast')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'broadcast' ? 'bg-themeAccent text-themeText dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] border border-transparent scale-95 hover:scale-100'}`}>
+ 
+    <div className={`flex flex-col gap-6 lg:gap-8 ${!isHubView && 'px-4 lg:px-8 mt-6'}`}>
+<div className="flex w-full border-b border-black/[0.04] dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6">
+ <button type="button" onClick={() => setActiveTab('broadcast')} className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'broadcast' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}>
  <i className="fa-solid fa-satellite-dish"></i> Notices
  </button>
- <button type="button" onClick={() => setActiveTab('events')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'events' ? 'bg-themeAccent text-themeText dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('events')} className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'events' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}>
  <i className="fa-solid fa-calendar-day"></i> Events
  </button>
- 
- <button type="button" onClick={() => setActiveTab('grid')} className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${activeTab === 'grid' ? 'bg-themeAccent text-themeText dark:text-white border border-themeAccent scale-100' : 'text-themeTextSec hover:text-themeText hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] border border-transparent scale-95 hover:scale-100'}`}>
+ <button type="button" onClick={() => setActiveTab('grid')} className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'grid' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}>
  <i className="fa-solid fa-table-cells"></i> Calendar Grid
  </button>
-
  </div>
 
  {activeTab === 'broadcast' ? renderBroadcastTab() : activeTab === 'events' ? <EventsBoard /> : <AcademicCalendarGrid />}
- 
+ </div>
  </div>
  </div>
  );
