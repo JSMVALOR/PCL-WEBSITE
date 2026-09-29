@@ -68,12 +68,12 @@ export default function AdminSystemVitals() {
       </div>
       
       {/* 1. Supabase Exact Metrics */}
-      <div className="grid grid-cols-3 gap-4 mb-4 bg-black/5 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/5">
+      <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="flex flex-col gap-1">
               <span className="text-[9px] font-bold text-themeTextSec tracking-normal">DB Size</span>
               <span className="text-[15px] font-semibold text-themeText">{stats.loading ? '--' : stats.dbSize}</span>
           </div>
-          <div className="flex flex-col gap-1 border-x border-black/5 dark:border-white/5 px-2">
+          <div className="flex flex-col gap-1 px-2">
               <span className="text-[9px] font-bold text-themeTextSec tracking-normal">Auth Users</span>
               <span className="text-[15px] font-semibold text-themeText">{stats.loading ? '--' : stats.authUsers}</span>
           </div>
