@@ -83,25 +83,25 @@ export default function MentorshipDashboard({ setActiveTab }) {
  
  {/* Quick Actions */}
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
- <button type="button" onClick={() => setActiveTab('allocations')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('allocations')} className="border-b border-black/5 dark:border-white/5 py-6 p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-indigo-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 group-hover:bg-indigo-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-users-rays text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Assign Mentors</span>
  </button>
- <button type="button" onClick={() => setActiveTab('transfers')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('transfers')} className="border-b border-black/5 dark:border-white/5 py-6 p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-amber-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-shuffle text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Reshuffle</span>
  </button>
- <button type="button" onClick={() => setActiveTab('transfers')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-emerald-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('transfers')} className="border-b border-black/5 dark:border-white/5 py-6 p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-emerald-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-right-left text-lg group-hover:scale-110 transition-transform"></i>
  </div>
  <span className="text-[9px] lg:text-[13px] font-medium text-themeText text-center mt-1">Transfer Mentees</span>
  </button>
- <button type="button" onClick={() => setActiveTab('allocations')} className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 transition group active:scale-95">
+ <button type="button" onClick={() => setActiveTab('allocations')} className="border-b border-black/5 dark:border-white/5 py-6 p-4 lg:p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 transition group active:scale-95">
  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500 group-hover:text-themeText dark:text-white transition duration-300">
  <i className="fa-solid fa-file-csv text-lg group-hover:scale-110 transition-transform"></i>
  </div>
@@ -113,7 +113,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  
  {/* Primary Stats */}
- <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6">
+ <div className="border-b border-black/5 dark:border-white/5 py-6 p-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Overall Progress</span>
  <i className="fa-solid fa-chart-simple text-themeTextSec"></i>
@@ -156,7 +156,7 @@ export default function MentorshipDashboard({ setActiveTab }) {
  </div>
 
  {/* Workload Stats */}
- <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6 flex flex-col">
+ <div className="border-b border-black/5 dark:border-white/5 py-6 p-6 flex flex-col">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Mentor Workload</span>
  <i className="fa-solid fa-scale-balanced text-themeTextSec"></i>

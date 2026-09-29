@@ -347,7 +347,7 @@ export default function MentorshipAllocations({}) {
  {/* 2. CONTROL PANEL */}
  <div className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 p-3 lg:p-6 flex flex-col xl:flex-row items-center justify-between gap-3 lg:gap-6 relative overflow-hidden z-20`}>
  <div className="flex items-center justify-between xl:justify-start gap-4 w-full xl:w-auto shrink-0">
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-4 rounded-2xl shadow-none dark:shadow-none border border-themeBorder dark:border-white/5 flex items-center justify-between gap-4 lg:gap-6 w-full xl:w-auto">
+ <div className="py-3 border-b border-black/5 dark:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors flex items-center justify-between gap-4 lg:gap-6 w-full xl:w-auto">
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeAccent mb-0.5">Max Capacity</p>
  <p className="text-[9px] lg:text-xs font-semibold text-themeTextSec opacity-70">Per Faculty Mentor</p>
@@ -405,13 +405,13 @@ export default function MentorshipAllocations({}) {
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Unallocated Students</h2>
  <p className="text-[10px] font-black text-themeTextSec tracking-normal mt-1">Search & Filter</p>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black bg-white dark:bg-[#121212] backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-black  backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
  {filteredStudents.length} / {unallocatedStudents.length}
  </span>
  </div>
 
  {/* Search & Filters */}
- <div className="flex flex-col gap-2 p-3 bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem]">
+ <div className="flex flex-col border-r border-black/5 dark:border-white/5 pr-4 last:border-0">
  <input 
  type="text"
  placeholder="Search Name or Reg No..."
@@ -470,7 +470,7 @@ export default function MentorshipAllocations({}) {
  ref={provided.innerRef}
  {...provided.draggableProps}
  {...provided.dragHandleProps}
- className={`bg-white dark:bg-[#121212] backdrop-blur-2xl p-2.5 lg:p-3 rounded-2xl shadow-none dark:shadow-none border flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ className={`py-4 border-b-2 flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  <div className="flex items-start justify-between mb-2">
  <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -489,9 +489,9 @@ export default function MentorshipAllocations({}) {
  <i className="fa-solid fa-grip-vertical text-themeTextSec opacity-30 group-hover:opacity-100 transition-opacity mt-1"></i>
  </div>
  <div className="flex flex-wrap gap-1.5">
- <span className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-black/5 dark:border-white/10 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">{student.programme}</span>
- <span className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-black/5 dark:border-white/10 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sem {student.semester}</span>
- <span className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-black/5 dark:border-white/10 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sec {student.section}</span>
+ <span className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">{student.programme}</span>
+ <span className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sem {student.semester}</span>
+ <span className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sec {student.section}</span>
  </div>
  </div>
  )}
@@ -511,7 +511,7 @@ export default function MentorshipAllocations({}) {
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Faculty Mentors</h2>
  <p className="text-[10px] font-black text-themeTextSec tracking-normal mt-1">Drag & Drop Allocation</p>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black bg-white dark:bg-[#121212] backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-black  backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
  {faculty.length} Mentors Available
  </span>
  </div>
@@ -520,7 +520,7 @@ export default function MentorshipAllocations({}) {
  {isLoading ? (
  Array(3).fill(0).map((_, i) => (
  <div key={i} className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 flex flex-col overflow-hidden h-[300px] animate-pulse`}>
- <div className="p-4 lg:p-5 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl h-32"></div>
+ <div className="p-4 lg:p-5 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5  backdrop-blur-2xl h-32"></div>
  <div className="p-3 lg:p-4 flex flex-col gap-2 flex-1"></div>
  </div>
  ))
@@ -532,7 +532,7 @@ export default function MentorshipAllocations({}) {
  return (
  <div key={fac.id} className={`${theme.layout.panel} rounded-2xl border flex flex-col overflow-hidden transition duration-300 ${isFull ? 'border-black/5 dark:border-white/10' : 'border-themeBorder dark:border-white/5'}`}>
 
- <div className="p-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212] backdrop-blur-2xl shrink-0">
+ <div className="p-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5  backdrop-blur-2xl shrink-0">
  <div className="flex justify-between items-start mb-3">
  {fac.profile_picture_url ? (
      <img src={fac.profile_picture_url} alt={fac.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 border border-black/5 dark:border-white/5" />
@@ -575,7 +575,7 @@ export default function MentorshipAllocations({}) {
  ref={provided.innerRef}
  {...provided.draggableProps}
  {...provided.dragHandleProps}
- className={`bg-white dark:bg-[#121212] backdrop-blur-2xl border p-2 lg:p-2.5 rounded-2xl shadow-none dark:shadow-none flex items-center justify-between group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ className={`py-3 border-b border-black/5 dark:border-white/5 flex items-center justify-between group transition hover:bg-black/[0.02] dark:hover:bg-white/[0.02] ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
  >
  <div className="flex items-center gap-2 min-w-0 pr-2">
  {student.profile_picture_url ? (

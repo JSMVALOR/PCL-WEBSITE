@@ -77,7 +77,7 @@ export default function MentorshipReports({}) {
 
  return (
  <div className="flex flex-col gap-6 animate-fade-in relative pb-10">
- <div className="bg-white dark:bg-[#121212] border border-themeBorder dark:border-white/5 rounded-[2rem] p-6">
+ <div className="border-b border-black/5 dark:border-white/5 py-6 p-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText mb-6 flex items-center justify-between`}>
  <span>Export Reports</span>
  <i className="fa-solid fa-file-csv text-themeTextSec"></i>
@@ -87,7 +87,7 @@ export default function MentorshipReports({}) {
  
  <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-indigo-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Faculty Workload Report")}>
  {loadingReport === "Faculty Workload Report" && (
- <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
+ <div className="absolute inset-0 /80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-indigo-500 text-2xl"></i>
  </div>
  )}
@@ -104,7 +104,7 @@ export default function MentorshipReports({}) {
 
  <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-emerald-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Student Allocation Report")}>
  {loadingReport === "Student Allocation Report" && (
- <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
+ <div className="absolute inset-0 /80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-emerald-500 text-2xl"></i>
  </div>
  )}
@@ -121,7 +121,7 @@ export default function MentorshipReports({}) {
 
  <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-rose-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Unassigned Students Report")}>
  {loadingReport === "Unassigned Students Report" && (
- <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
+ <div className="absolute inset-0 /80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-rose-500 text-2xl"></i>
  </div>
  )}
@@ -138,7 +138,7 @@ export default function MentorshipReports({}) {
 
  <div className="bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder dark:border-white/5 hover:border-amber-500 transition group flex flex-col h-full cursor-pointer relative overflow-hidden" onClick={() => handleDownload("Programme Wise Distribution")}>
  {loadingReport === "Programme Wise Distribution" && (
- <div className="absolute inset-0 bg-white dark:bg-[#121212]/80 backdrop-blur-sm flex items-center justify-center z-10">
+ <div className="absolute inset-0 /80 backdrop-blur-sm flex items-center justify-center z-10">
  <i className="fa-solid fa-circle-notch fa-spin text-amber-500 text-2xl"></i>
  </div>
  )}
