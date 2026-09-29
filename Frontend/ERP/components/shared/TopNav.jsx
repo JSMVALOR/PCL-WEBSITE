@@ -76,7 +76,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
     };
 
     return (
-        <div className="fixed top-0 left-0 right-0 z-40 bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border-b border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_4px_30px_rgb(0,0,0,0.2)]">
+        <div className="fixed top-0 left-0 right-0 z-40 bg-themeApp/80 backdrop-blur-3xl backdrop-blur-3xl saturate-[1.8] border-b border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_4px_30px_rgb(0,0,0,0.2)]">
             {/* Dark Overlay for "Covers Moments" */}
             <AnimatePresence>
                 {activeDropdown && activeDropdown !== 'profile' && activeDropdown !== 'notifications' && (
@@ -153,7 +153,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
                                             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                                            className="fixed top-[72px] left-0 w-full bg-white dark:bg-themePanel border-b border-black/[0.04] dark:border-white/[0.08] shadow-2xl z-[50]"
+                                            className="fixed top-[72px] left-0 w-full bg-themePanel border-b border-black/[0.04] dark:border-white/[0.08] shadow-2xl z-[50]"
                                         >
                                             <div className="max-w-[1400px] mx-auto px-6 py-10 flex justify-between gap-16">
                                                 
@@ -267,7 +267,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                                     className="absolute top-[calc(100%-8px)] right-0 pt-2 z-50 origin-top-right"
                                 >
-                                    <div className="bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
+                                    <div className="bg-themePanel border border-black/[0.04] dark:border-white/[0.08] shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] rounded-2xl p-4 min-w-[220px] flex flex-col gap-2 relative overflow-hidden">
                                         <div className="p-3 mb-2 border-b border-black/5 dark:border-white/5 flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-themeElevated flex items-center justify-center font-black text-themeText shadow-inner overflow-hidden border border-black/5 dark:border-white/5">
                                                 {(userSession?.profile_picture_url || getAvatarUrl(userSession)) && (userSession.profile_picture_url || getAvatarUrl(userSession)) !== 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' ? (

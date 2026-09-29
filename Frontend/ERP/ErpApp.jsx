@@ -218,7 +218,7 @@ export default function App() {
 
   if (isAppLoading) {
     return (
-      <div className="w-full h-screen bg-gray-50 dark:bg-black flex flex-col items-center justify-center selection:bg-white dark:bg-[#121212]">
+      <div className="w-full h-screen bg-themeApp flex flex-col items-center justify-center selection:bg-themeAccent/20">
         <div 
           style={{
             width: '64px', 
@@ -374,7 +374,7 @@ export default function App() {
       <SessionTimeoutGuard>
         <DialogContainer />
         <ToastContainer />
-        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-gray-50 dark:bg-black text-themeText dark:text-white premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
+        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-themeApp text-themeText dark:text-white premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
           
           {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
           {navLayout === 'classic' && (
@@ -393,7 +393,7 @@ export default function App() {
           {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Active when using TopNav Layout */}
           {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
 
-            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50 dark:bg-black relative min-w-0">
+            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
               <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
                 {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
                 <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
@@ -405,7 +405,7 @@ export default function App() {
                 </div>
 
               {/* ERP Footer with Privacy & Terms */}
-              <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder dark:border-white/5 bg-white dark:bg-[#121212]/30 text-xs font-medium text-themeTextSec dark:text-white/50 mt-auto z-10 relative">
+              <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder dark:border-white/5 bg-themePanel/80 backdrop-blur-md text-xs font-medium text-themeTextSec dark:text-white/50 mt-auto z-10 relative">
                 <div className="flex gap-4 mb-2 sm:mb-0">
                   <a href="/privacy" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Privacy Policy</a>
                   <a href="/terms" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Terms of Service</a>
@@ -482,7 +482,7 @@ function ModuleUnderConstruction({ tabName, role }) {
           </p>
         </div>
       </div>
-      <div className={`p-6 border-themeBorder dark:border-white/5 border-dashed border-neutral-800 rounded-2xl bg-gray-50 dark:bg-black flex flex-col items-center justify-center text-center py-24 `}>
+      <div className={`p-6 border-themeBorder dark:border-white/5 border-dashed border-neutral-800 rounded-2xl bg-themeApp flex flex-col items-center justify-center text-center py-24 `}>
         <i className={`fa-solid fa-code text-5xl ${theme.text.muted} mb-4`}></i>
         <h4 className={`${theme.text.heading} text-xl text-themeText dark:text-white mb-2`}>Module Under Construction</h4>
         <p className={`${theme.text.secondary} text-sm max-w-md leading-relaxed`}>
