@@ -87,7 +87,7 @@ Requirements: ${formData.message}`,
                     <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
                         Placement <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Cell</span>
                     </h1>
-                    <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-center">
+                    <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed text-center">
                         Connecting exceptional legal minds with industry-leading law firms, corporate houses, and esteemed chambers across the globe.
                     </p>
                 </motion.div>

@@ -87,7 +87,7 @@ export default function NotFound404() {
         </motion.div>
 
         <motion.p 
-          className="text-[#A3A3A3] text-lg md:text-xl uppercase tracking-[0.3em] mt-4 font-light mix-blend-difference"
+          className="text-[#A3A3A3] text-base md:text-xl uppercase tracking-[0.3em] mt-4 font-light mix-blend-difference"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 1 }}

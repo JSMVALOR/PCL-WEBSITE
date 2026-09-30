@@ -88,16 +88,16 @@ const EventsPreview = React.forwardRef((props, ref) => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-20 h-[400px]">
+          <div className="flex justify-center items-center py-10 h-[400px]">
              <div className="w-10 h-10 border-4 border-[var(--card-border)] border-t-[var(--primary-color)] rounded-full animate-spin"></div>
           </div>
         ) : error ? (
-           <div className="py-20 text-center flex flex-col items-center gap-3 h-[400px] justify-center">
+           <div className="py-10 text-center flex flex-col items-center gap-3 h-[400px] justify-center">
              <AlertCircle size={32} className="text-[var(--primary-color)]" />
              <p className="text-[var(--text-muted)]">{error}</p>
            </div>
         ) : events.length === 0 ? (
-           <div className="py-20 text-center h-[400px] flex items-center justify-center">
+           <div className="py-10 text-center h-[400px] flex items-center justify-center">
              <p className="text-[var(--text-muted)] text-lg">No upcoming events scheduled at the moment.</p>
            </div>
         ) : (

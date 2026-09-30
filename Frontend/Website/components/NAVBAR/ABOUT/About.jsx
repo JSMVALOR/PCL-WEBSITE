@@ -109,7 +109,7 @@ export default function About() {
             />
           </div>
 
-          <div className="lg:w-1/2 text-[var(--text-muted)] text-lg md:text-xl leading-relaxed text-justify space-y-8">
+          <div className="lg:w-1/2 text-[var(--text-muted)] text-base md:text-xl leading-relaxed text-justify space-y-8">
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
               <span className="font-semibold italic drop-cap block float-left mr-3 mt-1 mb-[-12px] text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.8' }}>
                 {cms.hero_desc_1.charAt(0)}

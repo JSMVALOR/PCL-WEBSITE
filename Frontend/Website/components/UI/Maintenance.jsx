@@ -70,7 +70,7 @@ export default function Maintenance() {
           <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-8 font-['Outfit'] leading-tight">
             Refining the <span className="font-['Playfair_Display'] italic font-normal text-[#cda75b]">Experience</span>
           </h2>
-          <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
+          <p className="text-white/60 text-base md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
             The Prudentia College of Law digital infrastructure is currently undergoing scheduled upgrades to enhance performance and security. We will be back online shortly.
           </p>
         </motion.div>

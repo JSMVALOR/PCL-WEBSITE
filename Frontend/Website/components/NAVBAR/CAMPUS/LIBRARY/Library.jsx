@@ -63,7 +63,7 @@ export default function Library() {
           >
             Library & <span className="text-[#FFBF00] italic">Infrastructure</span>
           </motion.h1>
-          <p className="text-xl text-gray-300 max-w-3xl leading-relaxed">
+          <p className="text-base md:text-xl text-gray-300 max-w-3xl leading-relaxed">
             State-of-the-art facilities designed to foster rigorous scholarship and dynamic education. Discover the intellectual core of Prudentia College of Law.
           </p>
         </div>

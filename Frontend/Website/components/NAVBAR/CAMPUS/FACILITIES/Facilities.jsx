@@ -137,7 +137,9 @@ function FacilityCarousel({ facilities }) {
           if (scrollLeft + clientWidth >= scrollWidth - 10) {
             scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
           } else {
-            scrollRef.current.scrollBy({ left: clientWidth >= 768 ? 400 : 300, behavior: 'smooth' });
+            const card = scrollRef.current.querySelector('.carousel-item');
+            const scrollAmount = card ? card.clientWidth + 24 : clientWidth;
+            scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
           }
         }
       }, 3500);
@@ -147,8 +149,8 @@ function FacilityCarousel({ facilities }) {
 
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const clientWidth = scrollRef.current.clientWidth;
-      const scrollAmount = clientWidth >= 768 ? 400 : 300;
+      const card = scrollRef.current.querySelector('.carousel-item');
+      const scrollAmount = card ? card.clientWidth + 24 : scrollRef.current.clientWidth;
       if (direction === 'start') {
         scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
@@ -172,7 +174,7 @@ function FacilityCarousel({ facilities }) {
       >
         <style>{`.carousel-container::-webkit-scrollbar { display: none; }`}</style>
         {facilities.map((facility) => (
-          <div key={facility.id} className="min-w-[85vw] sm:min-w-[350px] md:min-w-[400px] snap-start opacity-0 carousel-item shrink-0 h-full flex flex-col">
+          <div key={facility.id} className="w-[calc(100vw-48px)] sm:w-auto sm:min-w-[350px] md:min-w-[400px] snap-start opacity-0 carousel-item shrink-0 h-full flex flex-col">
             <div className={`${styles.glassCard} flex-1 p-0 flex flex-col transition-all duration-500 hover:border-[var(--primary-color)]/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:-translate-y-2 overflow-hidden`}>
               <ModuleFigure 
                 iconName={facility.icon} 
@@ -282,7 +284,7 @@ export default function Facilities() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.15 }}
-            className="text-[var(--text-muted)] max-w-3xl mx-auto text-lg md:text-xl leading-relaxed"
+            className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed"
           >
             From fully-equipped Moot Courts replicating High Court environments to an expansive digital Law Library. Discover the facilities shaping the next generation of legal luminaries.
           </motion.p>

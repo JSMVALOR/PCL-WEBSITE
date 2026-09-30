@@ -101,7 +101,7 @@ export default function CourseBBALLB() {
           >
             {cms.title} <span className="text-[var(--primary-color)] italic font-medium pr-2">{cms.title_highlight}</span>
           </motion.h1>
-          <p className="text-lg md:text-xl text-[var(--text-muted)] max-w-3xl leading-relaxed">
+          <p className="text-base md:text-base md:text-xl text-[var(--text-muted)] max-w-3xl leading-relaxed">
             {cms.description}
           </p>
         </div>

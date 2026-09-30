@@ -164,7 +164,7 @@ export default function BlogsPage() {
                 ) : (
                     <div className="relative z-10">
                         {filteredBlogs.length === 0 ? (
-                            <div className="py-20 text-center border border-white/10 rounded-2xl bg-[#1a1818]">
+                            <div className="py-10 text-center border border-white/10 rounded-2xl bg-[#1a1818]">
                                 <p className="text-white/50 text-xl font-light">No posts found in this category.</p>
                             </div>
                         ) : (

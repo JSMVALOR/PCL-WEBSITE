@@ -123,7 +123,7 @@ const Careers = () => {
           <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
             Careers at <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Prudentia</span>
           </h1>
-          <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-lg md:text-xl leading-relaxed text-center">
+          <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed text-center">
             We are constantly searching for passionate educators, brilliant researchers, and visionary administrators to help shape the next generation of legal vanguards.
           </p>
         </motion.div>
@@ -164,7 +164,7 @@ const Careers = () => {
               ))}
             </div>
           ) : (
-            <motion.div variants={itemVariants} className="w-full flex flex-col items-center justify-center p-16 border border-dashed border-[var(--card-border)] rounded-3xl bg-[var(--card-bg)]/20 backdrop-blur-sm text-center">
+            <motion.div variants={itemVariants} className="w-full flex flex-col items-center justify-center py-10 px-6 border border-dashed border-[var(--card-border)] rounded-3xl bg-[var(--card-bg)]/20 backdrop-blur-sm text-center">
                 <Briefcase size={48} className="text-[var(--primary-color)]/50 mb-6" />
                 <h3 className="text-2xl font-bold text-[var(--text-color)] mb-4 font-['Playfair_Display'] italic">No Open Positions</h3>
                 <p className="text-[var(--text-muted)] text-lg max-w-md">There are currently no active openings. We encourage you to check back later or submit a general inquiry.</p>

@@ -86,7 +86,7 @@ export default function MootCourt() {
             Where rigorous <br className="hidden md:block" />
             <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">advocacy</span> meets practice
           </motion.h1>
-          <p className="text-xl text-[var(--text-muted)] max-w-3xl leading-relaxed">
+          <p className="text-base md:text-xl text-[var(--text-muted)] max-w-3xl leading-relaxed">
             {MOOT_CONTENT.heroSubtitle}
           </p>
         </div>

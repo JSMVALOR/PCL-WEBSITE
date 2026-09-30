@@ -190,8 +190,7 @@ export default function Navbar() {
 
 
           <nav
-            className="navbar relative"
-            style={{ height: "70px" }}
+            className="navbar relative h-[64px] md:h-[70px]"
           >
             <div className="flex justify-between items-center w-full max-w-[1400px] mx-auto px-6 h-full">
               

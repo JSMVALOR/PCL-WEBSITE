@@ -84,7 +84,7 @@ export default function LegalAid() {
             Where rigorous <br className="hidden md:block" />
             <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">compassion</span> meets service
           </motion.h1>
-          <p className="text-xl text-[var(--text-muted)] max-w-3xl leading-relaxed">
+          <p className="text-base md:text-xl text-[var(--text-muted)] max-w-3xl leading-relaxed">
             {LEGAL_AID_CONTENT.heroSubtitle}
           </p>
         </div>

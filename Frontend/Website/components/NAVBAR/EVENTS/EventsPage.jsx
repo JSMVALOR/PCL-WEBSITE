@@ -237,7 +237,7 @@ export default function EventsPage() {
                                 Upcoming <span className="text-[var(--primary-color)] italic">Events</span>
                             </h2>
                             {upcomingEvents.length === 0 ? (
-                                <div className={`${styles.glassCard} py-20 text-center border border-[var(--card-border)]`}>
+                                <div className={`${styles.glassCard} py-10 text-center border border-[var(--card-border)]`}>
                                     <p className="text-[var(--text-muted)] text-xl">No future events scheduled at the moment.</p>
                                 </div>
                             ) : (
