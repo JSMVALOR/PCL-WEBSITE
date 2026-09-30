@@ -31,7 +31,7 @@ export default function CookieConsent() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          className="fixed bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-auto md:max-w-sm z-[9999] bg-white dark:bg-[#1a1a1a] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6 font-sans text-[var(--text-color)]"
+          className="fixed bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-auto md:max-w-sm z-[9999] bg-[var(--bg-app)] border border-[var(--primary-color)]/20 rounded-2xl shadow-2xl overflow-hidden p-6 font-sans text-[var(--text-color)]"
         >
           <div className="flex items-start gap-4 mb-5">
             <div className="w-10 h-10 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)] flex items-center justify-center shrink-0">
@@ -48,13 +48,13 @@ export default function CookieConsent() {
           <div className="flex items-center gap-3 w-full">
             <button 
               onClick={handleDecline}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              className="tlh-btn !py-2.5 flex-1 justify-center"
             >
               DECLINE
             </button>
             <button 
               onClick={handleAccept}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--primary-color)] text-white dark:text-black text-xs font-bold hover:opacity-90 transition-colors shadow-lg shadow-[var(--primary-glow)]"
+              className="tlh-btn !py-2.5 flex-1 justify-center !border-[var(--accent)]"
             >
               ACCEPT ALL
             </button>
