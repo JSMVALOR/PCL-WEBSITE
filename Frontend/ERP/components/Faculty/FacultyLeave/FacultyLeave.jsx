@@ -16,6 +16,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
     // NEW STATES
     const [isSingleDay, setIsSingleDay] = useState(true);
     const [editingLeaveId, setEditingLeaveId] = useState(null);
+    const [policies, setPolicies] = useState([]);
 
 
     // Form State
@@ -159,29 +160,21 @@ export default function FacultyLeave({ isEmbedded = false, }) {
             }
         });
 
-        if (leaveType === "Casual Leave (CL)") {
-            if (diffDays > 2) {
-                setStatusMessage({ type: "error", text: "HR Rule: Maximum 2 Casual Leaves can be combined." });
+        const activePolicy = policies.find(p => p.name === leaveType);
+        if (activePolicy) {
+            if (activePolicy.max_consecutive_days && diffDays > activePolicy.max_consecutive_days) {
+                setStatusMessage({ type: "error", text: `HR Rule: Maximum ${activePolicy.max_consecutive_days} consecutive days allowed for ${leaveType}.` });
                 setIsSubmitting(false); return;
             }
-            const accruedCL = new Date().getMonth() + 1; // 1 per month based on calendar year
-            if (usedDays + diffDays > accruedCL) {
-                setStatusMessage({ type: "error", text: `HR Rule: Insufficient balance. Accrued: ${accruedCL}, Used/Requested: ${usedDays}.` });
-                setIsSubmitting(false); return;
+            
+            // Special handling for Casual Leave accrued monthly
+            let limitToCheck = activePolicy.annual_limit;
+            if (leaveType === "Casual Leave (CL)") {
+                limitToCheck = new Date().getMonth() + 1; // accrued
             }
-        } else if (leaveType === "On Duty (OD)") {
-            if (usedDays + diffDays > 30) {
-                setStatusMessage({ type: "error", text: `HR Rule: OD limit exceeded. Max 30 days/year. Used: ${usedDays}.` });
-                setIsSubmitting(false); return;
-            }
-        } else if (leaveType === "Winter Vacation") {
-            if (usedDays + diffDays > 15) {
-                setStatusMessage({ type: "error", text: `HR Rule: Winter Vacation limit exceeded. Max 15 days/year.` });
-                setIsSubmitting(false); return;
-            }
-        } else if (leaveType === "Summer Vacation") {
-            if (usedDays + diffDays > 15) {
-                setStatusMessage({ type: "error", text: `HR Rule: Summer Vacation limit exceeded. Max 15 days/year.` });
+            
+            if (usedDays + diffDays > limitToCheck) {
+                setStatusMessage({ type: "error", text: `HR Rule: Insufficient balance for ${leaveType}. Limit: ${limitToCheck}, Used/Requested: ${usedDays + diffDays}.` });
                 setIsSubmitting(false); return;
             }
         } else if (leaveType === "Earned Leave (EL)") {
@@ -426,12 +419,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec dark:text-white/50 mb-2">Leave Category</label>
  <div className="relative">
  <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-black/[0.03] dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText dark:text-white focus:border-amber-500 focus:bg-white dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm appearance-none cursor-pointer">
- <option value="Casual Leave (CL)">Casual Leave (CL)</option>
- <option value="Earned Leave (EL)">Earned Leave (EL)</option>
- <option value="On Duty (OD)">On Duty (OD)</option>
- <option value="Winter Vacation">Winter Vacation</option>
- <option value="Summer Vacation">Summer Vacation</option>
- <option value="Loss of Pay (LOP)">Loss of Pay (LOP)</option>
+ {policies.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
  </select>
  <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec dark:text-white/30 pointer-events-none text-xs"></i>
  </div>
@@ -450,15 +438,13 @@ export default function FacultyLeave({ isEmbedded = false, }) {
                                                     used += Math.ceil(Math.abs(e - s) / (1000 * 60 * 60 * 24)) + 1;
                                                 }
                                             });
+                                            const p = policies.find(x => x.name === leaveType);
+                                            if (!p) return 'Unknown';
                                             if (leaveType === 'Casual Leave (CL)') {
                                                 const accrued = new Date().getMonth() + 1;
-                                                return `${Math.max(0, accrued - used)} Days (Accrued: ${accrued}/12, Used: ${used})`;
+                                                return `${Math.max(0, accrued - used)} Days (Accrued: ${accrued}/${p.annual_limit}, Used: ${used})`;
                                             }
-                                            if (leaveType === 'On Duty (OD)') return `${Math.max(0, 30 - used)} Days (Used: ${used}/30)`;
-                                            if (leaveType === 'Winter Vacation' || leaveType === 'Summer Vacation') return `${Math.max(0, 15 - used)} Days (Used: ${used}/15)`;
-                                            if (leaveType === 'Earned Leave (EL)') return `Rollover Based (Used: ${used})`;
-                                            if (leaveType === 'Loss of Pay (LOP)') return `Unlimited (Used: ${used})`;
-                                            return 'Unknown';
+                                            return `${Math.max(0, p.annual_limit - used)} Days (Used: ${used}/${p.annual_limit})`;
                                         })()}
                                     </span>
                                 </div>

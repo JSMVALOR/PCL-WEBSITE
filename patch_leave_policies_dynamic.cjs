@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+let file = 'Frontend/ERP/components/Admin/LeaveManagement/LeavePolicies.jsx';
+
+const content = `import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 export default function LeavePolicies() {
@@ -68,17 +71,17 @@ export default function LeavePolicies() {
                 {policies.map((policy, idx) => {
                     const c = getColorClasses(policy.color_theme);
                     return (
-                        <div key={policy.id || idx} className={`bg-white dark:bg-themeApp border border-black/5 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-${policy.color_theme}-500/30 transition-colors`}>
-                            <div className={`absolute top-0 left-0 w-full h-1 bg-${policy.color_theme}-500`}></div>
+                        <div key={policy.id || idx} className={\`bg-white dark:bg-themeApp border border-black/5 dark:border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:border-\${policy.color_theme}-500/30 transition-colors\`}>
+                            <div className={\`absolute top-0 left-0 w-full h-1 bg-\${policy.color_theme}-500\`}></div>
                             
                             <div className="flex justify-between items-start mb-6">
                                 <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${c.bg} ${c.text} text-xl`}>
+                                    <div className={\`w-12 h-12 rounded-full flex items-center justify-center \${c.bg} \${c.text} text-xl\`}>
                                         <i className="fa-solid fa-scale-balanced"></i>
                                     </div>
                                     <div>
                                         <h3 className="font-black text-themeText dark:text-white text-base">{policy.name}</h3>
-                                        <span className={`text-[10px] font-black uppercase tracking-widest ${c.text}`}>{policy.status}</span>
+                                        <span className={\`text-[10px] font-black uppercase tracking-widest \${c.text}\`}>{policy.status}</span>
                                     </div>
                                 </div>
                                 <button className="text-themeTextSec dark:text-white/30 hover:text-themeText dark:hover:text-white transition-colors">
@@ -107,3 +110,5 @@ export default function LeavePolicies() {
         </div>
     );
 }
+`;
+fs.writeFileSync(file, content);
