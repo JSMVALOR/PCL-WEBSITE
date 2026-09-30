@@ -138,9 +138,9 @@ Message: ${formData.message}`,
                 </a>
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] mb-2">Phone</h3>
-                  <p className="text-[var(--text-color)] leading-relaxed text-base">
+                  <a href="tel:+918599000777" className="text-[var(--text-color)] hover:text-[var(--primary-color)] transition-colors leading-relaxed text-base block">
                     +91 85990 00777
-                  </p>
+                  </a>
                 </div>
               </div>
 
@@ -165,7 +165,13 @@ Message: ${formData.message}`,
             transition={{ duration: 0.8, delay: 0.4 }}
             className="lg:col-span-8 h-[400px] md:h-[600px] relative w-full"
           >
-             <GlobeMap />
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d3808.887295777321!2d78.5367!3d17.3195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTfCsDE5JzEwLjIiTiA3OMKwMzInMTIuMSJF!5e0!3m2!1sen!2sin!4v1699999999999!5m2!1sen!2sin" 
+              className="w-full h-full rounded-[2rem] border border-[var(--card-border)] grayscale invert contrast-125 opacity-90 hover:grayscale-0 hover:invert-0 hover:opacity-100 transition-all duration-1000" 
+              allowFullScreen="" 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </motion.div>
         </div>
 

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Clock, Calendar, ArrowRight } from 'lucide-react';
+import { Clock, Calendar, ArrowRight, MapPin } from 'lucide-react';
 import fallbackLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
 import styles from '../PROGRAMS/Programs.module.css';
 
@@ -150,6 +150,7 @@ export default function EventsPage() {
                     
                     <div className="flex flex-col gap-2 text-xs font-bold tracking-widest text-[var(--text-muted)] uppercase mb-4">
                         <span className="flex items-center gap-2"><Clock size={14} className="text-[var(--primary-color)]"/> {evtDate.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' })}</span>
+                        <span className="flex items-center gap-2"><MapPin size={14} className="text-[var(--primary-color)]"/> {evt.location || "Prudentia Campus"}</span>
                     </div>
                     
                     <div className="mt-2 pt-4 border-t border-[var(--card-border)] flex items-center justify-between text-[var(--text-muted)] group-hover:text-[var(--primary-color)] transition-colors">

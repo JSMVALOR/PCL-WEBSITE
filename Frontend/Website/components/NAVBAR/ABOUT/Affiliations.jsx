@@ -35,8 +35,8 @@ const Affiliations = () => {
         <h1 className="text-4xl md:text-5xl lg:text-6xl  mb-6 tracking-tight font-serif tracking-tight font-bold">
           Institutional <span className="text-[var(--primary-color)] italic font-medium pr-2">Affiliations.</span>
         </h1>
-        <p className="text-[var(--text-muted)] max-w-2xl mx-auto text-lg leading-relaxed text-justify">
-          Prudentia College of Law is recognized by the highest statutory bodies in India, ensuring our students receive a globally recognized, rigorous legal education.
+        <p className="text-[var(--text-muted)] max-w-2xl mx-auto text-base md:text-lg leading-relaxed text-justify">
+          Prudentia College of Law is recognized by the highest statutory bodies in India, ensuring our students receive a rigorous and comprehensive legal education.
         </p>
       </motion.div>
 
@@ -58,6 +58,7 @@ const Affiliations = () => {
               <img decoding="async" loading="lazy" src={ouLogo} alt="Osmania University Logo" className="w-full h-full object-contain" />
             </div>
             <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary-color)] mb-2">University Affiliation</p>
               <h2 className="text-2xl md:text-3xl font-bold mb-2 text-[var(--text-color)]">Osmania University</h2>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-xs font-bold uppercase tracking-wider">
                 Affiliated Institution
@@ -77,7 +78,7 @@ const Affiliations = () => {
               </li>
               <li className="flex items-start gap-3">
                 <Award className="text-[var(--primary-color)] shrink-0 mt-1" size={18} />
-                <span className="text-sm md:text-base text-[var(--text-color)]">Degrees recognized globally for higher education and practice.</span>
+                <span className="text-sm md:text-base text-[var(--text-color)]">Degrees recognized globally for higher education and foundational legal practice.</span>
               </li>
             </ul>
 
@@ -93,17 +94,18 @@ const Affiliations = () => {
         {/* Bar Council of India Card */}
         <motion.div 
           variants={itemVariants}
-          className="relative group rounded-[32px] overflow-hidden p-10 flex flex-col justify-between bg-[var(--card-bg)] border border-[var(--card-border)] backdrop-blur-xl hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] hover:border-blue-500/30 transition-all duration-500 transform hover:-translate-y-2"
+          className="relative group rounded-[32px] overflow-hidden p-10 flex flex-col justify-between bg-[var(--card-bg)] border border-[var(--card-border)] backdrop-blur-xl hover:shadow-[0_0_40px_rgba(255,191,0,0.15)] hover:border-[var(--primary-color)]/30 transition-all duration-500 transform hover:-translate-y-2"
         >
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 rounded-full blur-3xl -ml-20 -mb-20"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--primary-color)] opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 rounded-full blur-3xl -ml-20 -mb-20"></div>
           
           <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
             <div className="w-24 h-24 rounded-2xl bg-[var(--bg-color)] border border-[var(--card-border)] p-2 shrink-0 shadow-lg group-hover:scale-105 transition-transform duration-500">
               <img decoding="async" loading="lazy" src={bciLogo} alt="Bar Council of India Logo" className="w-full h-full object-contain" />
             </div>
             <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--primary-color)] mb-2">Statutory Approval</p>
               <h2 className="text-2xl md:text-3xl font-bold mb-2 text-[var(--text-color)]">Bar Council of India</h2>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-500/10 text-blue-500 text-xs font-bold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-xs font-bold uppercase tracking-wider">
                 Approved Institution
               </div>
             </div>
@@ -116,11 +118,11 @@ const Affiliations = () => {
             
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <Shield className="text-blue-500 shrink-0 mt-1" size={18} />
+                <Shield className="text-[var(--primary-color)] shrink-0 mt-1" size={18} />
                 <span className="text-sm md:text-base text-[var(--text-color)]">Authorized to impart professional legal education.</span>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="text-blue-500 shrink-0 mt-1" size={18} />
+                <MapPin className="text-[var(--primary-color)] shrink-0 mt-1" size={18} />
                 <span className="text-sm md:text-base text-[var(--text-color)]">Graduates are eligible to enroll as advocates across India.</span>
               </li>
             </ul>

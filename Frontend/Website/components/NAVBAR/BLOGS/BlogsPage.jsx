@@ -145,8 +145,11 @@ export default function BlogsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className="flex justify-center"
+                        className="flex flex-col items-center gap-4 mt-4"
                     >
+                        <p className="text-[var(--text-muted)] text-sm max-w-lg text-center">
+                            Students, faculty, and legal practitioners are invited to contribute. All submissions undergo editorial review before publication.
+                        </p>
                         <Link to="/blogs/submit" className="tlh-btn flex justify-center !py-4 px-10">
                             <span className="text-xs font-bold uppercase tracking-widest flex items-center">
                                 <PenTool className="w-4 h-4 mr-2" />
