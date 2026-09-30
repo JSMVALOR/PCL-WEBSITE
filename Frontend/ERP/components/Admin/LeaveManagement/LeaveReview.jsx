@@ -2,6 +2,7 @@
 import SlideCommit from '../../../../Shared/components/ReactBits/SlideCommit/SlideCommit';
 import React, { useState } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  const [isProcessing, setIsProcessing] = useState(false);
@@ -13,10 +14,11 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  setIsProcessing(true);
  try {
  let updatePayload = {};
+ let remarks = "";
 
  if (actionType === 'Reject') {
- const remarks = window.prompt("Reason for rejection:");
- if (!remarks) return; // cancelled
+ remarks = await window.erpDialog?.prompt("Please enter a reason for rejecting this leave:", "Reject Leave") || window.prompt("Reason for rejection:");
+ if (!remarks) { setIsProcessing(false); return; } // cancelled
  updatePayload = { status: 'Rejected', admin_remarks: remarks };
  } 
  else if (actionType === 'Approve') {
@@ -32,6 +34,30 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  .eq('id', request.id);
 
  if (error) throw error;
+ 
+ // Send Email
+ try {
+    if (actionType === 'Reject') {
+        await sendSystemEmail('LEAVE_REJECTED', {
+            to_email: request.faculty?.email || 'admin@prudentia.edu',
+            student_name: request.faculty?.full_name || request.faculty_id,
+            leave_type: request.leave_type,
+            start_date: request.start_date,
+            end_date: request.end_date,
+            reason: remarks
+        });
+    } else {
+        await sendSystemEmail('LEAVE_APPROVED', {
+            to_email: request.faculty?.email || 'admin@prudentia.edu',
+            student_name: request.faculty?.full_name || request.faculty_id,
+            leave_type: request.leave_type,
+            start_date: request.start_date,
+            end_date: request.end_date
+        });
+    }
+ } catch (emailErr) {
+    console.warn("Email dispatch failed:", emailErr);
+ }
 
  // Simple mock audit log
  await supabase.from('leave_audit_logs').insert([{
