@@ -27,6 +27,11 @@ export const EMAIL_TEMPLATES = {
         subject: `Your ERP Password has been Reset`,
         message_body: HTML_EMAIL_TEMPLATES.PASSCODE_RESET(params) }),
         
+    
+    APPLICATION_REJECTED: (params) => ({
+        subject: `Update on Your Admission Application`,
+        message_body: HTML_EMAIL_TEMPLATES.APPLICATION_REJECTED(params) }),
+
     APPLICATION_RECEIVED: (params) => ({
         subject: `Application Received - Ticket #${params.ticket_id}`,
         message_body: HTML_EMAIL_TEMPLATES.APPLICATION_RECEIVED(params) }),

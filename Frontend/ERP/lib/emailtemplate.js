@@ -868,6 +868,15 @@ export const HTML_EMAIL_TEMPLATES = {
         <p style="font-size: 13px; color: #71717a;">Please keep this passcode secure. If you did not request this change, please contact the administration immediately.</p>`
     ),
 
+    
+    APPLICATION_REJECTED: (params) => buildEmailHtml(
+        'Update on Your Admission Application',
+        `<p>Dear ${params.student_name},</p>
+        <p>Thank you for your interest in the <strong>${params.program}</strong> at Prudentia College of Law.</p>
+        <p>After careful consideration of your application, we regret to inform you that we are unable to offer you admission at this time.</p>
+        <p>We appreciate the time you took to apply and wish you the best in your future academic endeavors.</p>`
+    ),
+
     APPLICATION_RECEIVED: (params) => buildEmailHtml(
         'Application Received',
         `<p>Dear Applicant,</p>

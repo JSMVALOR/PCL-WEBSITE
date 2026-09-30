@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { createClient } from '@supabase/supabase-js';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ;
@@ -89,13 +90,36 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  setProvisionLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
  };
 
- const handleReject = async (id) => {
+ const handleReject = async (app) => {
+ if (!(await window.erpDialog?.confirm(`Are you sure you want to reject ${app.name}'s application? This will send a rejection notification email.`))) return;
  try {
- const { error } = await supabase.from("admissions_applications").update({ status: 'rejected' }).eq("id", id);
+ const { error } = await supabase.from("admissions_applications").update({ status: 'rejected' }).eq("id", app.id);
  if (error) throw error;
+
+ // Send rejection email
+ try {
+ await sendSystemEmail('APPLICATION_REJECTED', {
+ to_email: app.email,
+ student_name: app.name,
+ program: app.program || 'Law Program'
+ });
+ } catch (emailErr) {
+ console.warn("Rejection email failed:", emailErr);
+ }
+
+ // Show undoable toast
+ if (window.erpToast?.undoable) {
+ window.erpToast.undoable(`${app.name}'s application has been rejected.`, async () => {
+ await supabase.from("admissions_applications").update({ status: 'pending' }).eq("id", app.id);
+ fetchApplications();
+ }, 10000);
+ } else {
+ window.erpToast?.show?.('Application rejected successfully.', 'success');
+ }
+
  fetchApplications();
  } catch (error) {
- (window.erpDialog?.alert || alert)("Failed to reject application.");
+ window.erpToast?.show?.('Failed to reject application.', 'error') || (window.erpDialog?.alert || alert)("Failed to reject application.");
  }
  };
 
@@ -193,6 +217,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  addLog(`[SUCCESS] Initial fee invoice generated successfully.`);
  }
 
+
  // 5. Send Welcome Email
  addLog(`[EMAIL] Dispatching secure setup link via Supabase...`);
  try {
@@ -201,7 +226,18 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  });
  if (resetError) throw resetError;
  addLog(`[SUCCESS] Setup link successfully dispatched to ${app.email}!`);
+ 
+ // ADDED: Send the actual credentials email
+ await sendSystemEmail('FIRST_CREDENTIALS', {
+ to_email: app.email,
+ student_name: app.name,
+ erp_id: generatedId,
+ password: generatedPassword,
+ portal_link: window.location.origin
+ });
+ addLog(`[SUCCESS] First credentials sent successfully to ${app.email}!`);
  } catch (emailErr) {
+
  console.error("Supabase Email Error:", emailErr);
  addLog(`[WARNING] Link dispatch failed: ${emailErr.message}. The account was created successfully, but credentials must be provided manually.`);
  }
@@ -241,7 +277,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  )}
 
  <div className={`flex items-center justify-between relative z-10 flex-wrap gap-4`}>
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-gray-100 dark:bg-themeApp backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
+ <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-themeApp dark:bg-themeApp backdrop-blur-2xl backdrop-blur-md rounded-2xl border border-black/5 dark:border-white/10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {['all', 'pending', 'approved', 'rejected'].map(f => (
  <button type="button" 
  key={f}
@@ -249,7 +285,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${
  filter === f 
  ? 'bg-themeAccent text-themeText dark:text-white border border-themeBorder dark:border-white/5Accent scale-100' 
- : 'text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-white dark:bg-[#121212] backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'
+ : 'text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white hover:bg-themePanel dark:bg-[#121212] backdrop-blur-2xl border border-transparent scale-95 hover:scale-100'
  }`}
  >
  {f}
@@ -274,10 +310,10 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  <div className="animate-spin w-8 h-8 border-4 border-themeBorder dark:border-white/5Accent border-t-transparent rounded-full"></div>
  </div>
  ) : (
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl rounded-2xl border border-themeBorder dark:border-white/5 overflow-hidden">
+ <div className="bg-themePanel dark:bg-[#121212] backdrop-blur-2xl rounded-2xl border border-themeBorder dark:border-white/5 overflow-hidden">
  <div className="overflow-x-auto">
  <table className="w-full text-left">
- <thead className="bg-gray-100 dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder dark:border-white/5 text-xs tracking-normal text-themeTextSec dark:text-white/50 font-black">
+ <thead className="bg-themeApp dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder dark:border-white/5 text-xs tracking-normal text-themeTextSec dark:text-white/50 font-black">
  <tr>
  <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Applicant</th>
  <th className="p-4 border-r-theme border-themeBorder dark:border-white/5">Program</th>
@@ -292,7 +328,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  <tr><td colSpan="6" className="p-8 text-center text-themeTextSec dark:text-white/50 font-black tracking-normal">No applications found.</td></tr>
  ) : (
  filteredApps.map(app => (
- <tr key={app.id} className="hover:bg-gray-100 dark:bg-themeApp backdrop-blur-2xl transition-colors group">
+ <tr key={app.id} className="hover:bg-themeApp dark:bg-themeApp backdrop-blur-2xl transition-colors group">
  <td className="p-4 border-r-theme border-themeBorder dark:border-white/5">
  <p className="font-black text-themeText dark:text-white">{app.name}</p>
  <p className="text-xs text-themeTextSec dark:text-white/50 font-medium mt-1">{app.email}</p>
@@ -327,7 +363,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  <button type="button" onClick={() => handleApprovePipeline(app)} className="w-8 h-8 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white rounded-lg transition" title="Approve">
  <i className="fa-solid fa-check"></i>
  </button>
- <button type="button" onClick={() => handleReject(app.id)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white rounded-lg transition" title="Reject">
+ <button type="button" onClick={() => handleReject(app)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white rounded-lg transition" title="Reject">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -345,14 +381,14 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  {/* Automation Pipeline Modal */}
  {showProvisionModal && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[500px]">
- <div className="bg-gray-100 dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder dark:border-white/5 p-5 flex justify-between items-center shrink-0">
+ <div className="bg-themePanel dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-2xl w-full max-w-2xl overflow-hidden flex flex-col h-[500px]">
+ <div className="bg-themeApp dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder dark:border-white/5 p-5 flex justify-between items-center shrink-0">
  <div className="flex items-center gap-3">
  <i className="fa-solid fa-robot text-themeAccent text-xl"></i>
  <span className="font-mono text-[15px] font-semibold text-themeText dark:text-white tracking-widest uppercase">Pipeline Execution</span>
  </div>
  {provisionStatus !== "running" && (
- <button type="button" onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }} className="w-8 h-8 flex items-center justify-center bg-transparent hover:bg-gray-100 dark:bg-themeApp backdrop-blur-2xl rounded-full border border-black/5 dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white transition">
+ <button type="button" onClick={() => { setShowProvisionModal(false); setGeneratedCredentials(null); }} className="w-8 h-8 flex items-center justify-center bg-transparent hover:bg-themeApp dark:bg-themeApp backdrop-blur-2xl rounded-full border border-black/5 dark:border-white/10 text-themeTextSec dark:text-white/50 hover:text-themeText dark:text-white transition">
  <i className="fa-solid fa-xmark"></i>
  </button>
  )}
@@ -369,13 +405,13 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  <div className="w-full max-w-sm bg-transparent p-6 rounded-2xl border border-black/5 dark:border-white/10 flex flex-col gap-5 text-left">
  <div className="flex flex-col gap-2">
  <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50 ml-1">Generated ERP ID</span>
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 p-3 rounded-lg text-base font-black text-themeText dark:text-white tracking-widest select-all text-center">
+ <div className="bg-themePanel dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 p-3 rounded-lg text-base font-black text-themeText dark:text-white tracking-widest select-all text-center">
  {generatedCredentials.id}
  </div>
  </div>
  <div className="flex flex-col gap-2">
  <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50 ml-1">Temporary Password</span>
- <div className="bg-white dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 p-3 rounded-lg text-base font-black text-themeText dark:text-white tracking-widest select-all text-center">
+ <div className="bg-themePanel dark:bg-[#121212] backdrop-blur-2xl border border-themeBorder dark:border-white/5 p-3 rounded-lg text-base font-black text-themeText dark:text-white tracking-widest select-all text-center">
  {generatedCredentials.password}
  </div>
  </div>
@@ -404,7 +440,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  </div>
  )}
 
- <div className="bg-gray-100 dark:bg-themeApp backdrop-blur-2xl border-t-theme border-themeBorder dark:border-white/5 p-4 shrink-0 flex justify-end">
+ <div className="bg-themeApp dark:bg-themeApp backdrop-blur-2xl border-t-theme border-themeBorder dark:border-white/5 p-4 shrink-0 flex justify-end">
  {provisionStatus === "running" ? (
  <div className="text-amber-400 font-mono text-[15px] font-semibold tracking-widest animate-pulse px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded">PIPELINE ACTIVE...</div>
  ) : (
