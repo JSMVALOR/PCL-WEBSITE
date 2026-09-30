@@ -14,12 +14,7 @@ export default function LinksSection() {
       {/* Brand & Identity */}
       <div className="flex flex-col items-center text-center lg:items-start lg:text-left col-span-1 md:col-span-2 lg:col-span-5 pr-0 lg:pr-12">
         <Link to="/" className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 group">
-          <img decoding="async" loading="lazy" 
-            src={logo} 
-            alt="Prudentia College of Law Logo" 
-            className="h-8 md:h-14 lg:h-16 w-auto group-hover:scale-105 transition-transform theme-logo"
-            
-          />
+          <div className="brand-crest !w-10 !h-10 md:!w-14 md:!h-14 lg:!w-16 lg:!h-16 group-hover:scale-105 transition-transform"></div>
           <div className="flex flex-col items-start lg:items-start">
             <span className="font-bold tracking-[0.2em] text-base md:text-xl lg:text-2xl text-[var(--text-primary)]">
               PRUDENTIA
@@ -71,10 +66,10 @@ export default function LinksSection() {
         </ul>
 
         <div className="flex justify-center lg:justify-start gap-4">
-          <a href="https://www.instagram.com/prudentiacollegeoflaw" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="Instagram">
+          <a href="https://www.instagram.com/prudentiacollegeoflaw" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5  border border-black/10  flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="Instagram">
             <FaInstagram className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
           </a>
-          <a href="https://wa.me/918599000777" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="WhatsApp">
+          <a href="https://wa.me/918599000777" target="_blank" rel="noopener noreferrer" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-black/5  border border-black/10  flex items-center justify-center text-[var(--text-primary)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] hover:border-[var(--accent)] transition-all hover:scale-110" aria-label="WhatsApp">
             <FaWhatsapp className="w-3.5 h-3.5 md:w-[18px] md:h-[18px]" />
           </a>
         </div>
