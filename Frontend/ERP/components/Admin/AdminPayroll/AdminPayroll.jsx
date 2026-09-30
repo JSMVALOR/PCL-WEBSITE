@@ -292,7 +292,7 @@ export default function AdminPayroll() {
                 title: 'Payroll Disbursed',
                 category: 'Finance',
                 target_audience: ['faculty'],
-                target_user_id: selectedFaculty.db_id,
+                target_user_id: selectedFac.id,
                 priority: 'high',
                 content: `Your salary for ${currentMonth} ${currentYear} has been disbursed.`,
                 author_name: 'Finance Department',

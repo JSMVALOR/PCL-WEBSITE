@@ -207,7 +207,7 @@ export default function MentorshipAllocations({}) {
     window.erpToast?.undoable(
         "All Mentorship Allocations Wiped",
         async () => {
-            const { error: deleteError } = await supabase.from('mentorship').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            const { error: deleteError } = await supabase.from("mentorship").delete().neq('id', '00000000-0000-0000-0000-000000000000');
             if (!deleteError) {
                 await logAction(`Cleared all mentorship allocations`);
             }
@@ -229,7 +229,7 @@ export default function MentorshipAllocations({}) {
  .eq('faculty_id', facultyId)
  .eq('student_id', studentId);
 
- if (error) return;
+ if (error) { window.toast?.error("Database error."); return; }
 
  const targetFaculty = faculty.find(f => f.id === facultyId);
  const targetStudent = targetFaculty.mentees.find(s => s.id === studentId);

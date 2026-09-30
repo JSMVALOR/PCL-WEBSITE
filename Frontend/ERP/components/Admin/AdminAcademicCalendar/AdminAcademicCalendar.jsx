@@ -142,7 +142,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  const handleDelete = async (id) => {
  
  try {
- const { error } = await supabase.from('academic_calendar').delete().eq('id', id);
+ const { error } = await supabase.from('academic_events').delete().eq('id', id);
  if (error) throw error;
       const { data: settingData } = await supabase.from('system_settings').select('value').eq('key', 'academic_calendar_pdf').single();
       if (settingData?.value?.url) {
