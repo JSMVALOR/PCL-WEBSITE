@@ -25,7 +25,7 @@ export default function FacultyCard({ faculty, onClick }) {
       />
       
       {/* Text Container */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 w-full bg-black/80 backdrop-blur-md border-t-[3px] border-[var(--primary-color)] p-3 md:p-6 overflow-hidden">
+      <div className="absolute bottom-0 left-0 right-0 z-10 w-full bg-black/80 backdrop-blur-md border-t-[3px] border-[var(--primary-color)] p-3 md:p-4 lg:p-5 overflow-hidden">
         
         {/* The Green Fill (expands on hover only inside the text container) */}
         <motion.div 
@@ -40,10 +40,10 @@ export default function FacultyCard({ faculty, onClick }) {
         {/* Content */}
         <div className="relative z-10 flex justify-between items-end">
           <div className="flex-1 pr-4">
-            <h3 className="text-[15px] md:text-2xl font-bold text-white font-serif mb-1 group-hover:text-black transition-colors duration-300 leading-tight">
+            <h3 className="text-[15px] md:text-lg lg:text-xl font-bold text-white font-serif mb-1 group-hover:text-black transition-colors duration-300 leading-tight">
               {faculty.full_name}
             </h3>
-            <p className="text-[9px] md:text-sm font-bold text-[var(--primary-color)] group-hover:text-black/80 transition-colors duration-300 uppercase tracking-[0.15em] md:tracking-widest">
+            <p className="text-[9px] md:text-[10px] lg:text-xs font-bold text-[var(--primary-color)] group-hover:text-black/80 transition-colors duration-300 uppercase tracking-widest md:tracking-[0.1em] leading-tight">
               {designation}
             </p>
           </div>
