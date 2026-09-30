@@ -1623,22 +1623,23 @@ html.home-snap {
   }
 
   :root {
-    --bg-app: #080808;
-    --bg-panel: #121212;
-    --bg-elevated: #1C1C1C;
-    --text-primary: #F5F5F0;
-    --text-secondary: #A1A1AA;
-    --accent: #FFC107;
-    --accent-muted: #C5A880;
-    --border-color: rgba(255, 193, 7, 0.1);
-    --border-strong: rgba(255, 193, 7, 0.2);
+    /* New Theme: Classic Ivory & Saddle Brown */
+    --bg-app: #FFFFFF;
+    --bg-panel: #FCFBF9;
+    --bg-elevated: #F4F1ED;
+    --text-primary: #2A201A;
+    --text-secondary: #73645B;
+    --accent: #8B4513;
+    --accent-muted: #A0522D;
+    --border-color: rgba(139, 69, 19, 0.15);
+    --border-strong: rgba(139, 69, 19, 0.3);
     --radius-panel: 0.75rem;
     --radius-btn: 0.5rem;
     --border-width: 1px;
-    --shadow-elevated: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-    --text-on-accent: #000000;
+    --shadow-elevated: 0 10px 30px -5px rgba(42, 32, 26, 0.08);
+    --text-on-accent: #FFFFFF;
     --panel-blur: 40px;
-    --panel-opacity: 0.85;
+    --panel-opacity: 0.90;
   }
 
     
@@ -1913,27 +1914,6 @@ html.home-snap {
     --border-color: rgba(255, 255, 255, 0.4);
     --border-strong: rgba(255, 255, 255, 0.8);
     --text-secondary: #E2E8F0;
-  }
-  
-  /* WEBSITE SPECIFIC LIGHT THEME (Only applies when no data-theme is set) */
-  /* system-website-light identifier */
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme]) {
-      --bg-app: #FAFAFA;
-      --bg-panel: #FFFFFF;
-      --bg-elevated: #F3F4F6;
-      --text-primary: #0F172A;
-      --text-secondary: #475569;
-      /* Website strictly keeps the Amber Gold accent in both modes */
-      --accent: #FFC107;
-      --accent-muted: #CA8A04;
-      --border-color: rgba(0, 0, 0, 0.08);
-      --border-strong: rgba(0, 0, 0, 0.15);
-      --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
-      --text-on-accent: #000000;
-      --panel-blur: 40px;
-      --panel-opacity: 0.90;
-    }
   }
 
   [data-theme="marble-executive"] {
