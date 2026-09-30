@@ -5,7 +5,9 @@ import { motion } from 'framer-motion';
 export default function FacultyCard({ faculty, onClick }) {
   const fProfile = faculty.faculty_profiles || {};
   const image = fProfile.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-  const designation = fProfile.designation || faculty.department || 'Faculty Member';
+  let designation = fProfile.designation || faculty.department || 'Faculty Member';
+  // Clean up redundant college names if they were entered in the ERP
+  designation = designation.replace(/,\s*prudentia college of law/i, '').replace(/prudentia college of law/i, '');
   
   return (
     <motion.div 

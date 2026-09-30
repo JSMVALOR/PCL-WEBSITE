@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import DOMPurify from 'dompurify';
 
 const ALL_TABS = [
+  { id: 'experience', label: 'Past Experience' },
   { id: 'education', label: 'Education' },
   { id: 'research', label: 'Areas of Expertise' },
   { id: 'projects', label: 'Projects' },
@@ -57,7 +58,7 @@ export default function FacultyProfile() {
                     id, full_name, department, email, status,
                     faculty_profiles (
                         designation, specialisation, bio, office_address, phone,
-                        linkedin_url, scholar_url, education, research, projects, patents, awards, is_public, image_url
+                        linkedin_url, scholar_url, experience, education, research, projects, patents, awards, is_public, image_url
                     )
                 `)
                 .eq('id', id)
