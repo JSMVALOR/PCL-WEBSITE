@@ -287,6 +287,17 @@ export default function AdminPayroll() {
             // 1. Database Insert
             const { error } = await supabase.from('faculty_payroll').insert([payload]);
             if (error) throw error;
+            await supabase.from('notices').insert([{
+                notice_id: `PAY-${Date.now()}`,
+                title: 'Payroll Disbursed',
+                category: 'Finance',
+                target_audience: ['faculty'],
+                target_user_id: selectedFaculty.db_id,
+                priority: 'high',
+                content: `Your salary for ${currentMonth} ${currentYear} has been disbursed.`,
+                author_name: 'Finance Department',
+                author_id: null
+            }]);
 
             // 2. Generate Ultra Luxury PDF via NATIVE ENGINE (Zero DOM Dependency)
             const base64Pdf = await generateNativePayslip(

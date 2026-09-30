@@ -8,7 +8,6 @@ import { getAvatarUrl } from '../../utils/avatarUtils';
 import { useNotification } from '../../../Shared/context/NotificationContext';
 import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo.svg';
 import { GlobalSearch } from './LiveHeaderComponents';
-import NotificationsDropdown from './Navigation/NotificationsDropdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function TopNav({ userSession, activeTab, setActiveTab, onLogout }) {
@@ -211,21 +210,14 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                         onMouseEnter={() => handleMouseEnter('notifications')}
                         onMouseLeave={handleMouseLeave}
                     >
-                        <button type="button" aria-label="View Notices" onClick={() => setActiveTab('notices')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-themeAccent focus-visible:ring-offset-2 shadow-sm">
+                        <button type="button" aria-label="View Notices" onClick={() => setActiveTab('notifications')} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/5 flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-themeAccent focus-visible:ring-offset-2 shadow-sm">
                             <i className="fa-regular fa-bell text-[13px] group-hover:scale-110 transition-transform"></i>
                             {(unreadNotifications > 0) && (
                                 <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-md bg-[#FF9500] shadow-[0_0_8px_#FF9500] animate-pulse border border-white dark:border-themeBorder"></span>
                             )}
                         </button>
                         
-                        <AnimatePresence>
-                            {activeDropdown === 'notifications' && (
-                                <NotificationsDropdown 
-                                    onClose={() => setActiveDropdown(null)} 
-                                    setActiveTab={setActiveTab} 
-                                />
-                            )}
-                        </AnimatePresence>
+                        
                     </div>
 
                     <div className="w-px h-5 bg-black/10 dark:bg-white/10 mx-1 hidden sm:block"></div>
