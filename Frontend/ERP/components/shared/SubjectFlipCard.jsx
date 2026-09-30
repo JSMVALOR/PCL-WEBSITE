@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 const SUBJECT_COLORS = {
-    blue: { text: 'text-themeAccent', solid: 'bg-[#007AFF]', gradient: 'from-[#007AFF]/20 to-transparent' },
+    blue: { text: 'text-themeAccent', solid: 'bg-[var(--theme-accent)]', gradient: 'from-[var(--theme-accent)]/20 to-transparent' },
     emerald: { text: 'text-[#34C759]', solid: 'bg-[#34C759]', gradient: 'from-[#34C759]/20 to-transparent' },
     purple: { text: 'text-[#AF52DE]', solid: 'bg-[#AF52DE]', gradient: 'from-[#AF52DE]/20 to-transparent' },
     orange: { text: 'text-[#FF9500]', solid: 'bg-[#FF9500]', gradient: 'from-[#FF9500]/20 to-transparent' },

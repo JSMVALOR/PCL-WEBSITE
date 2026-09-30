@@ -53,7 +53,7 @@ function App() {
 
   return (
     <>
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] bg-[#cda75b] text-white px-6 py-3 rounded-lg font-bold shadow-2xl">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] bg-[var(--primary-color)] text-white px-6 py-3 rounded-lg font-bold shadow-2xl">
         Skip to main content
       </a>
       <WebsiteTracker />

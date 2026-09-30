@@ -583,7 +583,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2 shrink-0">
      <div>
          <h1 className="text-2xl font-black text-themeText tracking-tight flex items-center gap-3">
-             <div className="w-10 h-10 rounded-xl bg-themeElevated shadow-inner border border-black/5 dark:border-white/5 flex items-center justify-center text-[#007AFF]">
+             <div className="w-10 h-10 rounded-xl bg-themeElevated shadow-inner border border-black/5 dark:border-white/5 flex items-center justify-center text-[var(--theme-accent)]">
                  <i className="fa-solid fa-wand-magic-sparkles text-lg"></i>
              </div>
              CMS Editor Engine
@@ -747,7 +747,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
                  errorLabel="Failed"
                  onConfirm={handleSave}
                  trackColor="rgba(28, 28, 30, 0.05)"
-                 handleColor="#007AFF"
+                 handleColor="var(--theme-accent)"
                  successColor="#10b981"
                  dangerColor="#f43f5e"
                  width="100%"

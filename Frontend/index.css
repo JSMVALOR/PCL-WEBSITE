@@ -853,7 +853,7 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 .arsenal-card:hover {
-  border-color: #FFBF00;
+  border-color: var(--primary-color);
   background: rgba(20, 20, 20, 0.9);
   transform: translateX(-10px);
   box-shadow: 0 10px 30px rgba(255, 191, 0, 0.1);
@@ -1023,7 +1023,7 @@ html, body {
   box-shadow: 0 20px 50px var(--primary-glow);
 }
 .icon-wrapper {
-  color: #FFBF00;
+  color: var(--primary-color);
   margin-bottom: 20px;
   padding: 15px;
   background: rgba(255, 191, 0, 0.05);
@@ -1035,7 +1035,7 @@ html, body {
   transition: all 0.3s ease;
 }
 .contact-box:hover .icon-wrapper {
-  background: #FFBF00;
+  background: var(--primary-color);
   color: #000;
   transform: scale(1.1);
   box-shadow: 0 0 20px rgba(255, 191, 0, 0.4);
@@ -1058,7 +1058,7 @@ html, body {
   text-align: center;
 }
 .contact-box a:hover {
-  color: #FFBF00;
+  color: var(--primary-color);
 }
 .hours-days {
   color: #fff !important;
@@ -1067,7 +1067,7 @@ html, body {
   letter-spacing: 1px;
 }
 .hours-time {
-  color: #FFBF00 !important;
+  color: var(--primary-color) !important;
   font-size: 1.1rem !important;
   font-weight: 300;
 }

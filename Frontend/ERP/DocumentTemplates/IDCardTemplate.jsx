@@ -9,7 +9,7 @@ import pclLogo from '../../Shared/Assets/LOGOS/pcl_logo.svg';
 const IDCardTemplate = React.forwardRef(({ profileData, roleTitle, userSession }, ref) => {
     
     const getThemeColor = () => {
-        if (roleTitle === 'Faculty' || roleTitle === 'Admin') return { main: '#007AFF', light: 'rgba(0,122,255,0.1)', grad: 'from-blue-500' };
+        if (roleTitle === 'Faculty' || roleTitle === 'Admin') return { main: 'var(--theme-accent)', light: 'rgba(0,122,255,0.1)', grad: 'from-blue-500' };
         
         const prog = (profileData?.programme || profileData?.department || '').toLowerCase().replace(/[.\s]/g, '');
         

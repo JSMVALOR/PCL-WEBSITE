@@ -19,13 +19,13 @@ const getBatchColorKey = (batchName) => {
 };
 
 const THEME_COLORS = {
-    blue: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' },
+    blue: { primary: 'var(--theme-accent)', bg: 'rgba(0,122,255,0.1)' },
     emerald: { primary: '#34C759', bg: 'rgba(52,199,89,0.1)' },
     amber: { primary: '#FF9500', bg: 'rgba(255,149,0,0.1)' },
     rose: { primary: '#FF3B30', bg: 'rgba(255,59,48,0.1)' },
     indigo: { primary: '#5856D6', bg: 'rgba(88,86,214,0.1)' },
     purple: { primary: '#AF52DE', bg: 'rgba(175,82,222,0.1)' },
-    default: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' }
+    default: { primary: 'var(--theme-accent)', bg: 'rgba(0,122,255,0.1)' }
 };
 
 export default function ClassRoster({ isEmbedded = false }) {

@@ -308,7 +308,7 @@ export default function CourseVault({ isEmbedded = false }) {
                                 placeholder="Search courses or codes..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/10 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-themeText focus:border-[#007AFF]/50 focus:ring-2 focus:ring-[#007AFF]/20 outline-none transition-all placeholder:text-themeTextSec"
+                                className="w-full bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/10 rounded-2xl pl-11 pr-4 py-3 text-sm font-bold text-themeText focus:border-[var(--theme-accent)]/50 focus:ring-2 focus:ring-[var(--theme-accent)]/20 outline-none transition-all placeholder:text-themeTextSec"
                             />
                         </div>
                         

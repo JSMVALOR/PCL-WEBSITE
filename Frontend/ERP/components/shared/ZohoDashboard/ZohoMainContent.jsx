@@ -21,7 +21,7 @@ export default function ZohoMainContent({ session, role }) {
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`px-5 py-5 text-[13px] font-semibold whitespace-nowrap transition-colors border-b-2 ${
-                            tab === activeTab ? 'border-[#007AFF] text-themeAccent' : 'border-transparent text-themeTextSec hover:text-themeText'
+                            tab === activeTab ? 'border-[var(--theme-accent)] text-themeAccent' : 'border-transparent text-themeTextSec hover:text-themeText'
                         }`}
                     >
                         {tab}

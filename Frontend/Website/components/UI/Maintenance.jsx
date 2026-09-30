@@ -27,7 +27,7 @@ export default function Maintenance() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen overflow-hidden bg-[#050505] text-white flex items-center justify-center font-sans selection:bg-[#cda75b]/30">
+    <div ref={containerRef} className="relative w-full h-screen overflow-hidden bg-[#050505] text-white flex items-center justify-center font-sans selection:bg-[var(--primary-color)]/30">
       {/* Background Image & Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -39,8 +39,8 @@ export default function Maintenance() {
       </div>
 
       {/* Ambient Lights */}
-      <div className="ambient-light absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-[#cda75b]/5 rounded-full blur-[100px] z-10 pointer-events-none" />
-      <div className="ambient-light absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#cda75b]/5 rounded-full blur-[120px] z-10 pointer-events-none" />
+      <div className="ambient-light absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-[var(--primary-color)]/5 rounded-full blur-[100px] z-10 pointer-events-none" />
+      <div className="ambient-light absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[var(--primary-color)]/5 rounded-full blur-[120px] z-10 pointer-events-none" />
 
       {/* Content */}
       <div className="relative z-20 max-w-4xl w-full px-6 flex flex-col items-center text-center">
@@ -64,11 +64,11 @@ export default function Maintenance() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
         >
-          <h1 className="text-sm md:text-base font-bold tracking-[0.3em] uppercase text-[#cda75b] mb-6 font-mono">
+          <h1 className="text-sm md:text-base font-bold tracking-[0.3em] uppercase text-[var(--primary-color)] mb-6 font-mono">
             System Maintenance
           </h1>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-8 font-['Outfit'] leading-tight">
-            Refining the <span className="font-['Playfair_Display'] italic font-normal text-[#cda75b]">Experience</span>
+            Refining the <span className="font-['Playfair_Display'] italic font-normal text-[var(--primary-color)]">Experience</span>
           </h2>
           <p className="text-white/60 text-base md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
             The Prudentia College of Law digital infrastructure is currently undergoing scheduled upgrades to enhance performance and security. We will be back online shortly.
@@ -84,7 +84,7 @@ export default function Maintenance() {
         >
           <div className="w-16 h-[2px] bg-white/10 rounded-full overflow-hidden">
             <motion.div 
-              className="h-full bg-[#cda75b]"
+              className="h-full bg-[var(--primary-color)]"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
             />

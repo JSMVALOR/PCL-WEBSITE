@@ -237,7 +237,7 @@ export default function ParentDashboard({ onLogout }) {
                             <div className="relative w-36 h-36 mt-8 mb-4 drop-shadow-[0_4px_12px_rgba(0,122,255,0.3)]">
                                 <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
                                     <circle cx="50" cy="50" r="40" className="stroke-black/5 dark:stroke-white/10 fill-none" strokeWidth="8" />
-                                    <circle cx="50" cy="50" r="40" className="stroke-[#007AFF] fill-none transition-all duration-1000 ease-out" strokeWidth="8" strokeLinecap="round" style={{ strokeDasharray: 251.2, strokeDashoffset: 251.2 - (251.2 * attPercentage) / 100 }} />
+                                    <circle cx="50" cy="50" r="40" className="stroke-[var(--theme-accent)] fill-none transition-all duration-1000 ease-out" strokeWidth="8" strokeLinecap="round" style={{ strokeDasharray: 251.2, strokeDashoffset: 251.2 - (251.2 * attPercentage) / 100 }} />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                                     <span className="text-[32px] font-semibold tracking-tight">{attPercentage}<span className="text-lg">%</span></span>
@@ -283,10 +283,10 @@ export default function ParentDashboard({ onLogout }) {
                         </div>
                         
                         {/* Assignments (6) */}
-                        <div onClick={() => setActiveModal('assignments')} className="col-span-1 md:col-span-3 lg:col-span-6 bg-white/70 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-[24px] p-6 cursor-pointer hover:border-[#007AFF]/30 transition-colors flex flex-col gap-4 relative group">
+                        <div onClick={() => setActiveModal('assignments')} className="col-span-1 md:col-span-3 lg:col-span-6 bg-white/70 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-[24px] p-6 cursor-pointer hover:border-[var(--theme-accent)]/30 transition-colors flex flex-col gap-4 relative group">
                             <div className="flex justify-between items-start">
                                 <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 rounded-xl bg-[#007AFF]/10 text-[#007AFF] flex items-center justify-center"><i className="fa-solid fa-book-open"></i></div>
+                                    <div className="w-10 h-10 rounded-xl bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] flex items-center justify-center"><i className="fa-solid fa-book-open"></i></div>
                                     <h3 className="font-bold">Assignments</h3>
                                 </div>
                                 <i className="fa-solid fa-arrow-right text-themeTextSec dark:text-white/50 opacity-0 group-hover:opacity-100 transition-all"></i>
@@ -336,7 +336,7 @@ export default function ParentDashboard({ onLogout }) {
                                     {activeModal === 'marks' && <><i className="fa-solid fa-graduation-cap text-[#34C759] mr-2"></i> Academic Marks</>}
                                     {activeModal === 'leaves' && <><i className="fa-solid fa-plane-departure text-[#FF9500] mr-2"></i> Leave History</>}
                                     {activeModal === 'fees' && <><i className="fa-solid fa-file-invoice-dollar text-[#AF52DE] mr-2"></i> Fee Invoices</>}
-                                    {activeModal === 'assignments' && <><i className="fa-solid fa-book-open text-[#007AFF] mr-2"></i> Assignment Status</>}
+                                    {activeModal === 'assignments' && <><i className="fa-solid fa-book-open text-[var(--theme-accent)] mr-2"></i> Assignment Status</>}
                                     {activeModal === 'contact_mentor' && <><i className="fa-regular fa-paper-plane text-themeAccent mr-2"></i> Contact Mentor</>}
                                 </h3>
                                 <button onClick={() => setActiveModal(null)} className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 flex items-center justify-center hover:bg-black/20 dark:hover:bg-white/20 transition-colors"><i className="fa-solid fa-xmark"></i></button>

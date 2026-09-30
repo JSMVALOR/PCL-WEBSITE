@@ -45,7 +45,7 @@ export default function Library() {
       <div className={styles.contentContainer} ref={contentRef}>
         
         {/* Navigation */}
-        <Link to="/campus/facilities" className="inline-flex items-center text-gray-400 hover:text-[#FFBF00] transition-colors mb-12 uppercase tracking-widest text-sm font-semibold relative z-10 gsap-fade-up">
+        <Link to="/campus/facilities" className="inline-flex items-center text-gray-400 hover:text-[var(--primary-color)] transition-colors mb-12 uppercase tracking-widest text-sm font-semibold relative z-10 gsap-fade-up">
           <span className="mr-2">←</span> Back to Facilities
         </Link>
 
@@ -61,7 +61,7 @@ export default function Library() {
             className="text-5xl md:text-6xl lg:text-7xl  text-white mb-6 leading-tight font-serif tracking-tight font-bold"
            
           >
-            Library & <span className="text-[#FFBF00] italic">Infrastructure</span>
+            Library & <span className="text-[var(--primary-color)] italic">Infrastructure</span>
           </motion.h1>
           <p className="text-base md:text-xl text-gray-300 max-w-3xl leading-relaxed">
             State-of-the-art facilities designed to foster rigorous scholarship and dynamic education. Discover the intellectual core of Prudentia College of Law.
@@ -71,15 +71,15 @@ export default function Library() {
         {/* Hero Image */}
         <div className="w-full h-[400px] md:h-[500px] rounded-3xl overflow-hidden mb-20 relative flex items-center justify-center group shadow-2xl gsap-fade-up z-10">
           <img decoding="async" loading="lazy" src={libraryImg} alt="Library & Infrastructure" className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-700" />
-          <div className="absolute inset-0 ring-1 ring-inset ring-[#FFBF00]/30 rounded-3xl pointer-events-none"></div>
+          <div className="absolute inset-0 ring-1 ring-inset ring-[var(--primary-color)]/30 rounded-3xl pointer-events-none"></div>
         </div>
 
         {/* Grid Section */}
         <div className="grid md:grid-cols-2 gap-8 relative z-10">
           
           <div className={`${styles.glassCard} gsap-fade-up`}>
-            <div className="w-14 h-14 rounded-xl border border-[#FFBF00]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
-              <LibraryIcon className="w-7 h-7 text-[#FFBF00]" />
+            <div className="w-14 h-14 rounded-xl border border-[var(--primary-color)]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
+              <LibraryIcon className="w-7 h-7 text-[var(--primary-color)]" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">
               The Prudentia Law Library
@@ -90,8 +90,8 @@ export default function Library() {
           </div>
 
           <div className={`${styles.glassCard} gsap-fade-up`}>
-            <div className="w-14 h-14 rounded-xl border border-[#FFBF00]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
-              <Monitor className="w-7 h-7 text-[#FFBF00]" />
+            <div className="w-14 h-14 rounded-xl border border-[var(--primary-color)]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
+              <Monitor className="w-7 h-7 text-[var(--primary-color)]" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">
               Interactive Smart Classrooms
@@ -102,8 +102,8 @@ export default function Library() {
           </div>
 
           <div className={`${styles.glassCard} gsap-fade-up`}>
-            <div className="w-14 h-14 rounded-xl border border-[#FFBF00]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
-              <Wifi className="w-7 h-7 text-[#FFBF00]" />
+            <div className="w-14 h-14 rounded-xl border border-[var(--primary-color)]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
+              <Wifi className="w-7 h-7 text-[var(--primary-color)]" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">
               High-Speed Campus Wi-Fi
@@ -114,8 +114,8 @@ export default function Library() {
           </div>
 
           <div className={`${styles.glassCard} gsap-fade-up`}>
-            <div className="w-14 h-14 rounded-xl border border-[#FFBF00]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
-              <Video className="w-7 h-7 text-[#FFBF00]" />
+            <div className="w-14 h-14 rounded-xl border border-[var(--primary-color)]/30 flex items-center justify-center bg-black/40 mb-6 shadow-[0_0_20px_rgba(255,191,0,0.1)]">
+              <Video className="w-7 h-7 text-[var(--primary-color)]" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">
               Executive Auditorium & Conference Hall

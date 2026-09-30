@@ -276,7 +276,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
                 errorLabel="Failed"
                 onConfirm={handleApproveERP}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}

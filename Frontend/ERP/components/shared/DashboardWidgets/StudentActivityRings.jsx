@@ -9,7 +9,7 @@ export default function StudentActivityRings() {
   const [data, setData] = useState([
     { name: 'Campus Avg', value: 0, fill: '#FF9F0A' },
     { name: 'Attendance', value: 0, fill: '#34C759' }, 
-    { name: 'Assignments', value: 0, fill: '#007AFF' }, 
+    { name: 'Assignments', value: 0, fill: 'var(--theme-accent)' }, 
   ]);
   const [loading, setLoading] = useState(true);
 
@@ -104,7 +104,7 @@ export default function StudentActivityRings() {
                 setData([
                     { name: 'Campus Avg', value: campusAvgScore === 0 ? 0.1 : campusAvgScore, fill: '#FF9F0A' },
                     { name: 'Attendance', value: attendanceScore === 0 ? 0.1 : attendanceScore, fill: '#34C759' }, 
-                    { name: 'Assignments', value: assignmentsScore === 0 ? 0.1 : assignmentsScore, fill: '#007AFF' }, 
+                    { name: 'Assignments', value: assignmentsScore === 0 ? 0.1 : assignmentsScore, fill: 'var(--theme-accent)' }, 
                 ]);
                 setLoading(false);
             }

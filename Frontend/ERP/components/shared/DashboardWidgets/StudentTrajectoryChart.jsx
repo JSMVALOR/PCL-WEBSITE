@@ -78,8 +78,8 @@ export default function StudentTrajectoryChart() {
           <AreaChart data={data} margin={{ top: 10, right: 30, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorGpa" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#007AFF" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#007AFF" stopOpacity={0}/>
+                <stop offset="5%" stopColor="var(--theme-accent)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="var(--theme-accent)" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#8E8E93', fontWeight: 'bold' }} dy={10} />
@@ -88,7 +88,7 @@ export default function StudentTrajectoryChart() {
                 contentStyle={{ backgroundColor: 'var(--theme-panel)', backdropFilter: 'blur(16px)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.3)', color: 'var(--theme-text)', fontSize: '12px', fontWeight: 'bold' }}
                 itemStyle={{ color: 'var(--theme-accent)' }}
             />
-            <Area type="monotone" dataKey="gpa" stroke="#007AFF" strokeWidth={3} fillOpacity={1} fill="url(#colorGpa)" activeDot={{ r: 6, fill: '#007AFF', stroke: '#fff', strokeWidth: 2 }} />
+            <Area type="monotone" dataKey="gpa" stroke="var(--theme-accent)" strokeWidth={3} fillOpacity={1} fill="url(#colorGpa)" activeDot={{ r: 6, fill: 'var(--theme-accent)', stroke: '#fff', strokeWidth: 2 }} />
           </AreaChart>
         </ResponsiveContainer>
       </div>

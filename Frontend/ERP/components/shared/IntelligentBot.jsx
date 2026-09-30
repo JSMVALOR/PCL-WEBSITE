@@ -252,7 +252,7 @@ export default function IntelligentBot() {
                                 key={msg.id}
                                 className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed flex flex-col shadow-sm ${
                                     msg.sender === 'user'
-                                        ? 'bg-gradient-to-br from-[#007AFF] to-[#0056b3] text-themeText dark:text-white shadow-md self-end rounded-2xl rounded-tr-sm'
+                                        ? 'bg-gradient-to-br from-[var(--theme-accent)] to-[#0056b3] text-themeText dark:text-white shadow-md self-end rounded-2xl rounded-tr-sm'
                                         : 'bg-white/80 dark:bg-themeElevated/80 backdrop-blur-xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_4px_15px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_15px_rgb(0,0,0,0.1)] text-themeText font-medium self-start rounded-2xl rounded-tl-sm bot-msg-anim shadow-[0_4px_20px_rgba(0,0,0,0.2)]'
                                 }`}
                             >
@@ -294,7 +294,7 @@ export default function IntelligentBot() {
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             placeholder="Message Assistant..."
-                            className="flex-1 bg-themeElevated backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-themeText focus:outline-none focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-themeElevated transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-themeTextSec font-medium"
+                            className="flex-1 bg-themeElevated backdrop-blur-md border border-transparent rounded-full pl-5 pr-4 py-3 text-sm text-themeText focus:outline-none focus:border-[var(--theme-accent)]/50 focus:bg-white dark:focus:bg-themeElevated transition-all placeholder:text-[#3A3A3C]/50 dark:placeholder:text-themeTextSec font-medium"
                         />
                         <button
                             type="submit"

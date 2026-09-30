@@ -6,7 +6,7 @@ export default function FacultySyllabusProgression() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([
     { name: 'Completed', value: 0, color: '#34C759' }, // Green
-    { name: 'In Progress', value: 0, color: '#007AFF' }, // Blue
+    { name: 'In Progress', value: 0, color: 'var(--theme-accent)' }, // Blue
     { name: 'Pending', value: 0, color: '#FF3B30' }, // Red
   ]);
   const [total, setTotal] = useState(0);
@@ -26,7 +26,7 @@ export default function FacultySyllabusProgression() {
             if (isMounted) {
                 setData([
                     { name: 'Completed', value: completedUnits, color: '#34C759' },
-                    { name: 'In Progress', value: inProgressUnits, color: '#007AFF' },
+                    { name: 'In Progress', value: inProgressUnits, color: 'var(--theme-accent)' },
                     { name: 'Pending', value: pendingUnits, color: '#FF3B30' },
                 ]);
                 setTotal(completedUnits + inProgressUnits + pendingUnits);

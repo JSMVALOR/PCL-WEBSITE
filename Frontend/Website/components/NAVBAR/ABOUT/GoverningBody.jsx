@@ -28,13 +28,13 @@ export default function GoverningBody() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#FFBF00]/50 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[var(--primary-color)]/50 transition-colors"
             >
-              <div className="w-16 h-16 rounded-full bg-[#FFBF00]/10 border border-[#FFBF00]/30 flex items-center justify-center text-[#FFBF00] mb-6">
+              <div className="w-16 h-16 rounded-full bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/30 flex items-center justify-center text-[var(--primary-color)] mb-6">
                 <i className="fa-solid fa-gavel text-2xl"></i>
               </div>
               <h3 className="text-2xl font-bold mb-2">{member.name}</h3>
-              <p className="text-[#FFBF00] font-semibold text-sm uppercase tracking-wider mb-4">{member.role}</p>
+              <p className="text-[var(--primary-color)] font-semibold text-sm uppercase tracking-wider mb-4">{member.role}</p>
               <p className="text-brand-muted leading-relaxed">{member.desc}</p>
             </motion.div>
           ))}

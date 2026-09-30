@@ -1073,7 +1073,7 @@ export default function FacultyAttendance({ subjectContext }) {
           errorLabel="Finalization Failed"
           onConfirm={handleCloseSession}
           trackColor="rgba(28, 28, 30, 0.05)"
-          handleColor="#007AFF"
+          handleColor="var(--theme-accent)"
           successColor="#10b981"
           dangerColor="#f43f5e"
           width="100%"
@@ -1094,7 +1094,7 @@ export default function FacultyAttendance({ subjectContext }) {
  placeholder="Search by name, roll, or ID..." 
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-white dark:bg-themeElevated border border-black/5 dark:border-white/5 rounded-xl pl-10 pr-4 py-3.5 text-[14px] font-medium text-themeText dark:text-themeText outline-none focus:border-[#007AFF] shadow-sm transition-colors placeholder-[#8E8E93]"
+ className="w-full bg-white dark:bg-themeElevated border border-black/5 dark:border-white/5 rounded-xl pl-10 pr-4 py-3.5 text-[14px] font-medium text-themeText dark:text-themeText outline-none focus:border-[var(--theme-accent)] shadow-sm transition-colors placeholder-[#8E8E93]"
  />
  </div>
  <button type="button" onClick={() => setIsSwipeMode(!isSwipeMode)} className="w-12 h-12 flex items-center justify-center bg-white dark:bg-themeElevated border border-black/5 dark:border-white/5 rounded-xl hover:text-emerald-500 text-themeTextSec shadow-sm transition-all hover:scale-105 active:scale-95" title={isSwipeMode ? "Switch to List View" : "Switch to Tinder Swipe View"}>

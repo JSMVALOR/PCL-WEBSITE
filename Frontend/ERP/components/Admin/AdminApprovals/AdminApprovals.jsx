@@ -360,7 +360,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
                 errorLabel="Failed"
                 onConfirm={() => handleLeaveAction(req.id, 'approved', 'Approved by Administration')}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}
@@ -481,7 +481,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
                 errorLabel="Failed"
                 onConfirm={() => handleProfileUpdateAction(req, 'approved', 'Approved by Administration')}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}

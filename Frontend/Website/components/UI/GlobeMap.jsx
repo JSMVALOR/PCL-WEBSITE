@@ -11,8 +11,8 @@ const customIcon = L.divIcon({
   iconAnchor: [8, 8],
   html: `
     <div style="position: relative; width: 16px; height: 16px; cursor: pointer;">
-      <div style="position: absolute; top: 0; left: 0; width: 16px; height: 16px; border: 2px solid #FFBF00; box-sizing: border-box; transition: transform 0.3s; border-radius: 50%; box-shadow: 0 0 10px #FFBF00;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></div>
-      <div style="position: absolute; top: 4px; left: 4px; width: 8px; height: 8px; background-color: #FFBF00; border-radius: 50%;"></div>
+      <div style="position: absolute; top: 0; left: 0; width: 16px; height: 16px; border: 2px solid var(--primary-color); box-sizing: border-box; transition: transform 0.3s; border-radius: 50%; box-shadow: 0 0 10px var(--primary-color);" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></div>
+      <div style="position: absolute; top: 4px; left: 4px; width: 8px; height: 8px; background-color: var(--primary-color); border-radius: 50%;"></div>
       <div style="position: absolute; top: -2px; left: 24px; font-family: Outfit, sans-serif; color: rgba(255,255,255,0.9); font-size: 16px; font-weight: 700; pointer-events: none; white-space: nowrap; text-shadow: 0px 2px 4px rgba(0,0,0,0.8);">
         Prudentia College of Law
       </div>

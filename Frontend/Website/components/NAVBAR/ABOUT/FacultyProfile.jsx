@@ -27,8 +27,8 @@ const SkeletonLoader = () => (
     {/* Right Skeleton */}
     <div className="w-full lg:w-7/12 flex flex-col justify-center space-y-6 lg:pt-12">
       <div className="h-20 w-3/4 bg-white/[0.03] animate-pulse rounded-xl"></div>
-      <div className="h-8 w-1/3 bg-[#FFBF00]/20 animate-pulse rounded-lg"></div>
-      <div className="w-32 h-[1px] bg-[#FFBF00]/20 my-8"></div>
+      <div className="h-8 w-1/3 bg-[var(--primary-color)]/20 animate-pulse rounded-lg"></div>
+      <div className="w-32 h-[1px] bg-[var(--primary-color)]/20 my-8"></div>
       <div className="space-y-4 w-full">
         <div className="h-4 w-full bg-white/[0.03] animate-pulse rounded"></div>
         <div className="h-4 w-5/6 bg-white/[0.03] animate-pulse rounded"></div>

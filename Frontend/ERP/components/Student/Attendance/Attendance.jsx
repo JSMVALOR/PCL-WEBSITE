@@ -640,7 +640,7 @@ const handleScanQR = async (e) => {
         slotSize={38}
         gap={6}
         radius={10}
-        accentColor="#007AFF"
+        accentColor="var(--theme-accent)"
         inkColor="#FFFFFF"
         slotColor="var(--bg-glass)"
         digitColor="var(--text-primary)"
@@ -681,7 +681,7 @@ const handleScanQR = async (e) => {
  <div className="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar flex flex-col gap-8">
  {/* Prediction Engine */}
  <div className="bg-white/60 dark:bg-black/20 backdrop-blur-xl border border-black/5 dark:border-white/5 p-6 rounded-3xl shadow-sm relative overflow-hidden group">
- <div className="absolute top-0 right-0 w-32 h-32 bg-[#007AFF]/10 dark:bg-[#007AFF]/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
+ <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--theme-accent)]/10 dark:bg-[var(--theme-accent)]/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:scale-110 transition-transform duration-700"></div>
  <h3 className="text-[13px] font-bold text-themeText tracking-tight mb-5 flex items-center gap-2">
  <i className="fa-solid fa-wand-magic-sparkles text-themeAccent"></i> Prediction Engine
  </h3>

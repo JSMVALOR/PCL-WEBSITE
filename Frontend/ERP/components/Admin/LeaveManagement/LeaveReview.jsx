@@ -201,7 +201,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
                 errorLabel="Failed"
                 onConfirm={() => handleAction('ApproveAndReplace')}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}
@@ -214,7 +214,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
                 errorLabel="Failed"
                 onConfirm={() => handleAction('Approve')}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}

@@ -231,7 +231,7 @@
 .gridCellAccent {
   padding: 24px;
   font-family: 'Outfit', sans-serif;
-  color: #FFBF00;
+  color: var(--primary-color);
   font-weight: 600;
   font-size: 0.95rem;
 }

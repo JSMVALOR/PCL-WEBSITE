@@ -305,7 +305,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
                 errorLabel="Failed"
                 onConfirm={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}

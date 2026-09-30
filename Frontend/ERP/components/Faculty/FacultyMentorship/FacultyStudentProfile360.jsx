@@ -415,7 +415,7 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
                 errorLabel="Failed"
                 onConfirm={handleVerifySubmit}
                 trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="#007AFF"
+                handleColor="var(--theme-accent)"
                 successColor="#10b981"
                 dangerColor="#f43f5e"
                 width={200}

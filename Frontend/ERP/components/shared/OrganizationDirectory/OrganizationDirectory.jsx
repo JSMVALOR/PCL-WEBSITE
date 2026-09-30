@@ -79,7 +79,7 @@ export default function OrganizationDirectory() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search directory..."
-                        className="w-full bg-white/50 dark:bg-themePanel/50 backdrop-blur-xl border border-black/10 dark:border-white/10 focus:border-[#007AFF] rounded-lg py-2.5 pl-9 pr-4 text-xs font-bold text-themeText dark:text-themeText outline-none transition-colors shadow-inner"
+                        className="w-full bg-white/50 dark:bg-themePanel/50 backdrop-blur-xl border border-black/10 dark:border-white/10 focus:border-[var(--theme-accent)] rounded-lg py-2.5 pl-9 pr-4 text-xs font-bold text-themeText dark:text-themeText outline-none transition-colors shadow-inner"
                     />
                 </div>
             </div>

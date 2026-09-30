@@ -103,7 +103,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
                             className="text-center"
                         >
-                            <i className="fa-solid fa-earth-americas text-3xl bg-clip-text text-transparent bg-gradient-to-r from-[#007AFF] to-[#5AC8FA] mb-3"></i>
+                            <i className="fa-solid fa-earth-americas text-3xl bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-accent)] to-[#5AC8FA] mb-3"></i>
                             <h4 className="text-[15px] font-bold text-themeText dark:text-themeText tracking-tight">Global Broadcast</h4>
                             <p className="text-[11px] font-medium text-themeTextSec mt-1">Sent to all registered users across the platform.</p>
                         </motion.div>
@@ -116,7 +116,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                     type="button"
                                     key={r} 
                                     onClick={() => toggleItem(r)}
-                                    className={`px-4 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${value.includes(r) ? 'bg-[#007AFF] text-themeText dark:text-white border-[#007AFF] shadow-md shadow-[#007AFF]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[#007AFF]/30'}`}
+                                    className={`px-4 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${value.includes(r) ? 'bg-[var(--theme-accent)] text-themeText dark:text-white border-[var(--theme-accent)] shadow-md shadow-[var(--theme-accent)]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[var(--theme-accent)]/30'}`}
                                 >
                                     {r}s
                                 </button>
@@ -131,7 +131,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                     type="button"
                                     key={b} 
                                     onClick={() => toggleItem(b)}
-                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-tight transition-all border ${value.includes(b) ? 'bg-[#007AFF] text-themeText dark:text-white border-[#007AFF] shadow-md shadow-[#007AFF]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[#007AFF]/30'}`}
+                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-tight transition-all border ${value.includes(b) ? 'bg-[var(--theme-accent)] text-themeText dark:text-white border-[var(--theme-accent)] shadow-md shadow-[var(--theme-accent)]/20' : 'bg-black/5 dark:bg-white/10 text-[#3A3A3C] dark:text-[#EBEBF5]/60 border-black/5 dark:border-white/5 hover:border-[var(--theme-accent)]/30'}`}
                                 >
                                     {b}
                                 </button>
@@ -145,7 +145,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                             {value.filter(v => v !== 'All' && !MOCK_BATCHES.includes(v) && !['Student','Faculty'].includes(v)).length > 0 && (
                                 <div className="flex flex-wrap gap-2 justify-center mb-2">
                                     {value.filter(v => v !== 'All' && !MOCK_BATCHES.includes(v) && !['Student','Faculty'].includes(v)).map(v => (
-                                        <div key={v} className="flex items-center gap-2 bg-[#007AFF]/10 text-themeAccent px-3 py-1.5 rounded-lg border border-[#007AFF]/20 text-[11px] font-bold tracking-tight">
+                                        <div key={v} className="flex items-center gap-2 bg-[var(--theme-accent)]/10 text-themeAccent px-3 py-1.5 rounded-lg border border-[var(--theme-accent)]/20 text-[11px] font-bold tracking-tight">
                                             <span>{v}</span>
                                             <button type="button" onClick={() => toggleItem(v)} className="hover:text-rose-500 transition-colors"><i className="fa-solid fa-xmark"></i></button>
                                         </div>
@@ -162,7 +162,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                     placeholder="Search by Name or ERP ID..." 
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-themeElevated rounded-xl pl-10 pr-4 py-3 text-[13px] font-semibold text-themeText dark:text-themeText placeholder:text-themeTextSec outline-none focus:ring-0 focus:outline-none transition-all shadow-inner"
+                                    className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[var(--theme-accent)]/50 focus:bg-white dark:focus:bg-themeElevated rounded-xl pl-10 pr-4 py-3 text-[13px] font-semibold text-themeText dark:text-themeText placeholder:text-themeTextSec outline-none focus:ring-0 focus:outline-none transition-all shadow-inner"
                                 />
                                 {isSearching && <i className="fa-solid fa-spinner fa-spin absolute right-4 top-1/2 -translate-y-1/2 text-themeAccent"></i>}
                                 
@@ -178,7 +178,7 @@ export default function TargetAudienceSelector({ value, onChange, role = 'admin'
                                             >
                                                 <span className="text-[13px] font-bold text-themeText dark:text-themeText tracking-tight">{user.full_name}</span>
                                                 <div className="flex gap-2 items-center mt-1">
-                                                    <span className="text-[13px] font-medium text-themeAccent bg-[#007AFF]/10 px-1.5 py-0.5 rounded">{user.erp_id}</span>
+                                                    <span className="text-[13px] font-medium text-themeAccent bg-[var(--theme-accent)]/10 px-1.5 py-0.5 rounded">{user.erp_id}</span>
                                                     <span className="text-[10px] font-semibold text-themeTextSec uppercase">{user.role}</span>
                                                     {user.academic_batch && <span className="text-[10px] font-semibold text-themeTextSec truncate max-w-[100px]">• {user.academic_batch}</span>}
                                                 </div>

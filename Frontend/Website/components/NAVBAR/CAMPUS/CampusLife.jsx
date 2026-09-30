@@ -33,12 +33,12 @@ export default function CampusLife() {
               transition={{ delay: idx * 0.1, duration: 0.4 }}
             >
               <Link to={mod.link} className="block group">
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[#FFBF00]/50 hover:bg-white/10 transition-all h-full relative overflow-hidden">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-[var(--primary-color)]/50 hover:bg-white/10 transition-all h-full relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                    <i className={`fa-solid ${mod.icon} text-6xl text-[#FFBF00]`}></i>
+                    <i className={`fa-solid ${mod.icon} text-6xl text-[var(--primary-color)]`}></i>
                   </div>
                   <div className="relative z-10">
-                    <div className="w-12 h-12 rounded-full bg-[#FFBF00]/10 text-[#FFBF00] flex items-center justify-center mb-6">
+                    <div className="w-12 h-12 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)] flex items-center justify-center mb-6">
                       <i className={`fa-solid ${mod.icon} text-lg`}></i>
                     </div>
                     <h3 className="text-xl font-bold mb-3">{mod.title}</h3>

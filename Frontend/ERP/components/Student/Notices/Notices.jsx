@@ -333,11 +333,11 @@ export default function Notices({ setActiveTab }) {
             <div className="relative z-20 w-full mx-auto flex flex-col h-full overflow-hidden">
                 
                 {/* Header Container */}
-            <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-[#007AFF]/5 via-transparent to-transparent py-8 shrink-0">
-    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-[#007AFF]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+            <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-[var(--theme-accent)]/5 via-transparent to-transparent py-8 shrink-0">
+    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-[var(--theme-accent)]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
     <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 px-2 md:px-6">
         <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-[#007AFF] shadow-sm">
+            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-[var(--theme-accent)] shadow-sm">
                 <i className="fa-solid fa-bullhorn"></i>
             </div>
             <div>
@@ -369,7 +369,7 @@ export default function Notices({ setActiveTab }) {
                         placeholder="Search notices..." 
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[#007AFF]/50 focus:bg-white dark:focus:bg-themeElevated rounded-xl pl-9 pr-4 py-2.5 text-[13px] font-semibold text-themeText dark:text-themeText placeholder:text-themeTextSec outline-none transition-all shadow-inner"
+                        className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[var(--theme-accent)]/50 focus:bg-white dark:focus:bg-themeElevated rounded-xl pl-9 pr-4 py-2.5 text-[13px] font-semibold text-themeText dark:text-themeText placeholder:text-themeTextSec outline-none transition-all shadow-inner"
                     />
                 </div>
             )}
@@ -377,7 +377,7 @@ export default function Notices({ setActiveTab }) {
             {(userSession?.role === 'faculty' || userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'broadcasts' && (
                 <button type="button" 
                     onClick={() => setIsBroadcasting(true)} 
-                    className="px-6 py-2.5 bg-[#007AFF]/10 text-themeAccent hover:bg-[#007AFF]/20 rounded-xl text-[13px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
+                    className="px-6 py-2.5 bg-[var(--theme-accent)]/10 text-themeAccent hover:bg-[var(--theme-accent)]/20 rounded-xl text-[13px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
                 >
                     <i className="fa-solid fa-satellite-dish"></i> Broadcast
                 </button>

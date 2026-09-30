@@ -78,7 +78,7 @@ export default function SystemUpdater({ children }) {
                     transition={{ type: "spring", damping: 25, stiffness: 400 }}
                     className="w-full max-w-sm bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl overflow-hidden p-8 flex flex-col items-center text-center"
                 >
-                    <div className="w-20 h-20 bg-gradient-to-br from-[#007AFF] to-[#5AC8FA] rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-white/20">
+                    <div className="w-20 h-20 bg-gradient-to-br from-[var(--theme-accent)] to-[#5AC8FA] rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-white/20">
                         <i className="fa-solid fa-cloud-arrow-down text-themeText dark:text-white text-3xl animate-bounce"></i>
                     </div>
                     
@@ -99,7 +99,7 @@ export default function SystemUpdater({ children }) {
 
                     <button type="button" 
                         onClick={handleDownloadUpdate}
-                        className="w-full py-3.5 rounded-xl bg-[#007AFF] text-themeText dark:text-white font-bold text-[13px] tracking-normal flex justify-center items-center gap-3 shadow-sm hover:bg-[#006DEB] transition-colors"
+                        className="w-full py-3.5 rounded-xl bg-[var(--theme-accent)] text-themeText dark:text-white font-bold text-[13px] tracking-normal flex justify-center items-center gap-3 shadow-sm hover:bg-[#006DEB] transition-colors"
                     >
                         <i className="fa-solid fa-download"></i>
                         Download & Install

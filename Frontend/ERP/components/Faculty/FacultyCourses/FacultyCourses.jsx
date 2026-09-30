@@ -13,7 +13,7 @@ import SyllabusEditorModal from "../../Admin/AdminTimetableBuilder/tabs/componen
 
 
 const THEME_COLORS = {
-    blue: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' },
+    blue: { primary: 'var(--theme-accent)', bg: 'rgba(0,122,255,0.1)' },
     emerald: { primary: '#34C759', bg: 'rgba(52,199,89,0.1)' },
     amber: { primary: '#FF9500', bg: 'rgba(255,149,0,0.1)' },
     rose: { primary: '#FF3B30', bg: 'rgba(255,59,48,0.1)' },
@@ -22,7 +22,7 @@ const THEME_COLORS = {
     cyan: { primary: '#32ADE6', bg: 'rgba(50,173,230,0.1)' },
     pink: { primary: '#FF2D55', bg: 'rgba(255,45,85,0.1)' },
     fuchsia: { primary: '#AF52DE', bg: 'rgba(175,82,222,0.1)' },
-    default: { primary: '#007AFF', bg: 'rgba(0,122,255,0.1)' }
+    default: { primary: 'var(--theme-accent)', bg: 'rgba(0,122,255,0.1)' }
 };
 
 
@@ -447,7 +447,7 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  <div className="bg-white/40 dark:bg-white/5 backdrop-blur-xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-2xl p-6 flex flex-col justify-center">
  {selectedCourse.nextClass ? (
  <div className="flex items-center gap-4">
- <div className="w-12 h-12 rounded-xl bg-[#007AFF]/10 text-themeAccent flex items-center justify-center text-xl shrink-0">
+ <div className="w-12 h-12 rounded-xl bg-[var(--theme-accent)]/10 text-themeAccent flex items-center justify-center text-xl shrink-0">
  <i className="fa-solid fa-clock"></i>
  </div>
  <div>
@@ -501,11 +501,11 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div className="flex flex-col gap-2">
  <label className="text-[11px] font-bold tracking-tight text-themeTextSec">Title</label>
- <input required type="text" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[#007AFF]" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value})} />
+ <input required type="text" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[var(--theme-accent)]" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value})} />
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[11px] font-bold tracking-tight text-themeTextSec">Type</label>
- <select className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[#007AFF] appearance-none" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value})}>
+ <select className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[var(--theme-accent)] appearance-none" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value})}>
  <option value="Drive Link">Google Drive</option>
  <option value="PDF Document">PDF Document</option>
  <option value="Video Lecture">Video Link</option>
@@ -515,7 +515,7 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[11px] font-bold tracking-tight text-themeTextSec">URL</label>
- <input required type="url" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[#007AFF]" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value})} />
+ <input required type="url" className="bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 rounded-xl px-4 py-3 text-sm font-bold text-themeText dark:text-themeText outline-none focus:border-[var(--theme-accent)]" value={formData.url} onChange={(e) => setFormData({ ...formData, url: e.target.value})} />
  </div>
  <button type="submit" disabled={isSubmitting} className="btn-erp disabled:cursor-not-allowed">
  {isSubmitting ? 'Saving...' : 'Save Resource'}
@@ -546,7 +546,7 @@ export default function FacultyCourses({ isEmbedded = false,  setActiveTab }) {
                         setFormData({ id: res.id, title: res.title, url: res.url, type: res.type });
                         setShowResourceForm(true);
                     }}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10 hover:bg-[#007AFF]/10 text-themeTextSec hover:text-themeAccent transition"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-black/5 dark:bg-white/10 hover:bg-[var(--theme-accent)]/10 text-themeTextSec hover:text-themeAccent transition"
                 >
                     <i className="fa-solid fa-pen text-sm"></i>
                 </button>
