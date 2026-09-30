@@ -67,13 +67,13 @@ export const ErpProvider = ({ children }) => {
 
     const [activeTheme, setActiveTheme] = useState(() => {
         let stored = localStorage.getItem('jsmerp_theme');
-        if (stored === 'light') stored = 'marble-executive';
+        if (stored === 'light') stored = 'apple-hig-light';
         if (stored === 'dark') stored = 'dark-luxury';
         if (stored) return stored;
         
         // Auto-detect system preference
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark-luxury';
+            return 'midnight-justice';
         }
         return 'marble-executive';
     });

@@ -40,7 +40,7 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
             ticket_id: ticketId,
             user_id: userSession.db_id,
             category: 'Attendance',
-            subject: `Missing Attendance Appeal: ${activeSubject.course_name} on ${new Date(appealRecord.date).toLocaleDateString()}`,
+            subject: `Missing Attendance Appeal: ${activeSubject?.course_name} on ${new Date(appealRecord.date).toLocaleDateString()}`,
             description: JSON.stringify({ reason: appealReason,
                 session_id: appealRecord.session_id,
                 student_id: userSession.db_id,
@@ -669,8 +669,8 @@ const handleScanQR = async (e) => {
  <div className="w-full max-w-md h-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-l border-black/5 dark:border-white/10 flex flex-col animate-slide-in-right shadow-2xl">
  <div className="p-6 md:p-8 border-b border-black/5 dark:border-white/10 flex justify-between items-start shrink-0 bg-gradient-to-b from-white/40 to-transparent dark:from-black/20">
  <div>
- <p className="text-[11px] font-bold tracking-widest uppercase text-themeTextSec opacity-70 mb-1">{activeSubject.course_code}</p>
- <h2 className="text-xl md:text-2xl font-black tracking-tight text-themeText leading-tight">{activeSubject.course_name}</h2>
+ <p className="text-[11px] font-bold tracking-widest uppercase text-themeTextSec opacity-70 mb-1">{activeSubject?.course_code}</p>
+ <h2 className="text-xl md:text-2xl font-black tracking-tight text-themeText leading-tight">{activeSubject?.course_name}</h2>
  <p className="text-xs font-semibold text-themeTextSec mt-2 flex items-center gap-1.5"><i className="fa-solid fa-user-tie"></i> {activeSubject.faculty_name}</p>
  </div>
  <button type="button" onClick={() => setActiveSubject(null)} className="w-9 h-9 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-themeTextSec hover:bg-black/10 dark:hover:bg-white/20 hover:text-themeText transition-all shrink-0">

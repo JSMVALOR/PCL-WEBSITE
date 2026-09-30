@@ -26,7 +26,7 @@ export default function Timetable({ isEmbedded = false }) {
  const [loading, setLoading] = useState(true);
 
  const fetchSchedule = async () => {
-        if (!userSession?.academic_batch) return;
+        if (!userSession?.academic_batch) { setLoading(false); return; }
         
         
         try {
@@ -54,8 +54,8 @@ export default function Timetable({ isEmbedded = false }) {
  const currentMins = nowTime.getHours() * 60 + nowTime.getMinutes();
  
  const formatted = (data || []).map(s => {
- const sTime = s.start_time.slice(0, 5);
- const eTime = s.end_time.slice(0, 5);
+ const sTime = (s.start_time || '00:00').slice(0, 5);
+ const eTime = (s.end_time || '00:00').slice(0, 5);
  
  // Calculate past/current/upcoming status dynamically based on time
  const sMins = parseInt(sTime.split(':')[0]) * 60 + parseInt(sTime.split(':')[1]);

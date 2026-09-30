@@ -275,7 +275,7 @@ export default function SidebarFramework({
                                     <img 
                                         src={
                                             userSession?.profile_picture_url || getLocalAvatar(userSession?.name) 
-                                            ? (userSession.profile_picture_url || getLocalAvatar(userSession.name))
+                                            ? (userSession?.profile_picture_url || getLocalAvatar(userSession?.name))
                                             : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`
                                         } 
                                         alt="Profile" 
@@ -393,7 +393,7 @@ export default function SidebarFramework({
                                 <img 
                                     src={
                                         userSession?.profile_picture_url || getLocalAvatar(userSession?.name) 
-                                        ? (userSession.profile_picture_url || getLocalAvatar(userSession.name))
+                                        ? (userSession?.profile_picture_url || getLocalAvatar(userSession?.name))
                                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`
                                     } 
                                     alt="Profile" 

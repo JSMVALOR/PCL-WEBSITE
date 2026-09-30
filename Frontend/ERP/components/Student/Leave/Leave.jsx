@@ -158,7 +158,8 @@ export default function Leave({ isEmbedded = false, }) {
  // --- SUBMISSION ENGINE ---
 
     const handleWithdraw = async (id) => {
-        if (!window.confirm("Are you sure you want to withdraw this leave request?")) return;
+        const confirmed = await window.erpDialog?.confirm("Are you sure you want to withdraw this leave request?", "Withdraw Request");
+    if (!confirmed) return;
         try {
             const { error } = await supabase.from('leave_requests').delete().eq('id', id);
             if (error) throw error;

@@ -29,7 +29,7 @@ export default function ParentDashboard({ onLogout }) {
     const fetchStudentData = async () => {
         try {
             // SWR Caching - Instant Load
-            const cacheKey = `parent_dashboard_${userSession.id}`;
+            const cacheKey = `parent_dashboard_${userSession?.id}`;
             const cachedData = sessionStorage.getItem(cacheKey);
             if (cachedData) {
                 const parsed = JSON.parse(cachedData);
@@ -157,7 +157,7 @@ export default function ParentDashboard({ onLogout }) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     to_email: 'marvelswaroop118@gmail.com', // [TESTING OVERRIDE]
-                    subject: `Message from ${userSession?.name} (Parent of ${studentData.full_name}): ${emailData.subject}`,
+                    subject: `Message from ${userSession?.name} (Parent of ${studentData?.full_name || "Student"}): ${emailData.subject}`,
                     message_body: `<p>Dear ${mentor.full_name},</p><p>${emailData.message.replace(/\n/g, '<br/>')}</p><p>Regards,<br/>${userSession?.name}</p>`
                 })
             });
@@ -409,7 +409,7 @@ export default function ParentDashboard({ onLogout }) {
                                                     </span>
                                                 </div>
                                                 <div className="text-xl font-black mt-2">
-                                                    ₹{f.amount.toLocaleString('en-IN')}
+                                                    ₹{Number(f.amount || 0).toLocaleString('en-IN')}
                                                 </div>
                                             </div>
                                         ))}
@@ -421,14 +421,14 @@ export default function ParentDashboard({ onLogout }) {
                                         {assignments.list.length === 0 ? <p className="text-themeTextSec dark:text-white/50 text-sm">No assignments found.</p> : assignments.list.map(a => (
                                             <div key={a.id} className="flex flex-col p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 gap-2">
                                                 <div className="flex justify-between items-start">
-                                                    <h4 className="font-bold text-sm pr-4">{a.title}</h4>
+                                                    <h4 className="font-bold text-sm pr-4">{a.assignments?.title || "Assignment"}</h4>
                                                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest shrink-0 ${a.submission_status === 'submitted' || a.submission_status === 'graded' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                                                         {a.submission_status}
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between items-center mt-2">
-                                                    <p className="text-xs font-medium text-themeTextSec dark:text-white/50">Due: {new Date(a.due_date).toLocaleDateString()}</p>
-                                                    <span className="text-xs font-bold text-themeTextSec dark:text-white/50">{a.subject_code}</span>
+                                                    <p className="text-xs font-medium text-themeTextSec dark:text-white/50">Due: {new Date(a.assignments?.due_date || new Date()).toLocaleDateString()}</p>
+                                                    <span className="text-xs font-bold text-themeTextSec dark:text-white/50">{a.assignments?.subject_code || ""}</span>
                                                 </div>
                                             </div>
                                         ))}

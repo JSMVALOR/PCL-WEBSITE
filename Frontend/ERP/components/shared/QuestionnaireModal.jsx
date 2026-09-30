@@ -119,7 +119,7 @@ export default function QuestionnaireModal({ onComplete, onSkip }) {
                     phone: formData.phone || null,
                     blood_group: formData.bloodGroup || null
                 })
-                .eq('id', userSession.db_id)
+                .eq('id', userSession?.db_id)
                 .select()
                 .single();
 

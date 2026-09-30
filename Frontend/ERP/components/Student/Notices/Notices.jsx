@@ -132,7 +132,7 @@ export default function Notices({ setActiveTab }) {
         
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
-            return n.title.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q) || n.category.toLowerCase().includes(q);
+            return (n.title || '').toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q) || (n.category || '').toLowerCase().includes(q);
         }
         return true;
     });

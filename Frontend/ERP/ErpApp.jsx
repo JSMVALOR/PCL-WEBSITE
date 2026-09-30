@@ -244,7 +244,7 @@ export default function App() {
       return <OTPVerification email={userSession.email || 'user@prudentiacollege.edu'} onVerify={() => setNeedsOtp(false)} onLogout={logout} />;
   }
 
-  if (!userSession) {
+  if (!userSession && !window.location.pathname.startsWith('/verify')) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />

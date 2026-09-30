@@ -550,7 +550,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  degree: profile.department || (isLLM ? "LL.M. (Master of Laws)" : "B.B.A. LL.B. (Hons.)"),
  university: "Prudentia College of Law, School of Law",
  duration: `${admYear} – ${gradYear}`,
- cgpa: analytics.cgpa ? `${analytics.cgpa.toFixed(2)} / 10.0` : "Awaiting Data",
+ cgpa: analytics.cgpa ? `${Number(analytics.cgpa || 0).toFixed(2)} / 10.0` : "Awaiting Data",
  rank: analytics.batch_rank ? `${analytics.batch_rank} / ${analytics.batch_total}` : "N/A" },
  experience: experiences,
  mootCourt: allAch.filter((a) => a.category === "Moot Courts"),

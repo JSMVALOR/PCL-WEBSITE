@@ -175,7 +175,7 @@ export default function AcademicCalendar() {
                 </div>
             </main>
 
-            <PremiumFooter />
+            
         </div>
     );
 }

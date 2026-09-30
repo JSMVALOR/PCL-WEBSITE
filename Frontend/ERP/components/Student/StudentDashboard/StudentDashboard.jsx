@@ -53,7 +53,8 @@ export default function StudentDashboard({ setActiveTab }) {
  });
  };
 
- const [profile, setProfile] = useState(null);
+ const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState(null);
  const [mentor, setMentor] = useState(null);
  const [academicCycle, setAcademicCycle] = useState('normal'); // 'normal', 'exams', 'moots', 'internships', 'fees', 'results'
 
@@ -82,7 +83,7 @@ export default function StudentDashboard({ setActiveTab }) {
  if (cachedProfile && cachedStats) {
     setProfile(JSON.parse(cachedProfile));
     setStats(JSON.parse(cachedStats));
-    setLoading(false);
+    
  }
 
  const { data: pData } = await supabase.from('profiles').select('*').eq('id', sid).single();
@@ -194,7 +195,7 @@ export default function StudentDashboard({ setActiveTab }) {
                             { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check', color: 'text-rose-500', tab: 'academic_center' },
                             { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check', color: 'text-emerald-500', tab: 'academic_center' },
                             { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsTotal || 0}`, icon: 'fa-file-lines', color: 'text-indigo-500', tab: 'academic_center' },
-                            { label: 'CGPA', val: stats.cgpa.toFixed(2), icon: 'fa-graduation-cap', color: 'text-amber-500', tab: 'academic_center' }
+                            { label: 'CGPA', val: Number(stats?.cgpa || 0).toFixed(2), icon: 'fa-graduation-cap', color: 'text-amber-500', tab: 'academic_center' }
                         ].map((m, i) => (
                             <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer hover:opacity-80 transition-opacity">
                                 <div className={`w-12 h-12 rounded-xl bg-black/5 dark:bg-white/5 flex items-center justify-center text-xl ${m.color}`}>

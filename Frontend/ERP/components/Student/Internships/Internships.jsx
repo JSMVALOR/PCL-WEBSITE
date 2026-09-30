@@ -182,7 +182,7 @@ export default function Internships({ isEmbedded = false }) {
  const sDate = new Date(expForm.start_date);
  const eDate = new Date(expForm.end_date);
  if (isNaN(sDate) || isNaN(eDate) || sDate > eDate) {
- alert("Please provide valid start and end dates.");
+ window.toast?.error("Please provide valid start and end dates.");
  return;
  }
 
@@ -236,7 +236,7 @@ export default function Internships({ isEmbedded = false }) {
  }, 1500);
  } catch (err) {
  console.error("Exp submit err:", err);
- alert("Failed to log experience.");
+ window.toast?.error("Failed to log experience.");
  setIsSubmitting(false);
  }
  };

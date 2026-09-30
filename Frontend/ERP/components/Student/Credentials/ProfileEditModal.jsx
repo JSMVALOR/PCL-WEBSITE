@@ -48,17 +48,17 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  
  // Form State
  const [formData, setFormData] = useState({
- phone: profileData.phone || '',
- blood_group: profileData.blood_group || '',
- dob: profileData.dob || '',
- currentAddress: profileData.questionnaire_data?.currentAddress || '',
- emergencyName: profileData.questionnaire_data?.emergencyName || '',
- emergencyRelation: profileData.questionnaire_data?.emergencyRelation || '',
- emergencyPhone: profileData.questionnaire_data?.emergencyPhone || '',
- profile_picture_url: profileData.profile_picture_url || '',
-        parent_name: profileData.parent_name || '',
-        parent_phone: profileData.parent_phone || '',
-        parent_email: profileData.parent_email || ''
+ phone: profileData?.phone || '',
+ blood_group: profileData?.blood_group || '',
+ dob: profileData?.dob || '',
+ currentAddress: profileData?.questionnaire_data?.currentAddress || '',
+ emergencyName: profileData?.questionnaire_data?.emergencyName || '',
+ emergencyRelation: profileData?.questionnaire_data?.emergencyRelation || '',
+ emergencyPhone: profileData?.questionnaire_data?.emergencyPhone || '',
+ profile_picture_url: profileData?.profile_picture_url || '',
+        parent_name: profileData?.parent_name || '',
+        parent_phone: profileData?.parent_phone || '',
+        parent_email: profileData?.parent_email || ''
  });
 
  // Cropping State
@@ -104,7 +104,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  'cropped-avatar.jpeg'
  );
 
- const fileName = `${profileData.id}-${Date.now()}.jpeg`;
+ const fileName = `${profileData?.id}-${Date.now()}.jpeg`;
  const filePath = `pending_avatars/${fileName}`;
 
  const { error: uploadError } = await supabase.storage
@@ -147,7 +147,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
             parent_phone: formData.parent_phone || null,
             parent_email: formData.parent_email || null,
  questionnaire_data: {
- ...profileData.questionnaire_data,
+ ...profileData?.questionnaire_data,
  currentAddress: formData.currentAddress || null,
  emergencyName: formData.emergencyName || null,
  emergencyRelation: formData.emergencyRelation || null,
@@ -165,7 +165,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  profile_picture_url: requestedChanges.profile_picture_url,
  questionnaire_data: requestedChanges.questionnaire_data
  })
- .eq('id', profileData.id)
+ .eq('id', profileData?.id)
  .select()
  .single();
 
@@ -176,7 +176,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
  const { data, error } = await supabase
  .from('profile_update_requests')
  .insert({
- student_id: profileData.id,
+ student_id: profileData?.id,
  requested_changes: requestedChanges,
  status: 'pending'
  })
@@ -191,7 +191,7 @@ export default function ProfileEditModal({ profileData, userRole = 'student', on
                     const notifs = adminProfiles.map(admin => ({
                         recipient_id: admin.id,
                         title: 'Profile Update Request',
-                        message: `${profileData.full_name || 'A student'} has requested a profile update.`,
+                        message: `${profileData?.full_name || 'A student'} has requested a profile update.`,
                         type: 'system',
                         action_link: 'adminapprovals'
                     }));
