@@ -211,7 +211,8 @@ function FacilityCarousel({ facilities }) {
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className={`carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 ${isDragging ? 'cursor-grabbing' : 'cursor-grab snap-x snap-mandatory'}`}
+        onDragStart={(e) => e.preventDefault()}
+        className={`carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab snap-x snap-mandatory'}`}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <style>{`.carousel-container::-webkit-scrollbar { display: none; }`}</style>
