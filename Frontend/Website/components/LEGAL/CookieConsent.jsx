@@ -32,10 +32,10 @@ export default function CookieConsent() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          className="fixed bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-auto md:max-w-md z-[9999] bg-white dark:bg-[#111] border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6 font-sans text-themeText dark:text-white"
+          className="fixed bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-auto md:max-w-md z-[9999] bg-white dark:bg-themeApp border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6 font-sans text-themeText dark:text-white"
         >
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-full bg-[#cda75b]/10 text-[#cda75b] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-full bg-themeAccent/10 text-themeAccent flex items-center justify-center shrink-0">
               <i className="fa-solid fa-cookie-bite text-xl"></i>
             </div>
             <div>
@@ -55,14 +55,14 @@ export default function CookieConsent() {
             </button>
             <button 
               onClick={handleAccept}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-[#cda75b] text-white text-xs font-bold hover:bg-[#b59049] transition-colors shadow-lg shadow-[#cda75b]/20"
+              className="flex-1 px-4 py-2.5 rounded-xl bg-themeAccent text-white text-xs font-bold hover:opacity-90 transition-colors shadow-lg shadow-themeAccent/20"
             >
               ACCEPT
             </button>
           </div>
           
           <div className="mt-4 text-center">
-            <a href="/privacy" className="text-[10px] text-black/40 dark:text-white/40 hover:text-[#cda75b] transition-colors underline underline-offset-2">
+            <a href="/privacy" className="text-[10px] text-black/40 dark:text-white/40 hover:text-themeAccent transition-colors underline underline-offset-2">
               Read our Privacy Policy
             </a>
           </div>
