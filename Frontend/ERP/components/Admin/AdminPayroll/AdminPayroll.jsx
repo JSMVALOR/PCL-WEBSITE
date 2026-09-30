@@ -8,6 +8,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 import { sendSystemEmail } from '../../../lib/EmailService';
 import QRCode from 'react-qr-code';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 
 export default function AdminPayroll() {
@@ -29,6 +30,7 @@ export default function AdminPayroll() {
     });
     const [isSavingConfig, setIsSavingConfig] = useState(false);
     const [expandedCards, setExpandedCards] = useState([]);
+    const [viewMode, setViewMode] = useState('grid');
 
     const toggleCardBreakdown = (id) => {
         setExpandedCards(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
@@ -389,10 +391,20 @@ export default function AdminPayroll() {
                 {/* FACULTY ROSTER CARDS */}
                 <div className="lg:col-span-3">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-black text-themeText dark:text-white tracking-tight">Faculty Payroll Cards</h2>
-                        <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
-                            Current Month
-                        </span>
+                        <div>
+                            <h2 className="text-xl font-black text-themeText dark:text-white tracking-tight">Faculty Payroll</h2>
+                            <span className="inline-block mt-1 px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
+                                Current Month
+                            </span>
+                        </div>
+                        <div className="flex bg-black/5 dark:bg-white/5 rounded-xl p-1 border border-black/10 dark:border-white/10">
+                            <button onClick={() => setViewMode('grid')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${viewMode === 'grid' ? 'bg-white dark:bg-themeElevated shadow-sm text-themeText' : 'text-themeTextSec hover:text-themeText dark:text-white/50 dark:hover:text-white'}`}>
+                                <i className="fa-solid fa-border-all"></i> Grid
+                            </button>
+                            <button onClick={() => setViewMode('list')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${viewMode === 'list' ? 'bg-white dark:bg-themeElevated shadow-sm text-themeText' : 'text-themeTextSec hover:text-themeText dark:text-white/50 dark:hover:text-white'}`}>
+                                <i className="fa-solid fa-list"></i> List
+                            </button>
+                        </div>
                     </div>
 
                     {loading ? (
