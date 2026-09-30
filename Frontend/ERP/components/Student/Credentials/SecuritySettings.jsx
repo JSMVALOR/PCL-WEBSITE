@@ -64,7 +64,7 @@ export default function SecuritySettings() {
  const handleGlobalLogout = async () => {
  setIsLoggingOut(true);
  try {
- await supabase.auth.signOut();
+ await supabase.auth.signOut({ scope: 'global' });
  window.location.href = '/login';
  } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };

@@ -1,122 +1,14 @@
-/* © 2026 JSM VALOR. All Rights Reserved. */
-/* eslint-disable */
-import { motion } from 'framer-motion';
-import React, { useState, useEffect, useRef } from "react";
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { generateComponentPDF } from "../../../DocumentTemplates/pdfEngine";
-import IDCardTemplate from '../../../DocumentTemplates/IDCardTemplate';
-import { useERP } from "../../../context/ErpContext";
-import { calculateRelativeSemester } from "../../../utils/academicUtils";
-import SecuritySettings from "./SecuritySettings";
-import AppearanceSettings from "./AppearanceSettings";
-import ProfileEditModal from "./ProfileEditModal";
-import QuestionnaireModal from "../../shared/QuestionnaireModal";
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+const fs = require('fs');
 
-export default function Credentials() {
- const { userSession, refreshProfile } = useERP();
- const [activeTab, setActiveTab] = useState("profile"); // profile, security, appearance
- const [isLoading, setIsLoading] = useState(true);
- 
- // Core Data State
- const [profileData, setProfileData] = useState(null);
- const [mentorData, setMentorData] = useState(null);
- const [pendingRequest, setPendingRequest] = useState(null);
- const [showEditModal, setShowEditModal] = useState(false);
+let file = 'Frontend/ERP/components/Student/Credentials/Credentials.jsx';
+let content = fs.readFileSync(file, 'utf8');
 
- // Removed inline Questionnaire State to unify with the global Onboarding Modal.
- const idCardRef = useRef(null);
- const [isGeneratingID, setIsGeneratingID] = useState(false);
- 
- const handleDownloadID = async () => {
- if (!idCardRef.current) return;
- setIsGeneratingID(true);
- try {
- await generateComponentPDF(idCardRef.current, `${profileData.full_name.replace(/\s+/g, '_')}_ID_Card.pdf`, { format: [54, 86], orientation: 'portrait', fitToPage: true }); // CR80 standard ID size in mm
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
- setIsGeneratingID(false);
- }
- };
- 
- useEffect(() => {
- const fetchMasterRecord = async () => {
- const studentId = userSession?.db_id || userSession?.id;
- if (!studentId) return;
+// Find the return statement and replace it
+const renderRegex = /return \([\s\S]*?\);\n\}/;
+const match = content.match(renderRegex);
 
- try {
- // 1. Fetch Profile
- const { data: pData, error: pError } = await supabase
- .from('profiles')
- .select('*')
- .eq('id', studentId)
- .single();
- 
- if (pError) throw pError;
- setProfileData(pData);
-
- // Removed inline questionnaire check; relying on global modal via questionnaire_completed
-
- // Check for pending profile update request
- const { data: requestData } = await supabase
- .from('profile_update_requests')
- .select('*')
- .eq('student_id', studentId)
- .eq('status', 'pending')
- .maybeSingle();
- 
- if (requestData) {
- setPendingRequest(requestData);
- }
-
- // 2. Fetch Mentor (Only for students)
- if (userSession?.role === 'student') {
- const { data: mData } = await supabase
- .from('mentorship')
- .select('faculty_id, profiles!mentorship_faculty_id_fkey(full_name)')
- .eq('student_id', studentId)
- .eq('status', 'active')
- .single();
- 
- if (mData?.profiles) {
- setMentorData(mData.profiles.full_name);
- }
- }
-
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
- setIsLoading(false);
- }
- };
-
- fetchMasterRecord();
- }, [userSession]);
-
- // Derived helpers
- const getInitials = (nameStr) => {
- if (!nameStr) return "US";
- const parts = nameStr.trim().split(" ");
- if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
- return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
- };
-
- if (isLoading) {
- return (
- <div className="flex flex-col gap-6 w-full animate-pulse opacity-70 p-4">
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
- <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
- <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
- <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
- </div>
- <div className="h-64 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder mt-4"></div>
-</div>
- );
- }
-
- if (!profileData) return null;
-
- const qd = profileData.questionnaire_data || {};
- const roleTitle = userSession?.role === 'admin' ? 'Admin' : userSession?.role === 'faculty' ? 'Faculty' : 'Student';
-
- return (
+if (match) {
+  const newRender = `return (
     <div className="w-full h-full lg:h-[calc(100vh-100px)] flex flex-col lg:flex-row gap-6 lg:gap-8 pb-10 lg:pb-0 animate-fade-in relative max-w-[1600px] mx-auto overflow-hidden text-themeText">
       
       {/* LEFT SIDEBAR: Full Height Profile Image & Info */}
@@ -173,7 +65,7 @@ export default function Credentials() {
           {/* Top Tabs */}
           <div className="flex p-3 gap-2 border-b border-themeBorder bg-themeElevated/30 flex-wrap">
               {['profile', 'security', 'appearance'].map(tab => (
-                  <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 min-w-[100px] py-3.5 text-[11px] font-black uppercase tracking-widest rounded-xl transition ${activeTab === tab ? 'bg-themePanel text-themeAccent shadow-sm border border-themeBorder' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated'}`}>
+                  <button key={tab} onClick={() => setActiveTab(tab)} className={\`flex-1 min-w-[100px] py-3.5 text-[11px] font-black uppercase tracking-widest rounded-xl transition \${activeTab === tab ? 'bg-themePanel text-themeAccent shadow-sm border border-themeBorder' : 'text-themeTextSec hover:text-themeText hover:bg-themeElevated'}\`}>
                       {tab === 'profile' ? 'Details' : tab === 'security' ? 'Security' : 'Appearance'}
                   </button>
               ))}
@@ -255,4 +147,7 @@ export default function Credentials() {
       {showEditModal && <ProfileEditModal profileData={profileData} onClose={() => setShowEditModal(false)} onUpdate={refreshProfile} />}
     </div>
   );
+}`;
+  content = content.replace(match[0], newRender);
+  fs.writeFileSync(file, content);
 }

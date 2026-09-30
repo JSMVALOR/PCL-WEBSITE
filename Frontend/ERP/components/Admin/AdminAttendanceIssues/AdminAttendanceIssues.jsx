@@ -214,11 +214,11 @@ export default function AdminAttendanceIssues() {
  <div className="flex flex-col sm:flex-row gap-4 items-center bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[2rem] p-6">
  <div className="flex-1 w-full">
  <label className="text-xs font-bold uppercase tracking-widest text-themeTextSec mb-2 block">Debarment Threshold (%)</label>
- <input type="number" value={debarThreshold} onChange={e => setDebarThreshold(Number(e.target.value))} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-themeAccent/50" />
+ <input type="number" value={debarThreshold} onChange={e => setDebarThreshold(Number(e.target.value))} className="w-full bg-themePanel border border-themeBorder shadow-sm rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-themeAccent/50" />
  </div>
  <div className="flex-1 w-full">
  <label className="text-xs font-bold uppercase tracking-widest text-themeTextSec mb-2 block">Filter Batch</label>
- <input type="text" placeholder="e.g. BATCH-2026" value={debarBatch} onChange={e => setDebarBatch(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-themeAccent/50" />
+ <input type="text" placeholder="e.g. BATCH-2026" value={debarBatch} onChange={e => setDebarBatch(e.target.value)} className="w-full bg-themePanel border border-themeBorder shadow-sm rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-themeAccent/50" />
  </div>
  </div>
 

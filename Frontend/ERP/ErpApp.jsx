@@ -390,7 +390,7 @@ export default function App() {
  )}
 
  {/* TOP NAV RENDER (Universal Desktop & Mobile Header) */}
- <div className={navLayout === 'classic' ? "block lg:hidden" : "block"}>
+ <div className="hidden lg:block">
  <TopNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />
  </div>
 
@@ -400,7 +400,7 @@ export default function App() {
  <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
  <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
  {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
- <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
+ <div className={`shrink-0 w-full pointer-events-none transition duration-500 hidden lg:block ${navLayout === 'classic' ? 'hidden' : 'h-[84px]'}`}></div>
 
  <div className="flex-1 p-2 pb-[110px] lg:pb-0 lg:p-6 lg:pt-0 flex flex-col relative z-10">
  <ErrorBoundary>

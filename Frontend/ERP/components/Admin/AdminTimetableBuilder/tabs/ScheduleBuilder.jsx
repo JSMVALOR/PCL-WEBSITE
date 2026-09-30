@@ -66,7 +66,7 @@ export default function ScheduleBuilder({}) {
  // 3. Fetch Subjects ONLY for this specific batch
  if (activeBatchId) {
  const { data: cohortData } = await supabase.from('cohort_subjects')
- .select('faculty_id, master_subjects(id, name, theme_color)')
+ .select('faculty_id, master_subjects(id, name)')
  .eq('batch_id', activeBatchId);
  
  if (cohortData) {
@@ -95,7 +95,7 @@ export default function ScheduleBuilder({}) {
  .from('class_schedule')
  .select(`
  id, batch, day_of_week, start_time, end_time, master_subject_id, faculty_id,
- subject:master_subjects(name, theme_color),
+ subject:master_subjects(name),
  
  faculty:profiles(full_name)
  `)
