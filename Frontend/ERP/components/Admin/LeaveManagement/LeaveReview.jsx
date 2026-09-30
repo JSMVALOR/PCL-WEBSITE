@@ -17,7 +17,8 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  let remarks = "";
 
  if (actionType === 'Reject') {
- remarks = await window.erpDialog?.prompt("Please enter a reason for rejecting this leave:", "Reject Leave") || window.prompt("Reason for rejection:");
+ if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm('Are you sure you want to reject this leave request?', r)))) { setIsProcessing(false); return; }
+            remarks = await window.erpDialog?.prompt('Please enter a reason for rejecting this leave:', 'Reject Leave') || '';
  if (!remarks) { setIsProcessing(false); return; } // cancelled
  updatePayload = { status: 'Rejected', admin_remarks: remarks };
  } 

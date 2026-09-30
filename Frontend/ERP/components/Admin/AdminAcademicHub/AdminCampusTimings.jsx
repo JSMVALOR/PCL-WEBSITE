@@ -30,7 +30,9 @@ export default function AdminCampusTimings() {
 
     const handleToggleDay = async (id, currentStatus) => {
         try {
-            await supabase.from('campus_timings').update({ is_active: !currentStatus }).eq('id', id);
+            const { error } = await supabase.from('campus_timings').update({ is_active: !currentStatus }).eq('id', id);
+            if (error) throw error;
+            if (window.erpToast) window.erpToast.show('Day updated successfully.', 'success');
             fetchTimings();
         } catch (e) {
             if (window.erpToast) window.erpToast.show("Failed to update day.", "error");
@@ -40,7 +42,9 @@ export default function AdminCampusTimings() {
     const handleUpdateMetadata = async (id, currentMeta, key, val) => {
         const newMeta = { ...currentMeta, [key]: val };
         try {
-            await supabase.from('campus_timings').update({ metadata: newMeta }).eq('id', id);
+            const { error } = await supabase.from('campus_timings').update({ metadata: newMeta }).eq('id', id);
+            if (error) throw error;
+            if (window.erpToast) window.erpToast.show('Saturday rule updated successfully.', 'success');
             fetchTimings();
         } catch (e) {
             if (window.erpToast) window.erpToast.show("Failed to update Saturday rule.", "error");

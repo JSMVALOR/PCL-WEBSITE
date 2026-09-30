@@ -78,9 +78,9 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  
  if (error) throw error;
  setIsAdmissionsOpen(newState);
- (window.erpDialog?.alert || alert)(`Admissions are now ${newState ? 'OPEN' : 'CLOSED'}`);
+ if(window.erpToast) window.erpToast.show(`Admissions are now ${newState ? 'OPEN' : 'CLOSED'}`, "info");
  } catch (error) {
- (window.erpDialog?.alert || alert)("Failed to toggle admissions status");
+ if(window.erpToast) window.erpToast.show("Failed to toggle admissions status", "info");
  } finally {
  setIsTogglingStatus(false);
  }
@@ -127,7 +127,7 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
 
  fetchApplications();
  } catch (error) {
- window.erpToast?.show?.('Failed to reject application.', 'error') || (window.erpDialog?.alert || alert)("Failed to reject application.");
+ if(window.erpToast) window.erpToast.show("Failed to reject application.", "info");
  }
  };
 

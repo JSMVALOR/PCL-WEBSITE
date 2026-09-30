@@ -67,12 +67,12 @@ export default function AvatarCropperModal({ user, currentImageUrl, isOpen, onCl
             const base64 = canvasRef.current.toDataURL('image/jpeg', 0.85);
             const { error } = await supabase.from('profiles').update({ profile_picture_url: base64 }).eq('id', user.db_id);
             if (error) throw error;
-            if (window.erpToast) window.erpToast.success("Profile picture updated!");
+            if (window.erpToast) window.erpToast.show("Profile picture updated!", "success");
             onSaved(base64);
             onClose();
         } catch (err) {
             console.error(err);
-            if (window.erpToast) window.erpToast.error("Failed to save image");
+            if (window.erpToast) window.erpToast.show("Failed to save image", "error");
         } finally {
             setIsSaving(false);
         }

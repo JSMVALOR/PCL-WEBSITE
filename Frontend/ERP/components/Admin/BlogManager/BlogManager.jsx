@@ -129,19 +129,18 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
 
  const handleReject = async () => {
  const actionText = currentBlog?.is_public ? "delete" : "reject and permanently delete";
- 
-
+ if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm(`Are you sure you want to ${actionText} this post?`, r)))) return;
  try {
  if (currentBlog?.id) {
  const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
  if (error) throw error;
- window.erpDialog?.alert(`Blog ${currentBlog?.is_public ? 'deleted' : 'rejected'} and removed from database.`);
+ if(window.erpToast) window.erpToast.show(`Blog ${currentBlog?.is_public ? 'deleted' : 'rejected'} and removed.`, 'success');
  }
  setIsEditing(false);
  fetchBlogs();
  } catch (error) {
  console.error("Reject failed.", error);
- window.erpDialog?.alert(`Could not ${actionText} the post.`);
+ if(window.erpToast) window.erpToast.show(`Could not ${actionText} the post.`, 'error');
  setIsEditing(false);
  }
  };

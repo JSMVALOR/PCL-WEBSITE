@@ -202,15 +202,25 @@ try {
  };
 
  const handleDeleteNotice = async (id) => {
- 
+ if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm("Are you sure you want to delete this notice?", r)))) return;
+ try {
  await supabase.from('notices').delete().eq('id', id);
  fetchNotices();
+ if(window.erpToast) window.erpToast.show("Notice deleted successfully.", "success");
+ } catch (e) {
+ if(window.erpToast) window.erpToast.show("Failed to delete notice.", "error");
+ }
  };
 
  const handleDeleteEvent = async (id) => {
- 
+ if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm("Are you sure you want to delete this event?", r)))) return;
+ try {
  await supabase.from('academic_calendar').delete().eq('id', id);
  fetchEvents();
+ if(window.erpToast) window.erpToast.show("Event deleted successfully.", "success");
+ } catch (e) {
+ if(window.erpToast) window.erpToast.show("Failed to delete event.", "error");
+ }
  };
 
  // --- RENDERERS ---

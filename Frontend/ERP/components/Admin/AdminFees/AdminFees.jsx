@@ -72,10 +72,12 @@ export default function AdminFees({ isEmbedded = false, }) {
   };
   
   const handleRemoveExpense = async (id) => {
+        if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm("Are you sure you want to delete this expense?", r)))) return;
       try {
           const { error } = await supabase.from('recurring_expenses').delete().eq('id', id);
-          if (error) throw error;
-          fetchOverview();
+            if (error) throw error;
+            fetchOverview();
+            if(window.erpToast) window.erpToast.show('Expense deleted successfully.', 'success');
       } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
   };
 
@@ -211,7 +213,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       }
       
       fetchVerifications();
-      (window.erpDialog?.alert || alert)(`✅ Payment Confirmed & Locked PDF Sent to ${txn.profiles?.full_name}`);
+      if(window.erpToast) window.erpToast.show(`Payment Confirmed & Locked PDF Sent to ${txn.profiles?.full_name}`, "success");
     } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { 
       setIsVerifying(false); 
       setCurrentTxnPayload(null);
@@ -227,7 +229,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       }
       setSelectedStudentIds([]);
       fetchBatchStudents(selectedBatch);
-      (window.erpDialog?.alert || alert)('Bulk Marked Paid successfully.');
+      if(window.erpToast) window.erpToast.show("Bulk Marked Paid successfully.", "success");
     } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 
@@ -249,7 +251,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       await supabase.from('fee_invoices').insert(inserts);
       setAssignTitle(''); setAssignAmount(''); setAssignDueDate('');
       fetchBatchStudents(selectedBatch);
-      (window.erpDialog?.alert || alert)('Fee assigned to batch successfully.');
+      if(window.erpToast) window.erpToast.show("Fee assigned to batch successfully.", "success");
     } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 

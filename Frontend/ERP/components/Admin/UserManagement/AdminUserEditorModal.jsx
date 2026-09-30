@@ -251,7 +251,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
             }
             
             if (window.erpToast) window.erpToast.show("User details updated successfully!", "success"); else if (window.erpToast && typeof window.erpToast.success === 'function') {
-                window.erpToast.success("User details updated successfully!");
+                window.erpToast.show("User details updated successfully!", "success");
             } else if (window.erpDialog && typeof window.erpDialog.alert === 'function') {
                 if(window.erpToast) window.erpToast.show("User details updated successfully!", "success");
             } else {
