@@ -127,10 +127,26 @@ const STATIC_FACILITIES = [
 function FacilityCarousel({ facilities }) {
   const scrollRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftState, setScrollLeftState] = useState(0);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    if (scrollRef.current) observer.observe(scrollRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let interval;
-    if (!isHovered) {
+    if (!isHovered && !isDragging && isInView) {
       interval = setInterval(() => {
         if (scrollRef.current) {
           const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -145,7 +161,7 @@ function FacilityCarousel({ facilities }) {
       }, 3500);
     }
     return () => clearInterval(interval);
-  }, [isHovered]);
+  }, [isHovered, isDragging, isInView]);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -159,17 +175,43 @@ function FacilityCarousel({ facilities }) {
     }
   };
 
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeftState(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    setIsHovered(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeftState - walk;
+  };
+
   return (
     <div 
       className="relative w-full group"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={handleMouseLeave}
       onTouchStart={() => setIsHovered(true)}
       onTouchEnd={() => setTimeout(() => setIsHovered(false), 2000)}
     >
       <div 
         ref={scrollRef}
-        className="carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 snap-x snap-mandatory"
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        className={`carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 ${isDragging ? 'cursor-grabbing' : 'cursor-grab snap-x snap-mandatory'}`}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <style>{`.carousel-container::-webkit-scrollbar { display: none; }`}</style>
@@ -265,7 +307,7 @@ export default function Facilities() {
       <div className={styles.auroraGlow} />
 
       <div className={styles.contentContainer} ref={containerRef}>
-        <div className="text-center mb-24 relative z-10 ">
+        <div className="text-center mb-16 relative z-10 ">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -291,7 +333,7 @@ export default function Facilities() {
         </div>
 
         {STATIC_FACILITIES.map((category) => (
-          <div key={category.categoryKey} className="mb-24 last:mb-0 relative z-10">
+          <div key={category.categoryKey} className="mb-16 last:mb-0 relative z-10">
             <div className="category-header mb-12 flex flex-col items-center md:items-start opacity-0">
               <h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)] mb-4 font-['Outfit']">
                 {category.title}

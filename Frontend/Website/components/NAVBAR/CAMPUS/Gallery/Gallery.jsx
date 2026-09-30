@@ -75,7 +75,7 @@ export default function Gallery() {
         <div className={styles.ambientBackground} />
         <div className={styles.auroraGlow} />
 
-        <div className={`${styles.contentContainer} `}>
+        <div className={styles.contentContainer}>
           {/* Header */}
           <div className="text-center mb-16 relative z-10">
             <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
