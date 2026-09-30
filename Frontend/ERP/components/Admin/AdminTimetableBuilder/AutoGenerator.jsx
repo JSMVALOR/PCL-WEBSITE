@@ -52,21 +52,6 @@ export default function AutoGenerator({}) {
             let workingDaysIndex = data.timings?.filter(t => t.setting_type === 'working_days').map(t => t.sort_order) || [];
             let timeSlots = data.timings?.filter(t => t.setting_type === 'period_slot').map(t => ({ s: t.start_time, e: t.end_time })) || [];
             
-            // Fallback if SQL has not been executed yet
-            if (workingDaysIndex.length === 0) {
-                workingDaysIndex = [1, 2, 3, 4, 5, 6];
-            }
-            if (timeSlots.length === 0) {
-                timeSlots = [
-                    { s: '08:45:00', e: '09:45:00' },
-                    { s: '09:45:00', e: '10:45:00' },
-                    { s: '10:45:00', e: '11:45:00' },
-                    { s: '11:45:00', e: '12:45:00' },
-                    { s: '13:45:00', e: '14:45:00' },
-                    { s: '14:45:00', e: '15:45:00' },
-                    { s: '15:45:00', e: '16:45:00' }
-                ];
-            }
             
             const targetBatches = specificBatchId ? data.batches.filter(b => b.id === specificBatchId) : data.batches;
 
