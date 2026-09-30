@@ -38,7 +38,7 @@ function LeadershipCard({ leader, index }) {
           <h3 className="text-2xl md:text-3xl text-white font-bold mb-2 transform translate-y-8 group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
             {leader.name}
           </h3>
-          <p className="text-[var(--primary-color)] uppercase tracking-widest text-xs md:text-sm font-semibold mb-6 transform translate-y-8 group-hover:translate-y-0 transition-transform duration-700 delay-[50ms] ease-[cubic-bezier(0.16,1,0.3,1)]">
+          <p className="text-[#d4b998] uppercase tracking-widest text-xs md:text-sm font-semibold mb-6 transform translate-y-8 group-hover:translate-y-0 transition-transform duration-700 delay-[50ms] ease-[cubic-bezier(0.16,1,0.3,1)]">
             {leader.title}
           </p>
 
@@ -83,10 +83,10 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[100px]">
+    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[40px]">
       
       {/* Content Container */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[120px] md:pt-[90px] md:pt-[120px] pb-[100px]">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[120px] md:pt-[90px] md:pt-[120px] pb-[40px]">
 
         {/* Editorial Intro Section */}
         <div className="w-full mb-32 flex flex-col lg:flex-row gap-8 lg:gap-24 items-start">
@@ -111,7 +111,7 @@ export default function About() {
 
           <div className="lg:w-1/2 text-[var(--text-muted)] text-base md:text-xl leading-relaxed text-justify space-y-8">
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-              <span className="font-serif italic drop-cap block float-left mr-3 mt-1 mb-0 text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.9' }}>
+              <span className="font-serif italic drop-cap block float-left mr-3 mt-1 mb-0 text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.9', fontFamily: "'Playfair Display', serif" }}>
                 {cms.hero_desc_1.charAt(0)}
               </span>
               {cms.hero_desc_1.slice(1)}
