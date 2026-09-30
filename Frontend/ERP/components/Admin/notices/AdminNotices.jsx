@@ -234,12 +234,12 @@ try {
  <form onSubmit={handlePublishNotice} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
  <div className="col-span-1 lg:col-span-2">
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Title</label>
- <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. End Semester Exam Schedule" />
+ <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. End Semester Exam Schedule" />
  </div>
  <div className="col-span-1 lg:col-span-2 grid grid-cols-2 gap-4">
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Category</label>
- <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
+ <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="Academic">Academic</option>
  <option value="Administrative">Administrative</option>
  <option value="General">General</option>
@@ -247,7 +247,7 @@ try {
  </div>
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Priority</label>
- <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
+ <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="normal">Normal</option>
  <option value="high">High</option>
  <option value="urgent">Urgent</option>
@@ -259,17 +259,17 @@ try {
  </div>
  <div className="col-span-1 lg:col-span-4">
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Content</label>
- <textarea value={content} onChange={e => setContent(e.target.value)} required rows="5" className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Draft the official notification here..."></textarea>
+ <textarea value={content} onChange={e => setContent(e.target.value)} required rows="5" className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Draft the official notification here..."></textarea>
  </div>
  
  <div className="col-span-1 lg:col-span-2">
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">External Link (Optional)</label>
- <input type="url" value={externalLink} onChange={e => setExternalLink(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
+ <input type="url" value={externalLink} onChange={e => setExternalLink(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
  </div>
 
  
  
- <label className="col-span-1 lg:col-span-2 flex items-center justify-between p-4 bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl cursor-pointer h-fit">
+ <label className="col-span-1 lg:col-span-2 flex items-center justify-between p-4 bg-themeElevated border border-themeBorder rounded-xl cursor-pointer h-fit">
  <div>
  <span className="text-sm font-bold text-themeText block">Publish to Public Website</span>
  <span className="text-[10px] font-bold text-themeTextSec">Make this broadcast visible on the main website</span>
@@ -293,14 +293,14 @@ try {
  <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Active Broadcasts</h3>
  <div className="flex overflow-x-auto snap-x no-scrollbar gap-6 pb-6">
  {notices.map(n => (
- <div key={n.id} className="min-w-[320px] max-w-[320px] snap-start bg-black/5 dark:bg-white/5 p-6 rounded-2xl border border-black/5 dark:border-white/10 flex flex-col gap-3 relative overflow-hidden group transition-opacity hover:opacity-80 shrink-0">
+ <div key={n.id} className="min-w-[320px] max-w-[320px] snap-start bg-themePanel p-6 rounded-2xl border border-themeBorder flex flex-col gap-3 relative overflow-hidden group transition-opacity hover:opacity-80 shrink-0">
  {n.priority === 'urgent' && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
  <div className="flex justify-between items-start">
  <div className="flex gap-2">
  <span className={`text-[12px] font-medium px-2 py-1 rounded-md border ${
- n.priority === 'urgent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] text-themeTextSec border-black/5 dark:border-white/10'
+ n.priority === 'urgent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-themeElevated text-themeTextSec border-themeBorder'
  }`}>{n.priority}</span>
- <span className="text-[12px] font-medium px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] text-themeTextSec border border-black/5 dark:border-white/10">{n.category}</span>
+ <span className="text-[12px] font-medium px-2 py-1 rounded-md bg-themeElevated text-themeTextSec border border-themeBorder">{n.category}</span>
  </div>
  <HoldButton size="sm" onHold={() => handleDeleteNotice(n.id)} radius={8} backgroundColor="transparent" fillColor="#f43f5e" textColor="#8E8E93" doneLabel="" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
  </div>
@@ -328,21 +328,21 @@ try {
  <form onSubmit={handleScheduleEvent} className="flex flex-col gap-4">
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Event Title</label>
- <input type="text" value={eventTitle} onChange={e => setEventTitle(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Guest Lecture" />
+ <input type="text" value={eventTitle} onChange={e => setEventTitle(e.target.value)} required className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Guest Lecture" />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Start Date</label>
- <input min="2026-09-14" type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} required className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
+ <input min="2026-09-14" type="date" value={eventStartDate} onChange={e => setEventStartDate(e.target.value)} required className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
  </div>
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">End Date (Optional)</label>
- <input min="2026-09-14" type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
+ <input min="2026-09-14" type="date" value={eventEndDate} onChange={e => setEventEndDate(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none" />
  </div>
  </div>
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Type</label>
- <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
+ <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="academic">Academic</option>
  <option value="holiday">Holiday</option>
  <option value="extracurricular">Extracurricular</option>
@@ -390,7 +390,7 @@ try {
  {events.map(e => (
  <div key={e.id} className="p-6 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex justify-between items-center group">
  <div className="flex gap-4 items-center">
- <div className="w-16 h-16 rounded-xl bg-black/5 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 flex flex-col items-center justify-center shrink-0">
+ <div className="w-16 h-16 rounded-xl bg-themeElevated border border-themeBorder flex flex-col items-center justify-center shrink-0">
  <span className="text-[13px] font-medium text-themeAccent">{new Date(e.start_date).toLocaleString('default', { month: 'short' })}</span>
  <span className="text-xl font-semibold tracking-tight text-themeText">{new Date(e.start_date).getDate()}</span>
  </div>

@@ -43,12 +43,12 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  <div className="flex flex-col gap-8 animate-fade-in">
  {/* Hero Stats */}
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => {}}>
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => {}}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition"></div>
  <span className="text-3xl font-semibold tracking-tight text-themeText z-10">{stats.loading ? '-' : stats.activeSubjects}</span>
  <span className="text-[12px] font-medium text-themeTextSec z-10">Active Subjects</span>
  </div>
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('schedule-builder')}>
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-6 flex flex-col gap-1 relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('schedule-builder')}>
  <div className="absolute -right-4 -top-4 w-16 h-16 bg-rose-500/10 rounded-full blur-xl group-hover:bg-rose-500/20 transition"></div>
  <span className="text-3xl font-semibold tracking-tight text-rose-500 z-10">{stats.loading ? '-' : stats.timetableRows}</span>
  <span className="text-[12px] font-medium text-themeTextSec z-10">Scheduled Classes</span>
@@ -57,24 +57,24 @@ export default function AdminTimetableHQ({ isHubView = false }) {
 
  <div className="grid grid-cols-1 gap-8">
 
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl p-6">
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-6">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-6">Welcome to the Command Center</h3>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  
  
- <div onClick={() => setActiveTab('schedule-manager')} className="p-6 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:border-black/10 dark:hover:border-white/20 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
+ <div onClick={() => setActiveTab('schedule-manager')} className="p-6 bg-themeElevated shadow-sm hover:shadow-md border border-themeBorder hover:border-themeAccent/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
  <i className="fa-solid fa-clock text-2xl text-cyan-500"></i>
  <span className="block text-[15px] font-semibold text-themeText mt-2">Schedule Manager</span>
  <span className="text-[10px] font-bold text-themeTextSec">Configure global timings and weekly off days.</span>
  </div>
- <div onClick={() => setActiveTab('schedule-builder')} className="p-6 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:border-black/10 dark:hover:border-white/20 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
+ <div onClick={() => setActiveTab('schedule-builder')} className="p-6 bg-themeElevated shadow-sm hover:shadow-md border border-themeBorder hover:border-themeAccent/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
  <i className="fa-solid fa-layer-group text-2xl text-rose-500"></i>
  <span className="block text-[15px] font-semibold text-themeText mt-2">Timetable Builder</span>
  <span className="text-[10px] font-bold text-themeTextSec">Manually schedule classes and inject them into grids.</span>
  </div>
  
  
- <div onClick={() => setActiveTab('auto-gen')} className="p-6 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] hover:border-black/10 dark:hover:border-white/20 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
+ <div onClick={() => setActiveTab('auto-gen')} className="p-6 bg-themeElevated shadow-sm hover:shadow-md border border-themeBorder hover:border-themeAccent/30 hover:scale-[1.02] transition-all duration-300 cursor-pointer rounded-xl flex flex-col gap-2">
  <i className="fa-solid fa-wand-magic-sparkles text-2xl text-purple-500"></i>
  <span className="block text-[15px] font-semibold text-themeText mt-2">Auto Generator</span>
  <span className="text-[10px] font-bold text-themeTextSec">AI-driven clash-free smart schedule builder.</span>
@@ -100,7 +100,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  </div>
 
  <div className="w-full px-4 lg:px-8 mt-2 mb-8 flex overflow-x-auto no-scrollbar pb-2">
-    <div className="flex p-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/20 relative z-10 gap-1.5 w-max">
+    <div className="flex p-1.5 bg-themeElevated rounded-2xl border border-themeBorder relative z-10 gap-1.5 w-max">
  {[
  { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-simple' },
  { id: 'schedule-builder', label: 'Timetable Builder', icon: 'fa-layer-group' },

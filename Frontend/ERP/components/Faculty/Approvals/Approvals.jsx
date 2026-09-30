@@ -278,12 +278,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_leaves' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {leaves.length === 0 ? (
- <div className={`col-span-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No leave requests pending from mentees.</p>
  </div>
  ) : (
  leaves.map(req => (
- <div key={req.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={req.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -332,12 +332,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_grievances' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {grievances.length === 0 ? (
- <div className={`col-span-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No active grievances assigned to you.</p>
  </div>
  ) : (
  grievances.map(g => (
- <div key={g.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={g.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -384,14 +384,14 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_internships' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {internships.length === 0 ? (
- <div className={`col-span-full bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No active internship applications from mentees.</p>
  </div>
  ) : (
  internships.map(i => {
  const student = allProfiles.find(p => p.id === i.student_id);
  return (
- <div key={i.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={i.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -429,7 +429,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  {activeTab === 'report_grievance' && (
  <div className="max-w-2xl mx-auto">
- <form onSubmit={submitFacultyGrievance} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-themePanel border-rose-500/30 border p-6 lg:p-8 flex flex-col gap-5`}>
+ <form onSubmit={submitFacultyGrievance} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-themePanel border-rose-500/30 border p-6 lg:p-8 flex flex-col gap-5`}>
  <div>
  <h2 className="text-xl font-semibold tracking-tight text-rose-500 mb-1"><i className="fa-solid fa-gavel mr-2"></i> Report Misconduct</h2>
  <p className="text-xs text-themeTextSec">Grievances filed by Faculty are immediately escalated to the Administration.</p>

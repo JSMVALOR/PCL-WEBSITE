@@ -94,7 +94,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  </div>
 
  {affectedClasses.length === 0 ? (
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-12 text-center flex flex-col items-center">
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-12 text-center flex flex-col items-center">
  <i className="fa-solid fa-calendar-check text-4xl text-themeTextSec mb-4"></i>
  <h3 className="text-lg font-semibold tracking-tight text-themeText">No Classes Affected</h3>
  <p className="text-sm text-themeTextSec mt-2">This faculty member has no classes scheduled during the leave period. No replacement is necessary.</p>
@@ -108,7 +108,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  </div>
  ) : (
  affectedClasses.map((cls, idx) => (
- <div key={idx} className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
+ <div key={idx} className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
  
  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 gap-3">
  <div>

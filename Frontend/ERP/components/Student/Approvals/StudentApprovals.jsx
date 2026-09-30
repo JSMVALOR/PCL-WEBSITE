@@ -238,7 +238,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  
  {/* LEFT PANE: Form */}
  <div className="lg:col-span-5 flex flex-col gap-4">
- <div className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-5 lg:p-6 sticky top-6`}>
+ <div className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-5 lg:p-6 sticky top-6`}>
  
  {false ? (
  <form onSubmit={submitLeave} className="flex flex-col gap-4">
@@ -349,7 +349,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 </div>
  ) : (
  leaves.map(req => (
- <div key={req.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-4 flex flex-col gap-3`}>
+ <div key={req.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
  <p className="text-[15px] font-semibold text-themeText mb-0.5">{req.start_date} to {req.end_date}</p>
@@ -369,12 +369,12 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  )
  ) : (
  grievances.length === 0 ? (
- <div className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-8 text-center opacity-60`}>
+ <div className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No grievances reported.</p>
  </div>
  ) : (
  grievances.map(grievance => (
- <div key={grievance.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-2xl rounded-[2rem] border-rose-500/20 border p-4 flex flex-col gap-3`}>
+ <div key={grievance.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border-rose-500/20 border p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
  <p className="text-[13px] font-medium text-rose-500 mb-1">{grievance.category}</p>

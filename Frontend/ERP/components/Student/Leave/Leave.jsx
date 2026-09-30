@@ -327,7 +327,7 @@ export default function Leave({ isEmbedded = false, }) {
  </div>
  ) : (
   leaveRequests.map((leave) => (
-  <div key={leave.id} className={`bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 rounded-[2rem] flex flex-col lg:flex-row lg:items-center justify-between gap-5 lg:gap-6 group`}>
+  <div key={leave.id} className={`bg-themePanel shadow-sm border border-themeBorder p-5 lg:p-6 rounded-[2rem] flex flex-col lg:flex-row lg:items-center justify-between gap-5 lg:gap-6 group`}>
 
   <div className="flex-1 w-full">
   {leave.request_id && (

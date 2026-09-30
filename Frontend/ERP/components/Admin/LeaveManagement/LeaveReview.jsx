@@ -103,7 +103,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <div className="flex flex-col gap-6 animate-fade-in max-w-4xl mx-auto">
  
  {/* Header Profile Card */}
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 lg:p-8 flex flex-col md:flex-row items-start md:items-center gap-4 lg:gap-6 relative overflow-hidden">
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 lg:p-8 flex flex-col md:flex-row items-start md:items-center gap-4 lg:gap-6 relative overflow-hidden">
  <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong rounded-full flex items-center justify-center text-xl lg:text-2xl text-themeTextSec shrink-0">
  <i className="fa-solid fa-user"></i>
  </div>
@@ -127,7 +127,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  
  <div className="lg:col-span-2 flex flex-col gap-6">
  {/* Details Box */}
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-6">
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-6">
  
  <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 pb-6">
  <div>
@@ -194,7 +194,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
 
  {/* Actions Box */}
  {request.status === 'Pending' && (
- <div className="bg-white/60 dark:bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-black/[0.04] dark:border-white/[0.08] rounded-themePanel p-5 flex flex-col gap-3">
+ <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 flex flex-col gap-3">
  <SlideCommit
                 label="Slide to Approve"
                 doneLabel="Done"
