@@ -88,8 +88,10 @@ export default function FacultyProfile() {
     if (!faculty) return [];
     return ALL_TABS.filter((tab) => {
         const val = faculty[tab.id];
-        // Ensure string length > 0 if it's stored as text
-        return typeof val === 'string' && val.trim().length > 0;
+        if (!val) return false;
+        if (Array.isArray(val)) return val.length > 0;
+        if (typeof val === 'string') return val.trim().length > 0;
+        return false;
     });
   }, [faculty]);
 
