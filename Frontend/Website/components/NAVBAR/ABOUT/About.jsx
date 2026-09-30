@@ -105,13 +105,13 @@ export default function About() {
               initial={{ opacity: 0, scaleX: 0 }} 
               animate={{ opacity: 1, scaleX: 1 }} 
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="h-[2px] w-16 bg-[var(--primary-color)] opacity-80 mb-8 origin-left"
+              className="h-[2px] w-16 bg-[var(--primary-color)] opacity-80 mb-0 lg:mb-8 origin-left"
             />
           </div>
 
           <div className="lg:w-1/2 text-[var(--text-muted)] text-base md:text-xl leading-relaxed text-justify space-y-8">
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-              <span className="font-['Playfair_Display'] italic drop-cap block float-left mr-3 mt-1 mb-[-12px] text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.8' }}>
+              <span className="font-serif italic drop-cap block float-left mr-3 mt-1 mb-0 text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.9' }}>
                 {cms.hero_desc_1.charAt(0)}
               </span>
               {cms.hero_desc_1.slice(1)}
