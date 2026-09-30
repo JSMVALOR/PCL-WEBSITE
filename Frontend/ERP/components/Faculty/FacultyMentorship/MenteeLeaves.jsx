@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. Proprietary and Confidential. */
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function MenteeLeaves({ menteeId }) {
     const [leaves, setLeaves] = useState([]);
@@ -24,12 +25,53 @@ export default function MenteeLeaves({ menteeId }) {
         }
     };
 
-    const handleAction = async (id, status) => {
+    const handleAction = async (leave, status) => {
         try {
-            await supabase.from('leave_requests').update({ status }).eq('id', id);
+            let updatePayload = { status };
+            let remarks = "";
+
+            if (status === 'rejected') {
+                remarks = await window.erpDialog?.prompt("Please enter a reason for rejecting this leave:", "Reject Leave") || window.prompt("Reason for rejection:");
+                if (!remarks) return;
+                updatePayload.admin_remarks = remarks;
+            }
+
+            const { error } = await supabase.from('leave_requests').update(updatePayload).eq('id', leave.id);
+            if (error) throw error;
+            
             fetchLeaves();
-            window.erpDialog?.alert(`Leave marked as ${status}`);
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+            window.erpToast?.show?.(`Leave marked as ${status}`, 'success');
+
+            // Dispatch Email
+            try {
+                // Fetch student profile for email
+                const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', menteeId).single();
+                
+                if (profile) {
+                    if (status === 'rejected') {
+                        await sendSystemEmail('LEAVE_REJECTED', {
+                            to_email: profile.email,
+                            student_name: profile.full_name,
+                            leave_type: leave.leave_type || 'Leave',
+                            start_date: leave.from_date,
+                            end_date: leave.to_date,
+                            reason: remarks
+                        });
+                    } else {
+                        await sendSystemEmail('LEAVE_APPROVED', {
+                            to_email: profile.email,
+                            student_name: profile.full_name,
+                            leave_type: leave.leave_type || 'Leave',
+                            start_date: leave.from_date,
+                            end_date: leave.to_date
+                        });
+                    }
+                }
+            } catch (emailErr) {
+                console.warn("Email dispatch failed:", emailErr);
+            }
+            
+        } catch (e) { console.error(e); window.erpToast?.show?.("An error occurred.", 'error'); }
     };
 
     const exportToExcel = () => {
@@ -124,8 +166,8 @@ export default function MenteeLeaves({ menteeId }) {
                             </div>
                             {l.status === 'pending' && (
                                 <div className="flex gap-2 pt-4 border-t border-themeBorder">
-                                    <button onClick={() => handleAction(l.id, 'approved')} className="flex-1 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-lg text-xs font-black transition-colors">Approve</button>
-                                    <button onClick={() => handleAction(l.id, 'rejected')} className="flex-1 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-xs font-black transition-colors">Reject</button>
+                                    <button onClick={() => handleAction(l, 'approved')} className="flex-1 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded-lg text-xs font-black transition-colors">Approve</button>
+                                    <button onClick={() => handleAction(l, 'rejected')} className="flex-1 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-xs font-black transition-colors">Reject</button>
                                 </div>
                             )}
                         </div>
