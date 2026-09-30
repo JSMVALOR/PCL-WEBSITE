@@ -11,7 +11,7 @@ export default function FacultyCard({ faculty, onClick }) {
     <motion.div 
       whileHover="hover"
       onClick={onClick}
-      className="relative w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-sm cursor-pointer group bg-black flex flex-col justify-end"
+      className="relative w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-sm cursor-pointer group bg-black"
     >
       {/* Background Image */}
       <img 
@@ -23,7 +23,7 @@ export default function FacultyCard({ faculty, onClick }) {
       />
       
       {/* Text Container */}
-      <div className="relative z-10 w-full bg-black/80 backdrop-blur-md border-t-[3px] border-[var(--primary-color)] p-3 md:p-6 overflow-hidden mt-auto">
+      <div className="absolute bottom-0 left-0 right-0 z-10 w-full bg-black/80 backdrop-blur-md border-t-[3px] border-[var(--primary-color)] p-3 md:p-6 overflow-hidden">
         
         {/* The Green Fill (expands on hover only inside the text container) */}
         <motion.div 

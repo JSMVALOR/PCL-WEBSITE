@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import DOMPurify from 'dompurify';
 
 const ALL_TABS = [
@@ -43,6 +43,13 @@ export default function FacultyProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [faculty, setFaculty] = useState(null);
+  const [activeTab, setActiveTab] = useState(null);
+
+  useEffect(() => {
+    if (availableTabs.length > 0 && !activeTab) {
+      setActiveTab(availableTabs[0].id);
+    }
+  }, [availableTabs, activeTab]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -152,11 +159,11 @@ export default function FacultyProfile() {
       <div className="relative z-20 pt-[90px] md:pt-[120px] pb-[100px] px-6 md:px-12 max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
         {/* LEFT COLUMN: Luxury Portrait & Contact */}
-        <div className="w-full max-w-sm mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 h-fit pb-10">
+        <div className="w-full max-w-sm mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-24 h-fit pb-4">
           
           <Link
             to="/about/faculty"
-            className="group inline-flex items-center text-[var(--text-muted)] hover:text-[var(--text-color)] transition-all mb-10 uppercase tracking-[0.2em] text-[10px] font-bold"
+            className="group inline-flex items-center text-[var(--text-muted)] hover:text-[var(--text-color)] transition-all mb-6 uppercase tracking-[0.2em] text-[10px] font-bold"
           >
             <i className="fa-solid fa-arrow-left mr-3 transform group-hover:-translate-x-1 transition-transform"></i> Directory
           </Link>
@@ -165,7 +172,7 @@ export default function FacultyProfile() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full aspect-[3/4] relative rounded-t-full rounded-b-3xl overflow-hidden mb-10 bg-black/5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border-[8px] border-[var(--bg-color)] ring-1 ring-[var(--card-border)]"
+            className="w-2/3 lg:w-4/5 mx-auto lg:mx-0 aspect-square relative rounded-2xl overflow-hidden mb-8 bg-black/5 shadow-2xl border-[4px] border-[var(--bg-color)] ring-1 ring-[var(--card-border)]"
           >
             <img decoding="async" loading="lazy" 
               src={faculty.image} 
@@ -178,7 +185,7 @@ export default function FacultyProfile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-col gap-6 items-center lg:items-start w-full"
+            className="flex flex-col gap-4 items-center lg:items-start w-full"
           >
             <div className="space-y-3">
                 <h1 className="text-4xl md:text-5xl font-serif text-[var(--text-color)] tracking-tight">
@@ -272,26 +279,59 @@ export default function FacultyProfile() {
           )}
 
           {/* Editorial Details Sections */}
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ delay: 0.5 }}
-            className="flex flex-col space-y-20"
-          >
-            {availableTabs.map((section, index) => {
-              const content = faculty[section.id];
-              if (!content || (typeof content === 'string' && content.trim().length === 0) || (Array.isArray(content) && content.length === 0)) return null;
+          {availableTabs.length > 0 && (
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.5 }}
+              className="w-full mt-4"
+            >
+              {/* Tabs Header */}
+              <div className="flex flex-wrap gap-2 md:gap-4 mb-8 md:mb-12 border-b border-[var(--card-border)]/60 pb-4">
+                {availableTabs.map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveTab(section.id)}
+                    className={`pb-2 px-1 text-sm md:text-base font-bold uppercase tracking-wider transition-all relative whitespace-nowrap ${
+                      activeTab === section.id 
+                        ? 'text-[var(--primary-color)]' 
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'
+                    }`}
+                  >
+                    {section.label}
+                    {activeTab === section.id && (
+                      <motion.div 
+                        layoutId="activeTabIndicator"
+                        className="absolute bottom-[-16px] left-0 w-full h-[3px] bg-[var(--primary-color)]"
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
 
-              return (
-                <div key={section.id} className="w-full">
-                  <h3 className="text-3xl font-serif mb-8 text-[var(--text-color)] tracking-tight">{section.label}</h3>
-                  <div className="w-full">
-                    {renderList(content)}
-                  </div>
-                </div>
-              );
-            })}
-          </motion.div>
+              {/* Tab Content */}
+              <AnimatePresence mode="wait">
+                {availableTabs.map((section) => {
+                  if (section.id !== activeTab) return null;
+                  const content = faculty[section.id];
+                  if (!content) return null;
+
+                  return (
+                    <motion.div
+                      key={section.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full min-h-[300px]"
+                    >
+                      {renderList(content)}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
+          )}
 
         </div>
       </div>
