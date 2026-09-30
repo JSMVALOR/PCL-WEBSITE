@@ -998,7 +998,7 @@ export const HTML_EMAIL_TEMPLATES = {
         </div>
         <p>Log in to the Student Portal to view full details and submit.</p>
         ${params.portal_link ? `<a href="${params.portal_link}" class="btn">View Assignment</a>` : ''}`
-    )
+    ),
 
     PLACEMENT_STATUS_UPDATE: (params) => buildEmailHtml(
         'Placement Drive Update',
