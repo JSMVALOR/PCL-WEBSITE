@@ -274,7 +274,7 @@ try {
  <span className="text-sm font-bold text-themeText block">Publish to Public Website</span>
  <span className="text-[10px] font-bold text-themeTextSec">Make this broadcast visible on the main website</span>
  </div>
- <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublicWebsite ? 'bg-themeAccent' : 'bg-black/10 dark:bg-white/10'}`}>
+ <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublicWebsite ? 'bg-themeAccent' : 'bg-themeBorder'}`}>
  <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isPublicWebsite ? 'translate-x-4' : 'translate-x-0'}`}></div>
  </div>
  <input type="checkbox" checked={isPublicWebsite} onChange={e => setIsPublicWebsite(e.target.checked)} className="hidden" />
@@ -360,7 +360,7 @@ try {
             <h4 className="text-sm font-black text-themeText tracking-tight">Publish to Website</h4>
             <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Make event visible publicly</p>
         </div>
-        <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-black/10 dark:bg-white/10'}`}>
+        <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-themeBorder'}`}>
             <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0'}`}></div>
         </div>
     </div>

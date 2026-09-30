@@ -2020,14 +2020,8 @@ html:not(.dark) input[type="date"] {
   }
 
 /* Theme Reactive Logo */
-.theme-logo {
-  filter: brightness(0) invert(1); /* Default dark mode logo */
-}
 
 @media (prefers-color-scheme: light) {
-  html:not([data-theme]) .theme-logo {
-    filter: none !important; /* System light mode logo */
-  }
 }
 
 
@@ -2052,6 +2046,8 @@ html:not(.dark) input[type="date"] {
 
 
 /* Global Reactive Logo */
+
+/* Unified ERP Theme Logo */
 html.dark .theme-logo {
   filter: invert(1) brightness(1.5) drop-shadow(0px 0px 5px rgba(255,255,255,0.2)) !important;
 }

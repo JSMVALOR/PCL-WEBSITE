@@ -100,10 +100,10 @@ export default function AdminKPIGrid({ setActiveTab }) {
                 </button>
             </div>
             
-            <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 shrink-0">
                 
                 {/* 1. Students */}
-                <div onClick={() => setActiveTab && setActiveTab('users')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer">
+                <div onClick={() => setActiveTab && setActiveTab('users')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer bg-themePanel p-4 rounded-2xl border border-themeBorder shadow-sm hover:shadow-md hover:border-themeAccent/30 transition-all">
                     <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-xl shrink-0">
                         <i className="fa-solid fa-user-graduate"></i>
                     </div>
@@ -114,7 +114,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                 </div>
 
                 {/* 2. Faculty */}
-                <div onClick={() => setActiveTab && setActiveTab('faculty')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer">
+                <div onClick={() => setActiveTab && setActiveTab('faculty')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer bg-themePanel p-4 rounded-2xl border border-themeBorder shadow-sm hover:shadow-md hover:border-themeAccent/30 transition-all">
                     <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-xl shrink-0">
                         <i className="fa-solid fa-chalkboard-user"></i>
                     </div>
@@ -125,7 +125,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                 </div>
 
                 {/* 3. Attendance */}
-                <div onClick={() => setActiveTab && setActiveTab('attendance')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer">
+                <div onClick={() => setActiveTab && setActiveTab('attendance')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer bg-themePanel p-4 rounded-2xl border border-themeBorder shadow-sm hover:shadow-md hover:border-themeAccent/30 transition-all">
                     <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl shrink-0">
                         <i className="fa-solid fa-user-check"></i>
                     </div>
@@ -136,7 +136,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                 </div>
 
                 {/* 4. Approvals */}
-                <div onClick={() => setActiveTab && setActiveTab('approvals')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer">
+                <div onClick={() => setActiveTab && setActiveTab('approvals')} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer bg-themePanel p-4 rounded-2xl border border-themeBorder shadow-sm hover:shadow-md hover:border-themeAccent/30 transition-all">
                     <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl shrink-0 relative">
                         {data.approvals.total > 0 && (
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -153,7 +153,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                 </div>
 
                 {/* 5. Fees */}
-                <div className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer">
+                <div className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer bg-themePanel p-4 rounded-2xl border border-themeBorder shadow-sm hover:shadow-md hover:border-themeAccent/30 transition-all">
                     <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl shrink-0">
                         <i className="fa-solid fa-indian-rupee-sign"></i>
                     </div>

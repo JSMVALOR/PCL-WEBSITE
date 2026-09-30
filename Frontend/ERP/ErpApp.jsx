@@ -99,6 +99,7 @@ import AdminWebsiteInquiries from './components/Admin/AdminWebsiteHub/AdminWebsi
 import AdminGalleryManager from './components/Admin/AdminWebsiteHub/AdminGalleryManager';
 import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
 import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
+import AdminWhatsAppQueue from './components/Admin/AdminWhatsApp/AdminWhatsAppQueue';
 import AdminAttendanceIssues from './components/Admin/AdminAttendanceIssues/AdminAttendanceIssues';
 import AdminPayroll from './components/Admin/AdminPayroll/AdminPayroll';
 
@@ -408,17 +409,17 @@ export default function App() {
                 </div>
 
               {/* ERP Footer with Privacy & Terms */}
-              <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder dark:border-white/5 bg-themePanel/80 backdrop-blur-md text-xs font-medium text-themeTextSec dark:text-white/50 mt-auto z-10 relative">
+              <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder  bg-themeApp/90 backdrop-blur-md text-xs font-medium text-themeTextSec mt-auto z-10 relative">
                 <div className="flex gap-4 mb-2 sm:mb-0">
-                  <a href="/privacy" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Privacy Policy</a>
-                  <a href="/terms" target="_blank" className="hover:text-themeText dark:text-white transition-colors">Terms of Service</a>
+                  <a href="/privacy" target="_blank" className="hover:text-themeText transition-colors">Privacy Policy</a>
+                  <a href="/terms" target="_blank" className="hover:text-themeText transition-colors">Terms of Service</a>
                 </div>
                 <div>
                   <div className="flex items-center gap-1">
                     <span className="opacity-50">&copy; {new Date().getFullYear()}</span>
                     <a href="https://jsmvalor.in" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center ml-1 mr-1">
-                      <span className="text-black dark:text-white font-bold tracking-widest text-xs">JSM </span>
-                      <span className="text-black dark:text-white font-black tracking-tight ml-[2px] text-xs">VALOR<span className="text-red-500">.</span></span>
+                      <span className="text-themeText font-bold tracking-widest text-xs">JSM </span>
+                      <span className="text-themeText font-black tracking-tight ml-[2px] text-xs">VALOR<span className="text-red-500">.</span></span>
                     </a>
                     <span className="opacity-50">Data Processor.</span>
                   </div>
@@ -473,7 +474,7 @@ function ModuleUnderConstruction({ tabName, role }) {
     <div className="w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-12 animate-fade-in">
       <div className={`${theme.layout.panel} rounded-2xl p-8`}>
       <div className="flex items-center gap-4 mb-6">
-        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorder dark:border-white/5BorderStrong bg-white dark:bg-[#121212]`}>
+        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorder BorderStrong bg-white dark:bg-[#121212]`}>
           <i className="fa-solid fa-layer-group"></i>
         </div>
         <div>
@@ -485,7 +486,7 @@ function ModuleUnderConstruction({ tabName, role }) {
           </p>
         </div>
       </div>
-      <div className={`p-6 border-themeBorder dark:border-white/5 border-dashed border-neutral-800 rounded-2xl bg-themeApp flex flex-col items-center justify-center text-center py-24 `}>
+      <div className={`p-6 border-themeBorder  border-dashed border-neutral-800 rounded-2xl bg-themeApp flex flex-col items-center justify-center text-center py-24 `}>
         <i className={`fa-solid fa-code text-5xl ${theme.text.muted} mb-4`}></i>
         <h4 className={`${theme.text.heading} text-xl text-themeText dark:text-white mb-2`}>Module Under Construction</h4>
         <p className={`${theme.text.secondary} text-sm max-w-md leading-relaxed`}>
