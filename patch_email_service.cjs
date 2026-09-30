@@ -1,32 +1,43 @@
 const fs = require('fs');
 
-// Add to emailtemplate.js
-let templateFile = 'Frontend/ERP/lib/emailtemplate.js';
-let templateContent = fs.readFileSync(templateFile, 'utf8');
+const file = 'Frontend/ERP/lib/EmailService.js';
+let content = fs.readFileSync(file, 'utf8');
 
-const rejectTemplate = `
-    APPLICATION_REJECTED: (params) => buildEmailHtml(
-        'Update on Your Admission Application',
-        \`<p>Dear \${params.student_name},</p>
-        <p>Thank you for your interest in the <strong>\${params.program}</strong> at Prudentia College of Law.</p>
-        <p>After careful consideration of your application, we regret to inform you that we are unable to offer you admission at this time.</p>
-        <p>We appreciate the time you took to apply and wish you the best in your future academic endeavors.</p>\`
-    ),
+const missingKeys = `    FEE_PAYMENT_RECEIPT: (params) => ({
+        subject: \`Fee Payment Receipt - \${params.fee_type}\`,
+        message_body: HTML_EMAIL_TEMPLATES.FEE_PAYMENT_RECEIPT(params) }),
+
+    PLACEMENT_STATUS_UPDATE: (params) => ({
+        subject: \`Placement Update: \${params.company_name}\`,
+        message_body: HTML_EMAIL_TEMPLATES.PLACEMENT_STATUS_UPDATE(params) }),
+
+    MENTOR_ASSIGNED: (params) => ({
+        subject: \`New Faculty Mentor Assigned\`,
+        message_body: HTML_EMAIL_TEMPLATES.MENTOR_ASSIGNED(params) }),
+
+    CLINIC_ASSIGNMENT: (params) => ({
+        subject: \`Clinical Program Assignment: \${params.clinic_name}\`,
+        message_body: HTML_EMAIL_TEMPLATES.CLINIC_ASSIGNMENT(params) }),
 `;
 
-templateContent = templateContent.replace(/APPLICATION_RECEIVED: \(params\) => buildEmailHtml\(/, rejectTemplate + "\n    APPLICATION_RECEIVED: (params) => buildEmailHtml(");
-fs.writeFileSync(templateFile, templateContent);
+if (!content.includes('FEE_PAYMENT_RECEIPT:')) {
+    content = content.replace(/};\n\nexport const sendSystemEmail/, missingKeys + '};\n\nexport const sendSystemEmail');
+}
 
-// Add to EmailService.js
-let serviceFile = 'Frontend/ERP/lib/EmailService.js';
-let serviceContent = fs.readFileSync(serviceFile, 'utf8');
+// Fix attachments bug in EmailService.js where it only checks params.attachment, but AdminFees passed params.attachments
+content = content.replace(
+    /attachments: params\.attachment \? \[\{\n\s*filename: params\.attachment_name \|\| 'Document\.pdf',\n\s*content: params\.attachment,\n\s*encoding: 'base64'\n\s*\}\] : undefined/g,
+    'attachments: params.attachments ? params.attachments : (params.attachment ? [{ filename: params.attachment_name || "Document.pdf", content: params.attachment, encoding: "base64" }] : undefined)'
+);
 
-const rejectService = `
-    APPLICATION_REJECTED: (params) => ({
-        subject: \`Update on Your Admission Application\`,
-        message_body: HTML_EMAIL_TEMPLATES.APPLICATION_REJECTED(params) }),
-`;
+// Fix AdminAdmissions FIRST_CREDENTIALS key bug.
+// AdminAdmissions uses 'FIRST_CREDENTIALS' but EmailService maps it as 'ONBOARDING'.
+// Let's add FIRST_CREDENTIALS alias to EmailService.
+const firstCredAlias = `    FIRST_CREDENTIALS: (params) => ({
+        subject: \`Welcome to PCL ERP - Your Official Credentials\`,
+        message_body: HTML_EMAIL_TEMPLATES.FIRST_CREDENTIALS ? HTML_EMAIL_TEMPLATES.FIRST_CREDENTIALS(params) : '' }),\n`;
+if (!content.includes('FIRST_CREDENTIALS:')) {
+    content = content.replace(/ONBOARDING: \(params\) => \(\{/g, firstCredAlias + '    ONBOARDING: (params) => ({');
+}
 
-serviceContent = serviceContent.replace(/APPLICATION_RECEIVED: \(params\) => \(\{/, rejectService + "\n    APPLICATION_RECEIVED: (params) => ({");
-fs.writeFileSync(serviceFile, serviceContent);
-
+fs.writeFileSync(file, content);

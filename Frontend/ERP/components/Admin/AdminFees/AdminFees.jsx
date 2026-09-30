@@ -189,19 +189,11 @@ export default function AdminFees({ isEmbedded = false, }) {
             returnBase64: true
         });
         
-        await sendSystemEmail('APPLICATION_RECEIVED', {
+        await sendSystemEmail('FEE_PAYMENT_RECEIPT', {
             to_email: txn.profiles?.email || 'marvelswaroop118@gmail.com',
-            subject: `Official Fee Invoice - ${txn.id}`,
-            message_body: `
-                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-                    <h2 style="color: #111; letter-spacing: 1px;">PCL FINANCE DEPARTMENT</h2>
-                    <p>Dear ${txn.profiles?.full_name},</p>
-                    <p>Your payment of <strong>₹${txn.amount}</strong> has been successfully verified.</p>
-                    <p>Please find your official encrypted tax invoice attached. It is protected with your ERP ID (<strong>${txn.profiles?.erp_id}</strong>).</p>
-                    <br/>
-                    <p style="font-size: 12px; color: #888;">This is an automated system message. Do not reply.</p>
-                </div>
-            `,
+            student_name: txn.profiles?.full_name || 'Student',
+            amount: txn.amount,
+            fee_type: txn.fee_invoices?.fee_types?.fee_name || 'Fee Payment',
             attachments: [
                 {
                     filename: `Fee_Invoice_${txn.id}.pdf`,
