@@ -166,7 +166,7 @@ const Advantages = forwardRef(({ windowWidth, ...props }, ref) => {
               >
                 {heading1}
                 <br />
-                <span className="text-[var(--primary-color)] drop-shadow-[0_0_18px_var(--primary-glow)]">{heading2}</span>
+                <span className="text-[var(--bg-app)] italic font-medium">{heading2}</span>
               </motion.h2>
               <div className="h-px w-14 bg-[var(--primary-color)]/60 my-4"></div>
               <motion.div
