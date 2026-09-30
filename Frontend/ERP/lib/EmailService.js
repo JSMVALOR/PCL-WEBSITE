@@ -84,7 +84,7 @@ Temporary Password: ${params.password}` }),
         
     SHORTAGE_WARNING: (params) => ({
         subject: `WARNING: Attendance Shortage`,
-        message_body: HTML_EMAIL_TEMPLATES.SHORTAGE_WARNING(params) })
+        message_body: HTML_EMAIL_TEMPLATES.SHORTAGE_WARNING(params) }),
     FEE_PAYMENT_RECEIPT: (params) => ({
         subject: `Fee Payment Receipt - ${params.fee_type}`,
         message_body: HTML_EMAIL_TEMPLATES.FEE_PAYMENT_RECEIPT(params) }),

@@ -354,6 +354,7 @@ export default function App() {
 
         case 'sql': return <SQLStudio />;
         case 'helpdesk': return <AdminHelpdesk />;
+        case 'whatsapp': return <AdminWhatsAppQueue />;
                 case 'siteeditor': return <AdminSiteEditor />;
         case 'parent-preview': return <ParentDashboard onLogout={logout} />;
 
