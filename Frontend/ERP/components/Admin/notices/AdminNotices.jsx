@@ -159,7 +159,7 @@ try {
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
- if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success"); else if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success");
+ if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success");
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
  setIsPublishing(false);
  }
