@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+
+// 1. Rewrite CookieConsent.jsx
+let cookieFile = 'Frontend/Website/components/LEGAL/CookieConsent.jsx';
+let cookieContent = `import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -74,3 +78,20 @@ export default function CookieConsent() {
     </AnimatePresence>
   );
 }
+`;
+fs.writeFileSync(cookieFile, cookieContent);
+
+// 2. Remove UnifiedDisclaimer from App.jsx
+let appFile = 'Frontend/App.jsx';
+let appContent = fs.readFileSync(appFile, 'utf8');
+
+appContent = appContent.replace("import UnifiedDisclaimer from './Website/components/UI/UnifiedDisclaimer';\n", "");
+appContent = appContent.replace("      <UnifiedDisclaimer />\n", "");
+
+fs.writeFileSync(appFile, appContent);
+
+// 3. Delete UnifiedDisclaimer.jsx
+if (fs.existsSync('Frontend/Website/components/UI/UnifiedDisclaimer.jsx')) {
+  fs.unlinkSync('Frontend/Website/components/UI/UnifiedDisclaimer.jsx');
+}
+

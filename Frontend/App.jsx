@@ -14,7 +14,6 @@ import CampusLife from './Website/components/NAVBAR/CAMPUS/CampusLife';
 
 import Gallery from './Website/components/NAVBAR/CAMPUS/Gallery/Gallery';
 import ScrollToTop from './Website/components/UI/ScrollToTop';
-import UnifiedDisclaimer from './Website/components/UI/UnifiedDisclaimer';
 import Affiliations from './Website/components/NAVBAR/ABOUT/Affiliations';
 import Careers from './Website/components/NAVBAR/CAREERS/Careers';
 import PlacementCell from './Website/components/NAVBAR/CAREERS/PlacementCell';
@@ -58,7 +57,6 @@ function App() {
       </a>
       <WebsiteTracker />
             <ScrollToTop />
-      <UnifiedDisclaimer />
             <Routes>
         <Route path="/" element={<><SEO title="Home | Prudentia College of Law" description="Premier legal education institution offering BA LLB, BBA LLB, and LLB programs with practical moot court experience." jsonLd={{ "@context": "https://schema.org", "@type": "CollegeOrUniversity", "name": "Prudentia College of Law", "url": "https://prudentiacollegeoflaw.com" }} /><Navbar /><main id="main-content"><Home /></main></>} />
         
