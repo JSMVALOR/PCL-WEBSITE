@@ -49,6 +49,7 @@ export default function GlobeMap() {
       </style>
       
       <div className="absolute inset-0 z-0 [&_.leaflet-container]:bg-[var(--bg-color)]">
+        <div className="absolute inset-0 z-50 cursor-pointer" onClick={openGoogleMaps} aria-label="Open in Google Maps"></div>
         <MapContainer 
           center={position} 
           zoom={14} 
@@ -63,7 +64,7 @@ export default function GlobeMap() {
           
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            className="dark-tiles"
+            
           />
           
           <LeafletMarker 

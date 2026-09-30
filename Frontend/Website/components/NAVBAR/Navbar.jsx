@@ -168,7 +168,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 bg-[#111111]/80 backdrop-blur-md z-[45]"
+            className="fixed inset-0 bg-black/10 backdrop-blur-sm z-[45]"
             onMouseEnter={() => setActiveDropdown(null)}
           />
         )}
