@@ -91,7 +91,7 @@ Program: ${formData.program}
       <div className={styles.ambientBackground} />
       <div className={styles.auroraGlow} />
 
-      <div className={`${styles.contentContainer} pt-24 md:pt-[160px] mb-20`}>
+      <div className={`${styles.contentContainer} pt-[90px] md:pt-[120px] mb-20`}>
         <motion.div 
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
           className="w-full text-center mb-16 relative z-10"
@@ -99,7 +99,7 @@ Program: ${formData.program}
           <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
             Admissions
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-6 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-6 leading-tight font-serif font-bold">
             Application <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Form</span>
           </h1>
           <p className="text-[var(--text-muted)] max-w-2xl mx-auto text-lg leading-relaxed text-center">

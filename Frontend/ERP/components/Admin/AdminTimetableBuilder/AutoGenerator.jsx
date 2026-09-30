@@ -29,8 +29,13 @@ export default function AutoGenerator({}) {
         try {
             const { data: batches } = await supabase.from('academic_batches').select('*').order('name');
             const { data: subjects } = await supabase.from('cohort_subjects').select('id, batch_id, master_subject_id, faculty_id, master_subjects(name, credits, target_semester), profiles(full_name)');
+            const { data: timings } = await supabase.from('campus_timings').select('*').eq('is_active', true).order('sort_order');
             
-            setData({ batches: batches || [], subjects: subjects || [] });
+            setData({ 
+                batches: batches || [], 
+                subjects: subjects || [],
+                timings: timings || []
+            });
         } catch (err) {
             console.error(err);
         } finally {
@@ -43,20 +48,25 @@ export default function AutoGenerator({}) {
         setProgress('Fetching data...');
 
         try {
-            // Official PCL Timings
-            const workingDaysIndex = [1, 2, 3, 4, 5, 6]; // 1-Mon, 6-Sat. (Sunday is off)
+            // Generate time slots based on dynamic campus_timings from database
+            let workingDaysIndex = data.timings?.filter(t => t.setting_type === 'working_days').map(t => t.sort_order) || [];
+            let timeSlots = data.timings?.filter(t => t.setting_type === 'period_slot').map(t => ({ s: t.start_time, e: t.end_time })) || [];
             
-            // Generate time slots based on official timings
-            const timeSlots = [
-                { s: '08:45:00', e: '09:45:00' },
-                { s: '09:45:00', e: '10:45:00' },
-                { s: '10:45:00', e: '11:45:00' },
-                { s: '11:45:00', e: '12:45:00' },
-                // 12:45 to 13:45 is Lunch Break
-                { s: '13:45:00', e: '14:45:00' },
-                { s: '14:45:00', e: '15:45:00' },
-                { s: '15:45:00', e: '16:45:00' }
-            ];
+            // Fallback if SQL has not been executed yet
+            if (workingDaysIndex.length === 0) {
+                workingDaysIndex = [1, 2, 3, 4, 5, 6];
+            }
+            if (timeSlots.length === 0) {
+                timeSlots = [
+                    { s: '08:45:00', e: '09:45:00' },
+                    { s: '09:45:00', e: '10:45:00' },
+                    { s: '10:45:00', e: '11:45:00' },
+                    { s: '11:45:00', e: '12:45:00' },
+                    { s: '13:45:00', e: '14:45:00' },
+                    { s: '14:45:00', e: '15:45:00' },
+                    { s: '15:45:00', e: '16:45:00' }
+                ];
+            }
             
             const targetBatches = specificBatchId ? data.batches.filter(b => b.id === specificBatchId) : data.batches;
 

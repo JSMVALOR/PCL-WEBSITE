@@ -11,7 +11,7 @@ const members = [
 
 export default function GoverningBody() {
   return (
-    <div className="pt-[160px] pb-[100px] min-h-screen bg-brand-bg text-brand-text">
+    <div className="pt-[90px] md:pt-[120px] pb-[100px] min-h-screen bg-brand-bg text-brand-text">
       <SEO title="Governing Body" description="Meet the esteemed Governing Body of Prudentia College of Law." />
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

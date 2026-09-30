@@ -82,7 +82,7 @@ Message: ${formData.message}`,
       <div className={styles.ambientBackground} />
       <div className={styles.auroraGlow} />
 
-      <div className={`${styles.contentContainer} mt-10 md:mt-16`}>
+      <div className={`${styles.contentContainer} `}>
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -93,7 +93,7 @@ Message: ${formData.message}`,
           <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
             Get In Touch
           </span>
-          <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">
             Contact <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Us</span>
           </h1>
           <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed text-center">

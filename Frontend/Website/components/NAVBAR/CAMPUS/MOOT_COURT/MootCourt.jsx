@@ -81,7 +81,7 @@ export default function MootCourt() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl lg:text-7xl  text-[var(--text-color)] mb-6 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']"
+            className="text-5xl md:text-6xl lg:text-7xl  text-[var(--text-color)] mb-6 leading-tight font-serif font-bold"
           >
             Where rigorous <br className="hidden md:block" />
             <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">advocacy</span> meets practice

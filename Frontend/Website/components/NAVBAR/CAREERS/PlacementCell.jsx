@@ -74,7 +74,7 @@ Requirements: ${formData.message}`,
             <div className={styles.ambientBackground} />
             <div className={styles.auroraGlow} />
 
-            <div className={`${styles.contentContainer} mt-10 md:mt-16`}>
+            <div className={`${styles.contentContainer} `}>
                 <motion.div 
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}

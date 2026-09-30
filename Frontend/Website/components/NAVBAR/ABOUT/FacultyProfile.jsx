@@ -149,7 +149,7 @@ export default function FacultyProfile() {
       {/* Refined Ambient Glow */}
       <div className="fixed top-0 right-0 w-[50vw] h-[50vw] bg-[var(--primary-color)]/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
-      <div className="relative z-20 pt-[160px] pb-[100px] px-6 md:px-12 max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+      <div className="relative z-20 pt-[90px] md:pt-[120px] pb-[100px] px-6 md:px-12 max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
         {/* LEFT COLUMN: Luxury Portrait & Contact */}
         <div className="w-full max-w-sm mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-32 h-fit pb-10">

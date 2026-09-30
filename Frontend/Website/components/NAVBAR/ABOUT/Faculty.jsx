@@ -67,7 +67,7 @@ export default function Faculty() {
 
   return (
     <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[100px]">
-      <div className="relative z-20 pt-[160px] md:pt-[160px] px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="relative z-20 pt-[90px] md:pt-[120px] px-6 md:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}

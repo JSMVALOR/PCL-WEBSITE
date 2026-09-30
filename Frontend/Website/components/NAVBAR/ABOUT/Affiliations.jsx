@@ -20,7 +20,7 @@ const Affiliations = () => {
   };
 
   return (
-    <div className="w-full min-h-screen pt-[120px] md:pt-[160px] pb-[100px] px-6 md:px-12 relative flex flex-col items-center overflow-hidden bg-[var(--bg-color)] transition-colors duration-300">
+    <div className="w-full min-h-screen pt-[120px] md:pt-[90px] md:pt-[120px] pb-[100px] px-6 md:px-12 relative flex flex-col items-center overflow-hidden bg-[var(--bg-color)] transition-colors duration-300">
       
       <div className="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col items-center">
       <motion.div 

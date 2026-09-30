@@ -81,7 +81,7 @@ export default function Gallery() {
             <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
               Campus Experience
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">
               The Prudentia <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Gallery</span>
             </h1>
             

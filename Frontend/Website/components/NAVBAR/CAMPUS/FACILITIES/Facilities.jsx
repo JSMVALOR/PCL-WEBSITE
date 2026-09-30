@@ -265,7 +265,7 @@ export default function Facilities() {
       <div className={styles.auroraGlow} />
 
       <div className={styles.contentContainer} ref={containerRef}>
-        <div className="text-center mb-24 relative z-10 mt-10 md:mt-16">
+        <div className="text-center mb-24 relative z-10 ">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -276,7 +276,7 @@ export default function Facilities() {
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']"
+            className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold"
           >
             Where rigorous <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">legal theory</span><br className="hidden md:block" /> meets practice
           </motion.h1>

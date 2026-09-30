@@ -11,7 +11,7 @@ const features = [
 
 export default function JudiciaryPrep() {
   return (
-    <div className="pt-[160px] pb-[100px] min-h-screen bg-brand-bg text-brand-text">
+    <div className="pt-[90px] md:pt-[120px] pb-[100px] min-h-screen bg-brand-bg text-brand-text">
       <SEO title="Judiciary Preparation" description="Specialized coaching for judicial services examinations at Prudentia College of Law." />
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
