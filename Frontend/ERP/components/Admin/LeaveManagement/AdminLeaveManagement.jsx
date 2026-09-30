@@ -8,6 +8,8 @@ import LeaveRequests from "./LeaveRequests";
 import LeaveCalendar from "./LeaveCalendar";
 import LeaveReview from "./LeaveReview"; // Detailed view of a request
 import ReplacementEngine from "./ReplacementEngine";
+import LeavePolicies from "./LeavePolicies";
+import LeaveAnalytics from "./LeaveAnalytics";
 
 export default function AdminLeaveManagement({ isHubView = false }) {
  const [activeTab, setActiveTab] = useState("dashboard");
@@ -24,10 +26,12 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  };
 
  const tabs = [
- { id: "dashboard", label: "Overview", icon: "fa-chart-pie" },
+ { id: "dashboard", label: "Dashboard", icon: "fa-chart-pie" },
  { id: "requests", label: "Leave Requests", icon: "fa-inbox" },
  { id: "calendar", label: "Calendar", icon: "fa-calendar-days" },
- 
+ { id: "analytics", label: "Analytics", icon: "fa-chart-line" },
+ { id: "policies", label: "Policies", icon: "fa-scale-balanced" },
+ { id: "audit", label: "Audit Log", icon: "fa-clipboard-list" }
  ];
 
  return (
@@ -76,6 +80,9 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  {activeTab === "dashboard" && <LeaveDashboard setActiveTab={setActiveTab} />}
  {activeTab === "requests" && <LeaveRequests onReviewRequest={handleReviewRequest} />}
  {activeTab === "calendar" && <LeaveCalendar />}
+ {activeTab === "analytics" && <LeaveAnalytics />}
+ {activeTab === "policies" && <LeavePolicies />}
+ {activeTab === "audit" && <div className="p-12 text-center text-themeTextSec italic">Audit Log coming soon...</div>}
  
             {activeTab === "review" && selectedRequest && (
  <LeaveReview request={selectedRequest} onClose={handleCloseReview} onAssignReplacement={() => setActiveTab("replacement")} />
