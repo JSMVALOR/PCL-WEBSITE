@@ -91,7 +91,14 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  };
 
  const handleReject = async (app) => {
- if (!(await window.erpDialog?.confirm(`Are you sure you want to reject ${app.name}'s application? This will send a rejection notification email.`))) return;
+ const reason = await window.erpDialog?.prompt(
+ `Please enter the reason for rejecting ${app.name}'s application. This message will be included in the email sent to the applicant.`,
+ "Reject Application",
+ "Your application did not meet the minimum requirements at this time."
+ );
+ 
+ if (reason === null) return; // User cancelled
+ 
  try {
  const { error } = await supabase.from("admissions_applications").update({ status: 'rejected' }).eq("id", app.id);
  if (error) throw error;
@@ -101,7 +108,8 @@ export default function AdminAdmissions({ isEmbedded = false,  isHubView = false
  await sendSystemEmail('APPLICATION_REJECTED', {
  to_email: app.email,
  student_name: app.name,
- program: app.program || 'Law Program'
+ program: app.program || 'Law Program',
+ reason: reason
  });
  } catch (emailErr) {
  console.warn("Rejection email failed:", emailErr);
