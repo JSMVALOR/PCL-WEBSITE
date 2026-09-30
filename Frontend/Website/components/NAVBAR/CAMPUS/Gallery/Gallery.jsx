@@ -71,7 +71,7 @@ export default function Gallery() {
   return (
     <>
       {!selectedImage && <Navbar />}
-      <div className={styles.pageWrapper} style={{ paddingTop: '80px' }}>
+      <div className={styles.pageWrapper}>
         <div className={styles.ambientBackground} />
         <div className={styles.auroraGlow} />
 

@@ -86,7 +86,7 @@ export default function About() {
     <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[40px]">
       
       {/* Content Container */}
-      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[120px] md:pt-[90px] md:pt-[120px] pb-[40px]">
+      <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[80px] md:pt-[140px] pb-[40px]">
 
         {/* Editorial Intro Section */}
         <div className="w-full mb-32 flex flex-col lg:flex-row gap-8 lg:gap-24 items-start">
