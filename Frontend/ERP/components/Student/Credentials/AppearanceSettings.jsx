@@ -7,6 +7,7 @@ export default function AppearanceSettings() {
     const { activeTheme, changeTheme, navLayout, changeNavLayout, sidebarMode, changeSidebarMode } = useERP();
 
         const allThemes = [
+        { id: 'prudentia-classic', name: 'Prudentia Classic', desc: 'Signature Beige & Chocolate', icon: 'fa-scale-balanced', gradient: 'bg-gradient-to-br from-[#efece3] via-[#efece3] to-[#e8e4d8]', accent: 'bg-[#4A3B32]' },
         { id: 'apple-hig-light', name: 'Pristine Alabaster', desc: 'Clean White & Red', icon: 'fa-sun', gradient: 'bg-gradient-to-br from-white via-white to-gray-100', accent: 'bg-[#E11D48]' },
         { id: 'midnight-justice', name: 'Obsidian Crimson', desc: 'Deep Black & Red', icon: 'fa-moon', gradient: 'bg-gradient-to-br from-black via-zinc-900 to-black', accent: 'bg-[#DC2626]' },
         { id: 'marble-executive', name: 'Nordic Slate', desc: 'Cool Slate & Rose', icon: 'fa-cloud-moon', gradient: 'bg-gradient-to-br from-slate-800 via-[#0B1120] to-slate-900', accent: 'bg-[#EF4444]' },
@@ -23,14 +24,9 @@ export default function AppearanceSettings() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const themes = isMobile ? allThemes.slice(0, 2) : allThemes;
+    const themes = allThemes;
     
-    useEffect(() => {
-        if (isMobile && !themes.find(t => t.id === activeTheme)) {
-            changeTheme(themes[0].id);
-        }
-    }, [isMobile, activeTheme, themes, changeTheme]);
-
+    
     return (
         <div className="flex flex-col gap-8 max-w-5xl animate-fade-in pb-12">
             

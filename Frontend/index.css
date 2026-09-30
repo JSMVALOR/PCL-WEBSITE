@@ -1681,6 +1681,21 @@ html.home-snap {
     --text-on-accent: #FFFFFF;
   }
 
+  [data-theme="prudentia-classic"] {
+    --bg-app: #efece3;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #FFFFFF;
+    --text-primary: #1a1a1a;
+    --text-secondary: #4A3B32;
+    --accent: #4A3B32;
+    --accent-muted: #E5C07B;
+    --border-color: rgba(74, 59, 50, 0.1);
+    --border-strong: rgba(74, 59, 50, 0.2);
+    --shadow-elevated: 0 8px 30px rgba(74, 59, 50, 0.05);
+    --text-on-accent: #efece3;
+  }
+
+
   /* 2. Obsidian Crimson (Dark) */
   [data-theme="midnight-justice"] {
     --bg-app: #000000;
@@ -2015,6 +2030,7 @@ html:not(.dark) input[type="date"] {
   }
 }
 
+html[data-theme="prudentia-classic"] .theme-logo,
 html[data-theme="apple-hig-light"] .theme-logo,
 html[data-theme="marble-executive"] .theme-logo,
 html[data-theme="emerald-chancery"] .theme-logo,
@@ -2042,3 +2058,4 @@ html[data-theme="structural-neo-brutalism"] .theme-logo {
         box-shadow: none;
     }
 }
+
