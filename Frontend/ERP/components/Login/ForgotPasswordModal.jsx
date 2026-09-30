@@ -110,7 +110,7 @@ export default function ForgotPasswordModal({ onClose }) {
  
  try {
  if (userId) {
- const { error: rpcError } = await supabase.rpc('admin_force_password_update', {
+ const { error: rpcError } = await supabase.rpc('admin_reset_password', {
  target_user_id: userId,
  new_password: newPassword
  });
