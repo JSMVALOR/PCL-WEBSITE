@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Briefcase, MapPin, X, Send, AlertCircle, Link2, Ticket } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Briefcase, MapPin, X, Send, AlertCircle, Link2, Ticket, GraduationCap, Clock } from 'lucide-react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../../../ERP/lib/EmailService';
 import styles from '../PROGRAMS/Programs.module.css';
@@ -151,8 +151,21 @@ const Careers = () => {
                         <span className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] bg-[var(--card-bg)]/80 px-3 py-1.5 rounded-full border border-[var(--card-border)]">{job.type}</span>
                     </div>
                     <h3 className="text-2xl font-bold mb-6 text-[var(--text-color)] leading-tight group-hover:text-[var(--primary-color)] transition-colors duration-500 font-['Playfair_Display'] italic relative z-10">{job.title}</h3>
-                    <div className="flex flex-col gap-2 mb-10 mt-auto relative z-10">
-                        <div className="flex items-center gap-3 text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase"><MapPin size={16} className="text-[var(--primary-color)]" /> {job.location || 'Prudentia Campus'}</div>
+                    <div className="flex flex-col gap-3 mb-10 mt-auto relative z-10">
+                        <div className="flex items-start gap-3 text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase">
+                            <MapPin size={16} className="text-[var(--primary-color)] shrink-0" /> 
+                            <span className="leading-relaxed">{job.location || 'Prudentia Campus'}</span>
+                        </div>
+                        <div className="flex items-start gap-3 text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase">
+                            <GraduationCap size={16} className="text-[var(--primary-color)] shrink-0" /> 
+                            <span className="leading-relaxed">{job.qualifications || 'LL.M / Ph.D in Law'}</span>
+                        </div>
+                        {job.deadline && (
+                            <div className="flex items-start gap-3 text-xs font-bold text-[var(--text-muted)] tracking-widest uppercase">
+                                <Clock size={16} className="text-[var(--primary-color)] shrink-0" /> 
+                                <span className="leading-relaxed">Apply by: {new Date(job.deadline).toLocaleDateString()}</span>
+                            </div>
+                        )}
                     </div>
                     <div className="relative z-10 mt-auto">
                       <button onClick={() => handleApplyClick(job)} className="tlh-btn justify-center w-full">

@@ -179,32 +179,79 @@ export default function Programs() {
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-                    <Link to="/programs/ba-llb" className={styles.glassCard}>
+                    {/* BA LL.B */}
+                    <Link to="/programs/ba-llb" className={`${styles.glassCard} group flex flex-col hover:border-[var(--primary-color)]/50 transition-colors duration-300`}>
                       <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex flex-wrap items-center justify-between font-['Playfair_Display']">
                         <span>BA. LL.B <span className="block text-xs text-[var(--text-muted)] font-sans mt-1 tracking-widest uppercase">5 Years</span></span>
                         <span className="transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">➔</span>
                       </h3>
-                      <p className="text-[var(--text-color)] leading-relaxed text-sm">
+                      <p className="text-[var(--text-color)] leading-relaxed text-sm mb-6 flex-grow">
                         An integrated undergraduate program combining Humanities with Law. Focuses on socio-legal awareness, preparing students for leadership in Governance.
                       </p>
+                      <div className="flex flex-col gap-3 pt-5 border-t border-[var(--card-border)]">
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Eligibility</span>
+                          <span className="text-[var(--text-color)] font-medium bg-[var(--card-bg)] px-2 py-1 rounded border border-[var(--card-border)]">10+2 (45%)</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Intake Route</span>
+                          <span className="text-[var(--text-color)] font-medium bg-[var(--card-bg)] px-2 py-1 rounded border border-[var(--card-border)]">TS LAWCET / Mgmt</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Annual Fee</span>
+                          <span className="text-[var(--primary-color)] font-bold font-mono">₹ 20,000*</span>
+                        </div>
+                      </div>
                     </Link>
-                    <Link to="/programs/bba-llb" className={styles.glassCard}>
+
+                    {/* BBA LL.B */}
+                    <Link to="/programs/bba-llb" className={`${styles.glassCard} group flex flex-col hover:border-[var(--primary-color)]/50 transition-colors duration-300`}>
                       <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex flex-wrap items-center justify-between font-['Playfair_Display']">
                         <span>BBA. LL.B <span className="block text-xs text-[var(--text-muted)] font-sans mt-1 tracking-widest uppercase">5 Years</span></span>
                         <span className="transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">➔</span>
                       </h3>
-                      <p className="text-[var(--text-color)] leading-relaxed text-sm">
+                      <p className="text-[var(--text-color)] leading-relaxed text-sm mb-6 flex-grow">
                         Merges Business Administration with Legal Education. Tailored for students aiming for careers in Corporate Law, Legal Consultancy, and Management.
                       </p>
+                      <div className="flex flex-col gap-3 pt-5 border-t border-[var(--card-border)]">
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Eligibility</span>
+                          <span className="text-[var(--text-color)] font-medium bg-[var(--card-bg)] px-2 py-1 rounded border border-[var(--card-border)]">10+2 (45%)</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Intake Route</span>
+                          <span className="text-[var(--text-color)] font-medium bg-[var(--card-bg)] px-2 py-1 rounded border border-[var(--card-border)]">TS LAWCET / Mgmt</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Annual Fee</span>
+                          <span className="text-[var(--primary-color)] font-bold font-mono">₹ 20,000*</span>
+                        </div>
+                      </div>
                     </Link>
-                    <Link to="/programs/llb" className={styles.glassCard}>
+
+                    {/* LL.B */}
+                    <Link to="/programs/llb" className={`${styles.glassCard} group flex flex-col hover:border-[var(--primary-color)]/50 transition-colors duration-300`}>
                       <h3 className="text-[var(--primary-color)] text-xl font-bold mb-4 flex flex-wrap items-center justify-between font-['Playfair_Display']">
                         <span>LL.B <span className="block text-xs text-[var(--text-muted)] font-sans mt-1 tracking-widest uppercase">3 Years</span></span>
                         <span className="transform translate-x-0 group-hover:translate-x-2 transition-transform duration-300">➔</span>
                       </h3>
-                      <p className="text-[var(--text-color)] leading-relaxed text-sm">
+                      <p className="text-[var(--text-color)] leading-relaxed text-sm mb-6 flex-grow">
                         A purely professional course for graduates. Emphasizes core legal subjects, procedural laws, and extensive court exposure.
                       </p>
+                      <div className="flex flex-col gap-3 pt-5 border-t border-[var(--card-border)]">
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Eligibility</span>
+                          <span className="text-[var(--text-color)] font-medium bg-[var(--card-bg)] px-2 py-1 rounded border border-[var(--card-border)]">Degree (45%)</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Intake Route</span>
+                          <span className="text-[var(--text-color)] font-medium bg-[var(--card-bg)] px-2 py-1 rounded border border-[var(--card-border)]">TS LAWCET / Mgmt</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px] md:text-xs">
+                          <span className="text-[var(--text-muted)] uppercase tracking-widest font-bold">Annual Fee</span>
+                          <span className="text-[var(--primary-color)] font-bold font-mono">₹ 20,000*</span>
+                        </div>
+                      </div>
                     </Link>
                   </div>
                 </>

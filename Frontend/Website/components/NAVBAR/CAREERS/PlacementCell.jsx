@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, Building, CheckCircle, Mail, Phone, MapPin, Send, ArrowRight } from 'lucide-react';
+import { Briefcase, Building, CheckCircle, Mail, Phone, MapPin, Send, ArrowRight, Download, Calendar } from 'lucide-react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../../../ERP/lib/EmailService';
 import styles from '../PROGRAMS/Programs.module.css';
@@ -84,11 +84,11 @@ Requirements: ${formData.message}`,
                     <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
                         Corporate Relations
                     </span>
-                    <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-[ font-serif tracking-tight font-bold'Outfit']">
+                    <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">
                         Placement <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Cell</span>
                     </h1>
                     <p className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed text-center">
-                        Connecting exceptional legal minds with industry-leading law firms, corporate houses, and esteemed chambers across the globe.
+                        Facilitating seamless connections between our skilled legal graduates and established law firms, corporate counsel, and judicial chambers.
                     </p>
                 </motion.div>
 
@@ -104,9 +104,22 @@ Requirements: ${formData.message}`,
                             Partner With <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Us</span>
                         </h2>
                         <div className="h-[3px] w-20 mb-6 bg-gradient-to-r from-[var(--primary-color)] to-transparent rounded-full" />
-                        <p className="text-[var(--text-muted)] text-base md:text-lg leading-relaxed text-justify mb-10">
-                            The Prudentia Placement Cell is committed to bridging the gap between academia and the professional legal landscape. We invite prestigious organizations to participate in our recruitment drives and discover the next generation of legal talent.
+                        <p className="text-[var(--text-muted)] text-base md:text-lg leading-relaxed text-justify mb-8">
+                            The Prudentia Placement Cell actively bridges the gap between academia and the professional legal landscape. We invite organizations to participate in our recruitment drives, offering access to well-trained, ethically grounded law graduates.
                         </p>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4 mb-10">
+                            <a href="#" className="tlh-btn justify-center inline-flex bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-black">
+                                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                    <Download size={16} /> Placement Brochure
+                                </span>
+                            </a>
+                            <a href="#" className="tlh-btn justify-center inline-flex bg-transparent border border-[var(--primary-color)] text-[var(--primary-color)] hover:bg-[var(--primary-color)] hover:text-black">
+                                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                    <Calendar size={16} /> Recruitment Timeline
+                                </span>
+                            </a>
+                        </div>
 
                         <div className="space-y-10 mb-12">
                             <div className="flex gap-6 group">
@@ -132,23 +145,26 @@ Requirements: ${formData.message}`,
                         <div className={`${styles.glassCard} p-8 border border-[var(--card-border)] hover:border-[var(--primary-color)]/50 transition-colors duration-500`}>
                             <h4 className="text-sm font-bold uppercase tracking-widest text-[var(--text-color)] mb-6 font-mono">Contact Placement Office</h4>
                             <div className="space-y-5">
-                                <a href="mailto:info@prudentiacollegeoflaw.com" className="flex items-center gap-4 text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors group">
-                                    <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center group-hover:border-[var(--primary-color)]/50 transition-colors">
+                                <a href="mailto:placements@prudentiacollegeoflaw.com" className="flex items-center gap-4 text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors group">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center group-hover:border-[var(--primary-color)]/50 transition-colors shrink-0">
                                         <Mail size={16} />
                                     </div>
-                                    <span className="font-medium text-sm md:text-base">info@prudentiacollegeoflaw.com</span>
+                                    <span className="font-medium text-sm md:text-base">placements@prudentiacollegeoflaw.com</span>
                                 </a>
-                                <div className="flex items-center gap-4 text-[var(--text-muted)] group">
-                                    <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center">
+                                <a href="tel:+918599000777" className="flex items-center gap-4 text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors group">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center group-hover:border-[var(--primary-color)]/50 transition-colors shrink-0">
                                         <Phone size={16} />
                                     </div>
-                                    <span className="font-medium text-sm md:text-base">+91 85990 00777</span>
-                                </div>
-                                <div className="flex items-center gap-4 text-[var(--text-muted)] group">
-                                    <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center">
+                                    <div>
+                                        <span className="font-medium text-sm md:text-base block">Training & Placement Officer</span>
+                                        <span className="text-xs opacity-70 block mt-0.5">+91 85990 00777</span>
+                                    </div>
+                                </a>
+                                <div className="flex items-start gap-4 text-[var(--text-muted)] group">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center shrink-0 mt-1">
                                         <MapPin size={16} />
                                     </div>
-                                    <span className="font-medium text-sm md:text-base">3-23, Gurramguda, Opp Badangpet Municipal Office, Balapur Mandal, R.R. Dist, Hyderabad - Telangana 501510</span>
+                                    <span className="font-medium text-sm md:text-base leading-relaxed">3-23, Gurramguda, Opp Badangpet Municipal Office, Balapur Mandal, R.R. Dist, Hyderabad - Telangana 501510</span>
                                 </div>
                             </div>
                         </div>
