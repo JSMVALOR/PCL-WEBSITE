@@ -18,7 +18,7 @@ export default function CampusLife() {
       <SEO title="Campus Life" description="Experience the vibrant campus life at Prudentia College of Law." />
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 font-serif">Campus Life</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">Campus Life</h1>
           <p className="text-brand-muted text-lg max-w-3xl mb-16 leading-relaxed">
             Life at Prudentia extends beyond classrooms. Our vibrant campus fosters a community of thinkers, advocates, and leaders. Discover world-class amenities designed to enrich your academic and social journey.
           </p>

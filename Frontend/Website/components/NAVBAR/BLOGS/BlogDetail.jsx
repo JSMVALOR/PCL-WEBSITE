@@ -94,7 +94,7 @@ export default function BlogDetail() {
                   {blog.category || 'Announcement'}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl  text-[var(--text-color)] leading-[1.1] mb-6 font-serif tracking-tight font-bold">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl  text-[var(--text-color)] leading-[1.1] mb-6 font-serif tracking-tight font-bold">
                 {blog.title}
               </h1>
               

@@ -73,7 +73,7 @@ export default function Faculty() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-5xl md:text-6xl lg:text-7xl  tracking-widest text-[var(--text-color)] mb-8 uppercase font-serif tracking-tight font-bold"
+            className="text-4xl md:text-5xl lg:text-7xl  tracking-widest text-[var(--text-color)] mb-8 uppercase font-serif tracking-tight font-bold"
            
           >
             OUR <span className="text-[var(--primary-color)] italic">FACULTY</span>

@@ -15,7 +15,7 @@ export default function JudiciaryPrep() {
       <SEO title="Judiciary Preparation" description="Specialized coaching for judicial services examinations at Prudentia College of Law." />
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 font-serif">Judiciary Preparation</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">Judiciary Preparation</h1>
           <p className="text-brand-muted text-lg max-w-3xl mb-16 leading-relaxed">
             Prudentia College of Law offers an integrated, intensive coaching module for Judicial Services Examinations. Our specialized program prepares aspirants for both Preliminary and Mains examinations, including interview guidance.
           </p>

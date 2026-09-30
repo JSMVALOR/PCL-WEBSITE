@@ -181,28 +181,23 @@ export default function EventsPage() {
             <div className={styles.contentContainer} ref={containerRef}>
                 
                 {/* Header */}
-                <div className="text-center mb-20 md:mb-24 relative z-10">
+                <div className="text-center mb-16 relative z-10">
+                    <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
+                        Our Community
+                    </span>
                     <motion.h1 
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-5xl md:text-6xl lg:text-7xl  tracking-widest text-[var(--text-color)] mb-6 uppercase leading-tight font-serif tracking-tight font-bold"
-                       
+                        className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold"
                     >
-                        Campus <span className="text-[var(--primary-color)] italic">Events</span>
+                        Campus <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Events</span>
                     </motion.h1>
-                    <motion.div 
-                        initial={{ opacity: 0, scaleX: 0 }} 
-                        animate={{ opacity: 1, scaleX: 1 }} 
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="h-[1px] w-32 bg-[var(--primary-color)]/50 mx-auto mb-8 origin-center"
-                    />
                     <motion.p 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        className="text-[var(--text-muted)] max-w-2xl mx-auto text-lg leading-relaxed"
-                       
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed text-center"
                     >
                         Stay updated with all the upcoming seminars, workshops, moot courts, and cultural activities happening at Prudentia College of Law.
                     </motion.p>

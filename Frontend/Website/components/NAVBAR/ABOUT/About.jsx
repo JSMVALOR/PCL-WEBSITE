@@ -95,11 +95,11 @@ export default function About() {
               initial={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-5xl md:text-6xl lg:text-7xl  text-[var(--text-color)] mb-6 tracking-tight font-serif tracking-tight font-bold"
+              className="text-4xl md:text-5xl lg:text-7xl  text-[var(--text-color)] mb-6 tracking-tight font-serif tracking-tight font-bold"
              
             >
               {cms.hero_line1} <br/>
-              <span className="text-[var(--primary-color)] italic pr-2">{cms.hero_highlight}</span>
+              <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">{cms.hero_highlight}</span>
             </motion.h1>
             <motion.div 
               initial={{ opacity: 0, scaleX: 0 }} 

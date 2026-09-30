@@ -122,21 +122,23 @@ export default function BlogsPage() {
             <div className={styles.auroraGlow} />
 
             <div className={styles.contentContainer} ref={containerRef}>
-                {/* Header */}
-                <div className="text-center mb-12 md:mb-16 relative z-10">
+                <div className="text-center mb-16 relative z-10">
+                    <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
+                        Media & Updates
+                    </span>
                     <motion.h1 
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-4xl md:text-5xl lg:text-6xl font-serif text-[var(--primary-color)] mb-6 leading-tight"
+                        className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold"
                     >
-                        News & Insights
+                        News & <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Insights</span>
                     </motion.h1>
                     <motion.p 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="text-white/80 max-w-2xl mx-auto text-lg leading-relaxed mb-10 font-light"
+                        className="text-[var(--text-muted)] max-w-3xl mx-auto text-base md:text-xl leading-relaxed text-center"
                     >
                         Explore our views on latest updates, insights and analysis to help you navigate the evolving legal landscape.
                     </motion.p>

@@ -32,7 +32,7 @@ const Affiliations = () => {
         <span className="text-[var(--primary-color)] font-bold tracking-[0.2em] uppercase text-sm mb-4 block">
           Accreditations & Recognition
         </span>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl  mb-6 tracking-tight font-serif tracking-tight font-bold">
+        <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">
           Institutional <span className="text-[var(--primary-color)] italic font-medium pr-2">Affiliations.</span>
         </h1>
         <p className="text-[var(--text-muted)] max-w-2xl mx-auto text-base md:text-lg leading-relaxed text-justify">

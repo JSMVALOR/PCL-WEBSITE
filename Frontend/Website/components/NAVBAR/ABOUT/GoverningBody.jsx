@@ -15,7 +15,7 @@ export default function GoverningBody() {
       <SEO title="Governing Body" description="Meet the esteemed Governing Body of Prudentia College of Law." />
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 font-serif">Governing Body</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">Governing Body</h1>
           <p className="text-brand-muted text-lg max-w-3xl mb-16 leading-relaxed">
             Our Governing Body comprises eminent jurists, legal luminaries, and academicians who provide strategic direction and vision to Prudentia College of Law, ensuring the highest standards of legal education.
           </p>
