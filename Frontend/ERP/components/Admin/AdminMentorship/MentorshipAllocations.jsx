@@ -177,7 +177,7 @@ export default function MentorshipAllocations({}) {
         () => {
             setFaculty(backupFaculty);
             setUnallocatedStudents(backupUnallocated);
-            window.erpToast?.show("Auto-allocation reverted.", "success");
+            window.erpToast?.show("Auto-allocation reverted.", 'success');
         },
         10000
     );
@@ -214,7 +214,7 @@ export default function MentorshipAllocations({}) {
         () => {
             setFaculty(backupFaculty);
             setUnallocatedStudents(backupUnallocated);
-            window.erpToast?.show("Wipe reverted successfully.", "success");
+            window.erpToast?.show("Wipe reverted successfully.", 'success');
         },
         10000
     );
@@ -276,7 +276,7 @@ export default function MentorshipAllocations({}) {
  const facIndex = newFaculty.findIndex(f => f.id === destination.droppableId);
  
  if (newFaculty[facIndex].mentees.length >= maxCapacity) {
- window.erpDialog?.alert("This mentor has reached maximum capacity!");
+ if(window.erpToast) window.erpToast.show("This mentor has reached maximum capacity!");
  fetchMentorshipData(); // reset state
  return; 
  }
@@ -291,14 +291,14 @@ export default function MentorshipAllocations({}) {
  });
 
  if (error) {
- window.erpDialog?.alert("Database Error: SQL table is missing or disconnected.\nPlease contact JSM VALOR Support.", "Mentorship Error", true);
+ if(window.erpToast) window.erpToast.show("Database Error: SQL table is missing or disconnected.\nPlease contact JSM VALOR Support.", "Mentorship Error", true);
  console.error(error);
  fetchMentorshipData();
  return;
  }
 
  await logAction(`Assigned student ${draggedStudent.name} to mentor ${newFaculty[facIndex].name}`);
- window.erpDialog?.alert(`Success! ${draggedStudent.name} has been assigned to ${newFaculty[facIndex].name}.`);
+ if(window.erpToast) window.erpToast.show(`Success! ${draggedStudent.name} has been assigned to ${newFaculty[facIndex].name}.`);
  }
 
  setUnallocatedStudents(newUnallocated);
@@ -319,7 +319,7 @@ export default function MentorshipAllocations({}) {
  // In production, we'd query IDs matching these reg numbers and bulk upsert.
  
  await logAction(`Bulk Imported ${rows.length} mentor assignments via CSV`);
- window.erpDialog?.alert(`Successfully imported ${rows.length} assignments from CSV.`);
+ if(window.erpToast) window.erpToast.show(`Successfully imported ${rows.length} assignments from CSV.`);
  
  } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  });

@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminPlacements({ isEmbedded = false,  isHubView = false }) {
@@ -40,7 +41,7 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  .from('placement_applications')
  .select(`
  id, drive_id, student_id, resume_url, status, created_at,
- profiles!placement_applications_student_id_fkey(full_name, erp_id),
+ profiles!placement_applications_student_id_fkey(full_name, erp_id, email),
  placement_drives!placement_applications_drive_id_fkey(company_name, role_title)
  `)
  .order('created_at', { ascending: false });
@@ -70,13 +71,13 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  status: "Open"
  });
  if (error) throw error;
- window.erpDialog?.alert("Placement Drive created successfully!");
+ if(window.erpToast) window.erpToast.show('Placement Drive created successfully!', 'success');
  setShowCreateModal(false);
  setDriveForm({ company_name: "", role_title: "", drive_date: "", eligibility_criteria: "", package_details: "" });
  fetchDrives();
  } catch (err) {
  console.error("Error creating drive", err);
- window.erpDialog?.alert("Failed to create drive.");
+ if(window.erpToast) window.erpToast.show('Failed to create drive.', 'error');
  } finally {
  setIsSubmitting(false);
  }
@@ -89,7 +90,7 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  fetchApplications();
  } catch (err) {
  console.error("Error updating application status", err);
- window.erpDialog?.alert("Failed to update status.");
+ if(window.erpToast) window.erpToast.show('Failed to update status.', 'error');
  }
  };
 
@@ -100,7 +101,7 @@ export default function AdminPlacements({ isEmbedded = false,  isHubView = false
  fetchInquiries();
  } catch (err) {
  console.error("Error updating inquiry status", err);
- window.erpDialog?.alert("Failed to update status.");
+ if(window.erpToast) window.erpToast.show('Failed to update status.', 'error');
  }
  };
 
