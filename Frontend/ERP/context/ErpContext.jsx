@@ -88,16 +88,27 @@ export const ErpProvider = ({ children }) => {
     };
 
     const changeTheme = (newTheme) => {
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            if (newTheme !== 'apple-hig-light' && newTheme !== 'midnight-justice') {
+                newTheme = 'apple-hig-light'; // Fallback to default mobile light theme
+            }
+        }
         setActiveTheme(newTheme);
     };
 
     useEffect(() => {
-        document.documentElement.setAttribute('data-theme', activeTheme);
+        let themeToApply = activeTheme;
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+            if (themeToApply !== 'apple-hig-light' && themeToApply !== 'midnight-justice') {
+                themeToApply = 'apple-hig-light';
+            }
+        }
+        document.documentElement.setAttribute('data-theme', themeToApply);
         localStorage.setItem('jsmerp_theme', activeTheme);
         
         // Fix for Tailwind dark mode classes - seamlessly sync the 'dark' class 
         // with our semantic themes so all dark: and light modes work properly.
-        if (activeTheme.includes('light') || ['apple-hig-light', 'emerald-chancery', 'imperial-crown', 'structural-neo-brutalism'].includes(activeTheme)) {
+        if (themeToApply.includes('light') || ['apple-hig-light', 'emerald-chancery', 'imperial-crown', 'structural-neo-brutalism'].includes(themeToApply)) {
             document.documentElement.classList.remove('dark');
         } else {
             document.documentElement.classList.add('dark');
