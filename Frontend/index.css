@@ -1623,20 +1623,20 @@ html.home-snap {
   }
 
   :root {
-    /* New Theme: Classic Ivory & Saddle Brown */
-    --bg-app: #FFFFFF;
-    --bg-panel: #FCFBF9;
-    --bg-elevated: #F4F1ED;
-    --text-primary: #2A201A;
-    --text-secondary: #73645B;
-    --accent: #8B4513;
-    --accent-muted: #A0522D;
-    --border-color: rgba(139, 69, 19, 0.15);
-    --border-strong: rgba(139, 69, 19, 0.3);
+    /* New Theme: Warm Beige & Chocolate Brown */
+    --bg-app: #F4EFE6;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #E8DFD1;
+    --text-primary: #3E2723;
+    --text-secondary: #795548;
+    --accent: #5D4037;
+    --accent-muted: #8D6E63;
+    --border-color: rgba(93, 64, 55, 0.15);
+    --border-strong: rgba(93, 64, 55, 0.3);
     --radius-panel: 0.75rem;
     --radius-btn: 0.5rem;
     --border-width: 1px;
-    --shadow-elevated: 0 10px 30px -5px rgba(42, 32, 26, 0.08);
+    --shadow-elevated: 0 15px 35px -5px rgba(62, 39, 35, 0.08);
     --text-on-accent: #FFFFFF;
     --panel-blur: 40px;
     --panel-opacity: 0.90;
