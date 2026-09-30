@@ -163,8 +163,9 @@ export default function CourseLLB() {
           </div>
 
           {/* Quick Facts Sidebar */}
-          <div className="order-first md:order-last mb-8 md:mb-0 relative h-full">
-            <div className={`${styles.glassCard} sticky top-[100px] gsap-fade-up`}>
+          <div className="order-first md:order-last mb-8 md:mb-0 relative">
+            <div className="sticky top-[100px]">
+              <div className={`${styles.glassCard} gsap-fade-up`}>
               <h3 className="text-xl font-bold text-[var(--primary-color)] mb-6 border-b border-[var(--card-border)] pb-4 font-['Playfair_Display']">Quick Facts</h3>
               
               <div className="space-y-6">
@@ -196,6 +197,7 @@ export default function CourseLLB() {
                   </svg>
                 </Link>
               </div>
+            </div>
             </div>
           </div>
         </div>
