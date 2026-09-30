@@ -16,7 +16,7 @@ const ALL_TABS = [
 
 const SkeletonLoader = () => (
   
-<div className="min-h-screen w-full bg-[var(--bg-color)] flex flex-col lg:flex-row px-6 md:px-12 py-32 gap-16 max-w-7xl mx-auto relative items-start">
+<div className="min-h-screen w-full bg-[var(--bg-color)] flex flex-col lg:flex-row px-6 md:px-12 pt-32 pb-10 gap-16 max-w-7xl mx-auto relative items-start">
     {/* Left Skeleton */}
     <div className="w-full lg:w-5/12 shrink-0 space-y-6">
       <div className="w-full aspect-[3/4] bg-white/[0.03] animate-pulse rounded-[2rem]"></div>
@@ -159,7 +159,7 @@ export default function FacultyProfile() {
       {/* Refined Ambient Glow */}
       <div className="fixed top-0 right-0 w-[50vw] h-[50vw] bg-[var(--primary-color)]/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
-      <div className="relative z-20 pt-[90px] md:pt-[120px] pb-[100px] px-6 md:px-12 max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+      <div className="relative z-20 pt-[90px] md:pt-[120px] pb-[20px] px-6 md:px-12 max-w-[1300px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
         
         {/* LEFT COLUMN: Luxury Portrait & Contact */}
         <div className="w-full max-w-sm mx-auto lg:max-w-none lg:w-4/12 shrink-0 flex flex-col items-center lg:items-start text-center lg:text-left lg:sticky lg:top-24 h-fit pb-4">

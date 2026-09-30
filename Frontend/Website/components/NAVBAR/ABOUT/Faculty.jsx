@@ -66,7 +66,7 @@ export default function Faculty() {
   }, [facultyList]);
 
   return (
-    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[100px]">
+    <div className="min-h-screen w-full relative bg-[var(--bg-color)] text-[var(--text-color)] overflow-x-hidden pb-[20px]">
       <div className="relative z-20 pt-[90px] md:pt-[120px] px-6 md:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <motion.h1

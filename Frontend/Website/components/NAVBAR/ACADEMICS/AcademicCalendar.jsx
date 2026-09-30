@@ -113,7 +113,7 @@ export default function AcademicCalendar() {
             <SEO title="Academic Calendar | Prudentia College of Law" description="View the academic calendar, important dates, exams, and holidays." />
             <Navbar />
             
-            <main className="flex-1 pt-[90px] md:pt-[120px] pb-[100px]">
+            <main className="flex-1 pt-[90px] md:pt-[120px] pb-[20px]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
