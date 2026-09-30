@@ -44,12 +44,6 @@ export default function FacultyProfile() {
   const navigate = useNavigate();
   const [faculty, setFaculty] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
-
-  useEffect(() => {
-    if (availableTabs.length > 0 && !activeTab) {
-      setActiveTab(availableTabs[0].id);
-    }
-  }, [availableTabs, activeTab]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -97,6 +91,12 @@ export default function FacultyProfile() {
         return typeof val === 'string' && val.trim().length > 0;
     });
   }, [faculty]);
+
+  useEffect(() => {
+    if (availableTabs.length > 0 && !activeTab) {
+      setActiveTab(availableTabs[0].id);
+    }
+  }, [availableTabs, activeTab]);
 
   if (loading) return <SkeletonLoader />;
 
