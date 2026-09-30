@@ -109,7 +109,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
                     setFormData(initialData);
                 } catch (e) {
                     console.error(e);
-                    if (window.toast) window.toast.error("An error occurred loading profile data.");
+                    if (window.erpToast) window.erpToast.show("An error occurred loading profile data.", "error");
                 }
             }
         };

@@ -33,7 +33,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  .order('created_at', { ascending: false });
  if (error) throw error;
  setJobs(data || []);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };
@@ -71,7 +71,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  }
  setIsEditing(false);
  fetchJobs();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const handleDelete = async () => {
@@ -82,7 +82,7 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  window.erpDialog?.alert("Job deleted.");
  setIsEditing(false);
  fetchJobs();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  if (isEditing) {

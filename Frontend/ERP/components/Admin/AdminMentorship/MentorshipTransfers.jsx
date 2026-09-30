@@ -36,7 +36,7 @@ export default function MentorshipTransfers({}) {
  
  if (error) throw error;
  setMentors(data || []);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };
@@ -67,7 +67,7 @@ export default function MentorshipTransfers({}) {
  
  setMentees(formatted);
  setSelectedMentees(new Set());
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const logAction = async (actionDesc) => {
@@ -76,7 +76,7 @@ export default function MentorshipTransfers({}) {
  action: actionDesc,
  table_name: 'mentorship'
  });
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const toggleStudentSelection = (studentId) => {
@@ -139,7 +139,7 @@ export default function MentorshipTransfers({}) {
  window.erpDialog?.alert("Transfer Complete!");
  fetchMentees(sourceMentorId); // Refresh roster
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsProcessing(false);
  setActionMessage("");
  }

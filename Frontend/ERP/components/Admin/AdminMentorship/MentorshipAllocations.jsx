@@ -109,7 +109,7 @@ export default function MentorshipAllocations({}) {
  sessionStorage.setItem('jsmerp_mentorship_faculty', JSON.stringify(facultyState));
  sessionStorage.setItem('jsmerp_mentorship_capacity', calcCapacity.toString());
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };
@@ -135,7 +135,7 @@ export default function MentorshipAllocations({}) {
  action: actionDesc,
  table_name: 'mentorship'
  });
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const executeDistribution = async (studentsToDistribute, currentFacultyState) => {
@@ -172,7 +172,7 @@ export default function MentorshipAllocations({}) {
                 const { error } = await supabase.from('mentorship').insert(newAllocations);
                 if (error) throw error;
                 await logAction(`Auto-allocated ${newAllocations.length} students`);
-            } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+            } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
         },
         () => {
             setFaculty(backupFaculty);
@@ -321,7 +321,7 @@ export default function MentorshipAllocations({}) {
  await logAction(`Bulk Imported ${rows.length} mentor assignments via CSV`);
  window.erpDialog?.alert(`Successfully imported ${rows.length} assignments from CSV.`);
  
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  });
  };
 

@@ -68,7 +68,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         if (error) throw error;
         setNewExpense({ title: '', amount: '' });
         fetchOverview();
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
   };
   
   const handleRemoveExpense = async (id) => {
@@ -76,7 +76,7 @@ export default function AdminFees({ isEmbedded = false, }) {
           const { error } = await supabase.from('recurring_expenses').delete().eq('id', id);
           if (error) throw error;
           fetchOverview();
-      } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+      } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
   };
 
   const fetchOverview = async () => {
@@ -120,7 +120,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       }
 
       setOverviewData({ totalExpected: expected, totalCollected: collected, pendingCount: count, payrollExpense: expense });
-    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+    } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
       setFetchingOverview(false);
     }
   };
@@ -133,7 +133,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         .select('*, profiles:student_id(full_name, academic_batch)')
         .eq('status', 'pending');
       if (data) setPendingVerifications(data);
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 
   const fetchInvoiceHistory = async () => {
@@ -145,7 +145,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         .order('created_at', { ascending: false })
         .limit(300);
       if (data) setInvoiceHistory(data);
-    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
+    } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 
   const fetchBatches = async () => {
@@ -153,7 +153,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       const { data } = await supabase.from('profiles').select('academic_batch').eq('role', 'student');
       const distinctBatches = [...new Set(data.map(item => item.academic_batch).filter(Boolean))].sort();
       setBatches(distinctBatches);
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
   };
 
   const fetchBatchStudents = async (batchName) => {
@@ -166,7 +166,7 @@ export default function AdminFees({ isEmbedded = false, }) {
         .eq('academic_batch', batchName)
         .eq('role', 'student');
       if (data) setStudents(data);
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 
   // ================== ACTIONS ==================
@@ -212,7 +212,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       
       fetchVerifications();
       (window.erpDialog?.alert || alert)(`✅ Payment Confirmed & Locked PDF Sent to ${txn.profiles?.full_name}`);
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { 
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { 
       setIsVerifying(false); 
       setCurrentTxnPayload(null);
     }
@@ -228,7 +228,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       setSelectedStudentIds([]);
       fetchBatchStudents(selectedBatch);
       (window.erpDialog?.alert || alert)('Bulk Marked Paid successfully.');
-    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
+    } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 
   const handleAssignFee = async (e) => {
@@ -250,7 +250,7 @@ export default function AdminFees({ isEmbedded = false, }) {
       setAssignTitle(''); setAssignAmount(''); setAssignDueDate('');
       fetchBatchStudents(selectedBatch);
       (window.erpDialog?.alert || alert)('Fee assigned to batch successfully.');
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally { setLoading(false); }
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
   };
 
   const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);

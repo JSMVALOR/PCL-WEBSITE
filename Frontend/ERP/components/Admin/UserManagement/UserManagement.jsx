@@ -62,7 +62,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  const parsed = JSON.parse(cached);
  if (parsed && parsed.students && parsed.faculty) return parsed;
  }
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  }
  return { students: [], faculty: [], disciplinary: [] };
  });
@@ -107,7 +107,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  if (typeof window !== "undefined") {
  sessionStorage.setItem(CACHE_KEY, JSON.stringify(structuredData));
  }
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };
@@ -185,7 +185,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
         } else {
             await sendSystemEmail('ACCOUNT_REACTIVATED', { to_email: user.email, name: user.name });
         }
-      } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+      } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
 
  } catch (error) {
  window.erpDialog.alert("Failed to update status: " + error.message);

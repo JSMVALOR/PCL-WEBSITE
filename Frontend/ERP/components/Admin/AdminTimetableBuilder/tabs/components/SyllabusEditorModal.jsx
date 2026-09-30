@@ -97,7 +97,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
             window.erpDialog?.alert("✅ Syllabus saved successfully.");
             if(onRefresh) onRefresh();
             if(onClose) onClose();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setLoading(false);
         }
     };

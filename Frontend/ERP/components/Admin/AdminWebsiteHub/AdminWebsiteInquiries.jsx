@@ -37,7 +37,7 @@ export default function AdminWebsiteInquiries({ isEmbedded = false }) {
             unique.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
             
             setInquiries(unique);
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsLoading(false);
         }
     };
@@ -92,7 +92,7 @@ export default function AdminWebsiteInquiries({ isEmbedded = false }) {
 
             setReplyText(prev => ({ ...prev, [ticketId]: '' }));
             fetchInquiries();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setSubmittingReply(null);
         }
     };

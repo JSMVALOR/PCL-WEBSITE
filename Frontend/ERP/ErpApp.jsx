@@ -87,6 +87,7 @@ import UserManagement from './components/Admin/UserManagement/UserManagement';
 import AdminCourseBuilder from './components/Admin/AdminTimetableBuilder/AdminCourseBuilder';
 import AdminTimetableHQ from './components/Admin/AdminTimetableBuilder/AdminTimetableHQ';
 import AdminMarksController from './components/Admin/AdminMarksController/AdminMarksController';
+import AdminCampusTimings from './components/Admin/AdminAcademicHub/AdminCampusTimings';
 import AdminMentorship from './components/Admin/AdminMentorship/AdminMentorship';
 import AdminApprovals from './components/Admin/AdminApprovals/AdminApprovals';
 import AdminLeaveManagement from './components/Admin/LeaveManagement/AdminLeaveManagement';
@@ -338,6 +339,7 @@ export default function App() {
         case 'coursebuilder': return <AdminCourseBuilder />;
         case 'timetablebuilder': return <AdminTimetableHQ />;
         case 'markscontroller': return <AdminMarksController />;
+        case 'campustimings': return <AdminCampusTimings />;
         case 'allocations': return <AdminMentorship />;
         case 'adminapprovals': return <AdminApprovals />;
         case 'leavemanagement': return <AdminLeaveManagement />;

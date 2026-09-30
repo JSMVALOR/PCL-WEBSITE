@@ -33,7 +33,7 @@ export default function LeaveRequests({ onReviewRequest }) {
             } else if (leaves) {
                 setRequests(leaves);
             }
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setLoading(false);
         }
     };

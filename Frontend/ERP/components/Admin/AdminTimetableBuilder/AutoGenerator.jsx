@@ -160,7 +160,7 @@ export default function AutoGenerator({}) {
             
         } catch (error) { 
             console.error(error); 
-            if (window.toast) window.toast.error("An error occurred. Please try again."); 
+            if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); 
         } finally {
             setIsGenerating(false);
         }

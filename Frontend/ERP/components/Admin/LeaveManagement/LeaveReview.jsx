@@ -93,7 +93,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
 
  onClose();
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsProcessing(false);
  }
  };

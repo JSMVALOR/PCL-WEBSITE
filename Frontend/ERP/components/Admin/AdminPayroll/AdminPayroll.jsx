@@ -77,7 +77,7 @@ export default function AdminPayroll() {
         try {
             await supabase.from('system_settings').upsert({ key: 'payroll_config', value: config });
             window.erpDialog?.alert("✅ Policy Engine updated successfully.");
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsSavingConfig(false);
         }
     };
@@ -218,7 +218,7 @@ export default function AdminPayroll() {
             }
         } catch (error) {
             console.error(error);
-            if (window.toast) window.toast.error(error.message || "Failed to load payroll data. Please try again.");
+            if (window.erpToast) window.erpToast.show(error.message || "Failed to load payroll data. Please try again.", "error");
         } finally {
             setLoading(false);
         }

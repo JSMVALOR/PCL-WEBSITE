@@ -42,7 +42,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                         fees: { collected: Number(kpi.fees?.collected) || 0, pending: Number(kpi.fees?.pending) || 0 }
                     });
                 }
-            } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+            } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
                 if (isMounted) setLoading(false);
             }
         };
@@ -80,7 +80,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
             if (window.erpDialog) window.erpDialog.alert("Database metrics synchronized successfully.", "Success");
         } catch (error) {
             console.error(error);
-            if (window.toast) window.toast.error("Database synchronization failed.");
+            if (window.erpToast) window.erpToast.show("Database synchronization failed.", "error");
         } finally {
             setRefreshing(false);
         }

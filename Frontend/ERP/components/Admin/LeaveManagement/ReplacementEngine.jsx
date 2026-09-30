@@ -33,7 +33,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  })).sort((a, b) => b.compatibility - a.compatibility).slice(0, 4);
 
  setSuggestions(mappedSuggestions);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };
@@ -74,7 +74,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
 
  onComplete();
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsProcessing(false);
  }
  };

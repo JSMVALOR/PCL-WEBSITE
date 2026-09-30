@@ -69,7 +69,7 @@ export default function MentorshipReports({}) {
 
  await supabase.from('audit_logs').insert({ action: `Exported ${reportName}`, table_name: 'mentorship' });
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsGenerating(false);
  setLoadingReport("");
  }

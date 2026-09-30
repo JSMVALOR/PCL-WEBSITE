@@ -46,7 +46,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
       }
       
  setEvents(data || []);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setLoading(false);
  }
  };
@@ -120,7 +120,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  
  setIsEditing(false);
  fetchEvents();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setUploading(false);
  }
  };
@@ -151,7 +151,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
       
  alert("Event deleted.");
  fetchEvents();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const getEventTypeColor = (type) => {
@@ -175,7 +175,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
         });
         if (error) throw error;
         window.erpDialog?.alert("PDF URL updated successfully!");
-    } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+    } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
         setSavingPdf(false);
     }
  };

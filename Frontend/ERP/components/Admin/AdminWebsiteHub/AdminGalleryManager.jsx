@@ -69,7 +69,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                 supabase.from('gallery_images').update({ created_at: currentCreatedAt }).eq('id', targetItem.id)
             ]);
             fetchImages();
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
         const handleOpenEdit = async (img) => {
@@ -78,7 +78,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const blob = await response.blob();
             const localUrl = URL.createObjectURL(blob);
             setEditingImage({ ...img, local_url: localUrl });
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
     const handleSaveEdit = async () => {
@@ -102,7 +102,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             await supabase.from('gallery_images').update({ image_url: publicUrl }).eq('id', editingImage.id);
             if(editingImage?.local_url) URL.revokeObjectURL(editingImage.local_url); setEditingImage(null);
             fetchImages();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsSavingEdit(false);
         }
     };
@@ -128,7 +128,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
 
             if (error) throw error;
             setImages(data || []);
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsLoading(false);
         }
     };
@@ -174,7 +174,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             }
             alert("Auto-Sync Complete!");
             fetchImages();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsSyncing(false);
         }
     };
@@ -239,7 +239,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                     resolve(blob);
                 }, 'image/jpeg', 0.95);
             });
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
 
@@ -302,7 +302,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             if (fileInput) fileInput.value = '';
             
             fetchImages();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsSaving(false);
         }
     };
@@ -314,7 +314,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const { error } = await supabase.from('gallery_images').delete().eq('id', id);
             if (error) throw error;
             fetchImages();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
     const toggleStatus = async (id, currentStatus) => {
@@ -322,7 +322,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
             const { error } = await supabase.from('gallery_images').update({ is_active: !currentStatus }).eq('id', id);
             if (error) throw error;
             fetchImages();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
     return (

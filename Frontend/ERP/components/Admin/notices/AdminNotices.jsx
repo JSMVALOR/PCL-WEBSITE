@@ -59,7 +59,7 @@ export default function AdminNotices({ isHubView = false }) {
  .limit(300)
  .order('created_at', { ascending: false });
  if (!error && data) setNotices(data);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const fetchEvents = async () => {
@@ -70,7 +70,7 @@ export default function AdminNotices({ isHubView = false }) {
  .limit(300)
  .order('start_date', { ascending: true });
  if (!error && data) setEvents(data);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  // --- HANDLERS ---
@@ -160,7 +160,7 @@ try {
  setIsPublicWebsite(false);
  fetchNotices();
  if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success");
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsPublishing(false);
  }
  };
@@ -196,7 +196,7 @@ try {
  setEventDesc("");
  fetchEvents();
  if (window.toast) window.toast.success("Event scheduled successfully!"); else alert("Event scheduled successfully!");
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsScheduling(false);
  }
  };

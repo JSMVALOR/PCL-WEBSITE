@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }) {
@@ -20,14 +21,14 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  try {
  const { data, error } = await supabase
  .from('helpdesk_tickets')
-        .select('*, profiles(full_name, role, erp_id)')
+        .select('*, profiles(full_name, role, erp_id, email)')
         .neq('category', 'Public Inquiry')
         .neq('category', 'public_inquiry')
         .order('created_at', { ascending: false });
 
  if (error) throw error;
  setTickets(data || []);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };
@@ -74,7 +75,7 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
  fetchTickets();
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setSubmittingReply(null);
  }
  };

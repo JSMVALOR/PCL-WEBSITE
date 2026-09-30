@@ -105,7 +105,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  studentAvgAttendance: avgAtt
  }));
  }
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setLoading(false);
  }
  };

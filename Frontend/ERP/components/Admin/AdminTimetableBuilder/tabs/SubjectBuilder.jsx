@@ -53,7 +53,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             } else {
                 setSubjects(subData || []);
             }
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setLoading(false);
         }
     };
@@ -104,7 +104,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
             resetForm();
             fetchData();
             window.erpToast?.show(`Master Syllabus ${editingId ? "Updated" : "Deployed"} Successfully`, "success");
-        } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
     const handleDelete = async (id) => {

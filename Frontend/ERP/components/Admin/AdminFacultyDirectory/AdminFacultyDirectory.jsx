@@ -63,7 +63,7 @@ export default function AdminFacultyDirectory({ isEmbedded = false,  isHubView =
 
  if (error) throw error;
  setFaculties(data || []);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
  };

@@ -22,7 +22,7 @@ export default function SemesterManager({}) {
  
  if (error) throw error;
  setSemesters(data || []);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setLoading(false);
  }
  };
@@ -45,7 +45,7 @@ export default function SemesterManager({}) {
  setStartDate('');
  setEndDate('');
  fetchSemesters();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  const toggleActive = async (id, currentStatus) => {
@@ -66,7 +66,7 @@ export default function SemesterManager({}) {
  
  if (error) throw error;
  fetchSemesters();
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
  return (

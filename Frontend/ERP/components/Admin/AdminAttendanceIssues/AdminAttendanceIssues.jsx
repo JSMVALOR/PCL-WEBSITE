@@ -28,7 +28,7 @@ export default function AdminAttendanceIssues() {
             if (error) throw error;
             const mapped = (tickets || []).map(t => {
                 let parsed = {};
-                try { parsed = JSON.parse(t.system_metadata) || {}; } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+                try { parsed = JSON.parse(t.system_metadata) || {}; } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
                 return {
                     id: t.id,
                     student_name: t.user?.full_name || 'Unknown',
@@ -43,7 +43,7 @@ export default function AdminAttendanceIssues() {
                 };
             });
             setAppeals(mapped);
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsLoading(false);
         }
     };
@@ -76,7 +76,7 @@ export default function AdminAttendanceIssues() {
             .sort((a, b) => a.attendance_percentage - b.attendance_percentage);
 
             setStudents(processed);
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setDebarLoading(false);
         }
     };

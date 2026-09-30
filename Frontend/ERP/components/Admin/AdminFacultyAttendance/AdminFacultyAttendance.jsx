@@ -77,7 +77,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             });
 
             setFacultyData(enriched);
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setLoading(false);
         }
     };
@@ -129,7 +129,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
             }]);
 
             fetchAttendanceData();
-        } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+        } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setActionLoading(null);
         }
     };
@@ -146,7 +146,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
                 setAuditHistory(data);
                 setShowHistoryModal(true);
             }
-        } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+        } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
     };
 
 

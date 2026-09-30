@@ -29,7 +29,7 @@ export default function AdminSystemSettings({}) {
  debar_percentage: data.value.debar_percentage || 75
  });
  }
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setLoading(false);
  }
  };
@@ -52,7 +52,7 @@ export default function AdminSystemSettings({}) {
  if (error) throw error;
  setSaveSuccess(true);
  setTimeout(() => setSaveSuccess(false), 3000);
- } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsSaving(false);
  }
  };
