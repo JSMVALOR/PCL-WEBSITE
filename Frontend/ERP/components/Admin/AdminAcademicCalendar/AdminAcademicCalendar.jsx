@@ -94,7 +94,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
           setPdfUrl(settingData.value.url);
       }
       
- alert("Event updated successfully!");
+ if(window.erpToast) window.erpToast.show("Event updated successfully!", "success");
  } else {
  // Insert
  const { error } = await supabase
@@ -113,7 +113,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
           setPdfUrl(settingData.value.url);
       }
       
- alert("Event added successfully!");
+ if(window.erpToast) window.erpToast.show("Event added successfully!", "success");
  }
  
  setFormData({ id: null, title: '', start_date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
@@ -149,7 +149,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
           setPdfUrl(settingData.value.url);
       }
       
- alert("Event deleted.");
+ if(window.erpToast) window.erpToast.show("Event deleted.", "success");
  fetchEvents();
  } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
@@ -174,7 +174,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
             description: 'URL for the downloadable Academic Calendar PDF'
         });
         if (error) throw error;
-        window.erpDialog?.alert("PDF URL updated successfully!");
+        if(window.erpToast) window.erpToast.show("PDF URL updated successfully!", "success");
     } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
         setSavingPdf(false);
     }

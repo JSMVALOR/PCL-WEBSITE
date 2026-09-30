@@ -135,12 +135,12 @@ export default function CohortManager() {
         
         if (error) {
             console.error("Save Error:", error);
-            window.erpDialog?.alert(`Failed to save cohort: ${error.message || 'Check database schema'}`);
+            if(window.erpToast) window.erpToast.show(`Failed to save cohort: ${error.message || 'Check database schema'}`, "error");
             return;
         }
         
         setIsCreatingBatch(false); setEditingBatchId(null); setBatchProgId(''); setBatchSection(''); setCampusStartDate(''); fetchData();
-        window.erpDialog?.alert(`✅ Successfully ${editingBatchId ? 'updated' : 'generated'} ${autoName}`);
+        if(window.erpToast) window.erpToast.show(`✅ Successfully ${editingBatchId ? 'updated' : 'generated'} ${autoName}`, "success");
     };
 
     const handleEditBatch = (b) => {
@@ -163,7 +163,7 @@ export default function CohortManager() {
         const updates = batchesToPromote.map(b => supabase.from('academic_batches').update({ current_semester: Number(currentSemester) + 1 }).eq('id', b.id));
         await Promise.all(updates);
         
-        window.erpDialog?.alert(`✅ Successfully promoted ${batchesToPromote.length} cohorts to Semester ${Number(currentSemester) + 1}!`);
+        if(window.erpToast) window.erpToast.show(`✅ Successfully promoted ${batchesToPromote.length} cohorts to Semester ${Number(currentSemester) + 1}!`, "success");
         fetchData();
     };
 

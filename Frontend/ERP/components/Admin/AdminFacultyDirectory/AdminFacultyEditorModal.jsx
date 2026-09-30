@@ -86,7 +86,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  });
  } catch (err) {
  console.error("Failed to load faculty:", err);
- window.erpDialog?.alert('Failed to load faculty data.');
+ if(window.erpToast) window.erpToast.show('Failed to load faculty data.', "error");
  } finally {
  setLoading(false);
  }
@@ -116,7 +116,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  setCrop(undefined);
  } catch (err) {
  console.error(err);
- alert("Could not load current image for cropping due to CORS or network error.");
+ if(window.erpToast) window.erpToast.show("Could not load current image for cropping.", "error");
  }
  };
 
@@ -175,7 +175,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  if (uploadError) {
      console.error("Image upload failed (Check if 'avatars' bucket exists):", uploadError);
-     window.alert("Warning: Could not upload the image. Please ensure the 'avatars' storage bucket exists in Supabase. The text changes will still be saved.");
+     if(window.erpToast) window.erpToast.show("Warning: Could not upload the image.", "error");
  } else {
      const { data: { publicUrl } } = supabase.storage
      .from('avatars')
@@ -231,7 +231,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  onSave();
  } catch (err) {
  console.error("Save error:", err);
- window.erpDialog?.alert(`Save failed: ${err.message}`);
+ if(window.erpToast) window.erpToast.show(`Save failed: ${err.message}`, "error");
  } finally {
  setSaving(false);
  }

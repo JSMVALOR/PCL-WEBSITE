@@ -195,7 +195,7 @@ try {
  setEventEndDate("");
  setEventDesc("");
  fetchEvents();
- if (window.toast) window.toast.success("Event scheduled successfully!"); else alert("Event scheduled successfully!");
+ if (window.erpToast) window.erpToast.show("Event scheduled successfully!", "success"); 
  } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsScheduling(false);
  }

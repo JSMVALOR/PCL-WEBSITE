@@ -77,7 +77,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                     fees: { collected: Number(kpi.fees?.collected) || 0, pending: Number(kpi.fees?.pending) || 0 }
                 });
             }
-            if (window.erpDialog) window.erpDialog.alert("Database metrics synchronized successfully.", "Success");
+            if (window.erpDialog) if(window.erpToast) window.erpToast.show("Database metrics synchronized successfully.", "success");
         } catch (error) {
             console.error(error);
             if (window.erpToast) window.erpToast.show("Database synchronization failed.", "error");

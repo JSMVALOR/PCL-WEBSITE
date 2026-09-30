@@ -26,7 +26,7 @@ export default function AcademicCalendarGrid() {
                 if (data.value.columns) setColumns(data.value.columns);
                 if (data.value.rows) setRows(data.value.rows);
             }
-        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred: " + err.message, "error"); else window.erpDialog?.alert("Error: " + err.message); } finally {
+        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred: " + err.message, "error"); else if(window.erpToast) window.erpToast.show("Error: " + err.message, "error"); } finally {
             setIsLoading(false);
         }
     };
@@ -39,8 +39,8 @@ export default function AcademicCalendarGrid() {
                 .from('system_settings')
                 .upsert({ key: 'academic_calendar_grid', value: payload }, { onConflict: 'key' });
             if (upsertError) throw upsertError;
-            if (window.erpToast) window.erpToast.show("Calendar updated successfully!", "success"); else window.erpDialog?.alert("Calendar updated successfully!");
-        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred: " + err.message, "error"); else window.erpDialog?.alert("Error: " + err.message); } finally {
+            if (window.erpToast) window.erpToast.show("Calendar updated successfully!", "success"); else if(window.erpToast) window.erpToast.show("Calendar updated successfully!", "success");
+        } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred: " + err.message, "error"); else if(window.erpToast) window.erpToast.show("Error: " + err.message, "error"); } finally {
             setIsSaving(false);
         }
     };

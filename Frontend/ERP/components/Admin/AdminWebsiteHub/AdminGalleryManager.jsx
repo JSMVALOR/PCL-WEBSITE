@@ -136,7 +136,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
         const [isSyncing, setIsSyncing] = useState(false);
 
     const handleAutoSync = async () => {
-        if (!window.confirm("This will automatically upload all 11 original images to Supabase. Proceed?")) return;
+        if (!await new Promise(res => window.erpDialog ? window.erpDialog.confirm("This will automatically upload all 11 original images to Supabase. Proceed?", res) : res(window.confirm("Proceed?")))) return;
         setIsSyncing(true);
         try {
             for (const img of LEGACY_IMAGES) {
@@ -172,7 +172,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
                     is_active: true
                 }]);
             }
-            alert("Auto-Sync Complete!");
+            if(window.erpToast) window.erpToast.show("Auto-Sync Complete!", "success");
             fetchImages();
         } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsSyncing(false);
@@ -246,7 +246,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     const handleAddImage = async (e) => {
         e.preventDefault();
         if (!imageFile) {
-            alert("Please select an image file to upload.");
+            if(window.erpToast) window.erpToast.show("Please select an image file to upload.", "error");
             return;
         }
 
@@ -308,7 +308,7 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to remove this image from the gallery?")) return;
+        if (!await new Promise(res => window.erpDialog ? window.erpDialog.confirm("Are you sure you want to remove this image from the gallery?", res) : res(window.confirm("Remove image?")))) return;
 
         try {
             const { error } = await supabase.from('gallery_images').delete().eq('id', id);

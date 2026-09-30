@@ -311,10 +311,10 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
             const { error } = await supabase.from('profiles').update(payload).eq('id', provisionedUser.id);
             if (error) throw error;
             
-            window.erpDialog?.alert("Extended Profile Updated Successfully.");
+            if(window.erpToast) window.erpToast.show("Extended Profile Updated Successfully.", "success");
         } catch (e) {
             console.error(e);
-            window.erpDialog?.alert("Failed to save extended info.");
+            if(window.erpToast) window.erpToast.show("Failed to save extended info.", "error");
         } finally {
             setIsSavingExtended(false);
         }

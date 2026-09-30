@@ -146,7 +146,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
             setCrop(undefined);
         } catch (err) {
             console.error(err);
-            alert("Could not load current image for cropping due to CORS or network error.");
+            if(window.erpToast) window.erpToast.show("Could not load current image for cropping.", "error");
         }
     };
 
@@ -250,22 +250,20 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
                 if (facError) throw facError;
             }
             
-            if (window.toast && typeof window.toast.success === 'function') {
-                window.toast.success("User details updated successfully!");
-            } else if (window.erpToast && typeof window.erpToast.success === 'function') {
+            if (window.erpToast) window.erpToast.show("User details updated successfully!", "success"); else if (window.erpToast && typeof window.erpToast.success === 'function') {
                 window.erpToast.success("User details updated successfully!");
             } else if (window.erpDialog && typeof window.erpDialog.alert === 'function') {
-                window.erpDialog.alert("User details updated successfully!", "Success", false);
+                if(window.erpToast) window.erpToast.show("User details updated successfully!", "success");
             } else {
-                alert("User details updated successfully!");
+                if(window.erpToast) window.erpToast.show("User details updated successfully!", "success");
             }
             
             onUpdate();
             onClose();
         } catch (err) { 
             console.error("Save Error:", err); 
-            if (window.erpDialog) window.erpDialog.alert("Failed to save changes: " + err.message); 
-            else alert("Failed to save changes: " + err.message);
+            if (window.erpDialog) if(window.erpToast) window.erpToast.show("Failed to save changes: " + err.message, "error"); 
+            else if(window.erpToast) window.erpToast.show("Failed to save changes: " + err.message, "error");
         } finally {
             setIsSaving(false);
         }

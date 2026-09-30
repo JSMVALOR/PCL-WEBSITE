@@ -63,11 +63,11 @@ export default function AdminCareers({ isEmbedded = false,  isHubView = false })
  if (currentJob?.id) {
  const { error } = await supabase.from('admin_careers').update(formData).eq('id', currentJob.id);
  if (error) throw error;
- window.erpDialog?.alert("Job updated successfully!");
+ if(window.erpToast) window.erpToast.show("Job updated successfully!", "success");
  } else {
  const { error } = await supabase.from('admin_careers').insert([formData]);
  if (error) throw error;
- window.erpDialog?.alert("Job created successfully!");
+ if(window.erpToast) window.erpToast.show("Job created successfully!", "success");
  }
  setIsEditing(false);
  fetchJobs();

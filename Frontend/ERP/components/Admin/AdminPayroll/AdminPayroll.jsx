@@ -76,7 +76,7 @@ export default function AdminPayroll() {
         setIsSavingConfig(true);
         try {
             await supabase.from('system_settings').upsert({ key: 'payroll_config', value: config });
-            window.erpDialog?.alert("✅ Policy Engine updated successfully.");
+            if(window.erpToast) window.erpToast.show("✅ Policy Engine updated successfully.", "success");
         } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsSavingConfig(false);
         }
@@ -253,7 +253,7 @@ export default function AdminPayroll() {
     
     const handleConfirmPayment = async (e) => {
         e.preventDefault();
-        const confirmed = window.confirm("Are you sure you want to finalize this payroll disbursal? This action will generate the encrypted PDF and cannot be undone.");
+        const confirmed = await new Promise(res => window.erpDialog ? window.erpDialog.confirm("Are you sure you want to finalize this payroll disbursal? This action will generate the encrypted PDF and cannot be undone.", res) : res(window.confirm("Finalize payroll?")));
         if (!confirmed) return;
         
         setIsProcessing(true);
@@ -318,7 +318,7 @@ export default function AdminPayroll() {
 
             setFaculty(prev => prev.map(f => f.id === selectedFac.id ? { ...f, isProcessed: true } : f));
             
-            window.erpDialog?.alert("✅ Payment processed & Recorded. Ultra Luxury Encrypted PDF Generated.");
+            if(window.erpToast) window.erpToast.show("✅ Payment processed & Recorded. Ultra Luxury Encrypted PDF Generated.", "success");
             setShowPaymentModal(false);
 
         } catch (err) { 

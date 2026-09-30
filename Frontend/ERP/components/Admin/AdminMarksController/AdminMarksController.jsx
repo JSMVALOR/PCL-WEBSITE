@@ -73,7 +73,7 @@ export default function AdminMarksController() {
                 .update({ status: statusStr, resolved_by: userSession.db_id, resolved_at: new Date().toISOString() })
                 .eq('id', reqId);
                 
-            window.erpDialog?.alert(`Request ${statusStr.toUpperCase()} successfully.`);
+            if(window.erpToast) window.erpToast.show(`Request ${statusStr.toUpperCase()} successfully.`, "success");
             fetchCorrections();
         } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
             setIsResolving(false);
@@ -142,7 +142,7 @@ export default function AdminMarksController() {
                     .eq('subject_id', sub.subject_id)
                     .eq('assessment_type', sub.assessment_type);
                 if (error) throw error;
-                window.erpDialog?.alert(`Max marks successfully updated to ${newMax} for all students in this assessment.`, "Success");
+                if(window.erpToast) window.erpToast.show(`Max marks successfully updated to ${newMax} for all students in this assessment.`, "success");
             } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
         }
     };
@@ -314,11 +314,11 @@ const ManualOverrideTab = () => {
                 updated_at: new Date().toISOString()
             }).eq('id', editMark.id);
             if (error) throw error;
-            window.erpDialog?.alert('Mark overridden successfully.', 'Success');
+            if(window.erpToast) window.erpToast.show('Mark overridden successfully.', "success");
             setEditMark(null);
             fetchMarks(selectedStudent);
         } catch(e) {
-            window.erpDialog?.alert('Failed to override mark: ' + e.message);
+            if(window.erpToast) window.erpToast.show('Failed to override mark: ' + e.message, "error");
         }
     };
 

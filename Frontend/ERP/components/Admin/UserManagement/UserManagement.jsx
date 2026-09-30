@@ -188,7 +188,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
       } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
 
  } catch (error) {
- window.erpDialog.alert("Failed to update status: " + error.message);
+ if(window.erpToast) window.erpToast.show("Failed to update status: " + error.message, "error");
  }
  };
 
@@ -207,7 +207,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
              selectedTarget: ''
          });
      } catch (e) {
-         window.erpDialog.alert("Failed to load workload stats: " + e.message);
+         if(window.erpToast) window.erpToast.show("Failed to load workload stats: " + e.message, "error");
      } finally {
          setIsLoading(false);
      }
@@ -227,7 +227,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
         });
         if (error) throw error;
 
-        window.erpDialog.alert("Workload successfully reassigned.");
+        if(window.erpToast) window.erpToast.show("Workload successfully reassigned.", "success");
         
         if (isDeactivating) {
             const input = await window.erpDialog.prompt(
@@ -255,7 +255,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
             }
         }
     } catch (err) {
-        window.erpDialog.alert("Transfer failed: " + err.message);
+        if(window.erpToast) window.erpToast.show("Transfer failed: " + err.message, "error");
     } finally {
         setIsLoading(false);
     }
@@ -276,7 +276,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
       await sendSystemEmail('PASSCODE_RESET', { to_email: user.email, name: user.name, password: newPass, erp_id: user.id });
       window.erpDialog.alert("New temporary passcode sent to " + user.email);
     } catch (error) {
-      window.erpDialog.alert("Failed to reset passcode: " + error.message);
+      if(window.erpToast) window.erpToast.show("Failed to reset passcode: " + error.message, "error");
     }
   };
 
@@ -289,11 +289,11 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
       }).eq('id', selectedQuestionnaireUser.db_id);
       
       if (error) throw error;
-      window.erpDialog.alert("Questionnaire data updated successfully.");
+      if(window.erpToast) window.erpToast.show("Questionnaire data updated successfully.", "success");
       setSelectedQuestionnaireUser(null);
       fetchDirectory();
     } catch (error) {
-      window.erpDialog.alert("Failed to update questionnaire: " + error.message);
+      if(window.erpToast) window.erpToast.show("Failed to update questionnaire: " + error.message, "error");
     }
   };
 
@@ -322,7 +322,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
       setSelectedQuestionnaireUser(null);
       fetchDirectory();
     } catch (error) {
-      window.erpDialog.alert("Failed to trigger questionnaire: " + error.message);
+      if(window.erpToast) window.erpToast.show("Failed to trigger questionnaire: " + error.message, "error");
     }
   };
 

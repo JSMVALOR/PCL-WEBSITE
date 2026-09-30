@@ -108,9 +108,9 @@ export default function AdminAttendanceIssues() {
                 await supabase.from('helpdesk_tickets').update({ status: 'closed', admin_reply: 'Appeal Rejected by Administration.' }).eq('id', appeal.id);
             }
             fetchAppeals();
-            window.erpDialog?.alert(`Appeal successfully ${action}ed.`);
+            if(window.erpToast) window.erpToast.show(`Appeal successfully ${action}ed.`, "success");
         } catch (error) {
-            window.erpDialog?.alert("Failed to process appeal: " + error.message);
+            if(window.erpToast) window.erpToast.show("Failed to process appeal: " + error.message, "error");
         } finally {
             setProcessingId(null);
         }
@@ -127,7 +127,7 @@ export default function AdminAttendanceIssues() {
                     threshold: debarThreshold,
                     portal_link: window.location.origin + '/login'
                 });
-                window.erpDialog?.alert('Warning email sent successfully.', 'Success');
+                if(window.erpToast) window.erpToast.show('Warning email sent successfully.', "success");
             } else if (action === 'Debar') {
                 await supabase.from('profiles').update({ is_debarred: true, debarment_reason: `Debarred due to severe attendance shortage (${student.attendance_percentage}%). Minimum required is ${debarThreshold}%.` }).eq('id', student.id);
                 await sendSystemEmail('DEBARMENT_NOTICE', {
@@ -144,7 +144,7 @@ export default function AdminAttendanceIssues() {
                 fetchDebarmentData();
             }
         } catch(e) {
-            window.erpDialog?.alert("Failed to process action: " + e.message);
+            if(window.erpToast) window.erpToast.show("Failed to process action: " + e.message, "error");
         } finally {
             setProcessingId(null);
         }

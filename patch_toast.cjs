@@ -1,15 +1,9 @@
 const fs = require('fs');
-const file = 'Frontend/ERP/components/shared/ToastContainer.jsx';
+
+const file = 'Frontend/ERP/components/Admin/UserManagement/AdminUserEditorModal.jsx';
 let content = fs.readFileSync(file, 'utf8');
-
 content = content.replace(
-    /useEffect\(\(\) => \{\n\s*registerToastContainer\(\(toast\) => \{\n\s*setToasts\(prev => \[\.\.\.prev, toast\]\);\n\s*\}\);\n\s*\}, \[\]\);/,
-    `useEffect(() => {
-        registerToastContainer((toast) => {
-            setToasts(prev => [...prev, toast]);
-        });
-        return () => registerToastContainer(null);
-    }, []);`
+    /if \(window\.toast && typeof window\.toast\.success === 'function'\) \{\n\s*window\.toast\.success\("User details updated successfully!"\);\n\s*\}/g,
+    'if (window.erpToast) window.erpToast.show("User details updated successfully!", "success");'
 );
-
 fs.writeFileSync(file, content);

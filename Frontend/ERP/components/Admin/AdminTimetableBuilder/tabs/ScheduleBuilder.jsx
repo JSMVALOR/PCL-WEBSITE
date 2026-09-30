@@ -191,7 +191,7 @@ export default function ScheduleBuilder({}) {
 
  const conflictMsg = await checkConflicts(facultyId, d, timeStr + ':00', endTimeStr + ':00');
  if (conflictMsg) {
- alert(`Conflict Detected: ${conflictMsg}`);
+ if(window.erpToast) window.erpToast.show(`Conflict Detected: ${conflictMsg}`, "error");
  return;
  }
 
@@ -235,7 +235,7 @@ export default function ScheduleBuilder({}) {
  
  setPendingDraws([]);
  fetchData();
- window.erpDialog?.alert(`Successfully saved ${inserts.length} classes!`);
+ if(window.erpToast) window.erpToast.show(`Successfully saved ${inserts.length} classes!`, "success");
  } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 

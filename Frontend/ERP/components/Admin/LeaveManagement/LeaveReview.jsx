@@ -83,7 +83,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  }]);
  }
 
- window.erpDialog?.alert(`Leave request has been updated successfully.`);
+ if(window.erpToast) window.erpToast.show(`Leave request has been updated successfully.`, "success");
 
  // If replacing, ideally we trigger the replacement engine modal.
  if (actionType === 'ApproveAndReplace') {

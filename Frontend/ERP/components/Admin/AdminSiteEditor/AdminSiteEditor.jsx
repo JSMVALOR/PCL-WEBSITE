@@ -510,16 +510,16 @@ export default function AdminSiteEditor({ isHubView = false }) {
  if (error) throw error;
  
  if (window.erpDialog) {
- window.erpDialog.alert("Content saved successfully and is now live on the public website.");
+ if(window.erpToast) window.erpToast.show("Content saved successfully and is now live on the public website.", "success");
  } else {
- window.erpDialog?.alert("Saved successfully!");
+ if(window.erpToast) window.erpToast.show("Saved successfully!", "success");
  }
  } catch (err) {
  console.error("Save error:", err);
  if (window.erpDialog) {
- window.erpDialog.alert(`Failed to save content. Ensure database schema is updated. ${err.message}`);
+ if(window.erpToast) window.erpToast.show(`Failed to save content. Ensure database schema is updated. ${err.message}`, "error");
  } else {
- window.erpDialog?.alert("Failed to save content.");
+ if(window.erpToast) window.erpToast.show("Failed to save content.", "error");
  }
  } finally {
  setIsSaving(false);

@@ -42,7 +42,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  setBlogs(data || []);
  } catch (error) {
  console.error("Failed to fetch blogs:", error);
- window.erpDialog?.alert("Failed to load blogs. Please check your connection.");
+ if(window.erpToast) window.erpToast.show("Failed to load blogs. Please check your connection.", "error");
  } finally {
  setIsLoading(false);
  }
@@ -110,12 +110,12 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  // Update
  const { error } = await supabase.from('admin_notices').update(savePayload).eq('id', currentBlog.id);
  if (error) throw error;
- window.erpDialog?.alert("Blog updated successfully!");
+ if(window.erpToast) window.erpToast.show("Blog updated successfully!", "success");
  } else {
  // Insert
  const { error } = await supabase.from('admin_notices').insert([savePayload]);
  if (error) throw error;
- window.erpDialog?.alert("Blog created successfully!");
+ if(window.erpToast) window.erpToast.show("Blog created successfully!", "success");
  }
 
  setIsEditing(false);
@@ -174,7 +174,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  fetchBlogs();
  } catch (error) {
  console.error("Approve failed", error);
- window.erpDialog?.alert("Failed to approve the blog.");
+ if(window.erpToast) window.erpToast.show("Failed to approve the blog.", "error");
  }
  };
 
@@ -210,7 +210,7 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
  fetchBlogs();
  } catch (error) {
  console.error("Reject failed", error);
- window.erpDialog?.alert(`Failed to ${actionVerb} the blog.`);
+ if(window.erpToast) window.erpToast.show(`Failed to ${actionVerb} the blog.`, "error");
  }
  };
 
@@ -237,10 +237,10 @@ export default function BlogManager({ isEmbedded = false,  isHubView = false }) 
             })
         });
         if (!response.ok) throw new Error("API Route failed");
-        window.erpDialog?.alert(`Automated ${type} email sent successfully to ${authorContact.email}!`);
+        if(window.erpToast) window.erpToast.show(`Automated ${type} email sent successfully to ${authorContact.email}!`, "success");
     } catch (err) {
         console.error("Email send failed:", err);
-        window.erpDialog?.alert("Failed to send automated email. Check Vercel server logs.");
+        if(window.erpToast) window.erpToast.show("Failed to send automated email. Check Vercel server logs.", "error");
     }
 };
 

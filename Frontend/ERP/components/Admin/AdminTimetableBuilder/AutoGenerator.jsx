@@ -156,7 +156,7 @@ export default function AutoGenerator({}) {
 
             setProgress('Done!');
             setTimeout(() => setProgress(''), 3000);
-            window.erpDialog?.alert("Auto-Timetable generation completed successfully!");
+            if(window.erpToast) window.erpToast.show("Auto-Timetable generation completed successfully!", "success");
             
         } catch (error) { 
             console.error(error); 

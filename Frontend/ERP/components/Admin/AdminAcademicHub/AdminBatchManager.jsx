@@ -59,7 +59,7 @@ export default function AdminBatchManager({}) {
  setGradYear('');
  setWhatsappGroupId('');
  fetchBatches();
- window.erpDialog?.alert("Batch created successfully.");
+ if(window.erpToast) window.erpToast.show("Batch created successfully.", "success");
  } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 

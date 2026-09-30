@@ -186,7 +186,7 @@ export default function AdminFacultyDirectory({ isEmbedded = false,  isHubView =
  if (error) throw error;
  fetchDirectory();
  } catch (err) {
- window.erpDialog?.alert('Failed to update visibility');
+ if(window.erpToast) window.erpToast.show('Failed to update visibility', "error");
  }
  };
 
