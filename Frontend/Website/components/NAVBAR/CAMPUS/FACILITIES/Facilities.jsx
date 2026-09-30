@@ -25,13 +25,13 @@ function ModuleFigure({ iconName, tag, image }) {
   const IconComponent = Icons[iconName] || Icons.Building;
   
   return (
-    <div className="relative w-full h-56 md:h-64 overflow-hidden rounded-t-2xl group border-b border-[var(--card-border)] bg-[#111]">
+    <div className="relative w-full h-56 md:h-64 overflow-hidden rounded-t-2xl group border-b border-[var(--card-border)] bg-[var(--card-solid)]">
       <img loading="lazy" 
         src={image || '/ASSETS/LOGOS/pcl_campus_logo.webp'} 
         alt={tag}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-[var(--bg-color)]/20 to-transparent opacity-80" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-solid)] via-[var(--card-solid)]/20 to-transparent opacity-80" />
       <span className="absolute top-4 right-5 font-mono text-[10px] tracking-widest text-[var(--primary-color)] uppercase z-10 bg-[var(--bg-color)]/70 px-3 py-1.5 rounded-full backdrop-blur-md border border-[var(--primary-color)]/30 font-bold shadow-lg">
         {tag}
       </span>
@@ -212,7 +212,7 @@ function FacilityCarousel({ facilities }) {
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
         onDragStart={(e) => e.preventDefault()}
-        className={`carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab snap-x snap-mandatory'}`}
+        className={`carousel-container flex overflow-x-auto gap-6 md:gap-8 pb-6 pt-4 px-2 -ml-2 ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab snap-x snap-mandatory'}`}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         <style>{`.carousel-container::-webkit-scrollbar { display: none; }`}</style>
