@@ -107,11 +107,11 @@ export default function Assignments({ isEmbedded = false }) {
  if (!submissionText.trim() || !selectedTask) return;
  
  if (selectedTask.submission_type !== 'offline') {
-    const currentWords = submissionText.trim().split(/\s+/).filter(Boolean).length;
-    if(selectedTask.word_limit && currentWords > selectedTask.word_limit) {
-    setSubmitError(`Word limit exceeded! You wrote ${currentWords} words, but the limit is ${selectedTask.word_limit}.`);
-    return;
-    }
+ const currentWords = submissionText.trim().split(/\s+/).filter(Boolean).length;
+ if(selectedTask.word_limit && currentWords > selectedTask.word_limit) {
+ setSubmitError(`Word limit exceeded! You wrote ${currentWords} words, but the limit is ${selectedTask.word_limit}.`);
+ return;
+ }
  }
 
  setIsSubmitting(true);
@@ -150,9 +150,9 @@ export default function Assignments({ isEmbedded = false }) {
 
  const getStatusBadge = (status) => {
  switch (status) {
- case 'Graded': return { color: 'text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent bg-emerald-500/10 border-emerald-500/20', icon: 'fa-check-double', label: 'Graded' };
+ case 'Graded': return { color: 'text-emerald-600 dark:text-emerald-400 bg-themePanel/50 dark:bg-transparent bg-emerald-500/10 border-emerald-500/20', icon: 'fa-check-double', label: 'Graded' };
  case 'Pending Review': return { color: 'text-blue-400 bg-blue-500/10 border-blue-500/20', icon: 'fa-clock', label: 'Awaiting Grade' };
- default: return { color: 'text-themeTextSec bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-black/10 dark:border-white/20', icon: 'fa-hourglass-half', label: status || 'Processing' };
+ default: return { color: 'text-themeTextSec bg-themeElevated backdrop-blur-[80px] border border-themeBorder ', icon: 'fa-hourglass-half', label: status || 'Processing' };
  }
  };
 
@@ -164,36 +164,36 @@ export default function Assignments({ isEmbedded = false }) {
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8`}>
 
  {/* ═══════════════ HEADER ═══════════════ */}
- <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-indigo-500/5 via-transparent to-transparent py-8 shrink-0">
-    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-    <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 px-4 lg:px-8">
-        <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-indigo-500 shadow-sm">
-                <i className="fa-solid fa-file-signature"></i>
-            </div>
-            <div>
-                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Assignment Portal</h1>
-                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Draft & submit coursework</p>
-            </div>
-        </div>
-        
-        <div className="flex w-full xl:w-auto border-b xl:border-b-0 xl:bg-black/5 xl:dark:bg-white/5 xl:border border-black/10 dark:border-white/10 xl:rounded-xl overflow-x-auto no-scrollbar gap-2">
-            <button type="button"
-                onClick={() => setView("pending")}
-                className={`flex-1 xl:flex-none px-6 py-4 xl:py-2.5 rounded-none xl:rounded-lg text-[13px] font-bold tracking-tight transition whitespace-nowrap flex items-center justify-center gap-2 border-b-2 xl:border-b-0 ${view === "pending" ? "text-indigo-600 border-indigo-600 xl:bg-white xl:dark:bg-themeElevated shadow-sm" : "text-themeTextSec border-transparent hover:text-themeText"}`}
-            >
-                <span className={`w-2 h-2 rounded-full ${view === "pending" && pendingAssignments.length > 0 ? 'bg-rose-500 animate-pulse' : 'bg-neutral-600'}`}></span>
-                Pending ({pendingAssignments.length})
-            </button>
-            <button type="button"
-                onClick={() => setView("completed")}
-                className={`flex-1 xl:flex-none px-6 py-4 xl:py-2.5 rounded-none xl:rounded-lg text-[13px] font-bold tracking-tight transition whitespace-nowrap flex items-center justify-center gap-2 border-b-2 xl:border-b-0 ${view === "completed" ? "text-indigo-600 border-indigo-600 xl:bg-white xl:dark:bg-themeElevated shadow-sm" : "text-themeTextSec border-transparent hover:text-themeText"}`}
-            >
-                <i className="fa-solid fa-check-circle"></i>
-                Completed
-            </button>
-        </div>
-    </div>
+ <div className="relative w-full overflow-hidden border-b border-themeBorder dark:border-white/[0.04] bg-gradient-to-r from-indigo-500/5 via-transparent to-transparent py-8 shrink-0">
+ <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+ <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 px-4 lg:px-8">
+ <div className="flex items-center gap-5">
+ <div className="w-14 h-14 bg-themePanel/50 backdrop-blur-2xl border border-themeBorder rounded-2xl flex items-center justify-center text-2xl text-indigo-500 shadow-sm">
+ <i className="fa-solid fa-file-signature"></i>
+ </div>
+ <div>
+ <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Assignment Portal</h1>
+ <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Draft & submit coursework</p>
+ </div>
+ </div>
+ 
+ <div className="flex w-full xl:w-auto border-b xl:border-b-0 xl:bg-themeElevated xl: xl:border border-themeBorder xl:rounded-xl overflow-x-auto no-scrollbar gap-2">
+ <button type="button"
+ onClick={() => setView("pending")}
+ className={`flex-1 xl:flex-none px-6 py-4 xl:py-2.5 rounded-none xl:rounded-lg text-[13px] font-bold tracking-tight transition whitespace-nowrap flex items-center justify-center gap-2 border-b-2 xl:border-b-0 ${view === "pending" ? "text-indigo-600 border-indigo-600 xl:bg-themePanel xl:dark:bg-themeElevated shadow-sm" : "text-themeTextSec border-transparent hover:text-themeText"}`}
+ >
+ <span className={`w-2 h-2 rounded-full ${view === "pending" && pendingAssignments.length > 0 ? 'bg-rose-500 animate-pulse' : 'bg-neutral-600'}`}></span>
+ Pending ({pendingAssignments.length})
+ </button>
+ <button type="button"
+ onClick={() => setView("completed")}
+ className={`flex-1 xl:flex-none px-6 py-4 xl:py-2.5 rounded-none xl:rounded-lg text-[13px] font-bold tracking-tight transition whitespace-nowrap flex items-center justify-center gap-2 border-b-2 xl:border-b-0 ${view === "completed" ? "text-indigo-600 border-indigo-600 xl:bg-themePanel xl:dark:bg-themeElevated shadow-sm" : "text-themeTextSec border-transparent hover:text-themeText"}`}
+ >
+ <i className="fa-solid fa-check-circle"></i>
+ Completed
+ </button>
+ </div>
+ </div>
 </div>
 
  {/* ═══════════════ PENDING VIEW ═══════════════ */}
@@ -201,7 +201,7 @@ export default function Assignments({ isEmbedded = false }) {
 {view === "pending" && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 animate-fade-in">
  {pendingAssignments.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-mug-hot text-5xl text-neutral-700 mb-6"></i>
  <h3 className={`${theme.text.heading} text-2xl text-themeText tracking-tight`}>You're all caught up!</h3>
  <p className={`${theme.text.secondary} text-sm mt-2 max-w-sm`}>There are no pending assignments active for {userSession?.academic_batch || 'your batch'}.</p>
@@ -211,21 +211,21 @@ export default function Assignments({ isEmbedded = false }) {
  const timeLeft = getTimeLeft(task.due_date);
 
  return (
- <div key={task.id} className={`py-6 border-b border-black/5 dark:border-white/10 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors flex flex-col relative group px-4`}>
+ <div key={task.id} className={`py-6 border-b border-themeBorder hover:bg-black/[0.02] dark:hover:bg-themePanel/[0.02] transition-colors flex flex-col relative group px-4`}>
  {timeLeft.urgent && <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-rose-500 to-amber-500"></div>}
 
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
- <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>
+ <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-themePanel/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>
  <span className={`px-2.5 py-1 rounded-md text-[11px] font-medium shrink-0 border-theme ${timeLeft.urgent
  ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
- : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeTextSec border-black/10 dark:border-white/20'
+ : 'bg-themeElevated backdrop-blur-[80px] border border-themeBorder text-themeTextSec border-themeBorder '
  }`}>
  <i className={`fa-solid ${timeLeft.urgent ? 'fa-fire' : 'fa-clock'} mr-1`}></i> {timeLeft.label}
  </span>
  </div>
 
- <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight leading-tight group-hover:text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent transition-colors mb-2 line-clamp-2">
+ <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight leading-tight group-hover:text-indigo-600 dark:text-indigo-400 bg-themePanel/50 dark:bg-transparent transition-colors mb-2 line-clamp-2">
  {task.title}
  </h3>
 
@@ -234,19 +234,19 @@ export default function Assignments({ isEmbedded = false }) {
  )}
 
  <div className="mt-auto flex flex-wrap items-center gap-3 text-[9px] font-bold text-themeTextSec tracking-normal">
- <span className="flex items-center gap-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-2 py-1 border border-black/10 dark:border-white/20 rounded">
- <i className="fa-solid fa-align-left text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent/50"></i> {task.word_limit ? `${task.word_limit} Words` : 'No Limit'}
+ <span className="flex items-center gap-1.5 bg-themeElevated backdrop-blur-[80px] border border-themeBorder px-2 py-1 border border-themeBorder rounded">
+ <i className="fa-solid fa-align-left text-indigo-600 dark:text-indigo-400 bg-themePanel/50 dark:bg-transparent/50"></i> {task.word_limit ? `${task.word_limit} Words` : 'No Limit'}
  </span>
- <span className="flex items-center gap-1.5 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-2 py-1 border border-black/10 dark:border-white/20 rounded">
- <i className="fa-solid fa-award text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent/50"></i> {task.max_marks || 100} Marks
+ <span className="flex items-center gap-1.5 bg-themeElevated backdrop-blur-[80px] border border-themeBorder px-2 py-1 border border-themeBorder rounded">
+ <i className="fa-solid fa-award text-emerald-600 dark:text-emerald-400 bg-themePanel/50 dark:bg-transparent/50"></i> {task.max_marks || 100} Marks
  </span>
  </div>
  </div>
 
- <div className="p-4 border-t-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20">
+ <div className="p-4 border-t-theme border-themeBorder bg-themeElevated backdrop-blur-[80px] border border-themeBorder ">
  <button type="button"
  onClick={() => openModal(task)}
- className="w-full bg-indigo-600 hover:bg-indigo-500 text-themeText dark:text-white font-black tracking-normal text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
+ className="w-full bg-indigo-600 hover:bg-indigo-500 text-themeText font-black tracking-normal text-[10px] py-3.5 rounded-lg transition active:scale-[0.98]"
  >
  <i className="fa-solid fa-pen-nib mr-2"></i> Start Writing
  </button>
@@ -262,7 +262,7 @@ export default function Assignments({ isEmbedded = false }) {
  {view === "completed" && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6 animate-fade-in">
  {completedAssignments.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-file-circle-check text-5xl text-neutral-700 mb-6"></i>
  <h3 className={`${theme.text.heading} text-2xl text-themeText tracking-tight`}>No submissions yet</h3>
  <p className={`${theme.text.secondary} text-sm mt-2`}>Your completed assignments will appear here.</p>
@@ -274,10 +274,10 @@ export default function Assignments({ isEmbedded = false }) {
  const maxM = task.max_marks || 100;
 
  return (
- <div key={sub.id} className={`py-6 border-b border-black/5 dark:border-white/10 flex flex-col relative px-4`}>
+ <div key={sub.id} className={`py-6 border-b border-themeBorder flex flex-col relative px-4`}>
  <div className="p-5 lg:p-6 flex-1 flex flex-col">
  <div className="flex items-center justify-between gap-3 mb-3">
- <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>
+ <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 bg-themePanel/50 dark:bg-transparent tracking-normal truncate">{task.master_subjects?.name || task.subject_name || 'Subject'}</span>
  <span className={`px-2 py-1 rounded-md text-[11px] font-medium shrink-0 border-theme ${badge.color}`}>
  <i className={`fa-solid ${badge.icon} mr-1`}></i> {badge.label}
  </span>
@@ -292,7 +292,7 @@ export default function Assignments({ isEmbedded = false }) {
  )}
 
  {sub.submission_text && (
- <div className="mt-2 mb-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4">
+ <div className="mt-2 mb-4 bg-themeElevated border border-themeBorder rounded-xl p-4">
  <p className="text-[10px] uppercase tracking-widest font-black text-themeTextSec mb-2"><i className="fa-solid fa-file-lines mr-1.5 text-indigo-500"></i> Your Submission</p>
  <p className="text-xs text-themeText leading-relaxed line-clamp-3 font-serif italic">"{sub.submission_text}"</p>
  </div>
@@ -310,7 +310,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="mt-2 mb-4 bg-emerald-500/5 border-theme border-emerald-500/20 rounded-xl p-4 flex justify-between items-center">
  <div>
  <p className="text-[12px] font-medium text-emerald-500/70 mb-1">Marks Awarded</p>
- <p className="text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent">{sub.marks_awarded} <span className="text-sm text-themeTextSec">/ {maxM}</span></p>
+ <p className="text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400 bg-themePanel/50 dark:bg-transparent">{sub.marks_awarded} <span className="text-sm text-themeTextSec">/ {maxM}</span></p>
  </div>
  {sub.remarks && (
  <div className="text-right max-w-[50%]">
@@ -340,19 +340,19 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] w-full max-w-3xl rounded-xl flex flex-col max-h-[90vh]">
  
  {/* Modal Header */}
- <div className="p-5 border-b-theme border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 flex items-start justify-between gap-4 rounded-t-xl">
+ <div className="p-5 border-b-theme border-themeBorder bg-themeElevated backdrop-blur-[80px] border border-themeBorder flex items-start justify-between gap-4 rounded-t-xl">
  <div>
- <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.master_subjects?.name || selectedTask.subject_name || 'Subject'}</span>
+ <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-themePanel/50 dark:bg-transparent tracking-normal mb-1 block">{selectedTask.master_subjects?.name || selectedTask.subject_name || 'Subject'}</span>
  <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">{selectedTask.title}</h3>
  </div>
- <button aria-label="Action button" type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-themeText dark:text-white transition-colors shrink-0"><i className="fa-solid fa-xmark"></i></button>
+ <button aria-label="Action button" type="button" onClick={closeModal} className="w-8 h-8 flex items-center justify-center rounded-full bg-transparent text-themeTextSec hover:text-themeText transition-colors shrink-0"><i className="fa-solid fa-xmark"></i></button>
  </div>
 
  {/* Modal Body */}
  <div className="flex-1 overflow-y-auto p-6 bg-transparent">
  {submitSuccess ? (
  <div className="py-20 flex flex-col items-center justify-center text-center animate-scale-in">
- <div className="w-20 h-20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-transparent rounded-full flex items-center justify-center text-4xl mb-4 border border-emerald-500/20">
+ <div className="w-20 h-20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 bg-themePanel/50 dark:bg-transparent rounded-full flex items-center justify-center text-4xl mb-4 border border-emerald-500/20">
  <i className="fa-solid fa-check-double"></i>
  </div>
  <h2 className="text-2xl font-semibold tracking-tight text-themeText tracking-tight mb-2">Submission Successful</h2>
@@ -360,7 +360,7 @@ export default function Assignments({ isEmbedded = false }) {
  </div>
  ) : (
  <form onSubmit={handleSubmission} className="flex flex-col gap-5">
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-4 rounded-lg border border-black/10 dark:border-white/20 text-sm text-themeTextSec leading-relaxed">
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder p-4 rounded-lg border border-themeBorder text-sm text-themeTextSec leading-relaxed">
  {selectedTask.description}
  </div>
 
@@ -373,7 +373,7 @@ export default function Assignments({ isEmbedded = false }) {
  <div className="flex flex-col">
  <div className="flex justify-between items-end mb-2">
  <label className="text-[13px] font-medium text-themeText">Write your submission</label>
- <span className={`text-[13px] font-medium px-2 py-1 rounded ${isOverLimit ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-transparent border border-black/10 dark:border-white/20'}`}>
+ <span className={`text-[13px] font-medium px-2 py-1 rounded ${isOverLimit ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-themeElevated backdrop-blur-[80px] border border-themeBorder text-indigo-600 dark:text-indigo-400 bg-themePanel/50 dark:bg-transparent border border-themeBorder '}`}>
  {wordCount} / {selectedTask.word_limit || '∞'} Words
  </span>
  </div>
@@ -381,19 +381,19 @@ export default function Assignments({ isEmbedded = false }) {
  value={submissionText}
  onChange={(e) => setSubmissionText(e.target.value)}
  placeholder="Begin typing your assignment here..."
- className={`w-full h-64 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 border-theme ${isOverLimit ? 'border-rose-500 focus:border-rose-400' : 'border-black/5 dark:border-white/10 focus:border-indigo-400'} rounded-lg p-4 text-sm text-themeText outline-none resize-none transition-colors font-serif`}
+ className={`w-full h-64 bg-themeElevated backdrop-blur-[80px] border border-themeBorder border-theme ${isOverLimit ? 'border-rose-500 focus:border-rose-400' : 'border-themeBorder focus:border-indigo-400'} rounded-lg p-4 text-sm text-themeText outline-none resize-none transition-colors font-serif`}
  required
  ></textarea>
  </div>
 
- <div className="flex justify-end gap-3 pt-4 border-t-theme border-black/10 dark:border-white/20">
- <button type="button" onClick={closeModal} className="px-5 py-2.5 rounded-lg text-xs font-bold text-themeTextSec hover:bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 transition-colors">
+ <div className="flex justify-end gap-3 pt-4 border-t-theme border-themeBorder ">
+ <button type="button" onClick={closeModal} className="px-5 py-2.5 rounded-lg text-xs font-bold text-themeTextSec hover:bg-themeElevated backdrop-blur-[80px] border border-themeBorder transition-colors">
  Cancel
  </button>
  <button 
  type="submit" 
  disabled={isSubmitting || (selectedTask.submission_type !== 'offline' && (isOverLimit || !submissionText.trim()))}
- className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-themeText dark:text-white font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2 disabled:cursor-not-allowed"
+ className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-neutral-800 disabled:text-themeTextSec text-themeText font-black tracking-normal text-[10px] px-8 py-2.5 rounded-lg transition-colors flex items-center gap-2 disabled:cursor-not-allowed"
  >
  {isSubmitting ? <><i className="fa-solid fa-circle-notch fa-spin"></i> Submitting...</> : <><i className="fa-solid fa-paper-plane"></i> Submit Final</>}
  </button>

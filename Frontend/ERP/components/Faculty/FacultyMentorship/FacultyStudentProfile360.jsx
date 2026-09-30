@@ -25,69 +25,69 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  fetchAchievements();
  fetchLeaves();
  if (mentee.attendance_percentage !== undefined) {
-     setAttendance(mentee.attendance_percentage + "%");
+ setAttendance(mentee.attendance_percentage + "%");
  }
  fetchAnalytics();
  }
  }, [mentee]);
 
  const exportLeavesToCSV = async () => {
-    if (!leaves.length) {
-        window.erpDialog?.alert("No leaves to export.");
-        return;
-    }
-    const title = "STUDENT LEAVE HISTORY";
-    const metaData = [
-        { label: "Student Name:", value: mentee.full_name },
-        { label: "Student ID:", value: mentee.erp_id || "N/A" },
-        { label: "Generated On:", value: new Date().toLocaleDateString() }
-    ];
-    const columns = ["ID", "Category", "Reason", "From Date", "To Date", "Status", "Requested At"];
-    const rows = leaves.map(l => [
-        l.id,
-        l.category || "General",
-        l.reason || "",
-        l.from_date,
-        l.to_date,
-        l.status,
-        new Date(l.created_at).toLocaleString()
-    ]);
-    
-    await generateBeautifulExcel(title, metaData, columns, rows, `Leaves_${mentee.full_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}`);
+ if (!leaves.length) {
+ window.erpDialog?.alert("No leaves to export.");
+ return;
+ }
+ const title = "STUDENT LEAVE HISTORY";
+ const metaData = [
+ { label: "Student Name:", value: mentee.full_name },
+ { label: "Student ID:", value: mentee.erp_id || "N/A" },
+ { label: "Generated On:", value: new Date().toLocaleDateString() }
+ ];
+ const columns = ["ID", "Category", "Reason", "From Date", "To Date", "Status", "Requested At"];
+ const rows = leaves.map(l => [
+ l.id,
+ l.category || "General",
+ l.reason || "",
+ l.from_date,
+ l.to_date,
+ l.status,
+ new Date(l.created_at).toLocaleString()
+ ]);
+ 
+ await generateBeautifulExcel(title, metaData, columns, rows, `Leaves_${mentee.full_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}`);
  };
 
  const fetchLeaves = async () => {
-    try {
-        const { data, error } = await supabase
-            .from('leave_requests')
-            .select('*')
-            .eq('student_id', mentee.id)
-            .order('created_at', { ascending: false });
-        if (error) throw error;
-        if (data) setLeaves(data);
-    } catch (e) {
-        console.error("Failed to fetch leaves:", e);
-    }
+ try {
+ const { data, error } = await supabase
+ .from('leave_requests')
+ .select('*')
+ .eq('student_id', mentee.id)
+ .order('created_at', { ascending: false });
+ if (error) throw error;
+ if (data) setLeaves(data);
+ } catch (e) {
+ console.error("Failed to fetch leaves:", e);
+ }
  };
 
  const fetchAnalytics = async () => {
-    // academic_analytics table doesn't exist, we use mentee.cgpa directly.
-    setAnalytics({ cgpa: mentee?.cgpa || 0 });
+ // academic_analytics table doesn't exist, we use mentee.cgpa directly.
+ setAnalytics({ cgpa: mentee?.cgpa || 0 });
  };
 
 
  const handleLeaveAction = async (leaveId, newStatus) => {
-        try {
-            if (!(await window.erpDialog?.confirm(`Are you sure you want to mark this leave as ${newStatus}?`))) return;
-            const { error } = await supabase.from('leave_requests').update({ status: newStatus }).eq('id', leaveId);
-            if (error) throw error;
-            setLeaves(leaves.map(l => l.id === leaveId ? { ...l, status: newStatus } : l));
-            window.erpDialog?.alert(`Leave has been ${newStatus}.`);
-        } catch(e) {
-            console.error(e);
-            window.erpDialog?.alert('Failed to update leave.');
-        }
-    };
+ try {
+ if (!(await window.erpDialog?.confirm(`Are you sure you want to mark this leave as ${newStatus}?`))) return;
+ const { error } = await supabase.from('leave_requests').update({ status: newStatus }).eq('id', leaveId);
+ if (error) throw error;
+ setLeaves(leaves.map(l => l.id === leaveId ? { ...l, status: newStatus } : l));
+ window.erpDialog?.alert(`Leave has been ${newStatus}.`);
+ } catch(e) {
+ console.error(e);
+ window.erpDialog?.alert('Failed to update leave.');
+ }
+ };
 
  const fetchAchievements = async () => {
  try {
@@ -208,52 +208,52 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  
  {/* NEW: Marks and CV Buttons */}
  <button type="button" onClick={() => { if(onViewMarks) onViewMarks(); }} className="bg-themePanel border border-themeBorder p-4 rounded-xl flex items-center justify-between group hover:border-themeAccent transition">
-    <div className="flex items-center gap-4">
-      <div className="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center text-lg"><i className="fa-solid fa-marker"></i></div>
-      <div className="text-left">
-         <p className="text-[14px] font-semibold tracking-tight text-themeText leading-tight mb-0.5 group-hover:text-themeAccent transition">View Marks</p>
-         <p className="text-[10px] font-medium text-themeTextSec">Internal & University</p>
-      </div>
-    </div>
-    <i className="fa-solid fa-chevron-right text-themeTextSec"></i>
+ <div className="flex items-center gap-4">
+ <div className="w-10 h-10 rounded-lg bg-purple-500/10 text-purple-500 flex items-center justify-center text-lg"><i className="fa-solid fa-marker"></i></div>
+ <div className="text-left">
+ <p className="text-[14px] font-semibold tracking-tight text-themeText leading-tight mb-0.5 group-hover:text-themeAccent transition">View Marks</p>
+ <p className="text-[10px] font-medium text-themeTextSec">Internal & University</p>
+ </div>
+ </div>
+ <i className="fa-solid fa-chevron-right text-themeTextSec"></i>
  </button>
 
- <button type="button" onClick={() => setShowCVModal(true)} className="bg-gradient-to-br from-amber-400 to-amber-600 text-black border border-amber-500/30 p-4 rounded-xl flex items-center justify-between group hover:brightness-110 transition shadow-lg shadow-amber-500/20">
-    <div className="flex items-center gap-4">
-      <div className="w-10 h-10 rounded-lg bg-white/20 text-black flex shrink-0 items-center justify-center text-lg"><i className="fa-solid fa-file-pdf"></i></div>
-      <div className="text-left">
-         <p className="text-[14px] font-black tracking-tight leading-tight mb-0.5">Download CV</p>
-         <p className="text-[10px] font-bold text-black/60 uppercase tracking-widest">Auto-Generated</p>
-      </div>
-    </div>
-    <i className="fa-solid fa-arrow-down text-black"></i>
+ <button type="button" onClick={() => setShowCVModal(true)} className="bg-gradient-to-br from-amber-400 to-amber-600 text-themeText border border-amber-500/30 p-4 rounded-xl flex items-center justify-between group hover:brightness-110 transition shadow-lg shadow-amber-500/20">
+ <div className="flex items-center gap-4">
+ <div className="w-10 h-10 rounded-lg bg-themePanel/20 text-themeText flex shrink-0 items-center justify-center text-lg"><i className="fa-solid fa-file-pdf"></i></div>
+ <div className="text-left">
+ <p className="text-[14px] font-black tracking-tight leading-tight mb-0.5">Download CV</p>
+ <p className="text-[10px] font-bold text-themeText/60 uppercase tracking-widest">Auto-Generated</p>
+ </div>
+ </div>
+ <i className="fa-solid fa-arrow-down text-themeText"></i>
  </button>
  </div>
  </div>
 
  {/* Mentee Quick Links */}
  <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <button type="button" onClick={() => setMenteeTab('leaves')} className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500 border border-indigo-500/20 p-4 rounded-xl flex flex-col gap-2 items-start transition-colors text-left group">
-        <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-lg"><i className="fa-solid fa-plane-departure"></i></div>
-        <div>
-            <h4 className="text-[13px] font-black tracking-tight mb-0.5">Leave Approvals</h4>
-            <p className="text-[10px] font-medium text-indigo-500/70">Manage time-off requests</p>
-        </div>
-    </button>
-    <button type="button" onClick={() => setMenteeTab('grievances')} className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/20 p-4 rounded-xl flex flex-col gap-2 items-start transition-colors text-left group">
-        <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-lg"><i className="fa-solid fa-scale-balanced"></i></div>
-        <div>
-            <h4 className="text-[13px] font-black tracking-tight mb-0.5">Grievance Record</h4>
-            <p className="text-[10px] font-medium text-amber-500/70">View official reports</p>
-        </div>
-    </button>
-    <button type="button" onClick={() => setMenteeTab('report')} className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 p-4 rounded-xl flex flex-col gap-2 items-start transition-colors text-left group">
-        <div className="w-10 h-10 rounded-lg bg-rose-500/20 flex items-center justify-center text-lg"><i className="fa-solid fa-triangle-exclamation"></i></div>
-        <div>
-            <h4 className="text-[13px] font-black tracking-tight mb-0.5">Report Mentee</h4>
-            <p className="text-[10px] font-medium text-rose-500/70">File disciplinary action</p>
-        </div>
-    </button>
+ <button type="button" onClick={() => setMenteeTab('leaves')} className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-500 border border-indigo-500/20 p-4 rounded-xl flex flex-col gap-2 items-start transition-colors text-left group">
+ <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-lg"><i className="fa-solid fa-plane-departure"></i></div>
+ <div>
+ <h4 className="text-[13px] font-black tracking-tight mb-0.5">Leave Approvals</h4>
+ <p className="text-[10px] font-medium text-indigo-500/70">Manage time-off requests</p>
+ </div>
+ </button>
+ <button type="button" onClick={() => setMenteeTab('grievances')} className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/20 p-4 rounded-xl flex flex-col gap-2 items-start transition-colors text-left group">
+ <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-lg"><i className="fa-solid fa-scale-balanced"></i></div>
+ <div>
+ <h4 className="text-[13px] font-black tracking-tight mb-0.5">Grievance Record</h4>
+ <p className="text-[10px] font-medium text-amber-500/70">View official reports</p>
+ </div>
+ </button>
+ <button type="button" onClick={() => setMenteeTab('report')} className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20 p-4 rounded-xl flex flex-col gap-2 items-start transition-colors text-left group">
+ <div className="w-10 h-10 rounded-lg bg-rose-500/20 flex items-center justify-center text-lg"><i className="fa-solid fa-triangle-exclamation"></i></div>
+ <div>
+ <h4 className="text-[13px] font-black tracking-tight mb-0.5">Report Mentee</h4>
+ <p className="text-[10px] font-medium text-rose-500/70">File disciplinary action</p>
+ </div>
+ </button>
  </div>
 
  {/* Pending Approvals / Achievements */}
@@ -327,15 +327,15 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  {/* CV Auto-Generated Modal */}
  {showCVModal && (
  <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[105] flex items-center justify-center p-4">
- <div className="bg-white dark:bg-[#1C1C1E] w-full max-w-2xl rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 flex flex-col max-h-[90vh]">
- <div className="p-4 border-b border-black/10 dark:border-white/10 flex justify-between items-center bg-black/[0.02] dark:bg-white/[0.02]">
+ <div className="bg-themePanel w-full max-w-2xl rounded-2xl overflow-hidden border border-themeBorder flex flex-col max-h-[90vh]">
+ <div className="p-4 border-b border-themeBorder flex justify-between items-center bg-black/[0.02] dark:bg-themePanel/[0.02]">
  <h3 className="text-sm font-black tracking-tight text-themeText"><i className="fa-solid fa-file-pdf text-amber-500 mr-2"></i> Auto-Generated CV</h3>
  <div className="flex gap-2">
- <button type="button" onClick={() => window.print()} className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 flex items-center justify-center transition-colors"><i className="fa-solid fa-print text-themeText"></i></button>
- <button type="button" onClick={() => setShowCVModal(false)} className="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark text-themeText"></i></button>
+ <button type="button" onClick={() => window.print()} className="w-8 h-8 rounded-lg bg-themeElevated hover:bg-black/10 flex items-center justify-center transition-colors"><i className="fa-solid fa-print text-themeText"></i></button>
+ <button type="button" onClick={() => setShowCVModal(false)} className="w-8 h-8 rounded-lg bg-themeElevated hover:bg-black/10 flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark text-themeText"></i></button>
  </div>
  </div>
- <div className="p-8 overflow-y-auto bg-white dark:bg-neutral-900 text-black dark:text-white" id="cv-printable-area">
+ <div className="p-8 overflow-y-auto bg-themePanel dark:bg-neutral-900 text-themeText " id="cv-printable-area">
  {/* Header */}
  <div className="border-b-2 border-amber-500 pb-4 mb-6">
  <h1 className="text-3xl font-black uppercase tracking-tight mb-1">{mentee.full_name}</h1>
@@ -410,18 +410,18 @@ export default function FacultyStudentProfile360({ mentee, onClose, onSchedule, 
  <div className="p-5 border-t border-themeBorder bg-themePanel/85 backdrop-blur-2xl flex justify-end gap-3">
  <button type="button" onClick={() => setShowVerifyModal(false)} className="px-4 py-2 rounded-lg text-xs font-bold text-themeTextSec hover:text-themeText">Cancel</button>
  <SlideCommit
-                label="Slide to Confirm"
-                doneLabel="Done"
-                errorLabel="Failed"
-                onConfirm={handleVerifySubmit}
-                trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="var(--theme-accent)"
-                successColor="#10b981"
-                dangerColor="#f43f5e"
-                width={200}
-                height={48}
-                radius={12}
-            />
+ label="Slide to Confirm"
+ doneLabel="Done"
+ errorLabel="Failed"
+ onConfirm={handleVerifySubmit}
+ trackColor="rgba(28, 28, 30, 0.05)"
+ handleColor="var(--theme-accent)"
+ successColor="#10b981"
+ dangerColor="#f43f5e"
+ width={200}
+ height={48}
+ radius={12}
+ />
  </div>
  </div>
  </div>

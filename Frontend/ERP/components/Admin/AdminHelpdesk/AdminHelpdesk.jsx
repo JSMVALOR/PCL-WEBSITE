@@ -5,7 +5,7 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../../lib/EmailService';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
-export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }) {
+export default function AdminHelpdesk({ isEmbedded = false, isHubView = false }) {
  const [tickets, setTickets] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
  const [activeTab, setActiveTab] = useState("all");
@@ -21,10 +21,10 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  try {
  const { data, error } = await supabase
  .from('helpdesk_tickets')
-        .select('*, profiles(full_name, role, erp_id, email)')
-        .neq('category', 'Public Inquiry')
-        .neq('category', 'public_inquiry')
-        .order('created_at', { ascending: false });
+ .select('*, profiles(full_name, role, erp_id, email)')
+ .neq('category', 'Public Inquiry')
+ .neq('category', 'public_inquiry')
+ .order('created_at', { ascending: false });
 
  if (error) throw error;
  setTickets(data || []);
@@ -83,22 +83,22 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  const filteredTickets = activeTab === "all" ? tickets : tickets.filter(t => t.category === activeTab);
 
  return (
- <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-transparent text-themeText dark:text-themeText" : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-transparent text-themeText " : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  {/* Header and Tabs */}
  {!isHubView && (
  <PageHeader icon="fa-solid fa-headset" title="Admin Helpdesk" subtitle="Manage and reply to student tickets and public inquiries." />
  )}
 
- <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-black/[0.04] dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
+ <div className={`flex flex-wrap lg:flex-nowrap p-1.5 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-themeBorder dark:border-white/[0.08] relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar shadow-premium`}>
  {['all', 'IT Support', 'Finance', 'Academic', 'Administration'].map(tab => (
  <button type="button"
  key={tab}
  onClick={() => setActiveTab(tab)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab 
- ? 'bg-white dark:bg-white/20 backdrop-blur-[80px] text-black dark:text-white border border-black/10 dark:border-white/40 scale-100' 
- : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
+ ? 'bg-themePanel backdrop-blur-[80px] text-themeText border border-themeBorder scale-100' 
+ : 'text-themeText/60 hover:text-themeText dark:hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'
  }`}
  >
  {tab === 'all' ? 'All Tickets' : tab}
@@ -112,41 +112,41 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  <div className="animate-spin w-8 h-8 border-4 border-themeAccent border-t-transparent rounded-full"></div>
  </div>
  ) : filteredTickets.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-check-double text-4xl lg:text-5xl text-neutral-700 mb-3 lg:mb-4"></i>
  <h3 className="text-sm lg:text-base font-black text-themeText">All Caught Up</h3>
  <p className={`text-[9px] lg:text-[13px] font-medium text-themeTextSec mt-1 lg:mt-2`}>No tickets found for this category.</p>
  </div>
  ) : (
  filteredTickets.map(ticket => (
- <div key={ticket.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-themePanel border border-black/[0.04] dark:border-white/[0.08] hover:border-black/5 dark:border-white/10 transition flex flex-col gap-4`}>
+ <div key={ticket.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-themePanel border border-themeBorder dark:border-white/[0.08] hover:border-themeBorder transition flex flex-col gap-4`}>
  <div className="flex justify-between items-start gap-4">
  <div>
  <div className="flex items-center gap-3 mb-2">
  {ticket.ticket_id && (
- <span className="text-[9px] lg:text-[10px] font-bold text-themeTextSec tracking-normal bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md px-2.5 py-1 rounded-md border border-black/[0.04] dark:border-white/[0.08]">
+ <span className="text-[9px] lg:text-[10px] font-bold text-themeTextSec tracking-normal bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md px-2.5 py-1 rounded-md border border-themeBorder dark:border-white/[0.08]">
  {ticket.ticket_id}
  </span>
  )}
- <span className="text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md text-themeAccent border-black/5 dark:border-white/10">
+ <span className="text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md text-themeAccent border-themeBorder ">
  {ticket.category === 'public_inquiry' ? 'Public Inquiry' : ticket.category}
  </span>
- <span className={`text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border ${ticket.status === 'resolved' ? 'bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md text-emerald-400 border-black/5 dark:border-white/10' : 'bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md text-amber-500 border-black/5 dark:border-white/10'}`}>
+ <span className={`text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border ${ticket.status === 'resolved' ? 'bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md text-emerald-400 border-themeBorder ' : 'bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md text-amber-500 border-themeBorder '}`}>
  {ticket.status}
  </span>
  </div>
  <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText mb-2">{ticket.subject}</h3>
-                                        {ticket.profiles && (
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <div className="w-6 h-6 rounded-full bg-themeElevated flex items-center justify-center border border-black/[0.04] dark:border-white/[0.08]">
-                                                    <i className="fa-solid fa-user text-[10px] text-themeTextSec"></i>
-                                                </div>
-                                                <span className="text-xs font-bold text-themeText">{ticket.profiles.full_name}</span>
-                                                <span className="text-[10px] uppercase font-bold tracking-widest text-themeAccent border border-themeAccent/20 bg-themeAccent/10 px-2 py-0.5 rounded-full">{ticket.profiles.role}</span>
-                                                <span className="text-[10px] uppercase font-bold tracking-widest text-themeTextSec">{ticket.profiles.erp_id}</span>
-                                            </div>
-                                        )}
- <div className="text-xs lg:text-sm text-themeTextSec bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-black/[0.04] dark:border-white/[0.08] whitespace-pre-wrap font-medium">
+ {ticket.profiles && (
+ <div className="flex items-center gap-2 mb-3">
+ <div className="w-6 h-6 rounded-full bg-themeElevated flex items-center justify-center border border-themeBorder dark:border-white/[0.08]">
+ <i className="fa-solid fa-user text-[10px] text-themeTextSec"></i>
+ </div>
+ <span className="text-xs font-bold text-themeText">{ticket.profiles.full_name}</span>
+ <span className="text-[10px] uppercase font-bold tracking-widest text-themeAccent border border-themeAccent/20 bg-themeAccent/10 px-2 py-0.5 rounded-full">{ticket.profiles.role}</span>
+ <span className="text-[10px] uppercase font-bold tracking-widest text-themeTextSec">{ticket.profiles.erp_id}</span>
+ </div>
+ )}
+ <div className="text-xs lg:text-sm text-themeTextSec bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-themeBorder dark:border-white/[0.08] whitespace-pre-wrap font-medium">
  {ticket.description}
  </div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec mt-3">
@@ -155,9 +155,9 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  </div>
  </div>
  
- <div className="border-t border-black/[0.04] dark:border-white/[0.08] pt-4 mt-2">
+ <div className="border-t border-themeBorder dark:border-white/[0.08] pt-4 mt-2">
  {ticket.status === 'resolved' ? (
- <div className="bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-black/[0.04] dark:border-white/[0.08]">
+ <div className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-themeBorder dark:border-white/[0.08]">
  <span className="text-[13px] font-medium text-emerald-400 block mb-1">Admin Reply</span>
  <p className="text-sm font-bold text-themeText">{ticket.admin_reply}</p>
  </div>
@@ -167,20 +167,20 @@ export default function AdminHelpdesk({ isEmbedded = false,  isHubView = false }
  value={replyText[ticket.id] || ''}
  onChange={(e) => setReplyText(prev => ({ ...prev, [ticket.id]: e.target.value }))}
  placeholder="Write your reply here..."
- className="flex-1 bg-black/5 dark:bg-themeElevated/90 backdrop-blur-md border border-black/[0.04] dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent resize-none min-h-[80px]"
+ className="flex-1 bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent resize-none min-h-[80px]"
  />
  <div className="flex lg:flex-col gap-2 shrink-0">
  <button type="button" 
  onClick={() => handleReply(ticket.id, false)}
  disabled={submittingReply === ticket.id}
- className="flex-1 lg:flex-none px-4 py-2 bg-themeAccent hover:bg-themeAccent/80 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-black/[0.04] dark:border-white/[0.08]"
+ className="flex-1 lg:flex-none px-4 py-2 bg-themeAccent hover:bg-themeAccent/80 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-themeBorder dark:border-white/[0.08]"
  >
  Send Reply
  </button>
  <button type="button" 
  onClick={() => handleReply(ticket.id, true)}
  disabled={submittingReply === ticket.id}
- className="flex-1 lg:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-black/[0.04] dark:border-white/[0.08]"
+ className="flex-1 lg:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-themeBorder dark:border-white/[0.08]"
  >
  Resolve & Close
  </button>

@@ -32,41 +32,41 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  try {
  setIsLoading(true);
 
-  // Fetch mentees of this faculty
-  const { data: menteeData } = await supabase.from('mentorship').select('student_id').eq('faculty_id', userSession.db_id);
-  const menteeIds = (menteeData || []).map(m => m.student_id).filter(Boolean);
+ // Fetch mentees of this faculty
+ const { data: menteeData } = await supabase.from('mentorship').select('student_id').eq('faculty_id', userSession.db_id);
+ const menteeIds = (menteeData || []).map(m => m.student_id).filter(Boolean);
 
-  const [
-  { data: leavesData },
-  { data: grievancesData },
-  { data: internshipsData },
-  { data: profilesData }
-  ] = await Promise.all([
-  // Fetch leaves from mentees
-  menteeIds.length > 0
-    ? supabase.from('leave_requests')
-      .select('*, profiles!leave_requests_student_id_fkey(full_name, erp_id)')
-      .in('student_id', menteeIds)
-      .order('created_at', { ascending: false })
-    : Promise.resolve({ data: [] }),
-  
-  // Fetch grievances assigned to this faculty
-  supabase.from('grievances')
-  .select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role), accused:profiles!grievances_accused_id_fkey(full_name, role)')
-  .eq('assigned_to', userSession.db_id)
-  .order('created_at', { ascending: false }),
-  
-  // Fetch internships from mentees
-  menteeIds.length > 0
-    ? supabase.from('noc_requests')
-      .select('*')
-      .in('student_id', menteeIds)
-      .order('applied_on', { ascending: false })
-    : Promise.resolve({ data: [] }),
+ const [
+ { data: leavesData },
+ { data: grievancesData },
+ { data: internshipsData },
+ { data: profilesData }
+ ] = await Promise.all([
+ // Fetch leaves from mentees
+ menteeIds.length > 0
+ ? supabase.from('leave_requests')
+ .select('*, profiles!leave_requests_student_id_fkey(full_name, erp_id)')
+ .in('student_id', menteeIds)
+ .order('created_at', { ascending: false })
+ : Promise.resolve({ data: [] }),
+ 
+ // Fetch grievances assigned to this faculty
+ supabase.from('grievances')
+ .select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role), accused:profiles!grievances_accused_id_fkey(full_name, role)')
+ .eq('assigned_to', userSession.db_id)
+ .order('created_at', { ascending: false }),
+ 
+ // Fetch internships from mentees
+ menteeIds.length > 0
+ ? supabase.from('noc_requests')
+ .select('*')
+ .in('student_id', menteeIds)
+ .order('applied_on', { ascending: false })
+ : Promise.resolve({ data: [] }),
 
-  // Fetch profiles for the "Report Grievance" dropdown
-  supabase.from('profiles').select('id, full_name, role').neq('id', userSession.db_id).neq('role', 'admin')
-  ]);
+ // Fetch profiles for the "Report Grievance" dropdown
+ supabase.from('profiles').select('id, full_name, role').neq('id', userSession.db_id).neq('role', 'admin')
+ ]);
 
  setLeaves(leavesData || []);
  setGrievances(grievancesData || []);
@@ -103,31 +103,31 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  
  // Fire LEAVE_APPROVED or LEAVE_REJECTED emails
  (async () => {
-    try {
-        const studentId = leave.student_id;
-        const { data: student } = await supabase.from('profiles').select('full_name, email').eq('id', studentId).single();
-        const { data: mapping } = await supabase.from('parent_student_mappings').select('parent_id').eq('student_id', studentId).maybeSingle();
-        let parentEmail = null;
-        if (mapping && mapping.parent_id) {
-            const { data: parent } = await supabase.from('profiles').select('email').eq('id', mapping.parent_id).maybeSingle();
-            parentEmail = parent?.email;
-        }
+ try {
+ const studentId = leave.student_id;
+ const { data: student } = await supabase.from('profiles').select('full_name, email').eq('id', studentId).single();
+ const { data: mapping } = await supabase.from('parent_student_mappings').select('parent_id').eq('student_id', studentId).maybeSingle();
+ let parentEmail = null;
+ if (mapping && mapping.parent_id) {
+ const { data: parent } = await supabase.from('profiles').select('email').eq('id', mapping.parent_id).maybeSingle();
+ parentEmail = parent?.email;
+ }
 
-        const template = newStatus === 'approved' ? 'LEAVE_APPROVED' : 'LEAVE_REJECTED';
-        const params = {
-            student_name: student?.full_name || 'Student',
-            leave_type: leave.leave_type || 'Leave',
-            start_date: leave.start_date,
-            end_date: leave.end_date,
-            reason: remarks || '',
-            approved_by: userSession.name,
-            rejected_by: userSession.name,
-            portal_link: window.location.origin + '/login'
-        };
+ const template = newStatus === 'approved' ? 'LEAVE_APPROVED' : 'LEAVE_REJECTED';
+ const params = {
+ student_name: student?.full_name || 'Student',
+ leave_type: leave.leave_type || 'Leave',
+ start_date: leave.start_date,
+ end_date: leave.end_date,
+ reason: remarks || '',
+ approved_by: userSession.name,
+ rejected_by: userSession.name,
+ portal_link: window.location.origin + '/login'
+ };
 
-        if (student?.email) sendSystemEmail(template, { ...params, to_email: student.email }).catch(e=>e);
-        if (parentEmail) sendSystemEmail(template, { ...params, to_email: parentEmail }).catch(e=>e);
-    } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ if (student?.email) sendSystemEmail(template, { ...params, to_email: student.email }).catch(e=>e);
+ if (parentEmail) sendSystemEmail(template, { ...params, to_email: parentEmail }).catch(e=>e);
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  })();
 
 
@@ -237,7 +237,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  
  {/* Header */}
- <PageHeader icon="fa-solid fa-stamp" title="Approvals & Disciplinary" subtitle="Manage mentee leave requests and investigate grievances." rightContent={<div className="flex bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] p-1.5 rounded-xl border border-themeBorder dark:border-white/5 w-fit relative z-10 overflow-x-auto max-w-full">
+ <PageHeader icon="fa-solid fa-stamp" title="Approvals & Disciplinary" subtitle="Manage mentee leave requests and investigate grievances." rightContent={<div className="flex bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08] p-1.5 rounded-xl border border-themeBorder w-fit relative z-10 overflow-x-auto max-w-full">
  <button type="button" 
  onClick={() => setActiveTab('mentee_leaves')}
  className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
@@ -252,13 +252,13 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  </button>
  <button type="button" 
  onClick={() => setActiveTab('mentee_internships')}
- className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_internships' ? 'bg-blue-500 text-white' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_internships' ? 'bg-blue-500 text-themeApp' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Mentee Internships
  </button>
  <button type="button" 
  onClick={() => setActiveTab('report_grievance')}
- className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'report_grievance' ? 'bg-rose-500 text-themeText dark:text-white' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'report_grievance' ? 'bg-rose-500 text-themeText ' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Report Grievance
  </button>
@@ -278,12 +278,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_leaves' && (
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
  {leaves.length === 0 ? (
- <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No leave requests pending from mentees.</p>
  </div>
  ) : (
  leaves.map(req => (
- <div key={req.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={req.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-themeAccent"></div>
  <div className="flex justify-between items-start pl-2">
  <div>
@@ -300,22 +300,22 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {req.status === 'pending' ? (
  <div className="flex gap-2 mt-auto">
  <SlideCommit
-                label="Slide to Approve"
-                doneLabel="Done"
-                errorLabel="Failed"
-                onConfirm={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')}
-                trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="var(--theme-accent)"
-                successColor="#10b981"
-                dangerColor="#f43f5e"
-                width={200}
-                height={48}
-                radius={12}
-            />
+ label="Slide to Approve"
+ doneLabel="Done"
+ errorLabel="Failed"
+ onConfirm={() => handleLeaveAction(req.id, 'approved', 'Approved by mentor')}
+ trackColor="rgba(28, 28, 30, 0.05)"
+ handleColor="var(--theme-accent)"
+ successColor="#10b981"
+ dangerColor="#f43f5e"
+ width={200}
+ height={48}
+ radius={12}
+ />
  <button type="button" onClick={() => {
  const reason = window.prompt("Reason for rejection:");
  if(reason) handleLeaveAction(req.id, 'rejected', reason);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-themeBorderStrong pt-3">
@@ -332,12 +332,12 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_grievances' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {grievances.length === 0 ? (
- <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No active grievances assigned to you.</p>
  </div>
  ) : (
  grievances.map(g => (
- <div key={g.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={g.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-amber-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -358,16 +358,16 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {g.status === 'pending' || g.status === 'investigating' ? (
  <div className="flex flex-wrap gap-2 mt-auto">
  {g.status === 'pending' && (
- <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="w-full bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
  )}
  <button type="button" onClick={() => {
  const notes = window.prompt("Resolution details:");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
- }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
+ }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
  <button type="button" onClick={() => {
  const notes = window.prompt("Reason for dismissal:");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-themeBorderStrong pt-3">
@@ -384,14 +384,14 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  {activeTab === 'mentee_internships' && (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {internships.length === 0 ? (
- <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-8 text-center opacity-60`}>
+ <div className={`col-span-full bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No active internship applications from mentees.</p>
  </div>
  ) : (
  internships.map(i => {
  const student = allProfiles.find(p => p.id === i.student_id);
  return (
- <div key={i.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl  p-5 flex flex-col gap-4 relative overflow-hidden`}>
+ <div key={i.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden`}>
  <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -411,9 +411,9 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  {i.status === 'pending_mentor' ? (
  <div className="flex flex-wrap gap-2 mt-auto">
- <button type="button" onClick={() => handleInternshipAction(i.id, 'approve')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText dark:text-white border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Approve</button>
- <button type="button" onClick={() => handleInternshipAction(i.id, 'forward')} disabled={isProcessing} className="flex-1 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText dark:text-white border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Fwd to Admin</button>
- <button type="button" onClick={() => handleInternshipAction(i.id, 'reject')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText dark:text-white border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
+ <button type="button" onClick={() => handleInternshipAction(i.id, 'approve')} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Approve</button>
+ <button type="button" onClick={() => handleInternshipAction(i.id, 'forward')} disabled={isProcessing} className="flex-1 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Fwd to Admin</button>
+ <button type="button" onClick={() => handleInternshipAction(i.id, 'reject')} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Reject</button>
  </div>
  ) : (
  <div className="mt-auto border-t-theme border-themeBorderStrong pt-3">
@@ -460,7 +460,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  <textarea required rows="5" className="w-full bg-themeElevated border-theme border-themeBorder rounded-lg px-3 py-3 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details. The administration will review this confidentially." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
  </div>
 
- <button disabled={isProcessing} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-sm py-4 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+ <button disabled={isProcessing} type="submit" className="w-full bg-rose-500 text-themeText font-black tracking-normal text-sm py-4 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
  {isProcessing ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit to Administration"}
  </button>
  </form>

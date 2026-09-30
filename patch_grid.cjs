@@ -1,26 +1,17 @@
 const fs = require('fs');
-const file = 'Frontend/ERP/components/Admin/notices/AcademicCalendarGrid.jsx';
+let file = 'Frontend/ERP/components/Admin/notices/AcademicCalendarGrid.jsx';
 let content = fs.readFileSync(file, 'utf8');
 
-// Replace the PageHeader with a div containing the buttons
-const replacement = `<div className="w-full mb-6 flex justify-end">
-                        <div className="flex flex-wrap gap-3">
-                            <button onClick={addColumn} className="px-5 py-3 rounded-xl bg-black/5 dark:bg-white/10 text-themeText font-bold text-[13px] hover:bg-black/10 dark:hover:bg-white/20 transition-colors flex items-center gap-2">
-                                <i className="fa-solid fa-plus"></i> Add Column
-                            </button>
-                            <button onClick={addRow} className="px-5 py-3 rounded-xl bg-black/5 dark:bg-white/10 text-themeText font-bold text-[13px] hover:bg-black/10 dark:hover:bg-white/20 transition-colors flex items-center gap-2">
-                                <i className="fa-solid fa-plus"></i> Add Row
-                            </button>
-                            <button onClick={saveData} disabled={isSaving} className="px-6 py-3 rounded-xl bg-themeAccent text-white font-bold text-[13px] hover:bg-themeAccent/90 transition-colors shadow-lg shadow-themeAccent/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i className="fa-solid fa-floppy-disk"></i> {isSaving ? 'Saving...' : 'Save Grid'}
-                            </button>
-                        </div>
-                    </div>`;
+// Wrapper
+content = content.replace(/bg-white\/70 dark:bg-themePanel\/70 backdrop-blur-3xl saturate-\[1\.8\] border border-black\/\[0\.04\] dark:border-white\/\[0\.08\]/g, 'bg-themePanel border border-themeBorder');
+content = content.replace(/border-b border-black\/\[0\.04\] dark:border-white\/\[0\.08\]/g, 'border-b border-themeBorder');
+content = content.replace(/hover:bg-black\/\[0\.02\] dark:hover:bg-white\/\[0\.02\]/g, 'hover:bg-themeElevated');
 
-// Use regex to replace the entire <PageHeader ... /> block
-content = content.replace(/<div className="w-full mb-6">\s*<PageHeader[\s\S]*?rightContent=\{([\s\S]*?)\}\s*\/>\s*<\/div>/, replacement);
+// Inputs
+content = content.replace(/bg-black\/5 dark:bg-white\/5 px-3 py-2 text-sm font-medium text-themeText border border-black\/10  focus:border-themeAccent focus:bg-white\/50 dark:focus:bg-black\/20/g, 'bg-themeElevated px-3 py-2 text-sm font-medium text-themeText border border-themeBorder focus:border-themeAccent focus:bg-themePanel');
 
-// Also remove the import of PageHeader
-content = content.replace(/import PageHeader from "\.\.\/\.\.\/shared\/PageHeader\/PageHeader";\n/, '');
+// Buttons
+content = content.replace(/bg-black\/5 dark:bg-white\/10 text-themeText font-bold text-\[13px\] hover:bg-black\/10 dark:hover:bg-white\/20/g, 'bg-themeElevated border border-themeBorder text-themeText font-bold text-[13px] hover:bg-themeBorder');
+content = content.replace(/text-white font-bold/g, 'text-themeApp font-bold');
 
 fs.writeFileSync(file, content);

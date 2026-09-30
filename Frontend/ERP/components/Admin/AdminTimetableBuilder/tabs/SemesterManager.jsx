@@ -107,7 +107,7 @@ export default function SemesterManager({}) {
  <div className="bg-themePanel shadow-sm border border-themeBorder rounded-2xl overflow-hidden">
  <div className="w-full overflow-x-auto">
  <table className="w-full text-left">
- <thead className="bg-themeElevated/90 backdrop-blur-2xl border-b border-themeBorder dark:border-white/5">
+ <thead className="bg-themeElevated/90 backdrop-blur-2xl border-b border-themeBorder ">
  <tr>
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Academic Term</th>
  <th className="p-4 text-[13px] font-medium text-themeTextSec">Timeline</th>
@@ -128,7 +128,7 @@ export default function SemesterManager({}) {
  <td className="p-4 text-center">
  <button type="button" 
  onClick={() => toggleActive(sem.id, sem.is_active_globally)}
- className={`inline-flex items-center gap-2 text-[13px] font-medium px-3 py-1.5 rounded-lg border transition ${sem.is_active_globally ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10 hover:text-themeText hover:border-themeText'}`}
+ className={`inline-flex items-center gap-2 text-[13px] font-medium px-3 py-1.5 rounded-lg border transition ${sem.is_active_globally ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-themeBorder hover:text-themeText hover:border-themeText'}`}
  >
  {sem.is_active_globally ? <><i className="fa-solid fa-toggle-on text-lg"></i> Active</> : <><i className="fa-solid fa-toggle-off text-lg"></i> Inactive</>}
  </button>

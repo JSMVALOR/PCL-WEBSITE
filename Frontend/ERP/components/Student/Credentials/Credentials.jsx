@@ -29,13 +29,13 @@ export default function Credentials() {
  const [isGeneratingID, setIsGeneratingID] = useState(false);
  
  const handleDownloadID = async () => {
-     if (!idCardRef.current) return;
-     setIsGeneratingID(true);
-     try {
-         await generateComponentPDF(idCardRef.current, `${profileData.full_name.replace(/\s+/g, '_')}_ID_Card.pdf`, { format: [54, 86], orientation: 'portrait', fitToPage: true }); // CR80 standard ID size in mm
-     } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
-         setIsGeneratingID(false);
-     }
+ if (!idCardRef.current) return;
+ setIsGeneratingID(true);
+ try {
+ await generateComponentPDF(idCardRef.current, `${profileData.full_name.replace(/\s+/g, '_')}_ID_Card.pdf`, { format: [54, 86], orientation: 'portrait', fitToPage: true }); // CR80 standard ID size in mm
+ } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ setIsGeneratingID(false);
+ }
  };
  
  useEffect(() => {
@@ -102,11 +102,11 @@ export default function Credentials() {
  return (
  <div className="flex flex-col gap-6 w-full animate-pulse opacity-70 p-4">
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
- <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
- <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
- <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
+ <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
+ <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
+ <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
  </div>
- <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20 mt-4"></div>
+ <div className="h-64 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder mt-4"></div>
 </div>
  );
  }
@@ -120,12 +120,12 @@ export default function Credentials() {
  <div className="w-full max-w-5xl mx-auto flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-12 animate-fade-in selection:bg-themeElevated relative">
  
  {/* Top Action & Navigation Bar */}
- <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white/70 dark:bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] px-6 py-4 rounded-[2rem] gap-4">
- <div className="flex bg-black/[0.03] dark:bg-white/[0.03] p-1.5 rounded-xl border border-black/[0.04] dark:border-white/[0.08] shadow-inner">
+ <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-themePanel shadow-sm border border-themeBorder dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] px-6 py-4 rounded-[2rem] gap-4">
+ <div className="flex bg-black/[0.03] dark:bg-themePanel/[0.03] p-1.5 rounded-xl border border-themeBorder dark:border-white/[0.08] shadow-inner">
  <button type="button"
  onClick={() => setActiveTab("profile")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
- activeTab === "profile" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
+ activeTab === "profile" ? 'bg-themeElevated backdrop-blur-[80px] border border-themeBorder text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
  }`}
  >
  <i className="fa-regular fa-user mr-2"></i> HR & Profile
@@ -133,7 +133,7 @@ export default function Credentials() {
  <button type="button"
  onClick={() => setActiveTab("security")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
- activeTab === "security" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
+ activeTab === "security" ? 'bg-themeElevated backdrop-blur-[80px] border border-themeBorder text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
  }`}
  >
  <i className="fa-solid fa-shield-halved mr-2"></i> Security
@@ -141,7 +141,7 @@ export default function Credentials() {
  <button type="button"
  onClick={() => setActiveTab("appearance")}
  className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition ${
- activeTab === "appearance" ? 'bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
+ activeTab === "appearance" ? 'bg-themeElevated backdrop-blur-[80px] border border-themeBorder text-themeAccent' : 'text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 hover:text-themeText dark:hover:text-themeText'
  }`}
  >
  <i className="fa-solid fa-palette mr-2"></i> Appearance
@@ -152,11 +152,11 @@ export default function Credentials() {
  <div className="flex gap-2">
  <button type="button" 
  onClick={() => setShowEditModal(true)}
- className="px-4 py-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-black/5 dark:border-white/10 flex items-center gap-2"
+ className="px-4 py-2 bg-themeElevated backdrop-blur-[80px] border border-themeBorder hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-themeBorder flex items-center gap-2"
  >
  <i className="fa-solid fa-pen-to-square"></i> Edit
  </button>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-black/5 dark:border-white/10 flex items-center gap-2">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-themeElevated backdrop-blur-[80px] border border-themeBorder hover:bg-themeBorder text-themeText text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-themeBorder flex items-center gap-2">
  <i className="fa-solid fa-print"></i> Print
  </button>
  <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="hidden sm:flex px-4 py-2 bg-themeAccent hover:opacity-90 text-themeApp text-[10px] font-black uppercase tracking-widest rounded transition-colors border border-themeAccent flex items-center gap-2">
@@ -197,19 +197,19 @@ export default function Credentials() {
  )}
 
  {/* 1. MASTER PROFILE BANNER */}
- <div className={`rounded-2xl p-6 lg:p-10 relative overflow-hidden bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 transition duration-300 flex flex-col sm:flex-row items-center sm:items-start gap-6 lg:gap-8`}>
+ <div className={`rounded-2xl p-6 lg:p-10 relative overflow-hidden bg-themeElevated backdrop-blur-[80px] border border-themeBorder transition duration-300 flex flex-col sm:flex-row items-center sm:items-start gap-6 lg:gap-8`}>
  
  {/* Photo & Status */}
  <div className="relative group shrink-0 flex flex-col items-center">
- <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-xl bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 text-themeAccent border-[4px] border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden relative">
+ <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-xl bg-themeElevated backdrop-blur-[80px] border border-themeBorder text-themeAccent border-[4px] border-themeBorder flex items-center justify-center overflow-hidden relative">
  <img 
-    src={
-        profileData.profile_picture_url || getLocalAvatar(profileData.full_name) 
-        ? (profileData.profile_picture_url || getLocalAvatar(profileData.full_name))
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
-    } 
-    alt="Profile" 
-    className="w-full h-full object-cover" 
+ src={
+ profileData.profile_picture_url || getLocalAvatar(profileData.full_name) 
+ ? (profileData.profile_picture_url || getLocalAvatar(profileData.full_name))
+ : `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+ } 
+ alt="Profile" 
+ className="w-full h-full object-cover" 
  />
  </div>
  <div className="mt-3 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded flex items-center gap-1.5">
@@ -222,7 +222,7 @@ export default function Credentials() {
  <h2 className="text-2xl lg:text-3xl font-black text-themeText tracking-tight mb-1">{profileData.full_name}</h2>
  <p className="text-sm font-bold text-themeTextSec uppercase tracking-widest mb-4">{profileData.department || (userSession?.role === 'student' ? "B.B.A. LL.B. (Hons.)" : "Department")}</p>
  
- <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-2 mt-2 pt-4 border-t border-black/5 dark:border-white/10 w-full">
+ <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-4 gap-x-2 mt-2 pt-4 border-t border-themeBorder w-full">
  <div>
  <p className="text-[9px] font-black uppercase tracking-widest text-themeTextSec opacity-70 mb-0.5">{roleTitle} ID</p>
  <p className="text-xs font-bold text-themeText">{profileData.erp_id || "N/A"}</p>
@@ -250,56 +250,56 @@ export default function Credentials() {
  {/* Questionnaire removed to avoid duplication with the global modal */}
 
  {/* Information Grid Layout */}
-                        {userSession?.role === 'admin' ? (
-                            <div className="grid grid-cols-1 gap-6 lg:gap-8">
-                                <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl p-6 lg:p-8 flex flex-col gap-8 shadow-inner">
-                                    <div>
-                                        <h3 className="text-sm font-bold tracking-widest text-themeText dark:text-white uppercase mb-6 border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
-                                            <i className="fa-solid fa-shield-halved text-themeAccent text-lg"></i> System Clearance & Access
-                                        </h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                            <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Account Type</span>
-                                                <span className="text-sm font-black text-themeText dark:text-white">Super Administrator</span>
-                                            </div>
-                                            <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Clearance Level</span>
-                                                <span className="text-sm font-black text-emerald-500">Tier 1 (Global)</span>
-                                            </div>
-                                            <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Database Access</span>
-                                                <span className="text-sm font-bold text-themeText dark:text-white">Read / Write / Delete</span>
-                                            </div>
-                                            <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Last Audit</span>
-                                                <span className="text-sm font-bold text-themeText dark:text-white">{new Date().toLocaleDateString('en-GB')}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <h3 className="text-sm font-bold tracking-widest text-themeText dark:text-white uppercase mb-6 border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
-                                            <i className="fa-solid fa-satellite-dish text-themeAccent text-lg"></i> Contact Protocols
-                                        </h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                            <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">System Email</span>
-                                                <span className="text-sm font-bold text-themeText dark:text-white break-all">{profileData.email || "Not Updated"}</span>
-                                            </div>
-                                            <div className="flex flex-col gap-1.5">
-                                                <span className="text-[10px] font-bold text-themeTextSec dark:text-white/50 uppercase tracking-widest">Emergency Ping</span>
-                                                <span className="text-sm font-bold text-themeText dark:text-white">{profileData.phone || "Not Updated"}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
+ {userSession?.role === 'admin' ? (
+ <div className="grid grid-cols-1 gap-6 lg:gap-8">
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-xl p-6 lg:p-8 flex flex-col gap-8 shadow-inner">
+ <div>
+ <h3 className="text-sm font-bold tracking-widest text-themeText uppercase mb-6 border-b border-themeBorder pb-3 flex items-center gap-3">
+ <i className="fa-solid fa-shield-halved text-themeAccent text-lg"></i> System Clearance & Access
+ </h3>
+ <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+ <div className="flex flex-col gap-1.5">
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Account Type</span>
+ <span className="text-sm font-black text-themeText ">Super Administrator</span>
+ </div>
+ <div className="flex flex-col gap-1.5">
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Clearance Level</span>
+ <span className="text-sm font-black text-emerald-500">Tier 1 (Global)</span>
+ </div>
+ <div className="flex flex-col gap-1.5">
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Database Access</span>
+ <span className="text-sm font-bold text-themeText ">Read / Write / Delete</span>
+ </div>
+ <div className="flex flex-col gap-1.5">
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Last Audit</span>
+ <span className="text-sm font-bold text-themeText ">{new Date().toLocaleDateString('en-GB')}</span>
+ </div>
+ </div>
+ </div>
+ 
+ <div>
+ <h3 className="text-sm font-bold tracking-widest text-themeText uppercase mb-6 border-b border-themeBorder pb-3 flex items-center gap-3">
+ <i className="fa-solid fa-satellite-dish text-themeAccent text-lg"></i> Contact Protocols
+ </h3>
+ <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+ <div className="flex flex-col gap-1.5">
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">System Email</span>
+ <span className="text-sm font-bold text-themeText break-all">{profileData.email || "Not Updated"}</span>
+ </div>
+ <div className="flex flex-col gap-1.5">
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Emergency Ping</span>
+ <span className="text-sm font-bold text-themeText ">{profileData.phone || "Not Updated"}</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ ) : (
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
  
  {/* Personal Information */}
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl border border-black/10 dark:border-white/20 p-6">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-black/5 dark:border-white/10 pb-2"><i className="fa-regular fa-user mr-2 text-themeTextSec"></i> Personal Information</h3>
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-xl border border-themeBorder p-6">
+ <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-themeBorder pb-2"><i className="fa-regular fa-user mr-2 text-themeTextSec"></i> Personal Information</h3>
  <div className="flex flex-col gap-4">
  <div className="grid grid-cols-2 gap-2">
  <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Date of Birth</span>
@@ -321,8 +321,8 @@ export default function Credentials() {
  </div>
 
  {/* Contact Information */}
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl border border-black/10 dark:border-white/20 p-6">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-black/5 dark:border-white/10 pb-2"><i className="fa-regular fa-address-book mr-2 text-themeTextSec"></i> Contact Information</h3>
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-xl border border-themeBorder p-6">
+ <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-themeBorder pb-2"><i className="fa-regular fa-address-book mr-2 text-themeTextSec"></i> Contact Information</h3>
  <div className="flex flex-col gap-4">
  <div className="grid grid-cols-[1fr_2fr] gap-2">
  <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">College Email</span>
@@ -344,8 +344,8 @@ export default function Credentials() {
  </div>
 
  {/* Academic/Professional Information */}
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl border border-black/10 dark:border-white/20 p-6">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-black/5 dark:border-white/10 pb-2"><i className="fa-solid fa-briefcase mr-2 text-themeTextSec"></i> {userSession?.role === 'student' ? 'Academic Information' : 'Professional Information'}</h3>
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-xl border border-themeBorder p-6">
+ <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-themeBorder pb-2"><i className="fa-solid fa-briefcase mr-2 text-themeTextSec"></i> {userSession?.role === 'student' ? 'Academic Information' : 'Professional Information'}</h3>
  <div className="flex flex-col gap-4">
  <div className="grid grid-cols-2 gap-2">
  <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Department</span>
@@ -368,8 +368,8 @@ export default function Credentials() {
 
  {/* Emergency Contact & Documents */}
  <div className="flex flex-col gap-6 lg:gap-8">
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-xl border border-black/10 dark:border-white/20 p-6">
- <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-black/5 dark:border-white/10 pb-2"><i className="fa-solid fa-truck-medical mr-2 text-themeTextSec"></i> Emergency Contact</h3>
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-xl border border-themeBorder p-6">
+ <h3 className="text-xs font-black uppercase tracking-widest text-themeText mb-4 border-b border-themeBorder pb-2"><i className="fa-solid fa-truck-medical mr-2 text-themeTextSec"></i> Emergency Contact</h3>
  <div className="flex flex-col gap-4">
  <div className="grid grid-cols-2 gap-2">
  <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Name</span>
@@ -388,19 +388,19 @@ export default function Credentials() {
  </div>
 
  </div>
-                        )}
+ )}
 
-                        {/* 3. DIGITAL ID CARD PREVIEW */}
+ {/* 3. DIGITAL ID CARD PREVIEW */}
  <div className="w-full flex flex-col items-center mt-8 gap-6">
-    <div className="flex items-center justify-between w-full max-w-sm">
-        <h3 className="text-[14px] font-bold tracking-widest text-themeText uppercase"><i className="fa-solid fa-id-badge text-themeAccent mr-2"></i> Digital ID Card</h3>
-        <button type="button" onClick={handleDownloadID} disabled={isGeneratingID} className="bg-themeAccent hover:bg-themeAccent/80 text-themeApp px-4 py-2 rounded-xl text-xs font-bold tracking-widest uppercase transition-colors flex items-center gap-2 disabled:cursor-not-allowed">
-            {isGeneratingID ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>}
-            Download PDF
-        </button>
-    </div>
-    <div className="w-full max-w-sm p-2 bg-black/5 dark:bg-white/5 backdrop-blur-2xl border border-black/10 dark:border-white/10 border-dashed rounded-3xl flex justify-center">
-        <IDCardTemplate ref={idCardRef} profileData={profileData} roleTitle={roleTitle} userSession={userSession} />
+ <div className="flex items-center justify-between w-full max-w-sm">
+ <h3 className="text-[14px] font-bold tracking-widest text-themeText uppercase"><i className="fa-solid fa-id-badge text-themeAccent mr-2"></i> Digital ID Card</h3>
+ <button type="button" onClick={handleDownloadID} disabled={isGeneratingID} className="bg-themeAccent hover:bg-themeAccent/80 text-themeApp px-4 py-2 rounded-xl text-xs font-bold tracking-widest uppercase transition-colors flex items-center gap-2 disabled:cursor-not-allowed">
+ {isGeneratingID ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>}
+ Download PDF
+ </button>
+ </div>
+ <div className="w-full max-w-sm p-2 bg-themeElevated backdrop-blur-2xl border border-themeBorder border-dashed rounded-3xl flex justify-center">
+ <IDCardTemplate ref={idCardRef} profileData={profileData} roleTitle={roleTitle} userSession={userSession} />
  </div>
  </div>
  </div>

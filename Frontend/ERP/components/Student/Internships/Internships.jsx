@@ -18,86 +18,86 @@ const writeCache = (key, data) => {
 
 // --- COMPRESSION HELPERS (Under 2KB Goal) ---
 const uint8ToBase64 = (u8Arr) => {
-    let CHUNK_SIZE = 0x8000;
-    let index = 0;
-    let result = '';
-    while (index < u8Arr.length) {
-        result += String.fromCharCode.apply(null, u8Arr.subarray(index, Math.min(index + CHUNK_SIZE, u8Arr.length)));
-        index += CHUNK_SIZE;
-    }
-    return btoa(result);
+ let CHUNK_SIZE = 0x8000;
+ let index = 0;
+ let result = '';
+ while (index < u8Arr.length) {
+ result += String.fromCharCode.apply(null, u8Arr.subarray(index, Math.min(index + CHUNK_SIZE, u8Arr.length)));
+ index += CHUNK_SIZE;
+ }
+ return btoa(result);
 };
 
 const LZW = {
-    compress: (uncompressed) => {
-        if (!uncompressed) return "";
-        const dict = new Map();
-        for (let i = 0; i < 256; i++) dict.set(String.fromCharCode(i), i);
-        let c = uncompressed.charAt(0);
-        let res = [];
-        let dictSize = 256;
-        for (let i = 1; i < uncompressed.length; i++) {
-            let wc = c + uncompressed.charAt(i);
-            if (dict.has(wc)) c = wc;
-            else {
-                res.push(dict.get(c));
-                dict.set(wc, dictSize++);
-                c = String(uncompressed.charAt(i));
-            }
-        }
-        if (c !== "") res.push(dict.get(c));
-        return uint8ToBase64(new Uint8Array(new Uint16Array(res).buffer));
-    },
-    decompress: (compressedBase64) => {
-        if (!compressedBase64) return "";
-        try {
-            const buffer = new Uint16Array(Uint8Array.from(atob(compressedBase64), c => c.charCodeAt(0)).buffer);
-            const compressed = Array.from(buffer);
-            const dict = new Map();
-            for (let i = 0; i < 256; i++) dict.set(i, String.fromCharCode(i));
-            let w = String.fromCharCode(compressed[0]);
-            let res = w;
-            let dictSize = 256;
-            for (let i = 1; i < compressed.length; i++) {
-                let entry = "";
-                const k = compressed[i];
-                if (dict.has(k)) entry = dict.get(k);
-                else if (k === dictSize) entry = w + w.charAt(0);
-                else return null;
-                res += entry;
-                dict.set(dictSize++, w + entry.charAt(0));
-                w = entry;
-            }
-            return res;
-        } catch { return compressedBase64; } 
-    }
+ compress: (uncompressed) => {
+ if (!uncompressed) return "";
+ const dict = new Map();
+ for (let i = 0; i < 256; i++) dict.set(String.fromCharCode(i), i);
+ let c = uncompressed.charAt(0);
+ let res = [];
+ let dictSize = 256;
+ for (let i = 1; i < uncompressed.length; i++) {
+ let wc = c + uncompressed.charAt(i);
+ if (dict.has(wc)) c = wc;
+ else {
+ res.push(dict.get(c));
+ dict.set(wc, dictSize++);
+ c = String(uncompressed.charAt(i));
+ }
+ }
+ if (c !== "") res.push(dict.get(c));
+ return uint8ToBase64(new Uint8Array(new Uint16Array(res).buffer));
+ },
+ decompress: (compressedBase64) => {
+ if (!compressedBase64) return "";
+ try {
+ const buffer = new Uint16Array(Uint8Array.from(atob(compressedBase64), c => c.charCodeAt(0)).buffer);
+ const compressed = Array.from(buffer);
+ const dict = new Map();
+ for (let i = 0; i < 256; i++) dict.set(i, String.fromCharCode(i));
+ let w = String.fromCharCode(compressed[0]);
+ let res = w;
+ let dictSize = 256;
+ for (let i = 1; i < compressed.length; i++) {
+ let entry = "";
+ const k = compressed[i];
+ if (dict.has(k)) entry = dict.get(k);
+ else if (k === dictSize) entry = w + w.charAt(0);
+ else return null;
+ res += entry;
+ dict.set(dictSize++, w + entry.charAt(0));
+ w = entry;
+ }
+ return res;
+ } catch { return compressedBase64; } 
+ }
 };
 
 const packLogs = (logs) => {
-    return logs; // Supabase handles JSONB arrays natively
+ return logs; // Supabase handles JSONB arrays natively
 };
 
 const unpackLogs = (packed) => {
-    if (!packed) return [];
-    if (typeof packed === 'string') {
-        if (packed.startsWith("LZW:")) {
-            try {
-                const rawJson = LZW.decompress(packed.slice(4));
-                const parsed = JSON.parse(rawJson);
-                return parsed.map(item => Array.isArray(item) ? { date: item[0], entry: item[1], logged_at: item[2] } : item);
-            } catch { return []; }
-        }
-        try {
-            return JSON.parse(packed);
-        } catch {
-            return [];
-        }
-    }
-    return Array.isArray(packed) ? packed : [];
+ if (!packed) return [];
+ if (typeof packed === 'string') {
+ if (packed.startsWith("LZW:")) {
+ try {
+ const rawJson = LZW.decompress(packed.slice(4));
+ const parsed = JSON.parse(rawJson);
+ return parsed.map(item => Array.isArray(item) ? { date: item[0], entry: item[1], logged_at: item[2] } : item);
+ } catch { return []; }
+ }
+ try {
+ return JSON.parse(packed);
+ } catch {
+ return [];
+ }
+ }
+ return Array.isArray(packed) ? packed : [];
 };
 
 // --- SHARED STYLES ---
-const INPUT_CLS = "w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-black/[0.04] dark:border-white/[0.08]Accent transition";
+const INPUT_CLS = "w-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-[2rem] px-4 py-3 text-xs lg:text-sm font-bold text-themeText outline-none focus:border-themeBorder dark:border-white/[0.08]Accent transition";
 const LABEL_CLS = "block text-[9px] lg:text-[13px] font-medium text-themeTextSec opacity-70 mb-1.5 ml-1";
 
 export default function Internships({ isEmbedded = false }) {
@@ -375,7 +375,7 @@ export default function Internships({ isEmbedded = false }) {
  case 'Judiciary': return "bg-amber-500/10 text-amber-400 border-amber-500/20";
  case 'Court Visit': return "bg-purple-500/10 text-purple-400 border-purple-500/20";
  case 'Legal Aid Clinic': return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
- default: return "bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec border-black/10 dark:border-white/20";
+ default: return "bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] text-themeTextSec border-themeBorder ";
  }
  };
 
@@ -394,14 +394,14 @@ export default function Internships({ isEmbedded = false }) {
  />
  
  {/* ═══════════════ HEADER & TABS ═══════════════ */}
- <div className="flex p-1.5 bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 rounded-2xl w-full lg:w-fit overflow-x-auto no-scrollbar min-w-max shadow-sm">
+ <div className="flex p-1.5 bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-2xl w-full lg:w-fit overflow-x-auto no-scrollbar min-w-max shadow-sm">
  {TABS.map(tab => (
  <button type="button"
  key={tab.id}
  onClick={() => setView(tab.id)}
  className={`flex-1 lg:flex-none px-6 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap ${view === tab.id
- ? "bg-white dark:bg-themeElevated shadow-sm border border-black/5 dark:border-white/5 text-themeText"
- : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-black/5 dark:hover:bg-white/10"
+ ? "bg-themePanel dark:bg-themeElevated shadow-sm border border-themeBorder text-themeText"
+ : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-themeElevated "
  }`}
  >
  <i className={`fa-solid ${tab.icon} ${view === tab.id ? '' : 'opacity-50'}`}></i> <span className="hidden sm:inline">{tab.label}</span>
@@ -415,7 +415,7 @@ export default function Internships({ isEmbedded = false }) {
  
  {/* --- SECTION 1: CORPORATE INTERNSHIPS --- */}
  <div className="flex flex-col gap-6">
- <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 pb-4">
+ <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-themeBorder dark:border-white/[0.08] border-themeBorder pb-4">
  <div>
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText flex items-center gap-2`}><i className="fa-solid fa-building text-themeAccent"></i> Corporate & External Internships</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec font-medium mt-1">Verified experiences sync to your digital resume.</p>
@@ -435,7 +435,7 @@ export default function Internships({ isEmbedded = false }) {
  <h3 className="text-sm font-bold text-themeTextSec uppercase tracking-widest"><i className="fa-solid fa-paper-plane mr-1.5 text-blue-500"></i> Active Applications</h3>
  <div className="flex flex-col gap-3">
  {permissions.map(p => (
- <div key={p.id} className="bg-themePanel dark:bg-white/5 border-black/[0.04] dark:border-white/[0.08] p-4 rounded-2xl border border-black/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+ <div key={p.id} className="bg-themePanel border-themeBorder dark:border-white/[0.08] p-4 rounded-2xl border border-themeBorder flex flex-col sm:flex-row sm:items-center justify-between gap-4">
  <div>
  <h4 className="text-sm font-bold text-themeText">{p.company_name}</h4>
  <p className="text-[10px] lg:text-xs text-themeTextSec font-medium">{p.duration}</p>
@@ -461,7 +461,7 @@ export default function Internships({ isEmbedded = false }) {
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
  {experiences.length === 0 ? (
- <div className="w-full py-10 lg:py-12 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-10 lg:py-12 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-briefcase text-4xl lg:text-5xl text-neutral-600/50 mb-4"></i>
  <p className={`${theme.text.muted} font-bold text-xs lg:text-sm`}>No experiences logged yet. Build your resume by adding one.</p>
  </div>
@@ -471,14 +471,14 @@ export default function Internships({ isEmbedded = false }) {
  let dailyLogs = unpackLogs(log.daily_logs);
 
  return (
- <div key={log.id} className={`${theme.layout.panel} rounded-[2rem] border-black/[0.04] dark:border-white/[0.08] ${isExpanded ? 'border-black/[0.04] dark:border-white/[0.08]' : 'border-black/10 dark:border-white/20'} hover:border-black/[0.04] dark:border-white/[0.08] transition group flex flex-col`}>
+ <div key={log.id} className={`${theme.layout.panel} rounded-[2rem] border-themeBorder dark:border-white/[0.08] ${isExpanded ? 'border-themeBorder dark:border-white/[0.08]' : 'border-themeBorder '} hover:border-themeBorder dark:border-white/[0.08] transition group flex flex-col`}>
  <div className="p-5 lg:p-6 cursor-pointer" onClick={() => setExpandedCard(isExpanded ? null : log.id)}>
  <div className="flex justify-between items-start mb-3">
  <div className="flex items-center gap-2">
- <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-black/[0.04] dark:border-white/[0.08] ${log.status === 'ongoing' ? 'bg-themeAccent/10 text-themeAccent border-black/[0.04] dark:border-white/[0.08]Accent/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+ <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-themeBorder dark:border-white/[0.08] ${log.status === 'ongoing' ? 'bg-themeAccent/10 text-themeAccent border-themeBorder dark:border-white/[0.08]Accent/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
  {log.status}
  </span>
- <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-black/[0.04] dark:border-white/[0.08] ${getTypeTheme(log.type)}`}>
+ <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-themeBorder dark:border-white/[0.08] ${getTypeTheme(log.type)}`}>
  {log.type}
  </span>
  {log.approval_status === 'approved' && <span className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-500 text-[8px] lg:text-[12px] font-bold border border-emerald-500/20"><i className="fa-solid fa-badge-check"></i> Approved</span>}
@@ -487,7 +487,7 @@ export default function Internships({ isEmbedded = false }) {
  {(!log.approval_status || log.approval_status === 'pending') && <span className="px-2 py-1 rounded-md bg-indigo-500/10 text-indigo-500 text-[8px] lg:text-[12px] font-bold border border-indigo-500/20"><i className="fa-solid fa-spinner fa-spin"></i> Pending Mentor</span>}
  </div>
  <div className="flex items-center gap-3">
- <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-black/10 dark:border-white/20 text-themeTextSec transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+ <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder text-themeTextSec transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
  <i className="fa-solid fa-chevron-down text-[10px]"></i>
  </div>
  </div>
@@ -499,16 +499,16 @@ export default function Internships({ isEmbedded = false }) {
  <p className="text-xs lg:text-sm font-bold text-themeTextSec"><i className="fa-regular fa-building mr-1"></i> {log.company_name}</p>
 
  <div className="flex items-center gap-3 mt-4 text-[9px] lg:text-[10px] font-bold text-themeTextSec opacity-80 tracking-normal">
- <span className="flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20"><i className="fa-regular fa-calendar text-themeAccent"></i> {log.duration}</span>
- <span className="flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-2.5 py-1 rounded-md border border-black/10 dark:border-white/20"><i className="fa-solid fa-location-dot text-themeAccent"></i> {log.location}</span>
+ <span className="flex items-center gap-1.5 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] px-2.5 py-1 rounded-md border border-themeBorder "><i className="fa-regular fa-calendar text-themeAccent"></i> {log.duration}</span>
+ <span className="flex items-center gap-1.5 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] px-2.5 py-1 rounded-md border border-themeBorder "><i className="fa-solid fa-location-dot text-themeAccent"></i> {log.location}</span>
  </div>
  </div>
 
  {isExpanded && (
- <div className="border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 animate-fade-in bg-gray-100 dark:bg-themeApp/20 rounded-b-themePanel">
+ <div className="border-themeBorder dark:border-white/[0.08] border-themeBorder animate-fade-in bg-gray-100 dark:bg-themeApp/20 rounded-b-themePanel">
  <div className="px-5 lg:px-6 py-5">
  <p className={`text-[12px] font-medium ${theme.text.muted} mb-2`}>Description</p>
- <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-4 rounded-[2rem] italic">
+ <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-4 rounded-[2rem] italic">
  "{log.description}"
  </p>
  </div>
@@ -516,7 +516,7 @@ export default function Internships({ isEmbedded = false }) {
  {log.certificate_notes && (
  <div className="px-5 lg:px-6 pb-5">
  <p className={`text-[12px] font-medium text-emerald-400 mb-2`}><i className="fa-solid fa-certificate mr-1"></i> Certificate Notes</p>
- <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-emerald-500/5 p-4 rounded-[2rem] border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20">
+ <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-emerald-500/5 p-4 rounded-[2rem] border-themeBorder dark:border-white/[0.08] border-emerald-500/20">
  {log.certificate_notes}
  </p>
  </div>
@@ -525,21 +525,21 @@ export default function Internships({ isEmbedded = false }) {
  <div className="px-5 lg:px-6 pb-5">
  <div className="flex items-center justify-between mb-3">
  <p className={`text-[12px] font-medium text-blue-400`}><i className="fa-solid fa-timeline mr-1"></i> Daily Logs ({dailyLogs.length})</p>
- <button type="button" onClick={(e) => { e.stopPropagation(); setDailyLogForm({ experience_id: log.id, date: '', entry: '' }); setShowDailyLogModal(true); }} className="text-[9px] font-black text-themeAccent tracking-normal flex items-center gap-1.5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-3 py-1.5 rounded-md border border-black/10 dark:border-white/20 hover:border-black/[0.04] dark:border-white/[0.08] hover:bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] transition">
+ <button type="button" onClick={(e) => { e.stopPropagation(); setDailyLogForm({ experience_id: log.id, date: '', entry: '' }); setShowDailyLogModal(true); }} className="text-[9px] font-black text-themeAccent tracking-normal flex items-center gap-1.5 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] px-3 py-1.5 rounded-md border border-themeBorder hover:border-themeBorder dark:border-white/[0.08] hover:bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] transition">
  <i className="fa-solid fa-plus text-[8px]"></i> Add Entry
  </button>
  </div>
 
  {dailyLogs.length === 0 ? (
- <div className="py-6 text-center bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-[2rem]">
+ <div className="py-6 text-center bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-[2rem]">
  <i className="fa-regular fa-note-sticky text-xl text-neutral-600/50 mb-2"></i>
  <p className={`text-[10px] ${theme.text.muted}`}>No daily log entries. Keep a journal of your tasks!</p>
  </div>
  ) : (
  <div className="space-y-3 max-h-56 overflow-y-auto pr-2 custom-scrollbar">
  {dailyLogs.sort((a, b) => new Date(b.date) - new Date(a.date)).map((entry, i) => (
- <div key={i} className="flex items-start gap-3 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-3.5 rounded-[2rem] hover:border-black/[0.04] dark:border-white/[0.08] transition-colors">
- <div className="w-7 h-7 rounded-full bg-blue-500/10 border-black/[0.04] dark:border-white/[0.08] border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
+ <div key={i} className="flex items-start gap-3 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-3.5 rounded-[2rem] hover:border-themeBorder dark:border-white/[0.08] transition-colors">
+ <div className="w-7 h-7 rounded-full bg-blue-500/10 border-themeBorder dark:border-white/[0.08] border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5">
  <i className="fa-solid fa-pen-nib text-blue-400 text-[10px]"></i>
  </div>
  <div className="flex-1 min-w-0">
@@ -554,7 +554,7 @@ export default function Internships({ isEmbedded = false }) {
  )}
  </div>
 
- <div className="px-5 lg:px-6 pb-6 pt-4 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 flex flex-col gap-3 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8]/30">
+ <div className="px-5 lg:px-6 pb-6 pt-4 border-themeBorder dark:border-white/[0.08] border-themeBorder flex flex-col gap-3 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8]/30">
  <button type="button" onClick={(e) => shareToLinkedIn(e, log)} className="w-full py-3 bg-[#0a66c2] hover:bg-[#004182] text-themeText rounded-[2rem] text-[13px] font-medium transition active:scale-[0.98] flex items-center justify-center gap-2 group/btn">
  <i className="fa-brands fa-linkedin text-sm group-hover/btn:scale-110 transition-transform"></i> Share to LinkedIn
  </button>
@@ -570,12 +570,12 @@ export default function Internships({ isEmbedded = false }) {
 
  {/* --- SECTION 2: PRACTICAL TRAINING & COURT VISITS --- */}
  <div className="flex flex-col gap-6">
- <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 pb-4">
+ <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-themeBorder dark:border-white/[0.08] border-themeBorder pb-4">
  <div>
  <h2 className={`${theme.text.heading} text-lg lg:text-xl text-themeText flex items-center gap-2`}><i className="fa-solid fa-scale-balanced text-themeAccent"></i> Practical & Clinical Training</h2>
  <p className="text-[10px] lg:text-xs text-themeTextSec font-medium mt-1">Mandatory clinical courses and court visits tracking.</p>
  </div>
- <button type="button" onClick={() => setShowPracModal(true)} className="px-5 py-2.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] flex items-center gap-2">
+ <button type="button" onClick={() => setShowPracModal(true)} className="px-5 py-2.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-themeBorder dark:border-white/[0.08] border-emerald-500/20 rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] flex items-center gap-2">
  <i className="fa-solid fa-plus"></i> Add Practical Log
  </button>
  </div>
@@ -584,41 +584,41 @@ export default function Internships({ isEmbedded = false }) {
  <div className={`${theme.layout.panel} p-5 lg:p-6 rounded-[2rem]`}>
  <div className="flex justify-between items-end mb-3">
  <p className={`text-[9px] lg:text-[10px] font-black text-themeTextSec tracking-normal`}><span className="text-themeAccent text-lg lg:text-xl">{totalPracticalHours}</span> / {REQUIRED_HOURS} Hours Logged</p>
- <span className={`text-[12px] font-medium px-2 py-1 rounded border-black/[0.04] dark:border-white/[0.08] ${hoursProgress >= 100 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec border-black/10 dark:border-white/20'}`}>
+ <span className={`text-[12px] font-medium px-2 py-1 rounded border-themeBorder dark:border-white/[0.08] ${hoursProgress >= 100 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] text-themeTextSec border-themeBorder '}`}>
  {hoursProgress >= 100 ? 'Completed' : 'In Progress'}
  </span>
  </div>
- <div className="h-2.5 lg:h-3 w-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full overflow-hidden border border-black/10 dark:border-white/20">
+ <div className="h-2.5 lg:h-3 w-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-full overflow-hidden border border-themeBorder ">
  <div className={`h-full rounded-full transition duration-1000 relative overflow-hidden ${hoursProgress >= 100 ? 'bg-emerald-500' : hoursProgress >= 50 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${hoursProgress}%` }}>
- <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
+ <div className="absolute inset-0 bg-themePanel/20 w-full h-full animate-[shimmer_2s_infinite]"></div>
  </div>
  </div>
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
  {practicalLogs.length === 0 ? (
- <div className="w-full py-10 lg:py-12 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-10 lg:py-12 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-gavel text-4xl lg:text-5xl text-neutral-600/50 mb-4"></i>
  <p className={`${theme.text.muted} font-bold text-xs lg:text-sm`}>No practical training hours logged.</p>
  </div>
  ) : (
  practicalLogs.map((log) => (
- <div key={log.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-[2rem] flex flex-col justify-between hover:border-black/[0.04] dark:border-white/[0.08] transition group`}>
+ <div key={log.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-[2rem] flex flex-col justify-between hover:border-themeBorder dark:border-white/[0.08] transition group`}>
  <div>
  <div className="flex justify-between items-start mb-4">
- <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-black/[0.04] dark:border-white/[0.08] ${getTypeTheme(log.type)}`}>
+ <span className={`px-2.5 py-1 rounded-md text-[8px] lg:text-[12px] font-medium border-themeBorder dark:border-white/[0.08] ${getTypeTheme(log.type)}`}>
  {log.type}
  </span>
- <span className="text-[10px] lg:text-[14px] font-medium text-themeText bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] px-3 py-1 rounded-md border border-black/10 dark:border-white/20">{log.hours} Hours</span>
+ <span className="text-[10px] lg:text-[14px] font-medium text-themeText bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] px-3 py-1 rounded-md border border-themeBorder ">{log.hours} Hours</span>
  </div>
  <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText mb-1.5 group-hover:text-themeAccent transition-colors">{log.title}</h3>
  <p className={`text-[8px] lg:text-[9px] font-bold text-themeTextSec opacity-70 tracking-normal mb-4`}><i className="fa-regular fa-calendar mr-1"></i> {new Date(log.date_logged).toLocaleDateString('en-GB')}</p>
- <p className="text-[10px] lg:text-xs font-medium text-themeTextSec bg-gray-100 dark:bg-themeApp/50 p-3 lg:p-4 rounded-[2rem] border-l-2 border-black/[0.04] dark:border-white/[0.08]Accent italic leading-relaxed line-clamp-3">
+ <p className="text-[10px] lg:text-xs font-medium text-themeTextSec bg-gray-100 dark:bg-themeApp/50 p-3 lg:p-4 rounded-[2rem] border-l-2 border-themeBorder dark:border-white/[0.08]Accent italic leading-relaxed line-clamp-3">
  "{log.description}"
  </p>
  </div>
- <div className="mt-5 pt-4 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 flex items-center justify-between">
- <span className={`text-[8px] lg:text-[12px] font-medium px-2.5 py-1.5 rounded-lg border-black/[0.04] dark:border-white/[0.08] ${log.is_verified ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'}`}>
+ <div className="mt-5 pt-4 border-themeBorder dark:border-white/[0.08] border-themeBorder flex items-center justify-between">
+ <span className={`text-[8px] lg:text-[12px] font-medium px-2.5 py-1.5 rounded-lg border-themeBorder dark:border-white/[0.08] ${log.is_verified ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20'}`}>
  <i className={`fa-solid ${log.is_verified ? 'fa-check-circle' : 'fa-clock'} mr-1`}></i> {log.is_verified ? 'Verified' : 'Pending Verification'}
  </span>
  </div>
@@ -644,15 +644,15 @@ export default function Internships({ isEmbedded = false }) {
  {/* A. LOG EXPERIENCE MODAL */}
  {showExpModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowExpModal(false)}>
- <div className="bg-transparent w-full max-w-xl rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-transparent w-full max-w-xl rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-themeBorder flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+ <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-5 lg:p-6 border-themeBorder dark:border-white/[0.08] border-themeBorder relative overflow-hidden shrink-0">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Log Legal Experience</h3>
  <p className="text-[10px] lg:text-xs text-emerald-400 font-bold tracking-normal"><i className="fa-solid fa-link mr-1"></i> Will sync to CV Builder</p>
  </div>
- <button type="button" onClick={() => setShowExpModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowExpModal(false)} className="w-8 h-8 rounded-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleExpSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -691,8 +691,8 @@ export default function Internships({ isEmbedded = false }) {
  <div><label className={LABEL_CLS}>Description (For CV)</label><textarea rows="3" value={expForm.description} onChange={e => setExpForm({ ...expForm, description: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="Describe your responsibilities and achievements..." required></textarea></div>
  <div><label className={LABEL_CLS}><i className="fa-solid fa-certificate mr-1 text-emerald-400"></i> Certificate Notes (Optional)</label><textarea rows="2" value={expForm.certificate_notes} onChange={e => setExpForm({ ...expForm, certificate_notes: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="Type certificate details, completion notes, or reference info..."></textarea></div>
  
- <div className="flex items-center gap-3 bg-[#0a66c2]/10 p-4 rounded-[2rem] border-black/[0.04] dark:border-white/[0.08] border-[#0a66c2]/20 cursor-pointer hover:bg-[#0a66c2]/20 transition-colors" onClick={() => setShareExpOnSubmit(!shareExpOnSubmit)}>
- <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${shareExpOnSubmit ? 'bg-[#0a66c2] text-themeText' : 'bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08]'}`}>
+ <div className="flex items-center gap-3 bg-[#0a66c2]/10 p-4 rounded-[2rem] border-themeBorder dark:border-white/[0.08] border-[#0a66c2]/20 cursor-pointer hover:bg-[#0a66c2]/20 transition-colors" onClick={() => setShareExpOnSubmit(!shareExpOnSubmit)}>
+ <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${shareExpOnSubmit ? 'bg-[#0a66c2] text-themeText' : 'bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08]'}`}>
  {shareExpOnSubmit && <i className="fa-solid fa-check text-xs"></i>}
  </div>
  <div>
@@ -702,7 +702,7 @@ export default function Internships({ isEmbedded = false }) {
  </div>
 
  {submitSuccess ? (
- <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Experience Logged</div>
+ <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Experience Logged</div>
  ) : (
  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-themeText hover:bg-themeText/90 text-themePanel rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Writing to Ledger..." : "Log Experience"}</button>
  )}
@@ -714,15 +714,15 @@ export default function Internships({ isEmbedded = false }) {
  {/* B. PERMISSION MODAL */}
  {showPermModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowPermModal(false)}>
- <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-themeBorder flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+ <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-5 lg:p-6 border-themeBorder dark:border-white/[0.08] border-themeBorder relative overflow-hidden shrink-0">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Apply for Internship Permission</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Will be routed directly to your assigned mentor.</p>
  </div>
- <button type="button" onClick={() => setShowPermModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowPermModal(false)} className="w-8 h-8 rounded-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handlePermSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -752,9 +752,9 @@ export default function Internships({ isEmbedded = false }) {
  <p className="text-[9px] text-themeTextSec mt-2"><i className="fa-solid fa-circle-info mr-1"></i> Ensure the link is set to "Anyone with the link can view"</p>
  </div>
  {submitSuccess ? (
- <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Application Routed to Mentor</div>
+ <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Application Routed to Mentor</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-themeApp rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Routing to Mentor..." : "Submit Application"}</button>
  )}
  </form>
  </div>
@@ -764,15 +764,15 @@ export default function Internships({ isEmbedded = false }) {
  {/* C. PRACTICAL LOG MODAL */}
  {showPracModal && (
  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowPracModal(false)}>
- <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20 flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden shrink-0">
- <div className="absolute top-0 right-0 w-32 h-32 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-transparent w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-themeBorder flex flex-col max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+ <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-5 lg:p-6 border-themeBorder dark:border-white/[0.08] border-themeBorder relative overflow-hidden shrink-0">
+ <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1">Add Practical Log</h3>
  <p className={`text-[10px] lg:text-xs ${theme.text.secondary}`}>Log hours for mandatory clinical courses.</p>
  </div>
- <button type="button" onClick={() => setShowPracModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowPracModal(false)} className="w-8 h-8 rounded-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handlePracSubmit} className="p-5 lg:p-6 flex flex-col gap-5 overflow-y-auto flex-1 custom-scrollbar">
@@ -792,7 +792,7 @@ export default function Internships({ isEmbedded = false }) {
  <div><label className={LABEL_CLS}>Date</label><input min="2026-09-14" type="date" value={pracForm.date_logged} onChange={e => setPracForm({ ...pracForm, date_logged: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  <div><label className={LABEL_CLS}>Observations</label><textarea rows="3" value={pracForm.description} onChange={e => setPracForm({ ...pracForm, description: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="What did you observe or do?" required></textarea></div>
  {submitSuccess ? (
- <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Practical Hours Logged</div>
+ <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Practical Hours Logged</div>
  ) : (
  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
  )}
@@ -804,22 +804,22 @@ export default function Internships({ isEmbedded = false }) {
  {/* D. DAILY LOG MODAL */}
  {showDailyLogModal && (
  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowDailyLogModal(false)}>
- <div className="bg-transparent w-full max-w-md rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] p-5 lg:p-6 border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 relative overflow-hidden">
- <div className="absolute top-0 right-0 w-24 h-24 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+ <div className="bg-transparent w-full max-w-md rounded-[2rem] overflow-hidden border border-themeBorder " onClick={(e) => e.stopPropagation()}>
+ <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-5 lg:p-6 border-themeBorder dark:border-white/[0.08] border-themeBorder relative overflow-hidden">
+ <div className="absolute top-0 right-0 w-24 h-24 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight mb-1">Add Daily Log Entry</h3>
  <p className={`text-[10px] lg:text-xs text-blue-400 font-bold tracking-normal`}><i className="fa-solid fa-timeline mr-1"></i> Internship Journal</p>
  </div>
- <button type="button" onClick={() => setShowDailyLogModal(false)} className="w-8 h-8 rounded-full bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-black/[0.04] dark:border-white/[0.08] border-black/[0.04] dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowDailyLogModal(false)} className="w-8 h-8 rounded-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
  <form onSubmit={handleDailyLogSubmit} className="p-5 lg:p-6 flex flex-col gap-5">
  <div><label className={LABEL_CLS}>Date</label><input min="2026-09-14" type="date" value={dailyLogForm.date} onChange={e => setDailyLogForm({ ...dailyLogForm, date: e.target.value })} className={`${INPUT_CLS} [color-scheme:dark]`} required /></div>
  <div><label className={LABEL_CLS}>What did you do today?</label><textarea rows="4" value={dailyLogForm.entry} onChange={e => setDailyLogForm({ ...dailyLogForm, entry: e.target.value })} className={`${INPUT_CLS} resize-none`} placeholder="Describe the work, cases reviewed, tasks completed..." required></textarea></div>
  {submitSuccess ? (
- <div className="w-full py-4 bg-emerald-500/10 border-black/[0.04] dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Entry Added</div>
+ <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Entry Added</div>
  ) : (
  <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-themeText rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Saving..." : "Add Log Entry"}</button>
  )}
@@ -831,31 +831,31 @@ export default function Internships({ isEmbedded = false }) {
  {/* E. LINKEDIN DRAFT MODAL */}
  {showLinkedInDraftModal && (
  <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in" onClick={() => setShowLinkedInDraftModal(false)}>
- <div className="bg-transparent w-full max-w-lg rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/20" onClick={(e) => e.stopPropagation()}>
- <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] p-5 lg:p-6 border-b border-black/10 dark:border-white/20 relative overflow-hidden">
+ <div className="bg-transparent w-full max-w-lg rounded-[2rem] overflow-hidden border border-themeBorder " onClick={(e) => e.stopPropagation()}>
+ <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] p-5 lg:p-6 border-b border-themeBorder relative overflow-hidden">
  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none blur-2xl"></div>
  <div className="relative z-10 flex justify-between items-start">
  <div>
  <h3 className="text-lg lg:text-xl font-semibold tracking-tight text-themeText tracking-tight mb-1"><i className="fa-brands fa-linkedin text-blue-500 mr-2"></i>Draft LinkedIn Post</h3>
  <p className="text-[10px] lg:text-xs text-themeTextSec">Review and copy your post before heading to LinkedIn.</p>
  </div>
- <button type="button" onClick={() => setShowLinkedInDraftModal(false)} className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button type="button" onClick={() => setShowLinkedInDraftModal(false)} className="w-8 h-8 rounded-full bg-themeElevated text-themeTextSec hover:text-themeText flex items-center justify-center transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
- <div className="p-5 lg:p-6 flex flex-col gap-5 bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8]">
+ <div className="p-5 lg:p-6 flex flex-col gap-5 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8]">
  <textarea 
  rows="8" 
- className="w-full bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10 rounded-xl p-4 text-sm text-themeText/90 focus:border-blue-500 outline-none resize-none custom-scrollbar leading-relaxed"
+ className="w-full bg-themeElevated /30 border border-themeBorder rounded-xl p-4 text-sm text-themeText/90 focus:border-blue-500 outline-none resize-none custom-scrollbar leading-relaxed"
  value={linkedInDraftText}
  onChange={(e) => setLinkedInDraftText(e.target.value)}
  ></textarea>
  <div className="flex gap-3">
- <button type="button" onClick={() => setShowLinkedInDraftModal(false)} className="flex-1 py-4 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-themeText rounded-[2rem] text-[13px] font-medium tracking-normal transition">Cancel</button>
+ <button type="button" onClick={() => setShowLinkedInDraftModal(false)} className="flex-1 py-4 bg-themeElevated hover:bg-black/10 text-themeText rounded-[2rem] text-[13px] font-medium tracking-normal transition">Cancel</button>
  <button type="button" onClick={() => {
  navigator.clipboard.writeText(linkedInDraftText);
  window.open(`https://www.linkedin.com/feed/?shareActive=true`, '_blank', 'width=800,height=600');
  setShowLinkedInDraftModal(false);
- }} className="flex-[2] py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-[2rem] text-[13px] font-medium tracking-normal transition shadow-lg shadow-blue-500/20"><i className="fa-regular fa-copy mr-2"></i>Copy & Post to LinkedIn</button>
+ }} className="flex-[2] py-4 bg-blue-600 hover:bg-blue-500 text-themeApp rounded-[2rem] text-[13px] font-medium tracking-normal transition shadow-lg shadow-blue-500/20"><i className="fa-regular fa-copy mr-2"></i>Copy & Post to LinkedIn</button>
  </div>
  </div>
  </div>

@@ -29,7 +29,7 @@ export default function MentorshipLogs({}) {
 
  return (
  <div className="flex flex-col gap-6 animate-fade-in relative pb-10">
- <div className="border-b border-black/5 dark:border-white/5 py-6 p-6">
+ <div className="border-b border-themeBorder py-6 p-6">
  <div className="flex justify-between items-center mb-6">
  <h3 className={`font-bold tracking-tight text-sm tracking-tight text-themeText flex items-center gap-2`}>
  <span>Audit Log</span>
@@ -37,21 +37,21 @@ export default function MentorshipLogs({}) {
  </h3>
  <button aria-label="Action button" type="button" 
  onClick={fetchLogs}
- className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec hover:text-indigo-500 hover:border-indigo-500 transition-colors flex items-center justify-center"
+ className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder text-themeTextSec hover:text-indigo-500 hover:border-indigo-500 transition-colors flex items-center justify-center"
  ><i className="fa-solid fa-rotate-right text-xs"></i></button>
  </div>
 
  {isLoading ? (
  <div className="w-full py-12 flex justify-center"><i className="fa-solid fa-circle-notch fa-spin text-2xl text-themeAccent"></i></div>
  ) : logs.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className="fa-solid fa-ghost text-4xl text-themeTextSec mb-4"></i>
  <h3 className="text-[15px] font-semibold text-themeText">No Logs Found</h3>
  <p className="text-[10px] font-bold text-themeTextSec mt-1">No mentorship actions have been recorded yet.</p>
  </div>
  ) : (
  <div className="flex flex-col gap-3">
- <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 border-b-[length:var(--border-width)] border-black/5 dark:border-white/10 text-[12px] font-medium text-themeTextSec">
+ <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2 border-b-[length:var(--border-width)] border-themeBorder text-[12px] font-medium text-themeTextSec">
  <div className="col-span-3">Timestamp</div>
  <div className="col-span-7">Action Details</div>
  <div className="col-span-2 text-right">Performed By</div>
@@ -60,8 +60,8 @@ export default function MentorshipLogs({}) {
  {logs.map((log) => {
  const date = new Date(log.created_at);
  return (
- <div key={log.id} className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder dark:border-white/5 rounded-lg md:items-center">
- <div className="md:col-span-3 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start border-b md:border-b-0 border-black/5 dark:border-white/10 pb-2 md:pb-0">
+ <div key={log.id} className="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 px-4 py-3 bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder rounded-lg md:items-center">
+ <div className="md:col-span-3 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start border-b md:border-b-0 border-themeBorder pb-2 md:pb-0">
  <span className="text-xs font-bold text-themeText">{date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
  <span className="text-[9px] font-bold text-themeTextSec tracking-normal">{date.toLocaleTimeString('en-US', { hour: '2-digit', minute:'2-digit' })}</span>
  </div>
@@ -70,7 +70,7 @@ export default function MentorshipLogs({}) {
  <span className="text-xs font-bold text-themeText leading-relaxed">{log.action}</span>
  </div>
  <div className="md:col-span-2 flex justify-end">
- <span className="text-[12px] font-medium  backdrop-blur-2xl px-2 py-1 rounded border border-themeBorder dark:border-white/5 text-indigo-500">
+ <span className="text-[12px] font-medium backdrop-blur-2xl px-2 py-1 rounded border border-themeBorder text-indigo-500">
  Admin
  </span>
  </div>

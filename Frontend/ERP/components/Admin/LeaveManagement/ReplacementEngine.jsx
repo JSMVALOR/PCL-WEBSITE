@@ -85,7 +85,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <div className="flex items-center gap-4">
  <button aria-label="Action button" type="button" 
  onClick={onBack}
- className="w-10 h-10 rounded-full bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors"
+ className="w-10 h-10 rounded-full bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08] flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors"
  ><i className="fa-solid fa-arrow-left"></i></button>
  <div>
  <h2 className={`font-bold tracking-tight text-xl text-themeText`}>Replacement Engine</h2>
@@ -101,7 +101,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <button type="button" 
  onClick={() => handleAssign({ name: "System Auto-Approved" })}
  disabled={isProcessing}
- className="mt-6 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-xl text-[14px] font-medium tracking-normal transition"
+ className="mt-6 px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-themeText rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Mark as Handled
  </button>
@@ -110,7 +110,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  affectedClasses.map((cls, idx) => (
  <div key={idx} className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 lg:p-6 flex flex-col gap-5 lg:gap-6">
  
- <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 gap-3">
+ <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pb-4 border-b-[length:var(--border-width)] border-themeBorder gap-3">
  <div>
  <h3 className="text-[15px] font-semibold text-themeText">{cls}</h3>
  <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-1">Pending Assignment</p>
@@ -132,7 +132,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  ) : (
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4">
  {suggestions.map((sug) => (
- <div key={sug.id} className="bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong rounded-xl p-4 flex flex-col gap-4 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+ <div key={sug.id} className="bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08]Strong rounded-xl p-4 flex flex-col gap-4 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
  <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-100 transition-opacity">
  <i className="fa-solid fa-circle-check text-4xl text-indigo-500"></i>
  </div>
@@ -159,7 +159,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  <button type="button" 
  onClick={() => handleAssign(sug)}
  disabled={isProcessing}
- className="mt-2 py-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-500 hover:text-themeText dark:text-white border-[length:var(--border-width)] border-indigo-500/20 rounded-lg text-[9px] lg:text-[13px] font-medium transition-colors w-full relative z-10"
+ className="mt-2 py-2 bg-indigo-500/10 hover:bg-indigo-500 text-indigo-500 hover:text-themeText border-[length:var(--border-width)] border-indigo-500/20 rounded-lg text-[9px] lg:text-[13px] font-medium transition-colors w-full relative z-10"
  >
  Assign
  </button>
@@ -169,7 +169,7 @@ export default function ReplacementEngine({ request, onBack, onComplete }) {
  )}
 
  <div className="mt-4 flex justify-center">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-themeBorder dark:border-white/5Strong rounded-lg text-[9px] lg:text-[13px] font-medium text-themeTextSec transition-colors">
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="px-4 py-2 bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder border border-themeBorder Strong rounded-lg text-[9px] lg:text-[13px] font-medium text-themeTextSec transition-colors">
  Manual Assignment <i className="fa-solid fa-chevron-right ml-1"></i>
  </button>
  </div>

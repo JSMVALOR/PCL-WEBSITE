@@ -44,15 +44,15 @@ export default function AdminLeaveManagement({ isHubView = false }) {
 
  {/* Tab Navigation (Hidden when viewing a review) */}
  {activeTab !== "review" && (
- <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-black/5 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
+ <div className="flex flex-wrap lg:flex-nowrap p-1.5 bg-themeElevated backdrop-blur-xl rounded-2xl border border-themeBorder relative z-10 gap-1.5 w-fit max-w-full overflow-x-auto no-scrollbar">
  {tabs.map((tab) => (
  <button type="button"
  key={tab.id}
  onClick={() => setActiveTab(tab.id)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab.id 
- ? 'bg-white dark:bg-themeElevated backdrop-blur-[80px] text-themeText border border-black/10 dark:border-white/40 scale-100' 
- : 'text-themeTextSec hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
+ ? 'bg-themePanel dark:bg-themeElevated backdrop-blur-[80px] text-themeText border border-themeBorder scale-100' 
+ : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'
  }`}
  >
  <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'text-themeAccent' : ''} text-sm lg:text-base`}></i>
@@ -67,7 +67,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  <div className="flex items-center gap-2 relative z-10 pt-2">
  <button type="button"
  onClick={handleCloseReview}
- className="px-5 py-3 bg-gray-50 dark:bg-black/20 backdrop-blur-md border border-black/10 dark:border-white/20 hover:bg-white/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal text-themeText dark:text-white transition-colors flex items-center gap-2"
+ className="px-5 py-3 bg-themeApp /20 backdrop-blur-md border border-themeBorder hover:bg-themePanel/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal text-themeText transition-colors flex items-center gap-2"
  >
  <i className="fa-solid fa-arrow-left"></i>
  Back to Requests
@@ -84,7 +84,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  {activeTab === "policies" && <LeavePolicies />}
  {activeTab === "audit" && <div className="p-12 text-center text-themeTextSec italic">Audit Log coming soon...</div>}
  
-            {activeTab === "review" && selectedRequest && (
+ {activeTab === "review" && selectedRequest && (
  <LeaveReview request={selectedRequest} onClose={handleCloseReview} onAssignReplacement={() => setActiveTab("replacement")} />
  )}
  {activeTab === "replacement" && selectedRequest && (

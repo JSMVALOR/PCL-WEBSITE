@@ -116,384 +116,384 @@ import { RoleActionButton } from './components/shared/LiveHeaderComponents';
 import IntelligentBot from './components/shared/IntelligentBot';
 
 export default function App() {
-  useEffect(() => {
+ useEffect(() => {
 
-  }, []);
-  const { userSession, isAppLoading, logout, notices, layoutPreference, navLayout } = useERP();
-  
-  const [needsOtp, setNeedsOtp] = useState(() => {
-    const sessionStr = sessionStorage.getItem('jsmerp_session');
-    if (!sessionStr) return false;
-    
-    const lastOtp = localStorage.getItem('erp_otp_verified');
-    const OTP_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days
-    return !lastOtp || (Date.now() - parseInt(lastOtp)) > OTP_EXPIRY;
-  });
-  const [hasSkippedQuestionnaire, setHasSkippedQuestionnaire] = useState(() => sessionStorage.getItem('skipped_questionnaire') === 'true');
+ }, []);
+ const { userSession, isAppLoading, logout, notices, layoutPreference, navLayout } = useERP();
+ 
+ const [needsOtp, setNeedsOtp] = useState(() => {
+ const sessionStr = sessionStorage.getItem('jsmerp_session');
+ if (!sessionStr) return false;
+ 
+ const lastOtp = localStorage.getItem('erp_otp_verified');
+ const OTP_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days
+ return !lastOtp || (Date.now() - parseInt(lastOtp)) > OTP_EXPIRY;
+ });
+ const [hasSkippedQuestionnaire, setHasSkippedQuestionnaire] = useState(() => sessionStorage.getItem('skipped_questionnaire') === 'true');
 
-  useEffect(() => {
-    if (userSession) {
-        const lastOtp = localStorage.getItem('erp_otp_verified');
-        const OTP_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days
-        // Enable OTP check properly
-        if (!lastOtp || (Date.now() - parseInt(lastOtp)) > OTP_EXPIRY) {
-            setNeedsOtp(true);
-        } else {
-            setNeedsOtp(false);
-        }
-    }
-  }, [userSession]);
-
-
-
-  const navigate = useNavigate();
+ useEffect(() => {
+ if (userSession) {
+ const lastOtp = localStorage.getItem('erp_otp_verified');
+ const OTP_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days
+ // Enable OTP check properly
+ if (!lastOtp || (Date.now() - parseInt(lastOtp)) > OTP_EXPIRY) {
+ setNeedsOtp(true);
+ } else {
+ setNeedsOtp(false);
+ }
+ }
+ }, [userSession]);
 
 
 
-  const location = useLocation();
+ const navigate = useNavigate();
 
-  // Derive active tab from URL
-  const pathParts = location.pathname.split('/').filter(Boolean);
-  const activeRole = pathParts[0] || (userSession ? userSession.role : '');
-  const activeTab = pathParts[1] || 'dashboard';
 
-  useEffect(() => {
-    const container = document.getElementById('jsm-main-scroll-container');
-    if (container) {
-      container.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }, [location.pathname]);
 
-  const setActiveTab = (tab) => {
-    if (userSession) {
-      navigate(`/${userSession.role}/${tab}`);
-    }
-  };
+ const location = useLocation();
 
-  // --- DYNAMIC HEADER FORMATTER ---
-  const getPageTitle = (tab) => {
-    const titles = {
-      dashboard: userSession?.role === 'admin' ? "Master Control" : userSession?.role === 'faculty' ? "Faculty Command Center" : "Student Dashboard",
-      credentials: "HR, Profile & Settings",
-      helpdesk: "Support Helpdesk",
-      notices: userSession?.role === 'admin' ? "Broadcast Center" : "Digital Notice Board",
+ // Derive active tab from URL
+ const pathParts = location.pathname.split('/').filter(Boolean);
+ const activeRole = pathParts[0] || (userSession ? userSession.role : '');
+ const activeTab = pathParts[1] || 'dashboard';
 
-      attendance: "Attendance Tracker",
-      coursevault: "Course Vault",
-      timetable: userSession?.role === 'faculty' ? "My Teaching Schedule" : "Academic Schedule & Hub",
-      assignments: userSession?.role === 'faculty' ? "Assignment Engine" : "Assignment Portal",      bidding: "Elective Bidding",
-      internships: "Internships & Training",
-      mootcourt: "Moot Court Society",
-      achievements: "Achievements Hub",
-      cvbuilder: "Career & CV Builder",
-      fees: "Fee Management",
-      leave: "Leave Applications",
+ useEffect(() => {
+ const container = document.getElementById('jsm-main-scroll-container');
+ if (container) {
+ container.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+ window.scrollTo({ top: 0, behavior: 'instant' });
+ }
+ }, [location.pathname]);
 
-      roster: "Class Roster & Attendance",
-      marks: "Official Marks Ledger",
-      teaching_hub: "Faculty Teaching Hub",
-      mentorship: "Mentorship & Advising",
-      grievances: "Grievance Cell",
-      approvals: "Student Approvals",
-      facultyleave: "Time Off & Leaves",
+ const setActiveTab = (tab) => {
+ if (userSession) {
+ navigate(`/${userSession.role}/${tab}`);
+ }
+ };
 
-      users: "Identity & Access Management",
-      curriculum: "Master Timetable Builder",
-      allocations: "Mentor Allocations",
-      adminapprovals: "Central Approvals",      finance: "Finance Ledger",
-      adminmootcourt: "Moot Court Society",
-      placements: "Placements & Internships",
-      enquiries: "Website Enquiries",
-      legalaid: "Legal Aid Clinic",
-      admincredentials: "Admin Identity & Security"
-    };
-    return titles[tab] || tab.replace('-', ' ');
-  };
+ // --- DYNAMIC HEADER FORMATTER ---
+ const getPageTitle = (tab) => {
+ const titles = {
+ dashboard: userSession?.role === 'admin' ? "Master Control" : userSession?.role === 'faculty' ? "Faculty Command Center" : "Student Dashboard",
+ credentials: "HR, Profile & Settings",
+ helpdesk: "Support Helpdesk",
+ notices: userSession?.role === 'admin' ? "Broadcast Center" : "Digital Notice Board",
 
-  const getThemeColors = () => {
-    if (userSession?.role === 'admin') return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
-    if (userSession?.role === 'faculty') return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
-    return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
-  };
-  const roleColors = getThemeColors();
+ attendance: "Attendance Tracker",
+ coursevault: "Course Vault",
+ timetable: userSession?.role === 'faculty' ? "My Teaching Schedule" : "Academic Schedule & Hub",
+ assignments: userSession?.role === 'faculty' ? "Assignment Engine" : "Assignment Portal", bidding: "Elective Bidding",
+ internships: "Internships & Training",
+ mootcourt: "Moot Court Society",
+ achievements: "Achievements Hub",
+ cvbuilder: "Career & CV Builder",
+ fees: "Fee Management",
+ leave: "Leave Applications",
 
-  if (isAppLoading) {
-    return (
-      <div className="w-full h-screen bg-themeApp flex flex-col items-center justify-center selection:bg-themeAccent/20">
-        <div 
-          style={{
-            width: '64px', 
-            height: '64px', 
-            backgroundColor: '#262626', /* neutral-800 equivalent */
-            WebkitMaskImage: `url(${pclLogo})`,
-            WebkitMaskSize: 'contain',
-            WebkitMaskRepeat: 'no-repeat',
-            WebkitMaskPosition: 'center',
-            marginBottom: '1.5rem'
-          }} 
-        />
-        <div className="flex items-center gap-3">
-          <i className="fa-solid fa-circle-notch fa-spin text-xl text-neutral-500"></i>
-          <h1 className="text-xl font-black tracking-widest text-themeText dark:text-white uppercase">Initializing ERP System...</h1>
-        </div>
-      </div>
-    );
-  }
+ roster: "Class Roster & Attendance",
+ marks: "Official Marks Ledger",
+ teaching_hub: "Faculty Teaching Hub",
+ mentorship: "Mentorship & Advising",
+ grievances: "Grievance Cell",
+ approvals: "Student Approvals",
+ facultyleave: "Time Off & Leaves",
 
-  if (userSession && needsOtp) {
-      return <OTPVerification email={userSession.email || 'user@prudentiacollege.edu'} onVerify={() => setNeedsOtp(false)} onLogout={logout} />;
-  }
+ users: "Identity & Access Management",
+ curriculum: "Master Timetable Builder",
+ allocations: "Mentor Allocations",
+ adminapprovals: "Central Approvals", finance: "Finance Ledger",
+ adminmootcourt: "Moot Court Society",
+ placements: "Placements & Internships",
+ enquiries: "Website Enquiries",
+ legalaid: "Legal Aid Clinic",
+ admincredentials: "Admin Identity & Security"
+ };
+ return titles[tab] || tab.replace('-', ' ');
+ };
 
-  if (!userSession && !window.location.pathname.startsWith('/verify')) {
-    return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
+ const getThemeColors = () => {
+ if (userSession?.role === 'admin') return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
+ if (userSession?.role === 'faculty') return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
+ return { text: 'text-themeAccent', bg: 'bg-themeAccent', border: 'border-themeAccent' };
+ };
+ const roleColors = getThemeColors();
 
-  const renderContent = () => {
-    const role = userSession.role;
+ if (isAppLoading) {
+ return (
+ <div className="w-full h-screen bg-themeApp flex flex-col items-center justify-center selection:bg-themeAccent/20">
+ <div 
+ style={{
+ width: '64px', 
+ height: '64px', 
+ backgroundColor: '#262626', /* neutral-800 equivalent */
+ WebkitMaskImage: `url(${pclLogo})`,
+ WebkitMaskSize: 'contain',
+ WebkitMaskRepeat: 'no-repeat',
+ WebkitMaskPosition: 'center',
+ marginBottom: '1.5rem'
+ }} 
+ />
+ <div className="flex items-center gap-3">
+ <i className="fa-solid fa-circle-notch fa-spin text-xl text-neutral-500"></i>
+ <h1 className="text-xl font-black tracking-widest text-themeText uppercase">Initializing ERP System...</h1>
+ </div>
+ </div>
+ );
+ }
 
-    
-    // 🟢 PARENT ROUTES
-    if (role === 'parent') {
-      return <ParentDashboard onLogout={logout} />;
-    }
+ if (userSession && needsOtp) {
+ return <OTPVerification email={userSession.email || 'user@prudentiacollege.edu'} onVerify={() => setNeedsOtp(false)} onLogout={logout} />;
+ }
 
-    // 🟢 STUDENT ROUTES
-    if (role === 'student') {
-      switch (activeTab) {
-        case 'dashboard': return <StudentDashboard setActiveTab={setActiveTab} />;
-        case 'notices': return <Notices />;
-        case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
-        // Compact Hubs
-        case 'academic_center': return <StudentAcademicHub />;
-        case 'career_center': return <StudentCareerHub />;
-        case 'support_center': return <StudentSupportHub />;
-        // Granular (Expanded Mode)
-        case 'vault': return <CourseVault />;
-        case 'attendance': return <Attendance />;
-        case 'assignments': return <Assignments />;
-        case 'timetable': return <Timetable />;        case 'mentorship': return <Mentorship />;
-        case 'internships': return <Internships />;
-        case 'mootcourt': return <MootCourt />;
-        case 'fees': return <Fees />;
-        case 'leave': return <Leave />;
-        case 'grievances': return <StudentApprovals />;
-        case 'approvals': return <StudentApprovals />;
-        case 'helpdesk': return <Helpdesk />;
-        case 'portfolio': return <Portfolio />;
-        
-        case 'credentials': return <Credentials />;
-        default: return <ModuleUnderConstruction tabName={activeTab} role="Student" />;
-      }
-    }
+ if (!userSession && !window.location.pathname.startsWith('/verify')) {
+ return (
+ <Routes>
+ <Route path="/login" element={<Login />} />
+ <Route path="*" element={<Navigate to="/login" replace />} />
+ </Routes>
+ );
+ }
 
-    // 🔵 FACULTY ROUTES
-    if (role === 'faculty') {
-      switch (activeTab) {
-        case 'dashboard': return <FacultyDashboard setActiveTab={setActiveTab} />;
-        case 'notices': return <Notices />;
-        case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
-        
-        // Mobile Hubs
-        case 'teaching_hub': return <FacultyAcademicHub />;
-        case 'faculty_advising_center': return <FacultyAdvisingHub />;
-        case 'faculty_admin_center': return <FacultyAdminHub />;
+ const renderContent = () => {
+ const role = userSession.role;
 
-        // Standalone Desktop/Direct Routes
-        case 'timetable': return <FacultyTimetable setActiveTab={setActiveTab} />;
-        case 'attendance': return <FacultyAttendance />;
-        case 'roster': return <FacultyAttendance />;
-        case 'courses':
-        case 'materials': return <FacultyCourses setActiveTab={setActiveTab} />;
-        case 'assignments': return <FacultyAssignments />;
-        case 'marks': return <FacultyMarks />;
-        case 'payroll': return <FacultyPayroll />;
-        
-        case 'mentorship': return <FacultyMentorship />;
-        case 'clinics': return <FacultyClinicsHub />;
-        
-        case 'facultyleave': return <FacultyLeave />;
-        case 'approvals': return <Approvals />;
-        
-        case 'helpdesk': return <Helpdesk />;
-        case 'credentials': return <Credentials />;
-        default: return <ModuleUnderConstruction tabName={activeTab} role="Faculty" />;
-      }
-    }
+ 
+ // 🟢 PARENT ROUTES
+ if (role === 'parent') {
+ return <ParentDashboard onLogout={logout} />;
+ }
 
-    // 🟣 ADMIN ROUTES
-    if (role === 'admin') {
-      switch (activeTab) {
-        case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />;        case 'academic': return <AdminAcademicHub />;
-        case 'clinics': return <AdminClinicsHub />;
-        case 'blogs': return <BlogManager />;
-        case 'gallery': return <AdminGalleryManager />;
-        case 'careers': return <AdminCareers />;
-        case 'notices': return <AdminNotices />;
-        case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
-        case 'users': return <UserManagement />;
-        case 'coursebuilder': return <AdminCourseBuilder />;
-        case 'timetablebuilder': return <AdminTimetableHQ />;
-        case 'markscontroller': return <AdminMarksController />;
-        case 'campustimings': return <AdminCampusTimings />;
-        case 'allocations': return <AdminMentorship />;
-        case 'adminapprovals': return <AdminApprovals />;
-        case 'leavemanagement': return <AdminLeaveManagement />;
-        case 'faculty_attendance': return <AdminFacultyAttendance />;        case 'finance': return <AdminFees />;
-        case 'adminpayroll': return <AdminPayroll />;
-        case 'mootcourt': return <AdminMootCourt />;
-        case 'placements': return <AdminPlacements />;
-        case 'enquiries': return <AdminWebsiteInquiries />;
-        case 'legalaid': return <AdminLegalAid />;
-        case 'adminadmissions': return <AdminAdmissions />;
-        case 'attendance_issues': return <AdminAttendanceIssues />;
+ // 🟢 STUDENT ROUTES
+ if (role === 'student') {
+ switch (activeTab) {
+ case 'dashboard': return <StudentDashboard setActiveTab={setActiveTab} />;
+ case 'notices': return <Notices />;
+ case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
+ // Compact Hubs
+ case 'academic_center': return <StudentAcademicHub />;
+ case 'career_center': return <StudentCareerHub />;
+ case 'support_center': return <StudentSupportHub />;
+ // Granular (Expanded Mode)
+ case 'vault': return <CourseVault />;
+ case 'attendance': return <Attendance />;
+ case 'assignments': return <Assignments />;
+ case 'timetable': return <Timetable />; case 'mentorship': return <Mentorship />;
+ case 'internships': return <Internships />;
+ case 'mootcourt': return <MootCourt />;
+ case 'fees': return <Fees />;
+ case 'leave': return <Leave />;
+ case 'grievances': return <StudentApprovals />;
+ case 'approvals': return <StudentApprovals />;
+ case 'helpdesk': return <Helpdesk />;
+ case 'portfolio': return <Portfolio />;
+ 
+ case 'credentials': return <Credentials />;
+ default: return <ModuleUnderConstruction tabName={activeTab} role="Student" />;
+ }
+ }
 
-        case 'sql': return <SQLStudio />;
-        case 'helpdesk': return <AdminHelpdesk />;
-        case 'whatsapp': return <AdminWhatsAppQueue />;
-                case 'siteeditor': return <AdminSiteEditor />;
-        case 'parent-preview': return <ParentDashboard onLogout={logout} />;
+ // 🔵 FACULTY ROUTES
+ if (role === 'faculty') {
+ switch (activeTab) {
+ case 'dashboard': return <FacultyDashboard setActiveTab={setActiveTab} />;
+ case 'notices': return <Notices />;
+ case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
+ 
+ // Mobile Hubs
+ case 'teaching_hub': return <FacultyAcademicHub />;
+ case 'faculty_advising_center': return <FacultyAdvisingHub />;
+ case 'faculty_admin_center': return <FacultyAdminHub />;
 
-        case 'credentials': return <Credentials />;
-        default: return <ModuleUnderConstruction tabName={activeTab} role="Admin" />;
-      }
-    }
+ // Standalone Desktop/Direct Routes
+ case 'timetable': return <FacultyTimetable setActiveTab={setActiveTab} />;
+ case 'attendance': return <FacultyAttendance />;
+ case 'roster': return <FacultyAttendance />;
+ case 'courses':
+ case 'materials': return <FacultyCourses setActiveTab={setActiveTab} />;
+ case 'assignments': return <FacultyAssignments />;
+ case 'marks': return <FacultyMarks />;
+ case 'payroll': return <FacultyPayroll />;
+ 
+ case 'mentorship': return <FacultyMentorship />;
+ case 'clinics': return <FacultyClinicsHub />;
+ 
+ case 'facultyleave': return <FacultyLeave />;
+ case 'approvals': return <Approvals />;
+ 
+ case 'helpdesk': return <Helpdesk />;
+ case 'credentials': return <Credentials />;
+ default: return <ModuleUnderConstruction tabName={activeTab} role="Faculty" />;
+ }
+ }
 
-    return <ModuleUnderConstruction tabName={activeTab} role="Unknown" />;
-  };
+ // 🟣 ADMIN ROUTES
+ if (role === 'admin') {
+ switch (activeTab) {
+ case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />; case 'academic': return <AdminAcademicHub />;
+ case 'clinics': return <AdminClinicsHub />;
+ case 'blogs': return <BlogManager />;
+ case 'gallery': return <AdminGalleryManager />;
+ case 'careers': return <AdminCareers />;
+ case 'notices': return <AdminNotices />;
+ case 'notifications': return <NotificationsCenter setActiveTab={setActiveTab} />;
+ case 'users': return <UserManagement />;
+ case 'coursebuilder': return <AdminCourseBuilder />;
+ case 'timetablebuilder': return <AdminTimetableHQ />;
+ case 'markscontroller': return <AdminMarksController />;
+ case 'campustimings': return <AdminCampusTimings />;
+ case 'allocations': return <AdminMentorship />;
+ case 'adminapprovals': return <AdminApprovals />;
+ case 'leavemanagement': return <AdminLeaveManagement />;
+ case 'faculty_attendance': return <AdminFacultyAttendance />; case 'finance': return <AdminFees />;
+ case 'adminpayroll': return <AdminPayroll />;
+ case 'mootcourt': return <AdminMootCourt />;
+ case 'placements': return <AdminPlacements />;
+ case 'enquiries': return <AdminWebsiteInquiries />;
+ case 'legalaid': return <AdminLegalAid />;
+ case 'adminadmissions': return <AdminAdmissions />;
+ case 'attendance_issues': return <AdminAttendanceIssues />;
 
-  // --- PROTECTED LAYOUT WRAPPER ---
-  const renderLayout = (requiredRole) => {
-    // 🛡️ STRICT ROLE-BASED GUARDING
-    if (userSession.role !== requiredRole) {
-      return <Navigate to={`/${userSession.role}/dashboard`} replace />;
-    }
+ case 'sql': return <SQLStudio />;
+ case 'helpdesk': return <AdminHelpdesk />;
+ case 'whatsapp': return <AdminWhatsAppQueue />;
+ case 'siteeditor': return <AdminSiteEditor />;
+ case 'parent-preview': return <ParentDashboard onLogout={logout} />;
 
-    return (
-      <SessionTimeoutGuard>
-        <DialogContainer />
-        <ToastContainer />
-        <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-themeApp text-themeText dark:text-white premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
-          
-          {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
-          {navLayout === 'classic' && (
-            <div className="hidden lg:block h-full">
-              {userSession.role === 'student' && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
-              {userSession.role === 'faculty' && <FacultySidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
-              {userSession.role === 'admin' && <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
-            </div>
-          )}
+ case 'credentials': return <Credentials />;
+ default: return <ModuleUnderConstruction tabName={activeTab} role="Admin" />;
+ }
+ }
 
-          {/* TOP NAV RENDER (Universal Desktop & Mobile Header) */}
-          <div className={navLayout === 'classic' ? "block lg:hidden" : "block"}>
-            <TopNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />
-          </div>
+ return <ModuleUnderConstruction tabName={activeTab} role="Unknown" />;
+ };
 
-          {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Active when using TopNav Layout */}
-          {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
+ // --- PROTECTED LAYOUT WRAPPER ---
+ const renderLayout = (requiredRole) => {
+ // 🛡️ STRICT ROLE-BASED GUARDING
+ if (userSession.role !== requiredRole) {
+ return <Navigate to={`/${userSession.role}/dashboard`} replace />;
+ }
 
-            <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
-              <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
-                {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
-                <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
+ return (
+ <SessionTimeoutGuard>
+ <DialogContainer />
+ <ToastContainer />
+ <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-themeApp text-themeText premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
+ 
+ {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
+ {navLayout === 'classic' && (
+ <div className="hidden lg:block h-full">
+ {userSession.role === 'student' && <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
+ {userSession.role === 'faculty' && <FacultySidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
+ {userSession.role === 'admin' && <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} userSession={userSession} />}
+ </div>
+ )}
 
-                <div className="flex-1 p-2 pb-[110px] lg:pb-0 lg:p-6 lg:pt-0 flex flex-col relative z-10">
-                  <ErrorBoundary>
-                    {renderContent()}
-                  </ErrorBoundary>
-                </div>
+ {/* TOP NAV RENDER (Universal Desktop & Mobile Header) */}
+ <div className={navLayout === 'classic' ? "block lg:hidden" : "block"}>
+ <TopNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />
+ </div>
 
-              {/* ERP Footer with Privacy & Terms */}
-              <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder  bg-themeApp/90 backdrop-blur-md text-xs font-medium text-themeTextSec mt-auto z-10 relative">
-                <div className="flex gap-4 mb-2 sm:mb-0">
-                  <a href="/privacy" target="_blank" className="hover:text-themeText transition-colors">Privacy Policy</a>
-                  <a href="/terms" target="_blank" className="hover:text-themeText transition-colors">Terms of Service</a>
-                </div>
-                <div>
-                  <div className="flex items-center gap-1">
-                    <span className="opacity-50">&copy; {new Date().getFullYear()}</span>
-                    <a href="https://jsmvalor.in" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center ml-1 mr-1">
-                      <span className="text-themeText font-bold tracking-widest text-xs">JSM </span>
-                      <span className="text-themeText font-black tracking-tight ml-[2px] text-xs">VALOR<span className="text-red-500">.</span></span>
-                    </a>
-                    <span className="opacity-50">Data Processor.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </main>
-        </div>
-      </SessionTimeoutGuard>
-    );
-  };
+ {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Active when using TopNav Layout */}
+ {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
 
-  const handleQuestionnaireComplete = (data) => {
-    // Clear the cache so it fetches fresh from DB on reload
-    localStorage.removeItem('jsmerp_master_session');
-    // Force a reload to cleanly apply state
-    window.location.reload();
-  };
+ <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
+ <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
+ {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
+ <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'block lg:hidden h-[72px]' : 'block h-[72px] lg:h-[84px]'}`}></div>
 
-  const handlePasswordChangeComplete = () => {
-    localStorage.removeItem('jsmerp_master_session');
-    window.location.reload();
-  };
+ <div className="flex-1 p-2 pb-[110px] lg:pb-0 lg:p-6 lg:pt-0 flex flex-col relative z-10">
+ <ErrorBoundary>
+ {renderContent()}
+ </ErrorBoundary>
+ </div>
 
-  return (
-    <>
-      <Routes>
-        <Route path="/verify/:id" element={<CredentialVerification />} />
-        <Route path="/student/*" element={renderLayout("student")} />
-        <Route path="/faculty/*" element={renderLayout("faculty")} />
-        <Route path="/admin/*" element={renderLayout("admin")} />
-        <Route path="*" element={<Navigate to={`/${userSession?.role || 'student'}/dashboard`} replace />} />
-      </Routes>
+ {/* ERP Footer with Privacy & Terms */}
+ <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder bg-themeApp/90 backdrop-blur-md text-xs font-medium text-themeTextSec mt-auto z-10 relative">
+ <div className="flex gap-4 mb-2 sm:mb-0">
+ <a href="/privacy" target="_blank" className="hover:text-themeText transition-colors">Privacy Policy</a>
+ <a href="/terms" target="_blank" className="hover:text-themeText transition-colors">Terms of Service</a>
+ </div>
+ <div>
+ <div className="flex items-center gap-1">
+ <span className="opacity-50">&copy; {new Date().getFullYear()}</span>
+ <a href="https://jsmvalor.in" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center ml-1 mr-1">
+ <span className="text-themeText font-bold tracking-widest text-xs">JSM </span>
+ <span className="text-themeText font-black tracking-tight ml-[2px] text-xs">VALOR<span className="text-red-500">.</span></span>
+ </a>
+ <span className="opacity-50">Data Processor.</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </main>
+ </div>
+ </SessionTimeoutGuard>
+ );
+ };
 
-      {/* Mandatory Onboarding Lockout for Student & Faculty Portals */}
-      {userSession && userSession.role !== 'admin' && userSession.questionnaire_completed === false && !hasSkippedQuestionnaire && (
-        <QuestionnaireModal onComplete={handleQuestionnaireComplete} onSkip={() => { setHasSkippedQuestionnaire(true); sessionStorage.setItem("skipped_questionnaire", "true"); }} />
-      )}
-      
-      {/* Mandatory Password Change Lockout */}
-      {userSession && userSession.force_password_change === true && (
-        <ForcePasswordChangeModal onComplete={handlePasswordChangeComplete} />
-      )}
-      
-      {/* {userSession && !isAppLoading && <IntelligentBot />} */}
-    </>
-  );
+ const handleQuestionnaireComplete = (data) => {
+ // Clear the cache so it fetches fresh from DB on reload
+ localStorage.removeItem('jsmerp_master_session');
+ // Force a reload to cleanly apply state
+ window.location.reload();
+ };
+
+ const handlePasswordChangeComplete = () => {
+ localStorage.removeItem('jsmerp_master_session');
+ window.location.reload();
+ };
+
+ return (
+ <>
+ <Routes>
+ <Route path="/verify/:id" element={<CredentialVerification />} />
+ <Route path="/student/*" element={renderLayout("student")} />
+ <Route path="/faculty/*" element={renderLayout("faculty")} />
+ <Route path="/admin/*" element={renderLayout("admin")} />
+ <Route path="*" element={<Navigate to={`/${userSession?.role || 'student'}/dashboard`} replace />} />
+ </Routes>
+
+ {/* Mandatory Onboarding Lockout for Student & Faculty Portals */}
+ {userSession && userSession.role !== 'admin' && userSession.questionnaire_completed === false && !hasSkippedQuestionnaire && (
+ <QuestionnaireModal onComplete={handleQuestionnaireComplete} onSkip={() => { setHasSkippedQuestionnaire(true); sessionStorage.setItem("skipped_questionnaire", "true"); }} />
+ )}
+ 
+ {/* Mandatory Password Change Lockout */}
+ {userSession && userSession.force_password_change === true && (
+ <ForcePasswordChangeModal onComplete={handlePasswordChangeComplete} />
+ )}
+ 
+ {/* {userSession && !isAppLoading && <IntelligentBot />} */}
+ </>
+ );
 }
 
 function ModuleUnderConstruction({ tabName, role }) {
-  return (
-    <div className="w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-12 animate-fade-in">
-      <div className={`${theme.layout.panel} rounded-2xl p-8`}>
-      <div className="flex items-center gap-4 mb-6">
-        <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorder BorderStrong bg-white dark:bg-[#121212]`}>
-          <i className="fa-solid fa-layer-group"></i>
-        </div>
-        <div>
-          <h3 className={`${theme.text.heading} text-xl text-themeText dark:text-white capitalize`}>
-            {tabName.replace('-', ' ')} Module
-          </h3>
-          <p className={theme.text.secondary}>
-            Workspace restricted to {role} accounts.
-          </p>
-        </div>
-      </div>
-      <div className={`p-6 border-themeBorder  border-dashed border-neutral-800 rounded-2xl bg-themeApp flex flex-col items-center justify-center text-center py-24 `}>
-        <i className={`fa-solid fa-code text-5xl ${theme.text.muted} mb-4`}></i>
-        <h4 className={`${theme.text.heading} text-xl text-themeText dark:text-white mb-2`}>Module Under Construction</h4>
-        <p className={`${theme.text.secondary} text-sm max-w-md leading-relaxed`}>
-          The <span className="font-black text-themeText dark:text-white">{tabName}</span> component is currently being developed for the {role} portal. Please select another module from the sidebar.
-        </p>
-      </div>
-    </div>
-    </div>
-  );
+ return (
+ <div className="w-full mx-auto max-w-[1920px] flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-12 animate-fade-in">
+ <div className={`${theme.layout.panel} rounded-2xl p-8`}>
+ <div className="flex items-center gap-4 mb-6">
+ <div className={`${theme.ui.logoBox} text-rose-500 text-xl border-themeBorder BorderStrong bg-themePanel`}>
+ <i className="fa-solid fa-layer-group"></i>
+ </div>
+ <div>
+ <h3 className={`${theme.text.heading} text-xl text-themeText capitalize`}>
+ {tabName.replace('-', ' ')} Module
+ </h3>
+ <p className={theme.text.secondary}>
+ Workspace restricted to {role} accounts.
+ </p>
+ </div>
+ </div>
+ <div className={`p-6 border-themeBorder border-dashed border-neutral-800 rounded-2xl bg-themeApp flex flex-col items-center justify-center text-center py-24 `}>
+ <i className={`fa-solid fa-code text-5xl ${theme.text.muted} mb-4`}></i>
+ <h4 className={`${theme.text.heading} text-xl text-themeText mb-2`}>Module Under Construction</h4>
+ <p className={`${theme.text.secondary} text-sm max-w-md leading-relaxed`}>
+ The <span className="font-black text-themeText ">{tabName}</span> component is currently being developed for the {role} portal. Please select another module from the sidebar.
+ </p>
+ </div>
+ </div>
+ </div>
+ );
 }

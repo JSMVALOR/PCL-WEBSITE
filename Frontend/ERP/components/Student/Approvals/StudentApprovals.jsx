@@ -226,11 +226,11 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  {isLoading ? (
  <div className="flex flex-col lg:flex-row gap-6 w-full animate-pulse opacity-70 p-4">
  <div className="flex-1 flex flex-col gap-4">
- <div className="h-64 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
+ <div className="h-64 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
  </div>
  <div className="w-full lg:w-80 flex flex-col gap-4">
- <div className="h-32 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
- <div className="h-48 bg-white/10 backdrop-blur-md rounded-[2rem] border border-black/10 dark:border-white/20"></div>
+ <div className="h-32 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
+ <div className="h-48 bg-themePanel/10 backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
  </div>
 </div>
  ) : (
@@ -238,7 +238,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  
  {/* LEFT PANE: Form */}
  <div className="lg:col-span-5 flex flex-col gap-4">
- <div className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-5 lg:p-6 sticky top-6`}>
+ <div className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-themeBorder p-5 lg:p-6 sticky top-6`}>
  
  {false ? (
  <form onSubmit={submitLeave} className="flex flex-col gap-4">
@@ -247,17 +247,17 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Start Date</label>
- <input type="date" min={minDateStr} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.startDate} onChange={e => setLeaveData({ ...leaveData, startDate: e.target.value})} />
+ <input type="date" min={minDateStr} required className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.startDate} onChange={e => setLeaveData({ ...leaveData, startDate: e.target.value})} />
  </div>
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">End Date</label>
- <input type="date" min={minDateStr} required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.endDate} onChange={e => setLeaveData({ ...leaveData, endDate: e.target.value})} />
+ <input type="date" min={minDateStr} required className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none" value={leaveData.endDate} onChange={e => setLeaveData({ ...leaveData, endDate: e.target.value})} />
  </div>
  </div>
 
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Reason for Leave</label>
- <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Provide a detailed reason..." value={leaveData.reason} onChange={e => setLeaveData({ ...leaveData, reason: e.target.value})}></textarea>
+ <textarea required rows="4" className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Provide a detailed reason..." value={leaveData.reason} onChange={e => setLeaveData({ ...leaveData, reason: e.target.value})}></textarea>
  </div>
 
  <button disabled={isSubmitting || !mentor} type="submit" className="btn-erp disabled:cursor-not-allowed">
@@ -270,32 +270,32 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Accused Type</label>
- <div className="flex bg-black/5 dark:bg-white/5 p-1 rounded-lg mb-3">
-    <button type="button" onClick={() => { setAccusedType('student'); setGrievanceData({...grievanceData, accusedId: ''}); setSearchQuery(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${accusedType === 'student' ? 'bg-white dark:bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}>Student</button>
-    <button type="button" onClick={() => { setAccusedType('faculty'); setGrievanceData({...grievanceData, accusedId: ''}); setSearchQuery(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${accusedType === 'faculty' ? 'bg-white dark:bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}>Faculty</button>
+ <div className="flex bg-themeElevated p-1 rounded-lg mb-3">
+ <button type="button" onClick={() => { setAccusedType('student'); setGrievanceData({...grievanceData, accusedId: ''}); setSearchQuery(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${accusedType === 'student' ? 'bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}>Student</button>
+ <button type="button" onClick={() => { setAccusedType('faculty'); setGrievanceData({...grievanceData, accusedId: ''}); setSearchQuery(''); }} className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-colors ${accusedType === 'faculty' ? 'bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText'}`}>Faculty</button>
  </div>
  
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Search Individual</label>
- <input type="text" placeholder="Search by name..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none mb-2" />
+ <input type="text" placeholder="Search by name..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none mb-2" />
  
- <div className="w-full max-h-40 overflow-y-auto bg-black/5 dark:bg-white/5 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg p-2 flex flex-col gap-1">
+ <div className="w-full max-h-40 overflow-y-auto bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg p-2 flex flex-col gap-1">
  {allProfiles.filter(p => p.role === accusedType && p.full_name.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
-    <div className="text-xs text-themeTextSec p-2 text-center">No individuals found.</div>
+ <div className="text-xs text-themeTextSec p-2 text-center">No individuals found.</div>
  ) : (
-    allProfiles.filter(p => p.role === accusedType && p.full_name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => (
-        <button
-            key={p.id}
-            type="button"
-            onClick={() => setGrievanceData({ ...grievanceData, accusedId: p.id })}
-            className={`w-full text-left px-3 py-2 rounded-md text-[13px] font-medium transition-all ${
-                grievanceData.accusedId === p.id 
-                    ? 'bg-rose-500 text-white shadow-sm' 
-                    : 'text-themeText hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-        >
-            {p.full_name}
-        </button>
-    ))
+ allProfiles.filter(p => p.role === accusedType && p.full_name.toLowerCase().includes(searchQuery.toLowerCase())).map(p => (
+ <button
+ key={p.id}
+ type="button"
+ onClick={() => setGrievanceData({ ...grievanceData, accusedId: p.id })}
+ className={`w-full text-left px-3 py-2 rounded-md text-[13px] font-medium transition-all ${
+ grievanceData.accusedId === p.id 
+ ? 'bg-rose-500 text-themeApp shadow-sm' 
+ : 'text-themeText hover:bg-themeElevated '
+ }`}
+ >
+ {p.full_name}
+ </button>
+ ))
  )}
  </div>
  {mentor && grievanceData.accusedId === mentor.id && (
@@ -305,7 +305,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Category</label>
- <select required className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.category} onChange={e => setGrievanceData({ ...grievanceData, category: e.target.value})}>
+ <select required className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" value={grievanceData.category} onChange={e => setGrievanceData({ ...grievanceData, category: e.target.value})}>
  <option>Academics</option>
  <option>Harassment</option>
  <option>Mentorship Issue</option>
@@ -316,15 +316,15 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Description</label>
- <textarea required rows="4" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details of the incident..." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
+ <textarea required rows="4" className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none resize-none" placeholder="Provide full details of the incident..." value={grievanceData.description} onChange={e => setGrievanceData({ ...grievanceData, description: e.target.value})}></textarea>
  </div>
 
  <div>
  <label className="block text-[13px] font-medium text-themeTextSec mb-1.5">Evidence / Image URL (Optional)</label>
- <input type="url" className="w-full bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" placeholder="https://..." value={grievanceData.imageUrl} onChange={e => setGrievanceData({ ...grievanceData, imageUrl: e.target.value})} />
+ <input type="url" className="w-full bg-themeElevated backdrop-blur-[80px] border border-themeBorder rounded-lg px-3 py-2 text-sm text-themeText focus:border-rose-500 outline-none" placeholder="https://..." value={grievanceData.imageUrl} onChange={e => setGrievanceData({ ...grievanceData, imageUrl: e.target.value})} />
  </div>
 
- <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-themeText dark:text-white font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+ <button disabled={isSubmitting} type="submit" className="w-full bg-rose-500 text-themeText font-black tracking-normal text-xs py-3.5 rounded-lg hover:bg-rose-600 transition-colors mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
  {isSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Submit Grievance"}
  </button>
  </form>
@@ -342,14 +342,14 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  <div className="flex flex-col gap-3">
  {false ? (
  leaves.length === 0 ? (
- <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 backdrop-blur-2xl border-2 border-dashed border-black/10 dark:border-white/10 rounded-[2rem] text-center px-4">
+ <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
  <i className={`fa-solid fa-bed text-4xl lg:text-5xl text-themeTextSec opacity-50 mb-4`}></i>
  <h3 className={`${theme.text.heading} text-lg lg:text-xl text-themeText tracking-tight`}>No Leave Requests</h3>
  <p className={`${theme.text.secondary} text-[10px] lg:text-xs mt-2 max-w-xs font-bold tracking-normal opacity-80`}>You haven't requested any leaves.</p>
 </div>
  ) : (
  leaves.map(req => (
- <div key={req.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-4 flex flex-col gap-3`}>
+ <div key={req.id} className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-themeBorder p-4 flex flex-col gap-3`}>
  <div className="flex justify-between items-start">
  <div>
  <p className="text-[15px] font-semibold text-themeText mb-0.5">{req.start_date} to {req.end_date}</p>
@@ -357,9 +357,9 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  </div>
  {getStatusBadge(req.status)}
  </div>
- <p className="text-xs text-themeTextSec font-medium border-l-2 border-black/5 dark:border-white/10 pl-3 py-1">{req.reason}</p>
+ <p className="text-xs text-themeTextSec font-medium border-l-2 border-themeBorder pl-3 py-1">{req.reason}</p>
  {req.admin_remarks && (
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-2.5 rounded-lg border border-black/5 dark:border-white/10 mt-1">
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder p-2.5 rounded-lg border border-themeBorder mt-1">
  <p className="text-[12px] font-medium text-themeAccent mb-1">Faculty Remarks</p>
  <p className="text-xs text-themeText">{req.admin_remarks}</p>
  </div>
@@ -369,7 +369,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  )
  ) : (
  grievances.length === 0 ? (
- <div className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-black/10 dark:border-white/20 p-8 text-center opacity-60`}>
+ <div className={`bg-themePanel shadow-sm border border-themeBorder rounded-2xl rounded-[2rem] border border-themeBorder p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No grievances reported.</p>
  </div>
  ) : (

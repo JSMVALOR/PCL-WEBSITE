@@ -110,65 +110,65 @@ const AchSection = ({ title, items, headStyle, mode }) => {
 
 // --- Template 1: Modern ---
 const ModernTemplate = (data, config) => {
-  const HS = { color: "#d97706", fontSize: "11pt", fontWeight: 800, borderBottom: "1px solid #fde68a", paddingBottom: "4px" };
-  return (
-    <div style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif", color: "#1e293b", lineHeight: 1.5 }}>
-      <div style={{ borderBottom: "4px solid #f59e0b", paddingBottom: "16px", marginBottom: "24px" }}>
-        <h1 style={{ fontSize: "28pt", fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.03em", color: "#0f172a", margin: "0 0 8px" }}>
-          {data.personal.name}
-        </h1>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", fontSize: "9pt", fontWeight: 500, color: "#64748b" }}>
-          <span style={{ fontWeight: 800, color: "#d97706", letterSpacing: "0.05em" }}>{data.academic.degree}</span>
-          {data.personal.email && <span>{data.personal.email}</span>}
-          {data.personal.phone && data.personal.phone !== "Update in Profile" && <span>• {data.personal.phone}</span>}
-          {data.personal.linkedin && data.personal.linkedin !== "Update in Profile" && <span>• {data.personal.linkedin}</span>}
-        </div>
-      </div>
+ const HS = { color: "#d97706", fontSize: "11pt", fontWeight: 800, borderBottom: "1px solid #fde68a", paddingBottom: "4px" };
+ return (
+ <div style={{ fontFamily: "'Inter', ui-sans-serif, system-ui, sans-serif", color: "#1e293b", lineHeight: 1.5 }}>
+ <div style={{ borderBottom: "4px solid #f59e0b", paddingBottom: "16px", marginBottom: "24px" }}>
+ <h1 style={{ fontSize: "28pt", fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.03em", color: "#0f172a", margin: "0 0 8px" }}>
+ {data.personal.name}
+ </h1>
+ <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", fontSize: "9pt", fontWeight: 500, color: "#64748b" }}>
+ <span style={{ fontWeight: 800, color: "#d97706", letterSpacing: "0.05em" }}>{data.academic.degree}</span>
+ {data.personal.email && <span>{data.personal.email}</span>}
+ {data.personal.phone && data.personal.phone !== "Update in Profile" && <span>• {data.personal.phone}</span>}
+ {data.personal.linkedin && data.personal.linkedin !== "Update in Profile" && <span>• {data.personal.linkedin}</span>}
+ </div>
+ </div>
 
-      <div style={{ marginBottom: "20px" }}>
-        <SectionHeading text="Education" style={HS} />
-        <EntryRow left={data.academic.university} right={data.academic.duration} />
-        <SubLine style={{ fontWeight: 600, color: "#334155" }}>{data.academic.degree}</SubLine>
-        <Bullet
-          items={[
-            ...(config.includeCGPA && data.academic.cgpa && data.academic.cgpa !== "Awaiting Data" ? [`Cumulative GPA: ${data.academic.cgpa}`] : []),
-            ...(config.includeClassRank && data.academic.rank && data.academic.rank !== "N/A" ? [`University Batch Rank: ${data.academic.rank}`] : []),
-          ]}
-        />
-      </div>
+ <div style={{ marginBottom: "20px" }}>
+ <SectionHeading text="Education" style={HS} />
+ <EntryRow left={data.academic.university} right={data.academic.duration} />
+ <SubLine style={{ fontWeight: 600, color: "#334155" }}>{data.academic.degree}</SubLine>
+ <Bullet
+ items={[
+ ...(config.includeCGPA && data.academic.cgpa && data.academic.cgpa !== "Awaiting Data" ? [`Cumulative GPA: ${data.academic.cgpa}`] : []),
+ ...(config.includeClassRank && data.academic.rank && data.academic.rank !== "N/A" ? [`University Batch Rank: ${data.academic.rank}`] : []),
+ ]}
+ />
+ </div>
 
-      {config.includeExperience && data.experience.length > 0 && (
-        <div style={{ marginBottom: "20px" }}>
-          <SectionHeading text="Legal Experience" style={HS} />
-          {data.experience.map((exp, i) => (
-            <div key={i} style={{ marginBottom: "16px", pageBreakInside: "avoid" }}>
-              <EntryRow left={exp.company_name} right={exp.duration} />
-              <SubLine style={{ fontWeight: 600, color: "#475569" }}>
-                {exp.role_title}
-                {exp.location ? ` • ${exp.location}` : ""}
-              </SubLine>
-              {exp.description && <Desc text={exp.description} />}
-            </div>
-          ))}
-        </div>
-      )}
+ {config.includeExperience && data.experience.length > 0 && (
+ <div style={{ marginBottom: "20px" }}>
+ <SectionHeading text="Legal Experience" style={HS} />
+ {data.experience.map((exp, i) => (
+ <div key={i} style={{ marginBottom: "16px", pageBreakInside: "avoid" }}>
+ <EntryRow left={exp.company_name} right={exp.duration} />
+ <SubLine style={{ fontWeight: 600, color: "#475569" }}>
+ {exp.role_title}
+ {exp.location ? ` • ${exp.location}` : ""}
+ </SubLine>
+ {exp.description && <Desc text={exp.description} />}
+ </div>
+ ))}
+ </div>
+ )}
 
-      {config.includeMootCourt && <AchSection title="Moot Court & Competitions" items={data.mootCourt} headStyle={HS} />}
-      {config.includeAwards && <AchSection title="Awards & Honors" items={data.awards} headStyle={HS} />}
-      {config.includePublications && <AchSection title="Publications" items={data.publications} headStyle={HS} mode="bullet" />}
-      {config.includeCertifications && <AchSection title="Certificates" items={data.certifications} headStyle={HS} mode="bullet" />}
-      {config.includeExtracurriculars && <AchSection title="Extracurricular Activities" items={data.extracurriculars} headStyle={HS} />}
+ {config.includeMootCourt && <AchSection title="Moot Court & Competitions" items={data.mootCourt} headStyle={HS} />}
+ {config.includeAwards && <AchSection title="Awards & Honors" items={data.awards} headStyle={HS} />}
+ {config.includePublications && <AchSection title="Publications" items={data.publications} headStyle={HS} mode="bullet" />}
+ {config.includeCertifications && <AchSection title="Certificates" items={data.certifications} headStyle={HS} mode="bullet" />}
+ {config.includeExtracurriculars && <AchSection title="Extracurricular Activities" items={data.extracurriculars} headStyle={HS} />}
 
-      <div style={{ marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #e2e8f0", textAlign: "center" }}>
-        <p style={{ fontSize: "6.5pt", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: "#94a3b8", margin: 0 }}>
-          Officially Verified & Minted • Prudentia College of Law
-        </p>
-        <p style={{ fontSize: "6pt", fontWeight: 600, color: "#cbd5e1", marginTop: "4px", textTransform: "uppercase", letterSpacing: "0.15em" }}>
-          Document ID: {data.docId}
-        </p>
-      </div>
-    </div>
-  );
+ <div style={{ marginTop: "40px", paddingTop: "20px", borderTop: "1px solid #e2e8f0", textAlign: "center" }}>
+ <p style={{ fontSize: "6.5pt", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", color: "#94a3b8", margin: 0 }}>
+ Officially Verified & Minted • Prudentia College of Law
+ </p>
+ <p style={{ fontSize: "6pt", fontWeight: 600, color: "#cbd5e1", marginTop: "4px", textTransform: "uppercase", letterSpacing: "0.15em" }}>
+ Document ID: {data.docId}
+ </p>
+ </div>
+ </div>
+ );
 };
 
 // --- Template 2: Classic ---
@@ -646,7 +646,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
+ className="w-full lg:w-auto px-6 lg:px-8 py-3.5 lg:py-4 bg-amber-500 hover:bg-amber-400 text-themeText shadow-lg shadow-amber-500/20 rounded-[2rem] text-xs lg:text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export PDF"}
@@ -662,7 +662,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  <button type="button"
  onClick={handleExport}
  disabled={isExporting}
- className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+ className="w-full px-6 py-4 bg-amber-500 hover:bg-amber-400 text-themeText shadow-lg shadow-amber-500/20 rounded-2xl text-sm font-black uppercase tracking-widest transition active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
  >
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin text-lg"></i> : <i className="fa-solid fa-file-pdf text-lg"></i>}
  {isExporting ? "Generating Document..." : "Export Professional CV"}
@@ -670,7 +670,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  )}
 
  {/* Template Selector */}
- <div className={`${theme.layout.panel} rounded-[2rem] p-5 lg:p-6 border border-black/10 dark:border-white/20`}>
+ <div className={`${theme.layout.panel} rounded-[2rem] p-5 lg:p-6 border border-themeBorder `}>
  <h2 className="text-[10px] lg:text-[14px] font-medium text-themeText tracking-normal mb-4 flex items-center gap-2">
  <i className="fa-solid fa-wand-magic-sparkles text-themeAccent"></i> Template Selection
  </h2>
@@ -681,13 +681,13 @@ export default function CVBuilder({ isEmbedded = false }) {
  onClick={() => setCvConfig({ ...cvConfig, template: key })}
  className={`w-full text-left p-4 rounded-[2rem] border-theme transition duration-200 group ${
  cvConfig.template === key
- ? "bg-themePanel border-black/[0.04] dark:border-white/[0.08] border-black/5 dark:border-white/10 ring-1 ring-themeBorderStrong"
- : "bg-themePanel border-black/[0.04] dark:border-white/[0.08] border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 hover:bg-themeElevated/50"
+ ? "bg-themePanel border-themeBorder dark:border-white/[0.08] border-themeBorder ring-1 ring-themeBorderStrong"
+ : "bg-themePanel border-themeBorder dark:border-white/[0.08] border-themeBorder hover:border-themeBorder hover:bg-themeElevated/50"
  }`}
  >
  <div className="flex items-center justify-between mb-1.5">
  <span className="flex items-center gap-2.5">
- <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${cvConfig.template === key ? "bg-themeAccent/10 text-themeAccent" : "bg-themePanel border-black/[0.04] dark:border-white/[0.08] text-themeTextSec group-hover:text-themeText"}`}>
+ <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${cvConfig.template === key ? "bg-themeAccent/10 text-themeAccent" : "bg-themePanel border-themeBorder dark:border-white/[0.08] text-themeTextSec group-hover:text-themeText"}`}>
  <i className={`fa-solid ${tmpl.icon} text-[10px]`}></i>
  </div>
  <span className={`text-xs font-bold tracking-wide ${cvConfig.template === key ? "text-themeAccent" : "text-themeText"}`}>{tmpl.name}</span>
@@ -701,7 +701,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  </div>
 
  {/* Data Integration Toggles */}
- <div className="bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 border border-black/10 dark:border-white/20 relative overflow-hidden">
+ <div className="bg-themePanel border-themeBorder dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 border border-themeBorder relative overflow-hidden">
  <div className="absolute top-0 right-0 w-32 h-32 bg-themePanel/30 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none blur-2xl"></div>
  <div className="flex items-center gap-2 mb-1.5 relative z-10">
  <i className="fa-solid fa-database text-themeAccent"></i>
@@ -712,7 +712,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  {dataToggles.map((toggle) => (
  <label
  key={toggle.id}
- className="flex items-center justify-between p-3.5 bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] cursor-pointer hover:border-black/5 dark:border-white/10 hover:bg-themePanel border-black/[0.04] dark:border-white/[0.08] transition group"
+ className="flex items-center justify-between p-3.5 bg-themePanel border-themeBorder dark:border-white/[0.08] rounded-[2rem] cursor-pointer hover:border-themeBorder hover:bg-themePanel border-themeBorder dark:border-white/[0.08] transition group"
  >
  <span className="text-[10px] lg:text-[11px] font-bold text-themeTextSec group-hover:text-themeText transition-colors flex items-center gap-2.5">
  <i className={`fa-solid ${toggle.icon} text-[10px] opacity-50 w-3 text-center`}></i>
@@ -723,7 +723,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  type="checkbox"
  checked={cvConfig[toggle.id]}
  onChange={() => handleToggle(toggle.id)}
- className="peer appearance-none w-10 h-5 bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded-full checked:bg-amber-500 checked:border-amber-500 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-1 focus:ring-offset-themePanel"
+ className="peer appearance-none w-10 h-5 bg-themePanel border-themeBorder dark:border-white/[0.08] rounded-full checked:bg-amber-500 checked:border-amber-500 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-1 focus:ring-offset-themePanel"
  />
  <div className="absolute left-[3px] top-[2.5px] w-3.5 h-3.5 bg-neutral-400 peer-checked:bg-[#050505] rounded-full peer-checked:translate-x-5 transition-transform duration-300 ease-out pointer-events-none"></div>
  </div>
@@ -746,13 +746,13 @@ export default function CVBuilder({ isEmbedded = false }) {
  <span className={`text-[13px] font-medium ${theme.text.secondary} flex items-center gap-2`}>
  <i className="fa-solid fa-eye text-themeAccent"></i> Live Preview — {activeTemplate.name}
  </span>
- <span className={`text-[9px] font-bold ${theme.text.muted} tracking-normal px-2 py-1 bg-themePanel border-black/[0.04] dark:border-white/[0.08] rounded border border-black/10 dark:border-white/20`}>
+ <span className={`text-[9px] font-bold ${theme.text.muted} tracking-normal px-2 py-1 bg-themePanel border-themeBorder dark:border-white/[0.08] rounded border border-themeBorder `}>
  A4 · 210 × 297 mm
  </span>
  </div>
 
  {/* Interactive Scale Container */}
- <div id="cv-preview-container" className="w-full bg-white dark:bg-[#121212] rounded-[2rem] p-4 lg:p-8 flex justify-center items-start overflow-hidden min-h-[500px] relative">
+ <div id="cv-preview-container" className="w-full bg-themePanel rounded-[2rem] p-4 lg:p-8 flex justify-center items-start overflow-hidden min-h-[500px] relative">
  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 to-transparent opacity-50 pointer-events-none"></div>
  
  {/* The paper document */}

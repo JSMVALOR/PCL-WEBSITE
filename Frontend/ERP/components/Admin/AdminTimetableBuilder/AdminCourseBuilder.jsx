@@ -106,7 +106,7 @@ export default function AdminCourseBuilder({ isHubView = false }) {
  </div>
 
  <div className="w-full px-4 lg:px-8 mt-2 mb-8 flex overflow-x-auto no-scrollbar pb-2">
-    <div className="flex p-1.5 bg-themeElevated rounded-2xl border border-themeBorder relative z-10 gap-1.5 w-max">
+ <div className="flex p-1.5 bg-themeElevated rounded-2xl border border-themeBorder relative z-10 gap-1.5 w-max">
  {[
  { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-simple' },
  { id: 'batches', label: 'Cohort & Program Manager', icon: 'fa-toggle-on' },
@@ -126,7 +126,7 @@ export default function AdminCourseBuilder({ isHubView = false }) {
  <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'animate-pulse text-blue-500' : ''}`}></i> {tab.label}
  </button>
  ))}
-    </div>
+ </div>
  </div>
 
  <div className={`${isHubView ? 'w-full mt-2' : 'w-full mx-auto p-6 mt-4'}`}>

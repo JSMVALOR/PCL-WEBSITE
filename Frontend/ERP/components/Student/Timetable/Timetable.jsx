@@ -13,7 +13,7 @@ const SUBJECT_COLORS = {
  orange: { bg: 'bg-orange-500/10', text: 'text-orange-500', border: 'border-orange-500/20', solid: 'bg-orange-500' },
  rose: { bg: 'bg-rose-500/10', text: 'text-rose-500', border: 'border-rose-500/20', solid: 'bg-rose-500' },
  amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', border: 'border-amber-500/20', solid: 'bg-amber-500' },
- gray: { bg: 'bg-white/10 backdrop-blur-[80px] border border-white/20', text: 'text-themeTextSec dark:text-white/50', border: 'border-white/20', solid: 'bg-themeBorderStrong' }
+ gray: { bg: 'bg-themePanel/10 backdrop-blur-[80px] border border-white/20', text: 'text-themeTextSec ', border: 'border-white/20', solid: 'bg-themeBorderStrong' }
 };
 
 export default function Timetable({ isEmbedded = false }) {
@@ -26,18 +26,18 @@ export default function Timetable({ isEmbedded = false }) {
  const [loading, setLoading] = useState(true);
 
  const fetchSchedule = async () => {
-        if (!userSession?.academic_batch) { setLoading(false); return; }
-        
-        
-        try {
-            const batchStringName = userSession.academic_batch;
+ if (!userSession?.academic_batch) { setLoading(false); return; }
+ 
+ 
+ try {
+ const batchStringName = userSession.academic_batch;
 
  
-            // Fetch cohort color dynamically
-            const { data: batchData } = await supabase.from('academic_batches').select('theme_color, academic_programs(theme_color)').eq('name', batchStringName).single();
-            const fetchedCohortColor = batchData?.academic_programs?.theme_color || batchData?.theme_color || 'blue';
+ // Fetch cohort color dynamically
+ const { data: batchData } = await supabase.from('academic_batches').select('theme_color, academic_programs(theme_color)').eq('name', batchStringName).single();
+ const fetchedCohortColor = batchData?.academic_programs?.theme_color || batchData?.theme_color || 'blue';
 
-            const { data, error } = await supabase
+ const { data, error } = await supabase
  .from('class_schedule')
  .select(`
  id, batch, day_of_week, start_time, end_time,
@@ -104,78 +104,78 @@ export default function Timetable({ isEmbedded = false }) {
  return () => clearInterval(timer);
  }, []);
 
-    const exportCalendar = () => {
-        const header = [
-            "BEGIN:VCALENDAR",
-            "VERSION:2.0",
-            "PRODID:-//PCL ERP//EN",
-            "CALSCALE:GREGORIAN",
-            "METHOD:PUBLISH"
-        ].join("\r\n");
+ const exportCalendar = () => {
+ const header = [
+ "BEGIN:VCALENDAR",
+ "VERSION:2.0",
+ "PRODID:-//PCL ERP//EN",
+ "CALSCALE:GREGORIAN",
+ "METHOD:PUBLISH"
+ ].join("\r\n");
 
-        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const dayCodes = { 'Sunday': 'SU', 'Monday': 'MO', 'Tuesday': 'TU', 'Wednesday': 'WE', 'Thursday': 'TH', 'Friday': 'FR', 'Saturday': 'SA' };
+ const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+ const dayCodes = { 'Sunday': 'SU', 'Monday': 'MO', 'Tuesday': 'TU', 'Wednesday': 'WE', 'Thursday': 'TH', 'Friday': 'FR', 'Saturday': 'SA' };
 
-        const getNextDate = (dayName, timeStr) => {
-            const today = new Date();
-            const currentDay = today.getDay();
-            const targetDay = dayNames.indexOf(dayName);
-            let daysToAdd = targetDay - currentDay;
-            if (daysToAdd < 0) daysToAdd += 7;
-            const nextDate = new Date(today);
-            nextDate.setDate(today.getDate() + daysToAdd);
-            const [h, m] = timeStr.split(':');
-            nextDate.setHours(parseInt(h), parseInt(m), 0, 0);
-            return nextDate;
-        };
+ const getNextDate = (dayName, timeStr) => {
+ const today = new Date();
+ const currentDay = today.getDay();
+ const targetDay = dayNames.indexOf(dayName);
+ let daysToAdd = targetDay - currentDay;
+ if (daysToAdd < 0) daysToAdd += 7;
+ const nextDate = new Date(today);
+ nextDate.setDate(today.getDate() + daysToAdd);
+ const [h, m] = timeStr.split(':');
+ nextDate.setHours(parseInt(h), parseInt(m), 0, 0);
+ return nextDate;
+ };
 
-        const formatIcsDate = (date) => {
-            const pad = (n) => n < 10 ? '0' + n : n;
-            return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
-        };
+ const formatIcsDate = (date) => {
+ const pad = (n) => n < 10 ? '0' + n : n;
+ return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+ };
 
-        const body = schedule.map(curr => {
-            const uid = Math.random().toString(36).substring(2) + "@jsmerp.com";
-            const dtStamp = formatIcsDate(new Date()) + "Z";
-            const startDate = getNextDate(curr.day, curr.time);
-            const endDate = getNextDate(curr.day, curr.endTime);
-            
-            const dtStart = formatIcsDate(startDate);
-            const dtEnd = formatIcsDate(endDate);
+ const body = schedule.map(curr => {
+ const uid = Math.random().toString(36).substring(2) + "@jsmerp.com";
+ const dtStamp = formatIcsDate(new Date()) + "Z";
+ const startDate = getNextDate(curr.day, curr.time);
+ const endDate = getNextDate(curr.day, curr.endTime);
+ 
+ const dtStart = formatIcsDate(startDate);
+ const dtEnd = formatIcsDate(endDate);
 
-            // RRULE for Saturday vs other days
-            let rrule = `FREQ=WEEKLY;BYDAY=${dayCodes[curr.day]}`;
-            if (curr.day === 'Saturday') {
-                // Classes only on 1st, 3rd, 5th Saturday (2nd and 4th are holidays)
-                rrule = `FREQ=MONTHLY;BYDAY=1SA,3SA,5SA`;
-            }
+ // RRULE for Saturday vs other days
+ let rrule = `FREQ=WEEKLY;BYDAY=${dayCodes[curr.day]}`;
+ if (curr.day === 'Saturday') {
+ // Classes only on 1st, 3rd, 5th Saturday (2nd and 4th are holidays)
+ rrule = `FREQ=MONTHLY;BYDAY=1SA,3SA,5SA`;
+ }
 
-            return [
-                "BEGIN:VEVENT",
-                `UID:${uid}`,
-                `DTSTAMP:${dtStamp}`,
-                `DTSTART;TZID=Asia/Kolkata:${dtStart}`,
-                `DTEND;TZID=Asia/Kolkata:${dtEnd}`,
-                `RRULE:${rrule}`,
-                `SUMMARY:${curr.subject}`,
-                `DESCRIPTION:Faculty: ${curr.faculty}`,
-                                "END:VEVENT"
-            ].join("\r\n");
-        }).join("\r\n");
+ return [
+ "BEGIN:VEVENT",
+ `UID:${uid}`,
+ `DTSTAMP:${dtStamp}`,
+ `DTSTART;TZID=Asia/Kolkata:${dtStart}`,
+ `DTEND;TZID=Asia/Kolkata:${dtEnd}`,
+ `RRULE:${rrule}`,
+ `SUMMARY:${curr.subject}`,
+ `DESCRIPTION:Faculty: ${curr.faculty}`,
+ "END:VEVENT"
+ ].join("\r\n");
+ }).join("\r\n");
 
-        const footer = "\r\nEND:VCALENDAR";
-        const icsContent = `${header}\r\n${body}${footer}`;
+ const footer = "\r\nEND:VCALENDAR";
+ const icsContent = `${header}\r\n${body}${footer}`;
 
-        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Timetable_${userSession?.academic_batch || 'Export'}.ics`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.erpDialog?.alert("Calendar Exported!", "You can now import this .ics file into Google Calendar or Apple Calendar.");
-    };
+ const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.href = url;
+ a.download = `Timetable_${userSession?.academic_batch || 'Export'}.ics`;
+ document.body.appendChild(a);
+ a.click();
+ document.body.removeChild(a);
+ window.erpDialog?.alert("Calendar Exported!", "You can now import this .ics file into Google Calendar or Apple Calendar.");
+ };
 
  const renderTodayTimeline = () => {
  // Fallback to Monday if it's Sunday, just so the demo isn't empty, otherwise use exact today
@@ -188,16 +188,16 @@ export default function Timetable({ isEmbedded = false }) {
 
  if (loading) {
  return <div className="flex flex-col gap-6 w-full animate-pulse opacity-70 p-4 mt-6">
- <div className="h-48 bg-black/5 dark:bg-white/5 backdrop-blur-md rounded-[2rem] border border-black/5 dark:border-white/5"></div>
- <div className="h-48 bg-black/5 dark:bg-white/5 backdrop-blur-md rounded-[2rem] border border-black/5 dark:border-white/5"></div>
+ <div className="h-48 bg-themeElevated backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
+ <div className="h-48 bg-themeElevated backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
 </div>;
  }
 
  if (todayClasses.length === 0) {
  return (
- <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4 mt-8">
- <i className="fa-regular fa-calendar text-4xl mb-4 text-themeTextSec dark:text-white/50"></i>
- <p className="text-sm font-bold text-themeTextSec dark:text-white/50">No classes scheduled for today.</p>
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-themeBorder border-dashed rounded-[2rem] text-center px-4 mt-8">
+ <i className="fa-regular fa-calendar text-4xl mb-4 text-themeTextSec "></i>
+ <p className="text-sm font-bold text-themeTextSec ">No classes scheduled for today.</p>
  </div>
  );
  }
@@ -205,7 +205,7 @@ export default function Timetable({ isEmbedded = false }) {
  return (
  <div className="flex flex-col relative py-4">
  <div className="absolute left-[72px] right-0 h-px bg-themeAccent z-10 flex items-center top-[30%] opacity-50">
- <div className="absolute -left-16 text-[10px] font-black tracking-widest text-[var(--primary-color)] bg-white/50 dark:bg-transparent bg-transparent pr-2">
+ <div className="absolute -left-16 text-[10px] font-black tracking-widest text-[var(--primary-color)] bg-themePanel/50 dark:bg-transparent bg-transparent pr-2">
  {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
  </div>
  <div className="w-1.5 h-1.5 rounded-full bg-themeAccent -ml-1"></div>
@@ -219,29 +219,29 @@ export default function Timetable({ isEmbedded = false }) {
  return (
  <div key={lec.id} className={`flex gap-6 relative group ${isPast ? 'opacity-40 grayscale-[50%]' : ''}`}>
  <div className="w-16 flex flex-col items-end shrink-0 pt-4">
- <span className="text-[14px] font-medium text-themeText dark:text-white">{lec.time}</span>
- <span className="text-[9px] font-bold text-themeTextSec dark:text-white/50">{lec.endTime}</span>
+ <span className="text-[14px] font-medium text-themeText ">{lec.time}</span>
+ <span className="text-[9px] font-bold text-themeTextSec ">{lec.endTime}</span>
  </div>
  
  <div className="relative w-px bg-themeBorder flex-col flex items-center">
- <div className={`w-3 h-3 rounded-full border-[3px] border-themeBorder dark:border-white/5App z-10 mt-4 transition-colors ${isCurrent ? c.solid + ' animate-pulse' : 'bg-themeBorderStrong group-hover:' + c.solid}`}></div>
+ <div className={`w-3 h-3 rounded-full border-[3px] border-themeBorder App z-10 mt-4 transition-colors ${isCurrent ? c.solid + ' animate-pulse' : 'bg-themeBorderStrong group-hover:' + c.solid}`}></div>
  </div>
 
  <div className="flex-1 pb-8 pt-2">
  <div 
  onClick={() => setSelectedLecture(lec)}
- className={`w-full rounded-3xl p-6 border transition-all cursor-pointer shadow-sm ${isCurrent ? `${c.bg} ${c.border} scale-[1.02] shadow-md` : 'bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] border border-black/5 dark:border-white/10 hover:border-black/10 dark:hover:border-white/20 hover:-translate-y-0.5 hover:shadow-md'}`}
+ className={`w-full rounded-3xl p-6 border transition-all cursor-pointer shadow-sm ${isCurrent ? `${c.bg} ${c.border} scale-[1.02] shadow-md` : 'bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] border border-themeBorder hover:border-themeAccent/30 hover:-translate-y-0.5 hover:shadow-md'}`}
  >
  <div className="flex justify-between items-start mb-3">
  <div className="flex items-center gap-2">
  <div className={`w-2.5 h-2.5 rounded-full shadow-sm ${c.solid}`}></div>
- <h3 className={`text-[17px] font-black tracking-tight ${isCurrent ? c.text : 'text-themeText dark:text-white'}`}>{lec.subject}</h3>
+ <h3 className={`text-[17px] font-black tracking-tight ${isCurrent ? c.text : 'text-themeText '}`}>{lec.subject}</h3>
  </div>
  
  </div>
- <div className="flex items-center gap-5 mt-4 border-t border-black/5 dark:border-white/5 pt-4">
- <span className="text-[12px] font-bold text-themeTextSec dark:text-white/60 flex items-center gap-1.5"><i className="fa-regular fa-user opacity-70"></i> {lec.faculty}</span>
- <span className="text-[12px] font-bold text-themeTextSec dark:text-white/60 flex items-center gap-1.5"><i className="fa-regular fa-clock opacity-70"></i> 60m</span>
+ <div className="flex items-center gap-5 mt-4 border-t border-themeBorder pt-4">
+ <span className="text-[12px] font-bold text-themeTextSec /60 flex items-center gap-1.5"><i className="fa-regular fa-user opacity-70"></i> {lec.faculty}</span>
+ <span className="text-[12px] font-bold text-themeTextSec /60 flex items-center gap-1.5"><i className="fa-regular fa-clock opacity-70"></i> 60m</span>
  </div>
  </div>
  </div>
@@ -270,7 +270,7 @@ export default function Timetable({ isEmbedded = false }) {
  return (
  <div className="flex flex-col gap-8 animate-fade-in w-full">
  <div>
- <h3 className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-4">Enrolled Subjects Overview</h3>
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-4">Enrolled Subjects Overview</h3>
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
  {uniqueSubjects.map((s, i) => (
  <SubjectFlipCard 
@@ -285,13 +285,13 @@ export default function Timetable({ isEmbedded = false }) {
  </div>
  {loading ? (
  <div className="flex flex-col gap-6 w-full animate-pulse opacity-70 p-4 mt-6">
- <div className="h-48 bg-black/5 dark:bg-white/5 backdrop-blur-md rounded-[2rem] border border-black/5 dark:border-white/5"></div>
- <div className="h-48 bg-black/5 dark:bg-white/5 backdrop-blur-md rounded-[2rem] border border-black/5 dark:border-white/5"></div>
+ <div className="h-48 bg-themeElevated backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
+ <div className="h-48 bg-themeElevated backdrop-blur-md rounded-[2rem] border border-themeBorder "></div>
 </div>
  ) : schedule.length === 0 ? (
- <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-calendar-xmark text-4xl mb-4 text-themeTextSec dark:text-white/50"></i>
- <p className="text-sm font-bold text-themeTextSec dark:text-white/50">No timetable published for your batch yet.</p>
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-themeBorder border-dashed rounded-[2rem] text-center px-4">
+ <i className="fa-solid fa-calendar-xmark text-4xl mb-4 text-themeTextSec "></i>
+ <p className="text-sm font-bold text-themeTextSec ">No timetable published for your batch yet.</p>
  </div>
  ) : (
  <WeeklyList 
@@ -306,28 +306,28 @@ export default function Timetable({ isEmbedded = false }) {
 
  const renderCalendar = () => (
  <div className="flex flex-col gap-4 animate-fade-in">
- <div className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-6 flex items-center justify-between">
+ <div className="bg-themePanel/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-6 flex items-center justify-between">
  <div>
- <h3 className="text-lg font-semibold tracking-tight text-themeText dark:text-white tracking-tight">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
- <p className="text-xs font-bold text-themeTextSec dark:text-white/50">Academic Calendar</p>
+ <h3 className="text-lg font-semibold tracking-tight text-themeText tracking-tight">{new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}</h3>
+ <p className="text-xs font-bold text-themeTextSec ">Academic Calendar</p>
  </div>
  <div className="flex gap-2">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText dark:text-white hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-left text-xs"></i></button>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeText dark:text-white hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-right text-xs"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-themePanel/10 backdrop-blur-[80px] border border-white/20 text-themeText hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-left text-xs"></i></button>
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="w-8 h-8 rounded-full bg-themePanel/10 backdrop-blur-[80px] border border-white/20 text-themeText hover:bg-themeBorder transition-colors"><i className="fa-solid fa-chevron-right text-xs"></i></button>
  </div>
  </div>
 
  <div className="grid gap-4">
- <div className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-5 flex items-center gap-6">
+ <div className="bg-themePanel/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-5 flex items-center gap-6">
  <div className="w-16 h-16 rounded-xl bg-purple-500/10 border border-purple-500/20 flex flex-col items-center justify-center shrink-0">
  <span className="text-[14px] font-medium tracking-normal text-purple-500">Aug</span>
  <span className="text-xl font-semibold tracking-tight text-purple-500">19</span>
  </div>
  <div className="flex-1">
- <h4 className="text-base font-black text-themeText dark:text-white">CAT II Examinations</h4>
- <p className="text-xs font-bold text-themeTextSec dark:text-white/50 mt-1">Continuous Assessment Test II begins for all semesters.</p>
+ <h4 className="text-base font-black text-themeText ">CAT II Examinations</h4>
+ <p className="text-xs font-bold text-themeTextSec mt-1">Continuous Assessment Test II begins for all semesters.</p>
  </div>
- <span className="px-3 py-1 rounded-full text-[13px] font-medium bg-white/10 backdrop-blur-[80px] border border-white/20 text-themeTextSec dark:text-white/50 border border-themeBorder dark:border-white/5">Exam</span>
+ <span className="px-3 py-1 rounded-full text-[13px] font-medium bg-themePanel/10 backdrop-blur-[80px] border border-white/20 text-themeTextSec border border-themeBorder ">Exam</span>
  </div>
  </div>
  </div>
@@ -345,12 +345,12 @@ export default function Timetable({ isEmbedded = false }) {
  <div className={`absolute top-0 right-0 w-48 h-48 ${c.solid} opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
  <div className="flex justify-between items-start mb-6 relative z-10">
  <span className={`px-2 py-1 rounded-full text-[12px] font-medium bg-transparent/80 backdrop-blur-md ${c.text} border ${c.border}`}>{selectedLecture.day}, {selectedLecture.time} - {selectedLecture.endTime}</span>
- <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-gray-50 dark:bg-black/20 text-themeText dark:text-white flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-themeApp /20 text-themeText flex items-center justify-center transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
  <h2 className={`text-2xl font-semibold tracking-tight tracking-tight mb-2 ${c.text} relative z-10`}>{selectedLecture.subject}</h2>
- <div className="flex items-center gap-4 text-xs font-bold text-themeTextSec dark:text-white/50 relative z-10">
+ <div className="flex items-center gap-4 text-xs font-bold text-themeTextSec relative z-10">
  <span className="flex items-center gap-1.5"><i className="fa-regular fa-user"></i> {selectedLecture.faculty}</span>
  
  </div>
@@ -358,30 +358,30 @@ export default function Timetable({ isEmbedded = false }) {
 
  <div className="overflow-y-auto p-6 flex flex-col gap-8 custom-scrollbar">
  <div className="grid grid-cols-2 gap-3">
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeBorder dark:border-white/5Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText dark:text-white transition">
- <i className="fa-solid fa-book-open text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Syllabus
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-themePanel/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeBorder Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
+ <i className="fa-solid fa-book-open text-[var(--primary-color)] bg-themePanel/50 dark:bg-transparent"></i> Syllabus
  </button>
- <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeBorder dark:border-white/5Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText dark:text-white transition">
- <i className="fa-solid fa-folder-open text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Material
+ <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.erpDialog?.alert("Development in Progress: This module is scheduled for Phase 2 deployment."); }} className="bg-themePanel/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] hover:border-themeBorder Accent py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-themeText transition">
+ <i className="fa-solid fa-folder-open text-[var(--primary-color)] bg-themePanel/50 dark:bg-transparent"></i> Material
  </button>
  </div>
 
  <div>
- <h3 className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-4">Subject Workspace</h3>
- <div className="bg-white/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-4 flex justify-between items-center">
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-4">Subject Workspace</h3>
+ <div className="bg-themePanel/10 backdrop-blur-[80px] border border-white/20 rounded-[2rem] rounded-2xl p-4 flex justify-between items-center">
  <div className="flex flex-col gap-1">
- <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Credits</span>
- <span className="text-xl font-semibold tracking-tight text-themeText dark:text-white">{selectedLecture.credits || 4}</span>
+ <span className="text-[13px] font-medium text-themeTextSec ">Credits</span>
+ <span className="text-xl font-semibold tracking-tight text-themeText ">{selectedLecture.credits || 4}</span>
  </div>
  <div className="w-px h-8 bg-themeBorderStrong"></div>
  <div className="flex flex-col gap-1 items-center">
- <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Attendance</span>
+ <span className="text-[13px] font-medium text-themeTextSec ">Attendance</span>
  <span className="text-xl font-semibold tracking-tight text-emerald-500">--</span>
  </div>
  <div className="w-px h-8 bg-themeBorderStrong"></div>
  <div className="flex flex-col gap-1 items-end">
- <span className="text-[13px] font-medium text-themeTextSec dark:text-white/50">Today</span>
- <span className="text-[15px] font-semibold text-themeText dark:text-white">Module 1</span>
+ <span className="text-[13px] font-medium text-themeTextSec ">Today</span>
+ <span className="text-[15px] font-semibold text-themeText ">Module 1</span>
  </div>
  </div>
  </div>
@@ -392,7 +392,7 @@ export default function Timetable({ isEmbedded = false }) {
  };
 
  return (
- <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText dark:text-white" : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText " : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-8 lg:gap-12 ${!isEmbedded ? "p-4 sm:p-6 lg:p-10 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  <PageHeader 
  icon="fa-solid fa-calendar-days" 
@@ -400,12 +400,12 @@ export default function Timetable({ isEmbedded = false }) {
  subtitle="Your official schedule and subject workspaces." 
  isEmbedded={isEmbedded}
  rightContent={
- <div className="flex bg-black/[0.04] dark:bg-white/[0.04] p-1.5 rounded-2xl border border-black/5 dark:border-white/5 overflow-x-auto no-scrollbar w-fit gap-1">
+ <div className="flex bg-black/[0.04] dark:bg-themePanel/[0.04] p-1.5 rounded-2xl border border-themeBorder overflow-x-auto no-scrollbar w-fit gap-1">
  {['Today', 'Week'].map(tab => (
  <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
- className={`min-w-[110px] px-6 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === tab.toLowerCase() ? "bg-white dark:bg-themeElevated shadow-sm border border-black/5 dark:border-white/5 text-themeText dark:text-white" : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-black/5 dark:hover:bg-white/10"}`}
+ className={`min-w-[110px] px-6 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === tab.toLowerCase() ? "bg-themePanel dark:bg-themeElevated shadow-sm border border-themeBorder text-themeText " : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-themeElevated "}`}
  >
  {tab}
  </button>
@@ -420,68 +420,68 @@ export default function Timetable({ isEmbedded = false }) {
  {activeTab === 'week' && (
  <>
  {renderWeeklyGrid()}
- <div className="lg:hidden w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4 mt-8">
- <i className="fa-solid fa-desktop text-3xl text-themeTextSec dark:text-white/50 mb-4"></i>
- <h3 className="text-[15px] font-semibold text-themeText dark:text-white mb-1">Desktop Recommended</h3>
- <p className="text-xs font-bold text-themeTextSec dark:text-white/50">The weekly timetable chart requires a larger screen. Please use a tablet or desktop, or switch to the 'Today' timeline view.</p>
+ <div className="lg:hidden w-full py-20 flex flex-col items-center justify-center bg-transparent border border-themeBorder border-dashed rounded-[2rem] text-center px-4 mt-8">
+ <i className="fa-solid fa-desktop text-3xl text-themeTextSec mb-4"></i>
+ <h3 className="text-[15px] font-semibold text-themeText mb-1">Desktop Recommended</h3>
+ <p className="text-xs font-bold text-themeTextSec ">The weekly timetable chart requires a larger screen. Please use a tablet or desktop, or switch to the 'Today' timeline view.</p>
  </div>
  </>
  )}
  {activeTab === 'calendar' && renderCalendar()}
  {activeTab === 'changes' && (
- <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-code-compare text-4xl mb-4 text-themeTextSec dark:text-white/50"></i>
- <p className="text-sm font-bold text-themeTextSec dark:text-white/50">No recent timetable changes.</p>
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-themeBorder border-dashed rounded-[2rem] text-center px-4">
+ <i className="fa-solid fa-code-compare text-4xl mb-4 text-themeTextSec "></i>
+ <p className="text-sm font-bold text-themeTextSec ">No recent timetable changes.</p>
  </div>
  )}
  </div>
 
  <div className="w-full lg:w-80 shrink-0 flex flex-col gap-6 sticky top-32">
- <div className="bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] rounded-[2rem] border border-black/5 dark:border-white/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
+ <div className="bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] rounded-[2rem] border border-themeBorder p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
  <div className="absolute -right-12 -top-12 w-32 h-32 bg-themeAccent/10 rounded-full blur-3xl group-hover:bg-themeAccent/20 transition-colors"></div>
- <h3 className="text-[13px] font-bold text-themeTextSec dark:text-white/50 mb-4">Daily Academic Pulse</h3>
+ <h3 className="text-[13px] font-bold text-themeTextSec mb-4">Daily Academic Pulse</h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="flex flex-col gap-1">
  {(() => {
-   const dMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
-   const todayCount = schedule.filter(c => c.day === dMap[new Date().getDay()]).length;
-   return <span className="text-3xl font-semibold tracking-tight text-themeText dark:text-white">{todayCount}</span>;
+ const dMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
+ const todayCount = schedule.filter(c => c.day === dMap[new Date().getDay()]).length;
+ return <span className="text-3xl font-semibold tracking-tight text-themeText ">{todayCount}</span>;
  })()}
- <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Today's Classes</span>
+ <span className="text-[12px] font-medium text-themeTextSec ">Today's Classes</span>
  </div>
  <div className="flex flex-col gap-1">
  <span className="text-3xl font-semibold tracking-tight text-emerald-500">{schedule.length}</span>
- <span className="text-[12px] font-medium text-themeTextSec dark:text-white/50">Weekly Total</span>
+ <span className="text-[12px] font-medium text-themeTextSec ">Weekly Total</span>
  </div>
- <div className="col-span-2 pt-4 border-t border-themeBorder dark:border-white/5 mt-2">
- <p className="text-[13px] font-medium text-themeTextSec dark:text-white/50 mb-2">Next Up</p>
+ <div className="col-span-2 pt-4 border-t border-themeBorder mt-2">
+ <p className="text-[13px] font-medium text-themeTextSec mb-2">Next Up</p>
  {(() => {
-   const dMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
-   const todayName = dMap[new Date().getDay()];
-   const upcoming = schedule.find(s => s.day === todayName && s.status === 'upcoming');
-   return upcoming ? (
+ const dMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' };
+ const todayName = dMap[new Date().getDay()];
+ const upcoming = schedule.find(s => s.day === todayName && s.status === 'upcoming');
+ return upcoming ? (
  <div className="flex items-center gap-3">
  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
  <div>
- <p className="text-[15px] font-semibold text-themeText dark:text-white">{upcoming.subject}</p>
- <p className="text-[10px] font-bold text-themeTextSec dark:text-white/50">{upcoming.time}</p>
+ <p className="text-[15px] font-semibold text-themeText ">{upcoming.subject}</p>
+ <p className="text-[10px] font-bold text-themeTextSec ">{upcoming.time}</p>
  </div>
  </div>
-   ) : (
- <p className="text-xs font-bold text-themeTextSec dark:text-white/50">No upcoming classes today.</p>
-   );
+ ) : (
+ <p className="text-xs font-bold text-themeTextSec ">No upcoming classes today.</p>
+ );
  })()}
  </div>
  </div>
  </div>
 
- <div className="bg-white/60 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] rounded-[2rem] border border-black/5 dark:border-white/10 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden">
- <h3 className="text-[13px] font-bold text-themeTextSec dark:text-white/50 mb-4">Personal Calendar Sync</h3>
- <p className="text-xs font-semibold text-themeTextSec dark:text-white/50 mb-4 leading-relaxed">
+ <div className="bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] rounded-[2rem] border border-themeBorder p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden">
+ <h3 className="text-[13px] font-bold text-themeTextSec mb-4">Personal Calendar Sync</h3>
+ <p className="text-xs font-semibold text-themeTextSec mb-4 leading-relaxed">
  Sync official updates, extra classes, and holidays directly to your Apple or Google Calendar.
  </p>
- <button type="button" onClick={exportCalendar} className="w-full py-4 bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 hover:bg-black/10 dark:hover:bg-white/20 text-themeText dark:text-themeText text-[13px] font-bold tracking-tight rounded-2xl transition-all flex items-center justify-center gap-2 mt-2">
- <i className="fa-regular fa-calendar-plus text-[var(--primary-color)] bg-white/50 dark:bg-transparent"></i> Export as .ICS
+ <button type="button" onClick={exportCalendar} className="w-full py-4 bg-themeElevated border border-themeBorder hover:bg-black/10 text-themeText text-[13px] font-bold tracking-tight rounded-2xl transition-all flex items-center justify-center gap-2 mt-2">
+ <i className="fa-regular fa-calendar-plus text-[var(--primary-color)] bg-themePanel/50 dark:bg-transparent"></i> Export as .ICS
  </button>
  </div>
  </div>

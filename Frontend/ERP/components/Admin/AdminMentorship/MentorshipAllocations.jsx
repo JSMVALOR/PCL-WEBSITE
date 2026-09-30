@@ -158,30 +158,30 @@ export default function MentorshipAllocations({}) {
  }
 
  if (newAllocations.length > 0) {
-    if (!(await window.erpDialog?.confirm(`Auto-allocate ${newAllocations.length} students across all available faculty?`, "Auto Allocate Engine"))) return;
+ if (!(await window.erpDialog?.confirm(`Auto-allocate ${newAllocations.length} students across all available faculty?`, "Auto Allocate Engine"))) return;
 
-    const backupFaculty = [...currentFacultyState];
-    const backupUnallocated = [...studentsToDistribute];
+ const backupFaculty = [...currentFacultyState];
+ const backupUnallocated = [...studentsToDistribute];
 
-    setFaculty(newFacultyState);
-    setUnallocatedStudents(pool);
+ setFaculty(newFacultyState);
+ setUnallocatedStudents(pool);
 
-    window.erpToast?.undoable(
-        `Auto-allocated ${newAllocations.length} students`,
-        async () => {
-            try {
-                const { error } = await supabase.from('mentorship').insert(newAllocations);
-                if (error) throw error;
-                await logAction(`Auto-allocated ${newAllocations.length} students`);
-            } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
-        },
-        () => {
-            setFaculty(backupFaculty);
-            setUnallocatedStudents(backupUnallocated);
-            window.erpToast?.show("Auto-allocation reverted.", 'success');
-        },
-        10000
-    );
+ window.erpToast?.undoable(
+ `Auto-allocated ${newAllocations.length} students`,
+ async () => {
+ try {
+ const { error } = await supabase.from('mentorship').insert(newAllocations);
+ if (error) throw error;
+ await logAction(`Auto-allocated ${newAllocations.length} students`);
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ },
+ () => {
+ setFaculty(backupFaculty);
+ setUnallocatedStudents(backupUnallocated);
+ window.erpToast?.show("Auto-allocation reverted.", 'success');
+ },
+ 10000
+ );
  }
  };
 
@@ -190,35 +190,35 @@ export default function MentorshipAllocations({}) {
  };
 
  const handleClearAll = async () => {
-    if (!(await window.erpDialog?.confirm("Are you absolutely sure you want to completely wipe all mentorship allocations? This action will affect all students.", "Nuclear Wipe"))) return;
+ if (!(await window.erpDialog?.confirm("Are you absolutely sure you want to completely wipe all mentorship allocations? This action will affect all students.", "Nuclear Wipe"))) return;
 
-    const backupFaculty = [...faculty];
-    const backupUnallocated = [...unallocatedStudents];
+ const backupFaculty = [...faculty];
+ const backupUnallocated = [...unallocatedStudents];
 
-    let allStudents = [...unallocatedStudents];
-    faculty.forEach(f => {
-        allStudents = [...allStudents, ...f.mentees];
-    });
-    const newFacultyState = faculty.map(f => ({ ...f, mentees: [] }));
-    
-    setFaculty(newFacultyState);
-    setUnallocatedStudents(allStudents);
+ let allStudents = [...unallocatedStudents];
+ faculty.forEach(f => {
+ allStudents = [...allStudents, ...f.mentees];
+ });
+ const newFacultyState = faculty.map(f => ({ ...f, mentees: [] }));
+ 
+ setFaculty(newFacultyState);
+ setUnallocatedStudents(allStudents);
 
-    window.erpToast?.undoable(
-        "All Mentorship Allocations Wiped",
-        async () => {
-            const { error: deleteError } = await supabase.from("mentorship").delete().neq('id', '00000000-0000-0000-0000-000000000000');
-            if (!deleteError) {
-                await logAction(`Cleared all mentorship allocations`);
-            }
-        },
-        () => {
-            setFaculty(backupFaculty);
-            setUnallocatedStudents(backupUnallocated);
-            window.erpToast?.show("Wipe reverted successfully.", 'success');
-        },
-        10000
-    );
+ window.erpToast?.undoable(
+ "All Mentorship Allocations Wiped",
+ async () => {
+ const { error: deleteError } = await supabase.from("mentorship").delete().neq('id', '00000000-0000-0000-0000-000000000000');
+ if (!deleteError) {
+ await logAction(`Cleared all mentorship allocations`);
+ }
+ },
+ () => {
+ setFaculty(backupFaculty);
+ setUnallocatedStudents(backupUnallocated);
+ window.erpToast?.show("Wipe reverted successfully.", 'success');
+ },
+ 10000
+ );
  };
 
  const handleRemoveStudent = async (facultyId, studentId) => {
@@ -339,28 +339,28 @@ export default function MentorshipAllocations({}) {
  return (
  <div className="flex flex-col gap-6 animate-fade-in relative pb-10">
  {isProcessing && (
- <div className="fixed bottom-6 right-6 bg-themeElevated/90 backdrop-blur-2xl px-5 py-3 rounded-full border border-black/5 dark:border-white/10 flex items-center gap-3 animate-fade-in z-50">
+ <div className="fixed bottom-6 right-6 bg-themeElevated/90 backdrop-blur-2xl px-5 py-3 rounded-full border border-themeBorder flex items-center gap-3 animate-fade-in z-50">
  <i className="fa-solid fa-circle-notch fa-spin text-themeAccent text-sm"></i>
  <span className="text-[14px] font-medium tracking-normal text-themeAccent">{actionMessage}</span>
  </div>
  )}
 
  {/* 2. CONTROL PANEL */}
- <div className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 p-3 lg:p-6 flex flex-col xl:flex-row items-center justify-between gap-3 lg:gap-6 relative overflow-hidden z-20`}>
+ <div className={`${theme.layout.panel} rounded-2xl border border-themeBorder p-3 lg:p-6 flex flex-col xl:flex-row items-center justify-between gap-3 lg:gap-6 relative overflow-hidden z-20`}>
  <div className="flex items-center justify-between xl:justify-start gap-4 w-full xl:w-auto shrink-0">
- <div className="py-3 border-b border-black/5 dark:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors flex items-center justify-between gap-4 lg:gap-6 w-full xl:w-auto">
+ <div className="py-3 border-b border-themeBorder hover:bg-black/[0.02] dark:hover:bg-themePanel/[0.02] transition-colors flex items-center justify-between gap-4 lg:gap-6 w-full xl:w-auto">
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeAccent mb-0.5">Max Capacity</p>
  <p className="text-[9px] lg:text-xs font-semibold text-themeTextSec opacity-70">Per Faculty Mentor</p>
  </div>
- <div className="flex items-center bg-themeElevated/90 backdrop-blur-2xl rounded-2xl border border-black/5 dark:border-white/10 overflow-hidden">
- <button type="button" disabled={isProcessing} onClick={() => setMaxCapacity(Math.max(1, maxCapacity - 1))} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-r border-black/5 dark:border-white/10 active:scale-95 disabled:opacity-50">
+ <div className="flex items-center bg-themeElevated/90 backdrop-blur-2xl rounded-2xl border border-themeBorder overflow-hidden">
+ <button type="button" disabled={isProcessing} onClick={() => setMaxCapacity(Math.max(1, maxCapacity - 1))} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-r border-themeBorder active:scale-95 disabled:opacity-50">
  <i className="fa-solid fa-minus text-[10px] lg:text-xs"></i>
  </button>
  <div className="w-12 h-10 lg:w-16 lg:h-12 flex items-center justify-center font-black text-themeText text-base lg:text-lg">
  {maxCapacity}
  </div>
- <button type="button" disabled={isProcessing} onClick={() => setMaxCapacity(maxCapacity + 1)} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-l border-black/5 dark:border-white/10 active:scale-95 disabled:opacity-50">
+ <button type="button" disabled={isProcessing} onClick={() => setMaxCapacity(maxCapacity + 1)} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center text-themeAccent hover:bg-neutral-800 transition-colors border-l border-themeBorder active:scale-95 disabled:opacity-50">
  <i className="fa-solid fa-plus text-[10px] lg:text-xs"></i>
  </button>
  </div>
@@ -378,17 +378,17 @@ export default function MentorshipAllocations({}) {
  <button type="button"
  onClick={() => fileInputRef.current?.click()}
  disabled={isProcessing}
- className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-blue-500/10 text-themeTextSec hover:text-blue-500 border border-themeBorder dark:border-white/5 hover:border-blue-500/30 rounded-2xl text-[9px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
+ className="col-span-1 w-full sm:w-auto px-3 lg:px-6 py-2.5 lg:py-4 bg-themeElevated/90 backdrop-blur-2xl hover:bg-blue-500/10 text-themeTextSec hover:text-blue-500 border border-themeBorder hover:border-blue-500/30 rounded-2xl text-[9px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
  >
  <i className="fa-solid fa-upload"></i> <span className="hidden sm:inline">Bulk </span>CSV
  </button>
  <HoldButton size="sm" onHold={handleClearAll} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
-                Clear All
-            </HoldButton>
+ Clear All
+ </HoldButton>
  <button type="button"
  onClick={handleAutoAllocate}
  disabled={filteredStudents.length === 0 || isProcessing}
- className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText dark:text-white rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98] disabled:cursor-not-allowed"
+ className="col-span-2 w-full sm:w-auto px-4 lg:px-6 py-3 lg:py-4 bg-indigo-500 hover:bg-indigo-600 text-themeText rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2 active:scale-[0.98] disabled:cursor-not-allowed"
  >
  <i className="fa-solid fa-wand-magic-sparkles text-sm lg:text-base"></i> Auto-Allocate View
  </button>
@@ -406,25 +406,25 @@ export default function MentorshipAllocations({}) {
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Unallocated Students</h2>
  <p className="text-[10px] font-black text-themeTextSec tracking-normal mt-1">Search & Filter</p>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black  backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-black backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder ">
  {filteredStudents.length} / {unallocatedStudents.length}
  </span>
  </div>
 
  {/* Search & Filters */}
- <div className="flex flex-col border-r border-black/5 dark:border-white/5 pr-4 last:border-0">
+ <div className="flex flex-col border-r border-themeBorder pr-4 last:border-0">
  <input 
  type="text"
  placeholder="Search Name or Reg No..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded px-3 py-2 text-xs font-bold text-themeText focus:border-indigo-500 outline-none"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder rounded px-3 py-2 text-xs font-bold text-themeText focus:border-indigo-500 outline-none"
  />
  <div className="grid grid-cols-2 gap-2">
  <select 
  value={filterProgramme}
  onChange={(e) => setFilterProgramme(e.target.value)}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded px-3 py-2 text-xs font-bold text-themeText focus:border-indigo-500 outline-none appearance-none"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder rounded px-3 py-2 text-xs font-bold text-themeText focus:border-indigo-500 outline-none appearance-none"
  >
  <option value="All">All Programmes</option>
  <option value="BA.LLB">BA.LLB</option>
@@ -434,7 +434,7 @@ export default function MentorshipAllocations({}) {
  <select 
  value={filterSemester}
  onChange={(e) => setFilterSemester(e.target.value)}
- className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded px-3 py-2 text-xs font-bold text-themeText focus:border-indigo-500 outline-none appearance-none"
+ className="w-full bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder rounded px-3 py-2 text-xs font-bold text-themeText focus:border-indigo-500 outline-none appearance-none"
  >
  <option value="All">All Semesters</option>
  <option value="1">Sem 1</option>
@@ -450,7 +450,7 @@ export default function MentorshipAllocations({}) {
  <div 
  ref={provided.innerRef}
  {...provided.droppableProps}
- className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 p-3 lg:p-4 h-[250px] lg:h-[600px] overflow-y-auto no-scrollbar flex flex-col gap-2 relative transition-colors ${snapshot.isDraggingOver ? 'bg-themeElevated/50 border-indigo-500' : ''}`}
+ className={`${theme.layout.panel} rounded-2xl border border-themeBorder p-3 lg:p-4 h-[250px] lg:h-[600px] overflow-y-auto no-scrollbar flex flex-col gap-2 relative transition-colors ${snapshot.isDraggingOver ? 'bg-themeElevated/50 border-indigo-500' : ''}`}
  >
  {isLoading ? (
  <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 opacity-60">
@@ -471,16 +471,16 @@ export default function MentorshipAllocations({}) {
  ref={provided.innerRef}
  {...provided.draggableProps}
  {...provided.dragHandleProps}
- className={`py-4 border-b-2 flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ className={`py-4 border-b-2 flex flex-col group transition ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder hover:border-themeBorder '}`}
  >
  <div className="flex items-start justify-between mb-2">
  <div className="flex items-center gap-2 min-w-0 pr-2">
  {student.profile_picture_url ? (
-     <img src={student.profile_picture_url} alt={student.name} className="w-8 h-8 rounded-xl object-cover shrink-0 border border-black/5 dark:border-white/5" />
+ <img src={student.profile_picture_url} alt={student.name} className="w-8 h-8 rounded-xl object-cover shrink-0 border border-themeBorder " />
  ) : (
-     <div className="w-8 h-8 rounded-xl bg-themeText/5 text-themeText flex items-center justify-center font-bold text-[10px] shrink-0 border border-black/5 dark:border-white/5">
-         {student.name.charAt(0)}
-     </div>
+ <div className="w-8 h-8 rounded-xl bg-themeText/5 text-themeText flex items-center justify-center font-bold text-[10px] shrink-0 border border-themeBorder ">
+ {student.name.charAt(0)}
+ </div>
  )}
  <div>
  <p className="text-xs lg:text-[15px] font-semibold text-themeText mb-0.5 truncate">{student.name}</p>
@@ -490,9 +490,9 @@ export default function MentorshipAllocations({}) {
  <i className="fa-solid fa-grip-vertical text-themeTextSec opacity-30 group-hover:opacity-100 transition-opacity mt-1"></i>
  </div>
  <div className="flex flex-wrap gap-1.5">
- <span className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">{student.programme}</span>
- <span className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sem {student.semester}</span>
- <span className="bg-black/5 dark:bg-white/5 px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sec {student.section}</span>
+ <span className="bg-themeElevated px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">{student.programme}</span>
+ <span className="bg-themeElevated px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sem {student.semester}</span>
+ <span className="bg-themeElevated px-1.5 py-0.5 rounded text-[8px] font-black uppercase text-themeTextSec tracking-widest">Sec {student.section}</span>
  </div>
  </div>
  )}
@@ -512,7 +512,7 @@ export default function MentorshipAllocations({}) {
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Faculty Mentors</h2>
  <p className="text-[10px] font-black text-themeTextSec tracking-normal mt-1">Drag & Drop Allocation</p>
  </div>
- <span className="text-[9px] lg:text-[10px] font-black  backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder dark:border-white/5">
+ <span className="text-[9px] lg:text-[10px] font-black backdrop-blur-2xl text-themeTextSec px-3 py-1.5 rounded-lg shadow-none dark:shadow-none border border-themeBorder ">
  {faculty.length} Mentors Available
  </span>
  </div>
@@ -520,8 +520,8 @@ export default function MentorshipAllocations({}) {
  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
  {isLoading ? (
  Array(3).fill(0).map((_, i) => (
- <div key={i} className={`${theme.layout.panel} rounded-2xl border border-themeBorder dark:border-white/5 flex flex-col overflow-hidden h-[300px] animate-pulse`}>
- <div className="p-4 lg:p-5 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5  backdrop-blur-2xl h-32"></div>
+ <div key={i} className={`${theme.layout.panel} rounded-2xl border border-themeBorder flex flex-col overflow-hidden h-[300px] animate-pulse`}>
+ <div className="p-4 lg:p-5 border-b-[length:var(--border-width)] border-themeBorder backdrop-blur-2xl h-32"></div>
  <div className="p-3 lg:p-4 flex flex-col gap-2 flex-1"></div>
  </div>
  ))
@@ -531,25 +531,25 @@ export default function MentorshipAllocations({}) {
  const loadPercentage = Math.min((currentLoad / maxCapacity) * 100, 100);
 
  return (
- <div key={fac.id} className={`${theme.layout.panel} rounded-2xl border flex flex-col overflow-hidden transition duration-300 ${isFull ? 'border-black/5 dark:border-white/10' : 'border-themeBorder dark:border-white/5'}`}>
+ <div key={fac.id} className={`${theme.layout.panel} rounded-2xl border flex flex-col overflow-hidden transition duration-300 ${isFull ? 'border-themeBorder ' : 'border-themeBorder '}`}>
 
- <div className="p-4 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5  backdrop-blur-2xl shrink-0">
+ <div className="p-4 border-b-[length:var(--border-width)] border-themeBorder backdrop-blur-2xl shrink-0">
  <div className="flex justify-between items-start mb-3">
  {fac.profile_picture_url ? (
-     <img src={fac.profile_picture_url} alt={fac.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 border border-black/5 dark:border-white/5" />
+ <img src={fac.profile_picture_url} alt={fac.name} className="w-10 h-10 rounded-2xl object-cover shrink-0 border border-themeBorder " />
  ) : (
-     <div className="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center font-black text-base border border-indigo-500/20 shrink-0">
-         {fac.name.charAt(0)}
-     </div>
+ <div className="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-2xl flex items-center justify-center font-black text-base border border-indigo-500/20 shrink-0">
+ {fac.name.charAt(0)}
+ </div>
  )}
- <span className={`text-[12px] font-medium px-2.5 py-1 rounded-md border ${isFull ? 'bg-themeElevated/90 backdrop-blur-2xl text-indigo-500 border-indigo-500/30' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-black/5 dark:border-white/10'}`}>
+ <span className={`text-[12px] font-medium px-2.5 py-1 rounded-md border ${isFull ? 'bg-themeElevated/90 backdrop-blur-2xl text-indigo-500 border-indigo-500/30' : 'bg-themeElevated/90 backdrop-blur-2xl text-themeTextSec border-themeBorder '}`}>
  {currentLoad} / {maxCapacity}
  </span>
  </div>
  <h3 className="text-[15px] font-semibold text-themeText truncate mb-0.5">{fac.name}</h3>
  <p className="text-[9px] font-bold text-themeTextSec opacity-70 tracking-normal truncate">{fac.department}</p>
 
- <div className="w-full h-1.5 bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-full mt-4 overflow-hidden">
+ <div className="w-full h-1.5 bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder rounded-full mt-4 overflow-hidden">
  <div
  className={`h-full rounded-full transition duration-500 ${isFull ? 'bg-indigo-500' : 'bg-emerald-500'}`}
  style={{ width: `${loadPercentage}%` }}
@@ -576,15 +576,15 @@ export default function MentorshipAllocations({}) {
  ref={provided.innerRef}
  {...provided.draggableProps}
  {...provided.dragHandleProps}
- className={`py-3 border-b border-black/5 dark:border-white/5 flex items-center justify-between group transition hover:bg-black/[0.02] dark:hover:bg-white/[0.02] ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder dark:border-white/5 hover:border-black/5 dark:border-white/10'}`}
+ className={`py-3 border-b border-themeBorder flex items-center justify-between group transition hover:bg-black/[0.02] dark:hover:bg-themePanel/[0.02] ${snapshot.isDragging ? 'border-indigo-500 bg-themeElevated/90 backdrop-blur-2xl z-50 scale-105' : 'border-themeBorder hover:border-themeBorder '}`}
  >
  <div className="flex items-center gap-2 min-w-0 pr-2">
  {student.profile_picture_url ? (
-     <img src={student.profile_picture_url} alt={student.name} className="w-8 h-8 rounded-[10px] object-cover shrink-0 border border-black/5 dark:border-white/5" />
+ <img src={student.profile_picture_url} alt={student.name} className="w-8 h-8 rounded-[10px] object-cover shrink-0 border border-themeBorder " />
  ) : (
-     <div className="w-8 h-8 rounded-[10px] bg-themeText/5 text-themeText flex items-center justify-center font-bold text-[9px] shrink-0 border border-black/5 dark:border-white/5">
-         {student.name.charAt(0)}
-     </div>
+ <div className="w-8 h-8 rounded-[10px] bg-themeText/5 text-themeText flex items-center justify-center font-bold text-[9px] shrink-0 border border-themeBorder ">
+ {student.name.charAt(0)}
+ </div>
  )}
  <div>
  <p className="text-[10px] lg:text-[14px] font-medium text-themeText truncate">{student.name}</p>
@@ -596,7 +596,7 @@ export default function MentorshipAllocations({}) {
  <button type="button"
  onClick={() => handleRemoveStudent(fac.id, student.id)}
  disabled={isProcessing}
- className="w-6 h-6 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-black/5 dark:border-white/10 text-themeTextSec opacity-70 hover:text-rose-500 hover:border-black/5 dark:border-white/10 hover:bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center transition-colors lg:opacity-0 lg:group-hover:opacity-100 shrink-0 disabled:opacity-50"
+ className="w-6 h-6 rounded-lg bg-themeElevated/90 backdrop-blur-2xl border border-themeBorder text-themeTextSec opacity-70 hover:text-rose-500 hover:border-themeBorder hover:bg-themeElevated/90 backdrop-blur-2xl flex items-center justify-center transition-colors lg:opacity-0 lg:group-hover:opacity-100 shrink-0 disabled:opacity-50"
  title="Remove from Mentor"
  >
  <i className="fa-solid fa-xmark text-[10px]"></i>

@@ -23,12 +23,12 @@ export default function AdminNotices({ isHubView = false }) {
  const [isPublishing, setIsPublishing] = useState(false);
  
  // Broadcast Form
-  const [title, setTitle] = useState("");
+ const [title, setTitle] = useState("");
  const [content, setContent] = useState("");
  const [category, setCategory] = useState("General");
  const [priority, setPriority] = useState("normal");
  const [targetAudience, setTargetAudience] = useState(['All']);
-  const [externalLink, setExternalLink] = useState("");
+ const [externalLink, setExternalLink] = useState("");
  const [isPublicWebsite, setIsPublicWebsite] = useState(false);
 
  // --- EVENTS STATE ---
@@ -79,7 +79,7 @@ export default function AdminNotices({ isHubView = false }) {
  setIsPublishing(true);
  try {
  const { error } = await supabase.from('notices').insert([{
-            
+ 
  title,
  content,
  category,
@@ -88,69 +88,69 @@ export default function AdminNotices({ isHubView = false }) {
  author_id: userSession?.db_id,
  external_link: externalLink || null
  ,
-            notice_id: `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`,
-            author_name: userSession?.full_name || userSession?.name || 'Admin'
-        }]);
+ notice_id: `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`,
+ author_name: userSession?.full_name || userSession?.name || 'Admin'
+ }]);
 
  if (error) throw error;
  
  if (isPublicWebsite) {
-            try {
-                await supabase.from('admin_notices').insert([{
-                    
-        title,
-        content,
-        category: 'Notice',
-        is_public: true,
-        external_link: externalLink || null
-    
-                }]);
-            } catch(e) { console.error("Could not insert to admin_notices", e); }
-        }
+ try {
+ await supabase.from('admin_notices').insert([{
+ 
+ title,
+ content,
+ category: 'Notice',
+ is_public: true,
+ external_link: externalLink || null
+ 
+ }]);
+ } catch(e) { console.error("Could not insert to admin_notices", e); }
+ }
 
  
 // NOTIFICATIONS INJECTION
 try {
-    const { data: users } = await supabase.from('profiles').select('id, erp_id, role, academic_batch');
-    if (users && users.length > 0) {
-        let recipientIds = [];
-        if (targetAudience.includes('All')) {
-            recipientIds = users.map(u => u.id);
-        } else {
-            users.forEach(u => {
-                if (targetAudience.includes('Student') && u.role === 'student') recipientIds.push(u.id);
-                else if (targetAudience.includes('Faculty') && u.role === 'faculty') recipientIds.push(u.id);
-                else if (u.academic_batch && targetAudience.includes(u.academic_batch)) recipientIds.push(u.id);
-                else if (targetAudience.includes(u.erp_id)) recipientIds.push(u.id);
-            });
-        }
-        
-        // Deduplicate
-        recipientIds = [...new Set(recipientIds)];
-        
-        if (recipientIds.length > 0) {
-            const notifs = recipientIds.map(rid => ({
-                recipient_id: rid,
-                title: 'New Broadcast: ' + title,
-                message: content.substring(0, 50) + '...',
-                type: 'notice'
-            }));
-            await supabase.from('notifications').insert(notifs);
-        }
-    }
+ const { data: users } = await supabase.from('profiles').select('id, erp_id, role, academic_batch');
+ if (users && users.length > 0) {
+ let recipientIds = [];
+ if (targetAudience.includes('All')) {
+ recipientIds = users.map(u => u.id);
+ } else {
+ users.forEach(u => {
+ if (targetAudience.includes('Student') && u.role === 'student') recipientIds.push(u.id);
+ else if (targetAudience.includes('Faculty') && u.role === 'faculty') recipientIds.push(u.id);
+ else if (u.academic_batch && targetAudience.includes(u.academic_batch)) recipientIds.push(u.id);
+ else if (targetAudience.includes(u.erp_id)) recipientIds.push(u.id);
+ });
+ }
+ 
+ // Deduplicate
+ recipientIds = [...new Set(recipientIds)];
+ 
+ if (recipientIds.length > 0) {
+ const notifs = recipientIds.map(rid => ({
+ recipient_id: rid,
+ title: 'New Broadcast: ' + title,
+ message: content.substring(0, 50) + '...',
+ type: 'notice'
+ }));
+ await supabase.from('notifications').insert(notifs);
+ }
+ }
 } catch(e) { console.error('Failed to send real-time notifications', e); }
 
  // NOTIFICATIONS
  if (priority === 'urgent' || priority === 'high') {
-    // We send a mock general broadcast email to a representative group
-    // In production, we'd query targetAudience users and batch send.
-    sendSystemEmail('GENERAL_BROADCAST', {
-        to_email: 'all_students@prudentiacollege.edu',
-        subject: `[${priority.toUpperCase()}] ${title}`,
-        title: title,
-        content: content,
-        priority: priority
-    }).catch(e => console.error("Email error:", e));
+ // We send a mock general broadcast email to a representative group
+ // In production, we'd query targetAudience users and batch send.
+ sendSystemEmail('GENERAL_BROADCAST', {
+ to_email: 'all_students@prudentiacollege.edu',
+ subject: `[${priority.toUpperCase()}] ${title}`,
+ title: title,
+ content: content,
+ priority: priority
+ }).catch(e => console.error("Email error:", e));
  }
 
  setTitle("");
@@ -170,23 +170,23 @@ try {
  setIsScheduling(true);
  try {
  const { error } = await supabase.from('academic_calendar').insert([{
-        title: eventTitle,
-        start_date: eventStartDate,
-        end_date: eventEndDate || eventStartDate,
-        type: eventType,
-        description: eventDesc
-      }]);
+ title: eventTitle,
+ start_date: eventStartDate,
+ end_date: eventEndDate || eventStartDate,
+ type: eventType,
+ description: eventDesc
+ }]);
 
-      if (isPublic) {
-          await supabase.from('admin_events').insert([{
-              title: eventTitle,
-              event_date: eventStartDate,
-              description: eventDesc,
-              event_type: eventType,
-              is_active: true,
-              is_public: true
-          }]);
-      }
+ if (isPublic) {
+ await supabase.from('admin_events').insert([{
+ title: eventTitle,
+ event_date: eventStartDate,
+ description: eventDesc,
+ event_type: eventType,
+ is_active: true,
+ is_public: true
+ }]);
+ }
 
  if (error) throw error;
  
@@ -275,7 +275,7 @@ try {
  <span className="text-[10px] font-bold text-themeTextSec">Make this broadcast visible on the main website</span>
  </div>
  <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublicWebsite ? 'bg-themeAccent' : 'bg-themeBorder'}`}>
- <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isPublicWebsite ? 'translate-x-4' : 'translate-x-0'}`}></div>
+ <div className={`w-4 h-4 bg-themePanel rounded-full transition-transform ${isPublicWebsite ? 'translate-x-4' : 'translate-x-0'}`}></div>
  </div>
  <input type="checkbox" checked={isPublicWebsite} onChange={e => setIsPublicWebsite(e.target.checked)} className="hidden" />
  </label>
@@ -306,7 +306,7 @@ try {
  </div>
  <h4 className="text-lg font-semibold tracking-tight text-themeText">{n.title}</h4>
  <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
- <div className="flex gap-4 mt-2 pt-3 border-t border-themeBorder dark:border-white/5">
+ <div className="flex gap-4 mt-2 pt-3 border-t border-themeBorder ">
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-regular fa-clock mr-1"></i> {new Date(n.created_at).toLocaleString()}</span>
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {Array.isArray(n.target_audience) && n.target_audience.join ? n.target_audience.join(', ') : typeof n.target_audience === 'string' ? n.target_audience : 'Unknown'}</span>
  
@@ -321,7 +321,7 @@ try {
  const renderEventsTab = () => (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
  {/* Form */}
- <div className="lg:col-span-5 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl p-6 h-max">
+ <div className="lg:col-span-5 bg-themePanel/70 dark:bg-themePanel/[0.03] backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/[0.08] shadow-none rounded-2xl p-6 h-max">
  <h2 className="text-xl font-semibold tracking-tight text-themeText mb-6 flex items-center gap-2">
  <i className="fa-solid fa-calendar-plus text-themeAccent"></i> Schedule Event
  </h2>
@@ -350,33 +350,33 @@ try {
  </div>
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-2 block">Description</label>
- <textarea value={eventDesc} onChange={e => setEventDesc(e.target.value)} required rows="3" className="w-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Short event description..."></textarea>
+ <textarea value={eventDesc} onChange={e => setEventDesc(e.target.value)} required rows="3" className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none resize-none" placeholder="Short event description..."></textarea>
  </div>
  
  {/* Public Event Toggle */}
- <div className="flex flex-col gap-3 p-4 bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-xl">
-    <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsPublic(!isPublic)}>
-        <div>
-            <h4 className="text-sm font-black text-themeText tracking-tight">Publish to Website</h4>
-            <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Make event visible publicly</p>
-        </div>
-        <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-themeBorder'}`}>
-            <div className={`w-4 h-4 bg-white rounded-full transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0'}`}></div>
-        </div>
-    </div>
-    
-    {isPublic && (
-        <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-black/5 dark:border-white/10">
-            <div>
-                <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Location</label>
-                <input type="text" value={eventLocation} onChange={e => setEventLocation(e.target.value)} className="w-full bg-white dark:bg-themePanel border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Main Auditorium" />
-            </div>
-            <div>
-                <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Banner Image URL</label>
-                <input type="url" value={eventImageUrl} onChange={e => setEventImageUrl(e.target.value)} className="w-full bg-white dark:bg-themePanel border border-black/5 dark:border-white/10 rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
-            </div>
-        </div>
-    )}
+ <div className="flex flex-col gap-3 p-4 bg-themeElevated border border-themeBorder rounded-xl">
+ <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsPublic(!isPublic)}>
+ <div>
+ <h4 className="text-sm font-black text-themeText tracking-tight">Publish to Website</h4>
+ <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Make event visible publicly</p>
+ </div>
+ <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublic ? 'bg-themeAccent' : 'bg-themeBorder'}`}>
+ <div className={`w-4 h-4 bg-themePanel rounded-full transition-transform ${isPublic ? 'translate-x-4' : 'translate-x-0'}`}></div>
+ </div>
+ </div>
+ 
+ {isPublic && (
+ <div className="flex flex-col gap-3 mt-2 pt-3 border-t border-themeBorder ">
+ <div>
+ <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Location</label>
+ <input type="text" value={eventLocation} onChange={e => setEventLocation(e.target.value)} className="w-full bg-themePanel border border-themeBorder rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="e.g. Main Auditorium" />
+ </div>
+ <div>
+ <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-1.5 block">Banner Image URL</label>
+ <input type="url" value={eventImageUrl} onChange={e => setEventImageUrl(e.target.value)} className="w-full bg-themePanel border border-themeBorder rounded-lg px-3 py-2 text-xs font-bold text-themeText focus:border-themeAccent outline-none" placeholder="https://..." />
+ </div>
+ </div>
+ )}
  </div>
  <button type="submit" disabled={isScheduling} className="btn-erp disabled:cursor-not-allowed">
  {isScheduling ? 'Scheduling...' : 'Add to Calendar'}
@@ -388,7 +388,7 @@ try {
  <div className="lg:col-span-7 flex flex-col gap-4">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Upcoming Calendar</h3>
  {events.map(e => (
- <div key={e.id} className="p-6 bg-white/70 dark:bg-white/[0.03] backdrop-blur-3xl saturate-[1.8] border border-black/[0.04] dark:border-white/[0.08] shadow-none rounded-2xl flex justify-between items-center group">
+ <div key={e.id} className="p-6 bg-themePanel/70 dark:bg-themePanel/[0.03] backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/[0.08] shadow-none rounded-2xl flex justify-between items-center group">
  <div className="flex gap-4 items-center">
  <div className="w-16 h-16 rounded-xl bg-themeElevated border border-themeBorder flex flex-col items-center justify-center shrink-0">
  <span className="text-[13px] font-medium text-themeAccent">{new Date(e.start_date).toLocaleString('default', { month: 'short' })}</span>
@@ -415,18 +415,18 @@ try {
  
  {/* Header and Tabs */}
  {!isHubView && (
-    <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
-        <PageHeader 
-            icon="fa-solid fa-bullhorn" 
-            title="System Broadcast" 
-            subtitle="Publish notices & manage calendar" 
-        />
-    </div>
+ <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
+ <PageHeader 
+ icon="fa-solid fa-bullhorn" 
+ title="System Broadcast" 
+ subtitle="Publish notices & manage calendar" 
+ />
+ </div>
 )}
 
  
-    <div className={`flex flex-col gap-6 lg:gap-8 ${!isHubView && 'px-4 lg:px-8 mt-6'}`}>
-<div className="flex w-full border-b border-black/[0.04] dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6">
+ <div className={`flex flex-col gap-6 lg:gap-8 ${!isHubView && 'px-4 lg:px-8 mt-6'}`}>
+<div className="flex w-full border-b border-themeBorder dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6">
  <button type="button" onClick={() => setActiveTab('broadcast')} className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === 'broadcast' ? 'text-themeAccent border-themeAccent' : 'text-themeTextSec border-transparent hover:text-themeText'}`}>
  <i className="fa-solid fa-satellite-dish"></i> Notices
  </button>
@@ -442,7 +442,7 @@ try {
  </div>
  </div>
  
-    
-    </div>
+ 
+ </div>
  );
 }

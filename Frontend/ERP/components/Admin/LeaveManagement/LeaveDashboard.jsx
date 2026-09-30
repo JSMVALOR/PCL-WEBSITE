@@ -89,7 +89,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  ];
 
  const StatCard = ({ label, value, icon, color }) => (
- <div className={`bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 flex items-center justify-between transition hover:border-${color}-500 group relative overflow-hidden`}>
+ <div className={`bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 flex items-center justify-between transition hover:border-${color}-500 group relative overflow-hidden`}>
  {/* Background Glow on Hover */}
  <div className={`absolute inset-0 bg-gradient-to-br from-${color}-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}></div>
  
@@ -97,7 +97,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec group-hover:text-themeText transition-colors mb-1">{label}</p>
  <h3 className="text-2xl lg:text-3xl font-semibold tracking-tight text-themeText">{isLoading ? "-" : value}</h3>
  </div>
- <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-${color}-500/10 flex items-center justify-center text-${color}-500 text-lg lg:text-xl border-[length:var(--border-width)] border-${color}-500/20 group-hover:bg-${color}-500 group-hover:text-themeText dark:text-white transition duration-300`}>
+ <div className={`relative z-10 w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-${color}-500/10 flex items-center justify-center text-${color}-500 text-lg lg:text-xl border-[length:var(--border-width)] border-${color}-500/20 group-hover:bg-${color}-500 group-hover:text-themeText transition duration-300`}>
  <i className={`fa-solid ${icon}`}></i>
  </div>
  </div>
@@ -122,7 +122,7 @@ export default function LeaveDashboard({ setActiveTab }) {
  <button type="button"
  key={idx}
  onClick={() => setActiveTab(action.tab)}
- className={`bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08] rounded-xl p-4 lg:p-5 flex flex-col items-center justify-center gap-2 lg:gap-3 hover:border-${action.color}-500/50 hover:bg-${action.color}-500/10 hover:-translate-y-1 transition duration-300 group`}
+ className={`bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08] rounded-xl p-4 lg:p-5 flex flex-col items-center justify-center gap-2 lg:gap-3 hover:border-${action.color}-500/50 hover:bg-${action.color}-500/10 hover:-translate-y-1 transition duration-300 group`}
  >
  <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-${action.color}-500/10 flex items-center justify-center text-${action.color}-500 group-hover:scale-110 transition-transform`}>
  <i className={`fa-solid ${action.icon} text-lg lg:text-xl`}></i>

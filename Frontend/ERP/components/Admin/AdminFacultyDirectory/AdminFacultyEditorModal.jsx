@@ -51,18 +51,18 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  
 
  const parseText = (val) => {
-   if (!val) return '';
-   if (Array.isArray(val)) return val.join('\n');
-   if (typeof val === 'string') {
-     try {
-       const p = JSON.parse(val);
-       if (Array.isArray(p)) return p.join('\n');
-       return typeof p === 'string' ? p : val;
-     } catch (e) {
-       return val;
-     }
-   }
-   return String(val);
+ if (!val) return '';
+ if (Array.isArray(val)) return val.join('\n');
+ if (typeof val === 'string') {
+ try {
+ const p = JSON.parse(val);
+ if (Array.isArray(p)) return p.join('\n');
+ return typeof p === 'string' ? p : val;
+ } catch (e) {
+ return val;
+ }
+ }
+ return String(val);
  };
 
  setFormData({
@@ -174,14 +174,14 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  .upload(fileName, blob, { contentType: 'image/jpeg', upsert: true });
 
  if (uploadError) {
-     console.error("Image upload failed (Check if 'avatars' bucket exists):", uploadError);
-     if(window.erpToast) window.erpToast.show("Warning: Could not upload the image.", "error");
+ console.error("Image upload failed (Check if 'avatars' bucket exists):", uploadError);
+ if(window.erpToast) window.erpToast.show("Warning: Could not upload the image.", "error");
  } else {
-     const { data: { publicUrl } } = supabase.storage
-     .from('avatars')
-     .getPublicUrl(fileName);
-     
-     finalImageUrl = publicUrl;
+ const { data: { publicUrl } } = supabase.storage
+ .from('avatars')
+ .getPublicUrl(fileName);
+ 
+ finalImageUrl = publicUrl;
  }
  }
  }
@@ -199,9 +199,9 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  if (profileError) throw profileError;
 
  const textToArray = (text) => {
-   if (!text || typeof text !== 'string') return null;
-   const arr = text.split('\n').map(s => s.trim()).filter(Boolean);
-   return arr.length > 0 ? arr : null;
+ if (!text || typeof text !== 'string') return null;
+ const arr = text.split('\n').map(s => s.trim()).filter(Boolean);
+ return arr.length > 0 ? arr : null;
  };
 
  // 3. Upsert faculty_profiles table (creates if missing)
@@ -251,10 +251,10 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  return createPortal(
  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
- <div className="bg-[#fcfcfc] w-full max-w-4xl rounded-[2rem] flex flex-col max-h-[90vh] overflow-hidden border border-black/10 dark:border-white/20">
+ <div className="bg-[#fcfcfc] w-full max-w-4xl rounded-[2rem] flex flex-col max-h-[90vh] overflow-hidden border border-themeBorder ">
  
  {/* HEADER */}
- <div className="bg-themePanel/85 backdrop-blur-2xl px-8 py-6 relative shrink-0 border-b border-black/5 dark:border-white/10 flex justify-between items-center z-10">
+ <div className="bg-themePanel/85 backdrop-blur-2xl px-8 py-6 relative shrink-0 border-b border-themeBorder flex justify-between items-center z-10">
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-2xl bg-themeAccent/10 flex items-center justify-center">
  <i className="fa-solid fa-user-pen text-themeAccent text-xl"></i>
@@ -262,31 +262,31 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <div>
  <h3 className="text-xl font-semibold tracking-tight text-themeText tracking-tight">Edit Faculty Profile</h3>
  <div className="flex items-center gap-4 mt-1">
-   <p className="text-[13px] font-medium text-themeTextSec">Manage public identity and details</p>
-   <label className="flex items-center gap-2 cursor-pointer bg-themeElevated/50 px-3 py-1 rounded-full border border-black/5 dark:border-white/10">
-     <input 
-       type="checkbox" 
-       name="is_public" 
-       checked={formData.is_public} 
-       onChange={handleInputChange}
-       className="w-4 h-4 rounded text-themeAccent bg-transparent border-themeBorder focus:ring-themeAccent focus:ring-offset-themePanel"
-     />
-     <span className="text-[12px] font-bold text-themeText">Show on Public Website</span>
-   </label>
+ <p className="text-[13px] font-medium text-themeTextSec">Manage public identity and details</p>
+ <label className="flex items-center gap-2 cursor-pointer bg-themeElevated/50 px-3 py-1 rounded-full border border-themeBorder ">
+ <input 
+ type="checkbox" 
+ name="is_public" 
+ checked={formData.is_public} 
+ onChange={handleInputChange}
+ className="w-4 h-4 rounded text-themeAccent bg-transparent border-themeBorder focus:ring-themeAccent focus:ring-offset-themePanel"
+ />
+ <span className="text-[12px] font-bold text-themeText">Show on Public Website</span>
+ </label>
  </div>
  </div>
  </div>
- <button type="button" onClick={onClose} className="w-10 h-10 bg-black/5 dark:bg-black/40 hover:bg-black/10 dark:hover:bg-white/10 rounded-full border border-black/5 dark:border-white/10 flex items-center justify-center text-themeTextSec  transition-colors active:scale-95">
+ <button type="button" onClick={onClose} className="w-10 h-10 bg-themeElevated /40 hover:bg-black/10 rounded-full border border-themeBorder flex items-center justify-center text-themeTextSec transition-colors active:scale-95">
  <i className="fa-solid fa-xmark text-base"></i>
  </button>
  </div>
 
  {/* SCROLLABLE CONTENT */}
- <div className="overflow-y-auto flex-1 bg-black/5 dark:bg-black/40 no-scrollbar p-8">
+ <div className="overflow-y-auto flex-1 bg-themeElevated /40 no-scrollbar p-8">
  <form id="faculty-edit-form" onSubmit={handleSubmit} className="flex flex-col gap-10">
  
  {/* PHOTO SECTION */}
- <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-black/5 dark:border-white/10 flex flex-col md:flex-row gap-8 items-start relative overflow-hidden">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-themeBorder flex flex-col md:flex-row gap-8 items-start relative overflow-hidden">
  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-themeAccent to-themeAccent/20"></div>
  
  <div className="flex-1 w-full flex flex-col">
@@ -304,14 +304,14 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  <button 
  type="button" 
  onClick={loadCurrentPhotoForCrop}
- className="bg-themeElevated hover:bg-themeElevated/80 border border-black/5 dark:border-white/10 text-themeText px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition flex items-center gap-2"
+ className="bg-themeElevated hover:bg-themeElevated/80 border border-themeBorder text-themeText px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition flex items-center gap-2"
  >
  <i className="fa-solid fa-crop-simple"></i> Adjust Current
  </button>
  </div>
  
  {imgSrc && (
- <div className="mt-2 border-2 border-dashed border-black/5 dark:border-white/10 rounded-2xl overflow-hidden flex justify-center bg-black/5 dark:bg-black/40 p-4 max-h-72">
+ <div className="mt-2 border-2 border-dashed border-themeBorder rounded-2xl overflow-hidden flex justify-center bg-themeElevated /40 p-4 max-h-72">
  <ReactCrop
  crop={crop}
  onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -325,16 +325,16 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  )}
  </div>
  
- <div className="shrink-0 flex flex-col items-center gap-3 bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-black/5 dark:border-white/10">
+ <div className="shrink-0 flex flex-col items-center gap-3 bg-themeElevated/90 backdrop-blur-2xl p-6 rounded-2xl border border-themeBorder ">
  <p className="text-[13px] font-medium text-neutral-400">Current Display</p>
- <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-themeBorder hover:bg-white/10 border border-themeBorder dark:border-white/10">
+ <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden bg-themeBorder hover:bg-themePanel/10 border border-themeBorder ">
  <img src={formData.image_url || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} className="w-full h-full object-cover" alt="Current" />
  </div>
  </div>
  </div>
 
  {/* DETAILS SECTION */}
- <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-black/5 dark:border-white/10 flex flex-col gap-6 relative overflow-hidden">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-8 rounded-[1.5rem] border border-themeBorder flex flex-col gap-6 relative overflow-hidden">
  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neutral-200 to-transparent"></div>
  
  <h4 className="text-[15px] font-semibold text-themeText tracking-normal mb-2 flex items-center gap-2">
@@ -350,59 +350,59 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  onChange={handleInputChange} 
  rows={3}
  placeholder="A brief overview of the faculty member..."
- className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition resize-y" 
+ className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition resize-y" 
  />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Full Name</label>
- <input type="text" name="full_name" value={formData.full_name} onChange={handleInputChange} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="full_name" value={formData.full_name} onChange={handleInputChange} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Department</label>
- <input type="text" name="department" value={formData.department} onChange={handleInputChange} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="department" value={formData.department} onChange={handleInputChange} required className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Designation</label>
- <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Specialisation</label>
- <input type="text" name="specialisation" value={formData.specialisation} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="specialisation" value={formData.specialisation} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div className="md:col-span-2">
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Professional Experience (One point per line)</label>
- <textarea name="experience" value={formData.experience || ''} onChange={handleInputChange} rows={3} placeholder="Principal, Prudentia College of Law..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
+ <textarea name="experience" value={formData.experience || ''} onChange={handleInputChange} rows={3} placeholder="Principal, Prudentia College of Law..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
  </div>
  <div className="md:col-span-2">
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Education & Qualifications (One point per line)</label>
- <textarea name="education" value={formData.education || ''} onChange={handleInputChange} rows={3} placeholder="Ph.D., LL.M., etc." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
+ <textarea name="education" value={formData.education || ''} onChange={handleInputChange} rows={3} placeholder="Ph.D., LL.M., etc." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
  </div>
  <div className="md:col-span-2">
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Areas of Expertise (One point per line)</label>
- <textarea name="research" value={formData.research || ''} onChange={handleInputChange} rows={3} placeholder="Cyber Law..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
+ <textarea name="research" value={formData.research || ''} onChange={handleInputChange} rows={3} placeholder="Cyber Law..." className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-medium focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 outline-none text-themeText transition resize-y" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Office Address</label>
- <input type="text" name="office_address" value={formData.office_address} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="office_address" value={formData.office_address} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Phone Number</label>
- <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">LinkedIn URL</label>
- <input type="text" name="linkedin_url" value={formData.linkedin_url} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="linkedin_url" value={formData.linkedin_url} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
  <div>
  <label className="block text-[13px] font-medium mb-1.5 ml-1 text-themeTextSec">Google Scholar URL</label>
- <input type="text" name="scholar_url" value={formData.scholar_url} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
+ <input type="text" name="scholar_url" value={formData.scholar_url} onChange={handleInputChange} className="w-full bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-4 text-sm font-bold focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/20 focus:bg-themePanel/85 backdrop-blur-2xl outline-none text-themeText transition" />
  </div>
- <div className="md:col-span-2 flex items-center gap-3 bg-themePanel/85 backdrop-blur-2xl border border-black/5 dark:border-white/10 p-4 rounded-xl mt-2">
-    <input type="checkbox" name="is_public" checked={formData.is_public} onChange={handleInputChange} className="w-5 h-5 rounded accent-themeAccent cursor-pointer" id="is_public_toggle" />
-    <label htmlFor="is_public_toggle" className="text-sm font-bold text-themeText cursor-pointer select-none">
-        Publish to Website Directory
-        <p className="text-[10px] text-themeTextSec font-medium mt-0.5 normal-case">If disabled, this faculty member will be hidden from the public website.</p>
-    </label>
+ <div className="md:col-span-2 flex items-center gap-3 bg-themePanel/85 backdrop-blur-2xl border border-themeBorder p-4 rounded-xl mt-2">
+ <input type="checkbox" name="is_public" checked={formData.is_public} onChange={handleInputChange} className="w-5 h-5 rounded accent-themeAccent cursor-pointer" id="is_public_toggle" />
+ <label htmlFor="is_public_toggle" className="text-sm font-bold text-themeText cursor-pointer select-none">
+ Publish to Website Directory
+ <p className="text-[10px] text-themeTextSec font-medium mt-0.5 normal-case">If disabled, this faculty member will be hidden from the public website.</p>
+ </label>
  </div>
 
  </div>
@@ -411,11 +411,11 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
  </div>
 
  {/* FOOTER */}
- <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-black/5 dark:border-white/10 flex justify-end shrink-0 gap-4 z-10">
- <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-white/10 border border-themeBorder dark:border-white/10 hover:text-themeText transition">
+ <div className="bg-themePanel/85 backdrop-blur-2xl p-6 border-t border-themeBorder flex justify-end shrink-0 gap-4 z-10">
+ <button type="button" onClick={onClose} disabled={saving} className="px-8 py-3 rounded-xl font-black tracking-normal text-[10px] text-themeTextSec bg-neutral-100 hover:bg-themeBorder hover:bg-themePanel/10 border border-themeBorder hover:text-themeText transition">
  Cancel
  </button>
- <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText dark:text-white px-10 py-3 rounded-xl font-black tracking-normal text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+ <button form="faculty-edit-form" type="submit" disabled={saving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText px-10 py-3 rounded-xl font-black tracking-normal text-[10px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
  {saving ? (
  <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div> Saving Changes...</>
  ) : (

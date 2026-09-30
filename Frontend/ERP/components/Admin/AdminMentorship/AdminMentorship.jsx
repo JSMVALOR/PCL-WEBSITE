@@ -9,7 +9,7 @@ import MentorshipTransfers from "./MentorshipTransfers";
 import MentorshipReports from "./MentorshipReports";
 import MentorshipLogs from "./MentorshipLogs";
 
-export default function AdminMentorship({ isEmbedded = false,  isHubView = false }) {
+export default function AdminMentorship({ isEmbedded = false, isHubView = false }) {
  const [activeTab, setActiveTab] = useState("dashboard");
 
  const tabs = [
@@ -25,25 +25,25 @@ export default function AdminMentorship({ isEmbedded = false,  isHubView = false
  {/* Header and Tabs */}
  {!isHubView && (
 <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
-    <PageHeader 
-        icon="fa-solid fa-server" 
-        title="Mentorship Engine" 
-        subtitle="Centralized administration for mentor mapping" 
-    />
+ <PageHeader 
+ icon="fa-solid fa-server" 
+ title="Mentorship Engine" 
+ subtitle="Centralized administration for mentor mapping" 
+ />
 </div>
 )}
 
-<div className="flex w-full border-b border-black/[0.04] dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6 mt-4 px-4 lg:px-8">
-    {tabs.map((tab) => (
-        <button type="button"
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === tab.id ? 'text-emerald-500 border-emerald-500' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
-        >
-            <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'animate-pulse' : ''}`}></i>
-            {tab.label}
-        </button>
-    ))}
+<div className="flex w-full border-b border-themeBorder dark:border-white/[0.08] relative z-10 overflow-x-auto no-scrollbar gap-6 mt-4 px-4 lg:px-8">
+ {tabs.map((tab) => (
+ <button type="button"
+ key={tab.id}
+ onClick={() => setActiveTab(tab.id)}
+ className={`py-4 text-[13px] font-bold tracking-tight transition-colors whitespace-nowrap flex items-center gap-2 border-b-2 ${activeTab === tab.id ? 'text-emerald-500 border-emerald-500' : 'text-themeTextSec border-transparent hover:text-themeText'}`}
+ >
+ <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'animate-pulse' : ''}`}></i>
+ {tab.label}
+ </button>
+ ))}
 </div>
 
  {/* Main Content Area */}

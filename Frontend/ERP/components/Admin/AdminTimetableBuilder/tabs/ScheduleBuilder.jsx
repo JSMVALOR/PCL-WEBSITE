@@ -19,10 +19,10 @@ export default function ScheduleBuilder({}) {
  const [selectedClass, setSelectedClass] = useState(null); // For edit/delete modal
  const [isDrawMode, setIsDrawMode] = useState(false);
  const [isCreating, setIsCreating] = useState(false);
-  const [day, setDay] = useState("Monday");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const handleCreate = () => {};
+ const [day, setDay] = useState("Monday");
+ const [startTime, setStartTime] = useState("");
+ const [endTime, setEndTime] = useState("");
+ const handleCreate = () => {};
  const [pendingDraws, setPendingDraws] = useState([]);
 
  // Filter State
@@ -46,8 +46,8 @@ export default function ScheduleBuilder({}) {
  
  let currentBatchString = selectedBatch;
  if (semData?.length > 0 && !semData.find(s => s.name === selectedBatch)) {
-    currentBatchString = semData[0].name;
-    setSelectedBatch(currentBatchString);
+ currentBatchString = semData[0].name;
+ setSelectedBatch(currentBatchString);
  }
 
  const activeBatchObj = (semData || []).find(s => s.name === currentBatchString);
@@ -56,37 +56,37 @@ export default function ScheduleBuilder({}) {
  // Fetch the selected cohort's theme color to use as fallback
  let fetchedCohortColor = 'blue';
  if (currentBatchString) {
-    const { data: batchData } = await supabase.from('academic_batches').select('theme_color, academic_programs(theme_color)').eq('name', currentBatchString).single();
-    if (batchData) {
-        fetchedCohortColor = batchData.academic_programs?.theme_color || batchData.theme_color || 'blue';
-    }
+ const { data: batchData } = await supabase.from('academic_batches').select('theme_color, academic_programs(theme_color)').eq('name', currentBatchString).single();
+ if (batchData) {
+ fetchedCohortColor = batchData.academic_programs?.theme_color || batchData.theme_color || 'blue';
+ }
  }
  setCohortColor(fetchedCohortColor);
 
  // 3. Fetch Subjects ONLY for this specific batch
  if (activeBatchId) {
-    const { data: cohortData } = await supabase.from('cohort_subjects')
-        .select('faculty_id, master_subjects(id, name, theme_color)')
-        .eq('batch_id', activeBatchId);
-    
-    if (cohortData) {
-        const filteredSubjects = cohortData.filter(c => c.master_subjects).map(c => ({
-            id: c.master_subjects.id,
-            name: c.master_subjects.name,
-            theme_color: c.master_subjects.theme_color,
-            faculty_id: c.faculty_id
-        }));
-        setSubjects(filteredSubjects);
-        // Force update the selected subject if it's invalid for this batch
-        if (filteredSubjects.length > 0 && (!subjectId || !filteredSubjects.find(s => s.id === subjectId))) {
-            setSubjectId(filteredSubjects[0].id);
-        } else if (filteredSubjects.length === 0) {
-            setSubjectId('');
-        }
-    }
+ const { data: cohortData } = await supabase.from('cohort_subjects')
+ .select('faculty_id, master_subjects(id, name, theme_color)')
+ .eq('batch_id', activeBatchId);
+ 
+ if (cohortData) {
+ const filteredSubjects = cohortData.filter(c => c.master_subjects).map(c => ({
+ id: c.master_subjects.id,
+ name: c.master_subjects.name,
+ theme_color: c.master_subjects.theme_color,
+ faculty_id: c.faculty_id
+ }));
+ setSubjects(filteredSubjects);
+ // Force update the selected subject if it's invalid for this batch
+ if (filteredSubjects.length > 0 && (!subjectId || !filteredSubjects.find(s => s.id === subjectId))) {
+ setSubjectId(filteredSubjects[0].id);
+ } else if (filteredSubjects.length === 0) {
+ setSubjectId('');
+ }
+ }
  } else {
-    setSubjects([]);
-    setSubjectId('');
+ setSubjects([]);
+ setSubjectId('');
  }
 
  // 4. Fetch actual schedule for the selected batch
@@ -184,9 +184,9 @@ export default function ScheduleBuilder({}) {
  // Support passing explicit end time from the strict slot grid
  let endTimeStr = explicitEndTime;
  if (!endTimeStr) {
-   const [h, m] = timeStr.split(':');
-   const endHour = parseInt(h, 10) + 1;
-   endTimeStr = `${String(endHour).padStart(2, '0')}:${m}`;
+ const [h, m] = timeStr.split(':');
+ const endHour = parseInt(h, 10) + 1;
+ endTimeStr = `${String(endHour).padStart(2, '0')}:${m}`;
  }
 
  const conflictMsg = await checkConflicts(facultyId, d, timeStr + ':00', endTimeStr + ':00');
@@ -246,9 +246,9 @@ export default function ScheduleBuilder({}) {
  
  
  if (selectedClass.isDraft) {
-    setPendingDraws(prev => prev.filter(d => d.id !== selectedClass.id));
-    setSelectedClass(null);
-    return;
+ setPendingDraws(prev => prev.filter(d => d.id !== selectedClass.id));
+ setSelectedClass(null);
+ return;
  }
  
  try {
@@ -261,104 +261,104 @@ export default function ScheduleBuilder({}) {
  };
  
  const handleShuffleGrid = async () => {
-    if (schedule.length === 0) return window.erpDialog?.alert("No classes in the grid to shuffle.");
-    if (!(await window.erpDialog?.confirm("Are you sure you want to magically shuffle all classes in this grid? This will randomly rearrange the current subjects across the existing time slots for this batch.", "Shuffle Grid"))) return;
+ if (schedule.length === 0) return window.erpDialog?.alert("No classes in the grid to shuffle.");
+ if (!(await window.erpDialog?.confirm("Are you sure you want to magically shuffle all classes in this grid? This will randomly rearrange the current subjects across the existing time slots for this batch.", "Shuffle Grid"))) return;
 
-    setLoading(true);
-    try {
-        const slots = schedule.map(s => ({ id: s.raw.id }));
-        const contents = schedule.map(s => ({ master_subject_id: s.raw.master_subject_id, faculty_id: s.raw.faculty_id }));
+ setLoading(true);
+ try {
+ const slots = schedule.map(s => ({ id: s.raw.id }));
+ const contents = schedule.map(s => ({ master_subject_id: s.raw.master_subject_id, faculty_id: s.raw.faculty_id }));
 
-        // Backup original state for undo
-        const originalUpdates = slots.map((slot, idx) => ({
-            id: slot.id,
-            master_subject_id: contents[idx].master_subject_id,
-            faculty_id: contents[idx].faculty_id
-        }));
+ // Backup original state for undo
+ const originalUpdates = slots.map((slot, idx) => ({
+ id: slot.id,
+ master_subject_id: contents[idx].master_subject_id,
+ faculty_id: contents[idx].faculty_id
+ }));
 
-        for (let i = contents.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [contents[i], contents[j]] = [contents[j], contents[i]];
-        }
+ for (let i = contents.length - 1; i > 0; i--) {
+ const j = Math.floor(Math.random() * (i + 1));
+ [contents[i], contents[j]] = [contents[j], contents[i]];
+ }
 
-        const updates = slots.map((slot, idx) => ({
-            id: slot.id,
-            master_subject_id: contents[idx].master_subject_id,
-            faculty_id: contents[idx].faculty_id
-        }));
+ const updates = slots.map((slot, idx) => ({
+ id: slot.id,
+ master_subject_id: contents[idx].master_subject_id,
+ faculty_id: contents[idx].faculty_id
+ }));
 
-        const { error } = await supabase.from('class_schedule').upsert(updates);
-        if (error) throw error;
-        
-        fetchData();
+ const { error } = await supabase.from('class_schedule').upsert(updates);
+ if (error) throw error;
+ 
+ fetchData();
 
-        if (window.erpToast?.undoable) {
-            window.erpToast.undoable(
-                "Grid magically shuffled! ✨",
-                () => {},
-                async () => {
-                    await supabase.from('class_schedule').upsert(originalUpdates);
-                    fetchData();
-                    window.erpToast.show("Shuffle undone. Grid restored.", "success");
-                }
-            );
-        } else if (window.erpToast) {
-            window.erpToast.show("Grid shuffled successfully!", "success");
-        }
-    } catch (err) {
-        if (window.erpToast) window.erpToast.show("Failed to shuffle grid: " + err.message, "error");
-        setLoading(false);
-    }
+ if (window.erpToast?.undoable) {
+ window.erpToast.undoable(
+ "Grid magically shuffled! ✨",
+ () => {},
+ async () => {
+ await supabase.from('class_schedule').upsert(originalUpdates);
+ fetchData();
+ window.erpToast.show("Shuffle undone. Grid restored.", "success");
+ }
+ );
+ } else if (window.erpToast) {
+ window.erpToast.show("Grid shuffled successfully!", "success");
+ }
+ } catch (err) {
+ if (window.erpToast) window.erpToast.show("Failed to shuffle grid: " + err.message, "error");
+ setLoading(false);
+ }
  };
 
  const handleSlotSwap = async (draggedId, targetDay, targetStart, targetEnd) => {
-    const draggedClass = schedule.find(s => String(s.id) === String(draggedId) || (s.raw && String(s.raw.id) === String(draggedId)));
-    if (!draggedClass) return;
+ const draggedClass = schedule.find(s => String(s.id) === String(draggedId) || (s.raw && String(s.raw.id) === String(draggedId)));
+ if (!draggedClass) return;
 
-    // Find if target slot is occupied
-    const targetClass = schedule.find(c => {
-        if (c.day !== targetDay) return false;
-        return (c.time >= targetStart && c.time < targetEnd) || (c.time <= targetStart && c.endTime > targetStart);
-    });
+ // Find if target slot is occupied
+ const targetClass = schedule.find(c => {
+ if (c.day !== targetDay) return false;
+ return (c.time >= targetStart && c.time < targetEnd) || (c.time <= targetStart && c.endTime > targetStart);
+ });
 
-    if (targetClass && targetClass.id === draggedClass.id) return; // Same slot
+ if (targetClass && targetClass.id === draggedClass.id) return; // Same slot
 
-    try {
-        const updates = [];
-        const originalUpdates = [];
+ try {
+ const updates = [];
+ const originalUpdates = [];
 
-        if (targetClass) {
-            // Swap
-            updates.push({ id: draggedClass.raw.id, day_of_week: targetClass.raw.day_of_week, start_time: targetClass.raw.start_time, end_time: targetClass.raw.end_time });
-            updates.push({ id: targetClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
-            
-            originalUpdates.push({ id: draggedClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
-            originalUpdates.push({ id: targetClass.raw.id, day_of_week: targetClass.raw.day_of_week, start_time: targetClass.raw.start_time, end_time: targetClass.raw.end_time });
-        } else {
-            // Move
-            updates.push({ id: draggedClass.raw.id, day_of_week: targetDay, start_time: targetStart + ':00', end_time: targetEnd + ':00' });
-            originalUpdates.push({ id: draggedClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
-        }
+ if (targetClass) {
+ // Swap
+ updates.push({ id: draggedClass.raw.id, day_of_week: targetClass.raw.day_of_week, start_time: targetClass.raw.start_time, end_time: targetClass.raw.end_time });
+ updates.push({ id: targetClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
+ 
+ originalUpdates.push({ id: draggedClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
+ originalUpdates.push({ id: targetClass.raw.id, day_of_week: targetClass.raw.day_of_week, start_time: targetClass.raw.start_time, end_time: targetClass.raw.end_time });
+ } else {
+ // Move
+ updates.push({ id: draggedClass.raw.id, day_of_week: targetDay, start_time: targetStart + ':00', end_time: targetEnd + ':00' });
+ originalUpdates.push({ id: draggedClass.raw.id, day_of_week: draggedClass.raw.day_of_week, start_time: draggedClass.raw.start_time, end_time: draggedClass.raw.end_time });
+ }
 
-        const { error } = await supabase.from('class_schedule').upsert(updates);
-        if (error) throw error;
-        
-        fetchData();
+ const { error } = await supabase.from('class_schedule').upsert(updates);
+ if (error) throw error;
+ 
+ fetchData();
 
-        if (window.erpToast?.undoable) {
-            window.erpToast.undoable(
-                targetClass ? "Classes interchanged." : "Class moved.",
-                () => {},
-                async () => {
-                    await supabase.from('class_schedule').upsert(originalUpdates);
-                    fetchData();
-                    window.erpToast.show("Move undone.", "success");
-                }
-            );
-        }
-    } catch (err) {
-        if (window.erpToast) window.erpToast.show("Failed to move class.", "error");
-    }
+ if (window.erpToast?.undoable) {
+ window.erpToast.undoable(
+ targetClass ? "Classes interchanged." : "Class moved.",
+ () => {},
+ async () => {
+ await supabase.from('class_schedule').upsert(originalUpdates);
+ fetchData();
+ window.erpToast.show("Move undone.", "success");
+ }
+ );
+ }
+ } catch (err) {
+ if (window.erpToast) window.erpToast.show("Failed to move class.", "error");
+ }
  };
 
 
@@ -387,14 +387,14 @@ export default function ScheduleBuilder({}) {
  
  <button type="button" 
  onClick={handleShuffleGrid} 
- className="px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition whitespace-nowrap border bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-themeText hover:border-themeAccent hover:text-themeAccent"
+ className="px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition whitespace-nowrap border bg-themeElevated/90 backdrop-blur-2xl border-themeBorder text-themeText hover:border-themeAccent hover:text-themeAccent"
  >
  <i className="fa-solid fa-shuffle mr-2"></i> Shuffle Grid
  </button>
 
  <button type="button" 
  onClick={() => setIsDrawMode(!isDrawMode)} 
- className={`px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition whitespace-nowrap border ${isDrawMode ? 'bg-amber-500 text-themeText dark:text-white border-amber-500' : 'bg-themeElevated/90 backdrop-blur-2xl border-black/5 dark:border-white/10 text-themeText hover:border-themeAccent'}`}
+ className={`px-5 py-2.5 rounded-xl text-[14px] font-medium tracking-normal transition whitespace-nowrap border ${isDrawMode ? 'bg-amber-500 text-themeText border-amber-500' : 'bg-themeElevated/90 backdrop-blur-2xl border-themeBorder text-themeText hover:border-themeAccent'}`}
  >
  <i className="fa-solid fa-paintbrush mr-2"></i> Draw Mode
  </button>
@@ -405,19 +405,19 @@ export default function ScheduleBuilder({}) {
  {isDrawMode && (
  <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex flex-col md:flex-row items-center gap-4 animate-fade-in -mt-2">
  <div className="flex items-center gap-2 shrink-0">
- <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-themeText dark:text-white">
+ <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-themeText ">
  <i className="fa-solid fa-palette text-sm"></i>
  </div>
  <div>
  <p className="text-[14px] font-medium text-amber-500 uppercase tracking-wider leading-tight">Active Brush</p>
  <p className="text-[10px] font-bold text-themeTextSec">Click grid to paint a 1-hour slot.</p>
-              <p className="text-[10px] font-black text-amber-500/70 mt-1 uppercase tracking-wider bg-amber-500/10 w-fit px-2 py-0.5 rounded border border-amber-500/20">{selectedBatch}</p>
+ <p className="text-[10px] font-black text-amber-500/70 mt-1 uppercase tracking-wider bg-amber-500/10 w-fit px-2 py-0.5 rounded border border-amber-500/20">{selectedBatch}</p>
  </div>
  </div>
  <div className="flex flex-wrap md:flex-nowrap gap-3 flex-1 min-w-0">
-              <select className="flex-1 min-w-0 truncate bg-themePanel shadow-sm border border-themeBorder rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}>
-                {batches.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
-              </select>
+ <select className="flex-1 min-w-0 truncate bg-themePanel shadow-sm border border-themeBorder rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)}>
+ {batches.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+ </select>
  <select className="flex-1 min-w-0 truncate bg-themePanel shadow-sm border border-themeBorder rounded-lg px-3 py-2 text-xs font-bold text-themeText outline-none focus:border-amber-500" value={subjectId} onChange={e => setSubjectId(e.target.value)}>
  {subjects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
  </select>
@@ -432,7 +432,7 @@ export default function ScheduleBuilder({}) {
  <button type="button" onClick={() => setPendingDraws([])} className="px-3 py-2 rounded-lg text-[10px] font-black uppercase text-amber-500 hover:bg-amber-500/10 transition-colors">
  Clear
  </button>
- <button type="button" onClick={handleSaveDraws} className="px-4 py-2 rounded-lg text-[14px] font-medium uppercase bg-amber-500 text-themeText dark:text-white hover:bg-amber-600 transition-colors">
+ <button type="button" onClick={handleSaveDraws} className="px-4 py-2 rounded-lg text-[14px] font-medium uppercase bg-amber-500 text-themeText hover:bg-amber-600 transition-colors">
  Save {pendingDraws.length} {pendingDraws.length === 1 ? 'Class' : 'Classes'}
  </button>
  </div>
@@ -451,8 +451,8 @@ export default function ScheduleBuilder({}) {
  {/* CREATE MODAL */}
  {isCreating && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
- <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-lg rounded-themePanel overflow-hidden border border-themeBorder dark:border-white/5 flex flex-col">
- <div className="px-6 py-5 border-b border-themeBorder dark:border-white/5 bg-themeElevated/50 flex justify-between items-center">
+ <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-lg rounded-themePanel overflow-hidden border border-themeBorder flex flex-col">
+ <div className="px-6 py-5 border-b border-themeBorder bg-themeElevated/50 flex justify-between items-center">
  <div>
  <h3 className="text-lg font-semibold tracking-tight text-themeText">Schedule New Class</h3>
  <p className="text-[13px] font-medium text-themeTextSec mt-0.5">{selectedBatch}</p>
@@ -485,7 +485,7 @@ export default function ScheduleBuilder({}) {
  
  </div>
 
- <div className="grid grid-cols-3 gap-4 border-t border-themeBorder dark:border-white/5 pt-5">
+ <div className="grid grid-cols-3 gap-4 border-t border-themeBorder pt-5">
  <div>
  <label className="text-[13px] font-medium text-themeTextSec mb-1.5 block">Day</label>
  <select value={day} onChange={e => setDay(e.target.value)} required className="w-full bg-themePanel shadow-sm border border-themeBorder focus:border-themeAccent rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none appearance-none transition-colors">
@@ -519,7 +519,7 @@ export default function ScheduleBuilder({}) {
  {/* MANAGE/DELETE MODAL */}
  {selectedClass && (
  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
- <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-sm rounded-themePanel overflow-hidden border border-themeBorder dark:border-white/5 flex flex-col relative">
+ <div className="bg-themePanel/85 backdrop-blur-2xl w-full max-w-sm rounded-themePanel overflow-hidden border border-themeBorder flex flex-col relative">
  <button type="button" onClick={() => setSelectedClass(null)} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-themeElevated/90 backdrop-blur-2xl hover:bg-themeBorder text-themeText transition-colors z-10">
  <i className="fa-solid fa-xmark text-sm"></i>
  </button>
@@ -540,8 +540,8 @@ export default function ScheduleBuilder({}) {
  </div>
  
  <HoldButton size="sm" onHold={handleDeleteClass} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>
-                Delete Class
-            </HoldButton>
+ Delete Class
+ </HoldButton>
  </div>
  </div>
  </div>

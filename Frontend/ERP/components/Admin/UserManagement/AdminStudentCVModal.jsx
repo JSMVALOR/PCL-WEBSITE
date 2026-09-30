@@ -147,10 +147,10 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
 
  return (
  <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
- <div className="w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-themeBorder dark:border-white/5">
+ <div className="w-full mx-auto flex flex-col h-screen relative z-10 bg-themePanel/85 backdrop-blur-2xl border-x border-themeBorder ">
  
  {/* Header */}
- <div className="flex justify-between items-center p-6 border-b-theme border-themeBorder dark:border-white/5 bg-themePanel/85 backdrop-blur-2xl">
+ <div className="flex justify-between items-center p-6 border-b-theme border-themeBorder bg-themePanel/85 backdrop-blur-2xl">
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-500">
  <i className="fa-solid fa-file-pdf"></i>
@@ -169,7 +169,7 @@ export default function AdminStudentCVModal({ studentId, onClose }) {
  {isExporting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-download"></i>} 
  Export PDF
  </button>
- <button aria-label="Action button" type="button" onClick={onClose} className="w-10 h-10 rounded-lg border border-black/5 dark:border-white/10 flex justify-center items-center text-themeTextSec hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors"><i className="fa-solid fa-xmark"></i></button>
+ <button aria-label="Action button" type="button" onClick={onClose} className="w-10 h-10 rounded-lg border border-themeBorder flex justify-center items-center text-themeTextSec hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-colors"><i className="fa-solid fa-xmark"></i></button>
  </div>
  </div>
 

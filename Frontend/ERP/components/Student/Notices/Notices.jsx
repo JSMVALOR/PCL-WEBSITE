@@ -8,489 +8,489 @@ import EventsBoard from "../../notices/EventsBoard";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function Notices({ setActiveTab }) {
-    const { userSession } = useERP();
-    const [notices, setNotices] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedNotice, setSelectedNotice] = useState(null);
-    const [activeFilter, setActiveFilter] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
-        const [saved, setSaved] = useState(new Set());
-    const [isBroadcasting, setIsBroadcasting] = useState(false);
+ const { userSession } = useERP();
+ const [notices, setNotices] = useState([]);
+ const [loading, setLoading] = useState(true);
+ const [selectedNotice, setSelectedNotice] = useState(null);
+ const [activeFilter, setActiveFilter] = useState('All');
+ const [searchQuery, setSearchQuery] = useState('');
+ const [saved, setSaved] = useState(new Set());
+ const [isBroadcasting, setIsBroadcasting] = useState(false);
 
-    // Main Tab State
-    const [activeMainTab, setActiveMainTab] = useState('broadcasts'); // broadcasts, events
-    const [events, setEvents] = useState([]);
+ // Main Tab State
+ const [activeMainTab, setActiveMainTab] = useState('broadcasts'); // broadcasts, events
+ const [events, setEvents] = useState([]);
 
-    // PRIORITY CONFIG (Match Supabase enum)
-    const PRIORITIES = {
-        urgent: { color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: 'fa-triangle-exclamation', display: 'CRITICAL' },
-        high: { color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: 'fa-bolt', display: 'IMPORTANT' },
-        normal: { color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: 'fa-circle-info', display: 'GENERAL' } };
+ // PRIORITY CONFIG (Match Supabase enum)
+ const PRIORITIES = {
+ urgent: { color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20', icon: 'fa-triangle-exclamation', display: 'CRITICAL' },
+ high: { color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: 'fa-bolt', display: 'IMPORTANT' },
+ normal: { color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20', icon: 'fa-circle-info', display: 'GENERAL' } };
 
-    useEffect(() => {
-        const fetchNotices = async () => {
-            setLoading(true);
-            try {
-                // Fetch Events
-                // Fetch Academic Calendar Events
-                const { data: acadEvents } = await supabase
-                    .from('academic_calendar')
-                    .select('*')
-                    .gte('start_date', new Date().toISOString().split('T')[0]);
-                
-                // Fetch Admin Events (Marketing/Public)
-                const { data: mktEvents } = await supabase
-                    .from('admin_events')
-                    .select('*')
-                    .gte('event_date', new Date().toISOString().split('T')[0]);
+ useEffect(() => {
+ const fetchNotices = async () => {
+ setLoading(true);
+ try {
+ // Fetch Events
+ // Fetch Academic Calendar Events
+ const { data: acadEvents } = await supabase
+ .from('academic_calendar')
+ .select('*')
+ .gte('start_date', new Date().toISOString().split('T')[0]);
+ 
+ // Fetch Admin Events (Marketing/Public)
+ const { data: mktEvents } = await supabase
+ .from('admin_events')
+ .select('*')
+ .gte('event_date', new Date().toISOString().split('T')[0]);
 
-                let unifiedEvents = [];
-                if (acadEvents) {
-                    unifiedEvents = [...unifiedEvents, ...acadEvents.map(e => ({
-                        id: 'acad_' + e.id,
-                        title: e.title,
-                        description: e.description,
-                        start_date: e.start_date,
-                        end_date: e.end_date,
-                        type: e.type,
-                        source: 'academic'
-                    }))];
-                }
-                
-                if (mktEvents) {
-                    unifiedEvents = [...unifiedEvents, ...mktEvents.map(e => ({
-                        id: 'mkt_' + e.id,
-                        title: e.title,
-                        description: e.description,
-                        start_date: e.event_date,
-                        end_date: e.event_date,
-                        type: 'Public Event',
-                        location: e.location,
-                        image_url: e.image_url,
-                        is_public: e.is_public,
-                        source: 'marketing'
-                    }))];
-                }
-                
-                // Sort by date ascending
-                unifiedEvents.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
-                setEvents(unifiedEvents);
+ let unifiedEvents = [];
+ if (acadEvents) {
+ unifiedEvents = [...unifiedEvents, ...acadEvents.map(e => ({
+ id: 'acad_' + e.id,
+ title: e.title,
+ description: e.description,
+ start_date: e.start_date,
+ end_date: e.end_date,
+ type: e.type,
+ source: 'academic'
+ }))];
+ }
+ 
+ if (mktEvents) {
+ unifiedEvents = [...unifiedEvents, ...mktEvents.map(e => ({
+ id: 'mkt_' + e.id,
+ title: e.title,
+ description: e.description,
+ start_date: e.event_date,
+ end_date: e.event_date,
+ type: 'Public Event',
+ location: e.location,
+ image_url: e.image_url,
+ is_public: e.is_public,
+ source: 'marketing'
+ }))];
+ }
+ 
+ // Sort by date ascending
+ unifiedEvents.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+ setEvents(unifiedEvents);
 
-                // Fetch Notices
-                const { data, error } = await supabase
-                    .from('notices')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+ // Fetch Notices
+ const { data, error } = await supabase
+ .from('notices')
+ .select('*')
+ .order('created_at', { ascending: false });
 
-                if (!error && data) {
-                    const userRole = userSession?.role || 'student';
-                    const userBatch = userSession?.academic_batch;
-                    const userId = userSession?.id;
-                    const userRoleCap = userRole.charAt(0).toUpperCase() + userRole.slice(1);
-                    
-                    // Filter logic: intersect target array with user properties
-                    const applicableNotices = data.filter(n => {
-                        if (!n.target_audience || !Array.isArray(n.target_audience) || n.target_audience.length === 0) return true;
-                        if (n.target_audience.includes('All')) return true;
-                        if (n.target_audience.includes(userRoleCap)) return true;
-                        if (userBatch && n.target_audience.includes(userBatch)) return true;
-                        if (userId && n.target_audience.includes(userId)) return true;
-                        
-                        // Always let authors see their own broadcasts
-                        if (n.author_id === userId) return true;
-                        
-                        return false;
-                    });
+ if (!error && data) {
+ const userRole = userSession?.role || 'student';
+ const userBatch = userSession?.academic_batch;
+ const userId = userSession?.id;
+ const userRoleCap = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+ 
+ // Filter logic: intersect target array with user properties
+ const applicableNotices = data.filter(n => {
+ if (!n.target_audience || !Array.isArray(n.target_audience) || n.target_audience.length === 0) return true;
+ if (n.target_audience.includes('All')) return true;
+ if (n.target_audience.includes(userRoleCap)) return true;
+ if (userBatch && n.target_audience.includes(userBatch)) return true;
+ if (userId && n.target_audience.includes(userId)) return true;
+ 
+ // Always let authors see their own broadcasts
+ if (n.author_id === userId) return true;
+ 
+ return false;
+ });
 
-                    // For now, treat all fetched as unread until we link notice_acknowledgements properly
-                    setNotices(applicableNotices.map(n => ({ ...n, isUnread: true })));
-                    
-                    // Fetch acknowledgements for this user
-                    } else {
-                    setNotices([]);
-                }
-            } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
-            setLoading(false);
-        };
-        fetchNotices();
-    }, [userSession]);
+ // For now, treat all fetched as unread until we link notice_acknowledgements properly
+ setNotices(applicableNotices.map(n => ({ ...n, isUnread: true })));
+ 
+ // Fetch acknowledgements for this user
+ } else {
+ setNotices([]);
+ }
+ } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ setLoading(false);
+ };
+ fetchNotices();
+ }, [userSession]);
 
-    const toggleSave = (id, e) => {
-        e.stopPropagation();
-        const next = new Set(saved);
-        if (next.has(id)) next.delete(id); else next.add(id);
-        setSaved(next);
-    };
+ const toggleSave = (id, e) => {
+ e.stopPropagation();
+ const next = new Set(saved);
+ if (next.has(id)) next.delete(id); else next.add(id);
+ setSaved(next);
+ };
 
-    
-    // Filter Logic
-    let filtered = notices.filter(n => {
-        if (activeFilter === 'Unread') return n.isUnread;
-        if (activeFilter === 'Pinned') return n.is_pinned;
-        if (activeFilter === 'Saved') return saved.has(n.id);
-        if (activeFilter !== 'All' && n.category !== activeFilter) return false;
-        
-        if (searchQuery) {
-            const q = searchQuery.toLowerCase();
-            return (n.title || '').toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q) || (n.category || '').toLowerCase().includes(q);
-        }
-        return true;
-    });
+ 
+ // Filter Logic
+ let filtered = notices.filter(n => {
+ if (activeFilter === 'Unread') return n.isUnread;
+ if (activeFilter === 'Pinned') return n.is_pinned;
+ if (activeFilter === 'Saved') return saved.has(n.id);
+ if (activeFilter !== 'All' && n.category !== activeFilter) return false;
+ 
+ if (searchQuery) {
+ const q = searchQuery.toLowerCase();
+ return (n.title || '').toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q) || (n.category || '').toLowerCase().includes(q);
+ }
+ return true;
+ });
 
-    const renderFeed = () => (
-        <div className="flex flex-col gap-4 pb-12">
-            {filtered.length === 0 ? (
-                <div className="bg-black/5 dark:bg-white/5 backdrop-blur-[30px] border border-black/10 dark:border-white/20 border-dashed rounded-[2rem] p-12 flex flex-col items-center justify-center opacity-50 shadow-inner">
-                    <i className="fa-regular fa-folder-open text-4xl mb-4 text-themeTextSec"></i>
-                    <p className="text-sm font-bold text-themeTextSec tracking-normal">No notices found</p>
-                </div>
-            ) : filtered.map((notice, i) => {
-                const pConf = PRIORITIES[notice.priority] || PRIORITIES.normal;
-                
-                return (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 30 }}
-                        whileHover={{ scale: 1.01, y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                        key={notice.id} 
-                        onClick={() => {
-                            setSelectedNotice(notice);
-                            setNotices(notices.map(n => n.id === notice.id ? { ...n, isUnread: false } : n));
-                        }}
-                        className={`py-5 border-b border-black/[0.04] dark:border-white/[0.04] cursor-pointer flex flex-col group relative overflow-hidden transition-opacity hover:opacity-80`}
-                    >
-                        {/* Specular Highlight */}
-                        {/* Glow effect for unread/pinned */}
-                        {notice.isUnread && <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${pConf.bg} shadow-[0_0_15px_${pConf.bg.split('/')[0].replace('bg-','')}]`}></div>}
-                        
-                        <div className="flex justify-between items-start mb-3 relative z-10">
-                            <div className="flex items-center gap-3">
-                                {notice.is_pinned && <motion.i initial={{ rotate: 0 }} animate={{ rotate: 45 }} className="fa-solid fa-thumbtack text-[12px] text-themeAccent"></motion.i>}
-                                <span className={`px-2 py-1 rounded-full text-[12px] font-medium ${pConf.bg} ${pConf.color} border border-black/5 dark:border-white/10 shadow-inner`}>
-                                    <i className={`fa-solid ${pConf.icon} mr-1.5`}></i>
-                                    {pConf.display}
-                                </span>
-                                <span className="text-[11px] font-bold text-themeTextSec bg-black/5 dark:bg-white/10 px-3 py-1 rounded-md border border-black/5 dark:border-white/5">{notice.category}</span>
-                            </div>
-                            <div className="flex gap-4 items-center">
-                                <span className="text-[10px] font-bold text-themeTextSec tracking-normal">{new Date(notice.created_at).toLocaleDateString()}</span>
-                                <motion.button whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} onClick={(e) => toggleSave(notice.id, e)} className={`text-base transition-colors ${saved.has(notice.id) ? 'text-amber-400' : 'text-themeTextSec hover:text-themeText'}`}>
-                                    <i className={`${saved.has(notice.id) ? 'fa-solid' : 'fa-regular'} fa-bookmark`}></i>
-                                </motion.button>
-                            </div>
-                        </div>
+ const renderFeed = () => (
+ <div className="flex flex-col gap-4 pb-12">
+ {filtered.length === 0 ? (
+ <div className="bg-themeElevated backdrop-blur-[30px] border border-themeBorder border-dashed rounded-[2rem] p-12 flex flex-col items-center justify-center opacity-50 shadow-inner">
+ <i className="fa-regular fa-folder-open text-4xl mb-4 text-themeTextSec"></i>
+ <p className="text-sm font-bold text-themeTextSec tracking-normal">No notices found</p>
+ </div>
+ ) : filtered.map((notice, i) => {
+ const pConf = PRIORITIES[notice.priority] || PRIORITIES.normal;
+ 
+ return (
+ <motion.div 
+ initial={{ opacity: 0, y: 20 }}
+ animate={{ opacity: 1, y: 0 }}
+ transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 30 }}
+ whileHover={{ scale: 1.01, y: -2 }}
+ whileTap={{ scale: 0.98 }}
+ key={notice.id} 
+ onClick={() => {
+ setSelectedNotice(notice);
+ setNotices(notices.map(n => n.id === notice.id ? { ...n, isUnread: false } : n));
+ }}
+ className={`py-5 border-b border-themeBorder dark:border-white/[0.04] cursor-pointer flex flex-col group relative overflow-hidden transition-opacity hover:opacity-80`}
+ >
+ {/* Specular Highlight */}
+ {/* Glow effect for unread/pinned */}
+ {notice.isUnread && <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${pConf.bg} shadow-[0_0_15px_${pConf.bg.split('/')[0].replace('bg-','')}]`}></div>}
+ 
+ <div className="flex justify-between items-start mb-3 relative z-10">
+ <div className="flex items-center gap-3">
+ {notice.is_pinned && <motion.i initial={{ rotate: 0 }} animate={{ rotate: 45 }} className="fa-solid fa-thumbtack text-[12px] text-themeAccent"></motion.i>}
+ <span className={`px-2 py-1 rounded-full text-[12px] font-medium ${pConf.bg} ${pConf.color} border border-themeBorder shadow-inner`}>
+ <i className={`fa-solid ${pConf.icon} mr-1.5`}></i>
+ {pConf.display}
+ </span>
+ <span className="text-[11px] font-bold text-themeTextSec bg-themeElevated px-3 py-1 rounded-md border border-themeBorder ">{notice.category}</span>
+ </div>
+ <div className="flex gap-4 items-center">
+ <span className="text-[10px] font-bold text-themeTextSec tracking-normal">{new Date(notice.created_at).toLocaleDateString()}</span>
+ <motion.button whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} onClick={(e) => toggleSave(notice.id, e)} className={`text-base transition-colors ${saved.has(notice.id) ? 'text-amber-400' : 'text-themeTextSec hover:text-themeText'}`}>
+ <i className={`${saved.has(notice.id) ? 'fa-solid' : 'fa-regular'} fa-bookmark`}></i>
+ </motion.button>
+ </div>
+ </div>
 
-                        <h3 className={`text-xl font-semibold tracking-tight tracking-tight mb-2 relative z-10 drop-shadow-sm ${notice.isUnread ? 'text-themeText' : 'text-themeTextSec'}`}>
-                            {notice.title}
-                            {notice.isUnread && <span className="inline-block w-2.5 h-2.5 rounded-full bg-themeAccent ml-3 mb-1 animate-pulse shadow-[0_0_10px_var(--theme-accent)]"></span>}
-                        </h3>
-                        <p className="text-sm font-bold text-themeTextSec/80 line-clamp-2 leading-relaxed relative z-10">{notice.summary}</p>
+ <h3 className={`text-xl font-semibold tracking-tight tracking-tight mb-2 relative z-10 drop-shadow-sm ${notice.isUnread ? 'text-themeText' : 'text-themeTextSec'}`}>
+ {notice.title}
+ {notice.isUnread && <span className="inline-block w-2.5 h-2.5 rounded-full bg-themeAccent ml-3 mb-1 animate-pulse shadow-[0_0_10px_var(--theme-accent)]"></span>}
+ </h3>
+ <p className="text-sm font-bold text-themeTextSec/80 line-clamp-2 leading-relaxed relative z-10">{notice.summary}</p>
 
-                        {/* Quick Action Footer */}
-                        <div className="mt-5 flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-4 opacity-50 group-hover:opacity-100 transition-opacity relative z-10">
-                            <span className="text-[13px] font-medium text-themeAccent">Read Full Notice →</span>
-                            
-                        </div>
-                    </motion.div>
-                );
-            })}
-        </div>
-    );
+ {/* Quick Action Footer */}
+ <div className="mt-5 flex items-center justify-between border-t border-themeBorder pt-4 opacity-50 group-hover:opacity-100 transition-opacity relative z-10">
+ <span className="text-[13px] font-medium text-themeAccent">Read Full Notice →</span>
+ 
+ </div>
+ </motion.div>
+ );
+ })}
+ </div>
+ );
 
-    const renderEventsFeed = () => (
-        <div className="flex flex-col gap-4 pb-12">
-            {events.length === 0 ? (
-                <div className="bg-black/5 dark:bg-white/5 backdrop-blur-[30px] border border-black/10 dark:border-white/20 border-dashed rounded-[2rem] p-12 flex flex-col items-center justify-center opacity-50 shadow-inner">
-                    <i className="fa-regular fa-calendar-xmark text-4xl mb-4 text-themeTextSec"></i>
-                    <p className="text-sm font-bold text-themeTextSec tracking-normal">No upcoming events</p>
-                </div>
-            ) : events.map((e, i) => (
-                <motion.div 
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 30 }}
-                    whileHover={{ scale: 1.01 }}
-                    key={e.id} 
-                    className="bg-black/5 dark:bg-white/5 backdrop-blur-[30px] shadow-none border border-black/10 dark:border-white/20 hover:border-black/5 dark:border-white/10 rounded-[2rem] p-6 flex items-center justify-between group relative overflow-hidden"
-                >
-                    <div className="flex gap-6 items-center relative z-10">
-                        <div className="w-24 h-24 rounded-[1.5rem] bg-gray-50 dark:bg-black/20 dark:bg-white/10 backdrop-blur-md shadow-inner border border-black/5 dark:border-white/10 flex flex-col items-center justify-center shrink-0 group-hover:bg-themeAccent/10 group-hover:border-themeAccent/30 transition-colors">
-                            <span className="text-[13px] font-medium text-themeAccent drop-shadow-sm">{new Date(e.start_date).toLocaleString('default', { month: 'short' })}</span>
-                            <span className="text-4xl font-black text-themeText leading-none mt-1">{new Date(e.start_date).getDate()}</span>
-                        </div>
-                        <div>
-                            <div className="flex gap-2 mb-2">
-                                <span className="text-[11px] font-bold text-themeTextSec bg-black/5 dark:bg-white/10 px-3 py-1 rounded-md border border-black/5 dark:border-white/5">
-                                    {e.event_type}
-                                </span>
-                            </div>
-                            <h3 className="text-xl font-semibold tracking-tight text-themeText drop-shadow-sm">{e.title}</h3>
-                            <p className="text-sm font-bold text-themeTextSec/80 mt-1 line-clamp-2">{e.description}</p>
-                            {e.end_date && e.end_date !== e.start_date && (
-                                <p className="text-[13px] font-medium text-themeTextSec mt-3 flex items-center gap-2">
-                                    <i className="fa-solid fa-arrow-right-long text-themeAccent"></i>
-                                    Ends {new Date(e.end_date).toLocaleDateString()}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </motion.div>
-            ))}
-        </div>
-    );
+ const renderEventsFeed = () => (
+ <div className="flex flex-col gap-4 pb-12">
+ {events.length === 0 ? (
+ <div className="bg-themeElevated backdrop-blur-[30px] border border-themeBorder border-dashed rounded-[2rem] p-12 flex flex-col items-center justify-center opacity-50 shadow-inner">
+ <i className="fa-regular fa-calendar-xmark text-4xl mb-4 text-themeTextSec"></i>
+ <p className="text-sm font-bold text-themeTextSec tracking-normal">No upcoming events</p>
+ </div>
+ ) : events.map((e, i) => (
+ <motion.div 
+ initial={{ opacity: 0, x: -20 }}
+ animate={{ opacity: 1, x: 0 }}
+ transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 30 }}
+ whileHover={{ scale: 1.01 }}
+ key={e.id} 
+ className="bg-themeElevated backdrop-blur-[30px] shadow-none border border-themeBorder hover:border-themeBorder rounded-[2rem] p-6 flex items-center justify-between group relative overflow-hidden"
+ >
+ <div className="flex gap-6 items-center relative z-10">
+ <div className="w-24 h-24 rounded-[1.5rem] bg-themeApp /20 backdrop-blur-md shadow-inner border border-themeBorder flex flex-col items-center justify-center shrink-0 group-hover:bg-themeAccent/10 group-hover:border-themeAccent/30 transition-colors">
+ <span className="text-[13px] font-medium text-themeAccent drop-shadow-sm">{new Date(e.start_date).toLocaleString('default', { month: 'short' })}</span>
+ <span className="text-4xl font-black text-themeText leading-none mt-1">{new Date(e.start_date).getDate()}</span>
+ </div>
+ <div>
+ <div className="flex gap-2 mb-2">
+ <span className="text-[11px] font-bold text-themeTextSec bg-themeElevated px-3 py-1 rounded-md border border-themeBorder ">
+ {e.event_type}
+ </span>
+ </div>
+ <h3 className="text-xl font-semibold tracking-tight text-themeText drop-shadow-sm">{e.title}</h3>
+ <p className="text-sm font-bold text-themeTextSec/80 mt-1 line-clamp-2">{e.description}</p>
+ {e.end_date && e.end_date !== e.start_date && (
+ <p className="text-[13px] font-medium text-themeTextSec mt-3 flex items-center gap-2">
+ <i className="fa-solid fa-arrow-right-long text-themeAccent"></i>
+ Ends {new Date(e.end_date).toLocaleDateString()}
+ </p>
+ )}
+ </div>
+ </div>
+ </motion.div>
+ ))}
+ </div>
+ );
 
-    const renderDetailView = () => {
-        const pConf = PRIORITIES[selectedNotice.priority] || PRIORITIES.normal;
-        const sanitize = window.DOMPurify ? window.DOMPurify.sanitize : (s) => s;
+ const renderDetailView = () => {
+ const pConf = PRIORITIES[selectedNotice.priority] || PRIORITIES.normal;
+ const sanitize = window.DOMPurify ? window.DOMPurify.sanitize : (s) => s;
 
-        return (
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                className="flex-1 flex flex-col bg-white/5 backdrop-blur-[40px] shadow-none border border-black/5 dark:border-white/10 rounded-[2rem] overflow-hidden relative"
-            >
-                {/* Edge Specular */}
-                {/* Header Area */}
-                <div className="p-8 lg:p-10 border-b border-black/5 dark:border-white/10 relative overflow-hidden bg-black/10 dark:bg-white/5">
-                    <div className={`absolute top-0 right-0 w-full max-w-[20rem] h-[20rem] bg-gradient-to-br ${pConf.bg} to-transparent rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none blur-[100px] opacity-70`}></div>
-                    
-                    <motion.button 
-                        whileHover={{ x: -5 }} whileTap={{ scale: 0.9 }}
-                        onClick={() => setSelectedNotice(null)} 
-                        className="mb-8 text-[13px] font-medium text-themeTextSec hover:text-themeText transition-colors flex items-center gap-2 relative z-10"
-                    >
-                        <i className="fa-solid fa-arrow-left"></i> Back to Board
-                    </motion.button>
+ return (
+ <motion.div 
+ initial={{ opacity: 0, scale: 0.95 }}
+ animate={{ opacity: 1, scale: 1 }}
+ exit={{ opacity: 0, scale: 0.95 }}
+ transition={{ type: "spring", stiffness: 400, damping: 30 }}
+ className="flex-1 flex flex-col bg-themePanel/5 backdrop-blur-[40px] shadow-none border border-themeBorder rounded-[2rem] overflow-hidden relative"
+ >
+ {/* Edge Specular */}
+ {/* Header Area */}
+ <div className="p-8 lg:p-10 border-b border-themeBorder relative overflow-hidden bg-black/10 ">
+ <div className={`absolute top-0 right-0 w-full max-w-[20rem] h-[20rem] bg-gradient-to-br ${pConf.bg} to-transparent rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none blur-[100px] opacity-70`}></div>
+ 
+ <motion.button 
+ whileHover={{ x: -5 }} whileTap={{ scale: 0.9 }}
+ onClick={() => setSelectedNotice(null)} 
+ className="mb-8 text-[13px] font-medium text-themeTextSec hover:text-themeText transition-colors flex items-center gap-2 relative z-10"
+ >
+ <i className="fa-solid fa-arrow-left"></i> Back to Board
+ </motion.button>
 
-                    <div className="flex items-center gap-3 mb-5 relative z-10">
-                        <span className={`px-3 py-1.5 rounded-full text-[12px] font-medium ${pConf.bg} ${pConf.color} border border-black/5 dark:border-white/10 shadow-inner`}>
-                            {pConf.display}
-                        </span>
-                        <span className="text-[13px] font-medium text-themeTextSec bg-gray-50 dark:bg-black/20 dark:bg-white/10 backdrop-blur-md shadow-inner px-3 py-1.5 rounded-full border border-black/10 dark:border-white/20">{selectedNotice.category}</span>
-                        <span className="text-[10px] font-bold text-themeTextSec tracking-normal ml-2 opacity-70">Published: {new Date(selectedNotice.created_at).toLocaleDateString()}</span>
-                    </div>
+ <div className="flex items-center gap-3 mb-5 relative z-10">
+ <span className={`px-3 py-1.5 rounded-full text-[12px] font-medium ${pConf.bg} ${pConf.color} border border-themeBorder shadow-inner`}>
+ {pConf.display}
+ </span>
+ <span className="text-[13px] font-medium text-themeTextSec bg-themeApp /20 backdrop-blur-md shadow-inner px-3 py-1.5 rounded-full border border-themeBorder ">{selectedNotice.category}</span>
+ <span className="text-[10px] font-bold text-themeTextSec tracking-normal ml-2 opacity-70">Published: {new Date(selectedNotice.created_at).toLocaleDateString()}</span>
+ </div>
 
-                    <h1 className="text-3xl lg:text-4xl font-black text-themeText tracking-tight mb-3 relative z-10 leading-tight">{selectedNotice.title}</h1>
-                    <p className="text-sm font-bold text-themeTextSec/90 relative z-10 leading-relaxed max-w-3xl">{selectedNotice.summary}</p>
-                </div>
+ <h1 className="text-3xl lg:text-4xl font-black text-themeText tracking-tight mb-3 relative z-10 leading-tight">{selectedNotice.title}</h1>
+ <p className="text-sm font-bold text-themeTextSec/90 relative z-10 leading-relaxed max-w-3xl">{selectedNotice.summary}</p>
+ </div>
 
-                {/* Content Area */}
-                <div className="p-8 lg:p-10 flex-1 overflow-y-auto custom-scrollbar prose prose-invert prose-p:text-themeTextSec prose-p:font-bold prose-headings:font-black prose-a:text-themeAccent max-w-none relative z-10">
-                    <div dangerouslySetInnerHTML={{ __html: sanitize(selectedNotice.content) }}></div>
-                </div>
+ {/* Content Area */}
+ <div className="p-8 lg:p-10 flex-1 overflow-y-auto custom-scrollbar prose prose-invert prose-p:text-themeTextSec prose-p:font-bold prose-headings:font-black prose-a:text-themeAccent max-w-none relative z-10">
+ <div dangerouslySetInnerHTML={{ __html: sanitize(selectedNotice.content) }}></div>
+ </div>
 
-                {/* Footer / Actions Area */}
-                <div className="p-8 border-t border-black/5 dark:border-white/10 bg-gray-50 dark:bg-black/20 dark:bg-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10 backdrop-blur-md">
-                    
-                    <div className="flex gap-3">
-                        {selectedNotice.deep_link_url && (
-                            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setActiveTab(selectedNotice.deep_link_url)} className="bg-white/10 backdrop-blur-md shadow-inner border border-black/5 dark:border-white/10 hover:border-themeAccent hover:text-themeAccent text-themeText px-5 py-3 rounded-xl text-[13px] font-medium transition-colors flex items-center gap-2">
-                                <i className="fa-solid fa-link"></i> Go to Portal
-                            </motion.button>
-                        )}
-                        {(userSession?.role === 'admin' || userSession?.role === 'faculty' || selectedNotice.author_id === userSession?.db_id) && (
-                            <motion.button 
-                                whileHover={{ scale: 1.05 }} 
-                                whileTap={{ scale: 0.95 }} 
-                                onClick={async (e) => { 
-                                    e.preventDefault(); 
-                                    e.stopPropagation(); 
-                                    const confirmed = await window.erpDialog?.confirm("Are you sure you want to permanently delete this notice?", "Delete Notice");
-                                    if (confirmed) {
-                                        const { data, error } = await supabase.from('notices').delete().eq('id', selectedNotice.id).select();
-                                        if (error) {
-                                            window.erpDialog?.alert("Failed to delete notice: " + error.message, "Error");
-                                        } else if (!data || data.length === 0) {
-                                            window.erpDialog?.alert("Access Denied: You do not have permission to delete this notice (RLS blocked).", "Error");
-                                        } else {
-                                            setSelectedNotice(null);
-                                            window.erpDialog?.alert("Notice deleted successfully.", "Success");
-                                            setNotices(prev => prev.filter(n => n.id !== selectedNotice.id));
-                                        }
-                                    }
-                                }} 
-                                className="bg-rose-500/10 backdrop-blur-md border border-rose-500/20 hover:border-rose-500 hover:text-rose-500 text-rose-400 px-5 py-3 rounded-xl text-[13px] font-medium transition-colors flex items-center gap-2"
-                            >
-                                <i className="fa-solid fa-trash"></i> Delete Notice
-                            </motion.button>
-                        )}
-                    </div>
+ {/* Footer / Actions Area */}
+ <div className="p-8 border-t border-themeBorder bg-themeApp /20 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10 backdrop-blur-md">
+ 
+ <div className="flex gap-3">
+ {selectedNotice.deep_link_url && (
+ <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setActiveTab(selectedNotice.deep_link_url)} className="bg-themePanel/10 backdrop-blur-md shadow-inner border border-themeBorder hover:border-themeAccent hover:text-themeAccent text-themeText px-5 py-3 rounded-xl text-[13px] font-medium transition-colors flex items-center gap-2">
+ <i className="fa-solid fa-link"></i> Go to Portal
+ </motion.button>
+ )}
+ {(userSession?.role === 'admin' || userSession?.role === 'faculty' || selectedNotice.author_id === userSession?.db_id) && (
+ <motion.button 
+ whileHover={{ scale: 1.05 }} 
+ whileTap={{ scale: 0.95 }} 
+ onClick={async (e) => { 
+ e.preventDefault(); 
+ e.stopPropagation(); 
+ const confirmed = await window.erpDialog?.confirm("Are you sure you want to permanently delete this notice?", "Delete Notice");
+ if (confirmed) {
+ const { data, error } = await supabase.from('notices').delete().eq('id', selectedNotice.id).select();
+ if (error) {
+ window.erpDialog?.alert("Failed to delete notice: " + error.message, "Error");
+ } else if (!data || data.length === 0) {
+ window.erpDialog?.alert("Access Denied: You do not have permission to delete this notice (RLS blocked).", "Error");
+ } else {
+ setSelectedNotice(null);
+ window.erpDialog?.alert("Notice deleted successfully.", "Success");
+ setNotices(prev => prev.filter(n => n.id !== selectedNotice.id));
+ }
+ }
+ }} 
+ className="bg-rose-500/10 backdrop-blur-md border border-rose-500/20 hover:border-rose-500 hover:text-rose-500 text-rose-400 px-5 py-3 rounded-xl text-[13px] font-medium transition-colors flex items-center gap-2"
+ >
+ <i className="fa-solid fa-trash"></i> Delete Notice
+ </motion.button>
+ )}
+ </div>
 
-                    
-                    
-                </div>
-            </motion.div>
-        );
-    };
+ 
+ 
+ </div>
+ </motion.div>
+ );
+ };
 
-    return (
-        <div className="w-full h-auto xl:h-[calc(100vh-9rem)] xl:min-h-[600px] min-h-full relative flex-1 bg-transparent text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
-            
-            <div className="relative z-20 w-full mx-auto flex flex-col h-full overflow-hidden">
-                
-                {/* Header Container */}
-            <div className="relative w-full overflow-hidden border-b border-black/[0.04] dark:border-white/[0.04] bg-gradient-to-r from-[var(--theme-accent)]/5 via-transparent to-transparent py-8 shrink-0">
-    <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-[var(--theme-accent)]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-    <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 px-2 md:px-6">
-        <div className="flex items-center gap-5">
-            <div className="w-14 h-14 bg-white dark:bg-themePanel/50 backdrop-blur-2xl border border-black/5 dark:border-white/10 rounded-2xl flex items-center justify-center text-2xl text-[var(--theme-accent)] shadow-sm">
-                <i className="fa-solid fa-bullhorn"></i>
-            </div>
-            <div>
-                <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Notice Board</h1>
-                <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Official communication & events</p>
-            </div>
-        </div>
-        <div className="flex flex-col md:flex-row gap-3 items-center w-full xl:w-auto">
-            <div className="flex bg-black/5 dark:bg-white/10 p-1 rounded-xl border border-black/5 dark:border-white/5 w-full md:w-auto">
-                <button type="button" 
-                    onClick={() => {setActiveMainTab('broadcasts'); setSelectedNotice(null); setIsBroadcasting(false);}} 
-                    className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-[13px] font-bold tracking-tight transition ${activeMainTab === "broadcasts" ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
-                >
-                    Notices
-                </button>
-                <button type="button" 
-                    onClick={() => {setActiveMainTab('events'); setSelectedNotice(null); setIsBroadcasting(false);}} 
-                    className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-[13px] font-bold tracking-tight transition ${activeMainTab === "events" ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
-                >
-                    Events
-                </button>
-            </div>
-            
-            {activeMainTab === "broadcasts" && (
-                <div className="relative flex-1 md:w-64 w-full">
-                    <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec text-[13px]"></i>
-                    <input 
-                        type="text" 
-                        placeholder="Search notices..." 
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/5 focus:border-[var(--theme-accent)]/50 focus:bg-white dark:focus:bg-themeElevated rounded-xl pl-9 pr-4 py-2.5 text-[13px] font-semibold text-themeText dark:text-themeText placeholder:text-themeTextSec outline-none transition-all shadow-inner"
-                    />
-                </div>
-            )}
+ return (
+ <div className="w-full h-auto xl:h-[calc(100vh-9rem)] xl:min-h-[600px] min-h-full relative flex-1 bg-transparent text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
+ 
+ <div className="relative z-20 w-full mx-auto flex flex-col h-full overflow-hidden">
+ 
+ {/* Header Container */}
+ <div className="relative w-full overflow-hidden border-b border-themeBorder dark:border-white/[0.04] bg-gradient-to-r from-[var(--theme-accent)]/5 via-transparent to-transparent py-8 shrink-0">
+ <div className="absolute top-0 right-0 w-full max-w-[30rem] h-[30rem] bg-[var(--theme-accent)]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+ <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6 px-2 md:px-6">
+ <div className="flex items-center gap-5">
+ <div className="w-14 h-14 bg-themePanel/50 backdrop-blur-2xl border border-themeBorder rounded-2xl flex items-center justify-center text-2xl text-[var(--theme-accent)] shadow-sm">
+ <i className="fa-solid fa-bullhorn"></i>
+ </div>
+ <div>
+ <h1 className="text-3xl font-black text-themeText tracking-tight mb-1">Notice Board</h1>
+ <p className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest">Official communication & events</p>
+ </div>
+ </div>
+ <div className="flex flex-col md:flex-row gap-3 items-center w-full xl:w-auto">
+ <div className="flex bg-themeElevated p-1 rounded-xl border border-themeBorder w-full md:w-auto">
+ <button type="button" 
+ onClick={() => {setActiveMainTab('broadcasts'); setSelectedNotice(null); setIsBroadcasting(false);}} 
+ className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-[13px] font-bold tracking-tight transition ${activeMainTab === "broadcasts" ? 'bg-themePanel dark:bg-themeElevated text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
+ >
+ Notices
+ </button>
+ <button type="button" 
+ onClick={() => {setActiveMainTab('events'); setSelectedNotice(null); setIsBroadcasting(false);}} 
+ className={`flex-1 md:flex-none px-6 py-2.5 rounded-lg text-[13px] font-bold tracking-tight transition ${activeMainTab === "events" ? 'bg-themePanel dark:bg-themeElevated text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}
+ >
+ Events
+ </button>
+ </div>
+ 
+ {activeMainTab === "broadcasts" && (
+ <div className="relative flex-1 md:w-64 w-full">
+ <i className="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec text-[13px]"></i>
+ <input 
+ type="text" 
+ placeholder="Search notices..." 
+ value={searchQuery}
+ onChange={(e) => setSearchQuery(e.target.value)}
+ className="w-full bg-themeElevated border border-themeBorder focus:border-[var(--theme-accent)]/50 focus:bg-themePanel dark:focus:bg-themeElevated rounded-xl pl-9 pr-4 py-2.5 text-[13px] font-semibold text-themeText placeholder:text-themeTextSec outline-none transition-all shadow-inner"
+ />
+ </div>
+ )}
 
-            {(userSession?.role === 'faculty' || userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'broadcasts' && (
-                <button type="button" 
-                    onClick={() => setIsBroadcasting(true)} 
-                    className="px-6 py-2.5 bg-[var(--theme-accent)]/10 text-themeAccent hover:bg-[var(--theme-accent)]/20 rounded-xl text-[13px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
-                >
-                    <i className="fa-solid fa-satellite-dish"></i> Broadcast
-                </button>
-            )}
-        </div>
-    </div>
+ {(userSession?.role === 'faculty' || userSession?.role === 'admin') && !isBroadcasting && activeMainTab === 'broadcasts' && (
+ <button type="button" 
+ onClick={() => setIsBroadcasting(true)} 
+ className="px-6 py-2.5 bg-[var(--theme-accent)]/10 text-themeAccent hover:bg-[var(--theme-accent)]/20 rounded-xl text-[13px] font-bold tracking-tight transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
+ >
+ <i className="fa-solid fa-satellite-dish"></i> Broadcast
+ </button>
+ )}
+ </div>
+ </div>
 </div>
 
-            {/* Content Area */}
-                <div className="flex flex-col xl:flex-row gap-8 h-full overflow-hidden">
-                    
-                    {/* LEFT: Feed or Detail */}
-                    <div className="flex-1 w-full flex flex-col gap-6 h-full overflow-hidden">
-                        
-                        {/* Filters Bar */}
-                        <AnimatePresence>
-                            {activeMainTab === "broadcasts" && !selectedNotice && !isBroadcasting && (
-                                <motion.div 
-                                    initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                                    className="flex flex-wrap gap-2 shrink-0"
-                                >
-                                    {['All', 'Unread', 'Pinned', 'Saved', 'Academic', 'Emergency'].map(f => (
-                                        <motion.button 
-                                            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                                            key={f}
-                                            onClick={() => setActiveFilter(f)}
-                                            className={`px-5 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${
-                                                activeFilter === f 
-                                                    ? 'bg-white dark:bg-themeElevated text-themeText dark:text-themeText border-black/5 dark:border-white/10 shadow-sm scale-105' 
-                                                    : 'bg-black/5 dark:bg-white/10 text-themeTextSec border-transparent hover:text-themeText dark:hover:text-themeText hover:border-black/5 dark:hover:border-themeBorder dark:border-white/10'
-                                            }`}
-                                        >
-                                            {f}
-                                        </motion.button>
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+ {/* Content Area */}
+ <div className="flex flex-col xl:flex-row gap-8 h-full overflow-hidden">
+ 
+ {/* LEFT: Feed or Detail */}
+ <div className="flex-1 w-full flex flex-col gap-6 h-full overflow-hidden">
+ 
+ {/* Filters Bar */}
+ <AnimatePresence>
+ {activeMainTab === "broadcasts" && !selectedNotice && !isBroadcasting && (
+ <motion.div 
+ initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+ className="flex flex-wrap gap-2 shrink-0"
+ >
+ {['All', 'Unread', 'Pinned', 'Saved', 'Academic', 'Emergency'].map(f => (
+ <motion.button 
+ whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+ key={f}
+ onClick={() => setActiveFilter(f)}
+ className={`px-5 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${
+ activeFilter === f 
+ ? 'bg-themePanel dark:bg-themeElevated text-themeText border-themeBorder shadow-sm scale-105' 
+ : 'bg-themeElevated text-themeTextSec border-transparent hover:text-themeText dark:hover:text-themeText hover:border-themeBorder dark:hover:border-themeBorder '
+ }`}
+ >
+ {f}
+ </motion.button>
+ ))}
+ </motion.div>
+ )}
+ </AnimatePresence>
 
-                        {/* Scrolling Content Feed */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-8">
-                            <AnimatePresence mode="wait">
-                                {activeMainTab === "events" ? (
-                                    <motion.div key="events" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
-                                        <EventsBoard />
-                                    </motion.div>
-                                ) : isBroadcasting ? (
-                                    <motion.div key="broadcast" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="bg-white/5 backdrop-blur-3xl border border-black/5 dark:border-white/10 rounded-3xl md:rounded-[2rem] p-0 sm:p-4 md:p-8 overflow-hidden">
-                                        <FacultyBroadcastForm 
-                                            onCancel={() => setIsBroadcasting(false)}
-                                            onNoticePublished={async () => { setIsBroadcasting(false); await window.erpDialog?.alert("Notice successfully published to the notice board.", "Broadcast Sent"); window.location.reload(); }}
-                                        />
-                                    </motion.div>
-                                ) : selectedNotice ? (
-                                    <motion.div key="detail" className="h-full flex flex-col">
-                                        {renderDetailView()}
-                                    </motion.div>
-                                ) : (
-                                    <motion.div key="feed" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
-                                        {renderFeed()}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
+ {/* Scrolling Content Feed */}
+ <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-8">
+ <AnimatePresence mode="wait">
+ {activeMainTab === "events" ? (
+ <motion.div key="events" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
+ <EventsBoard />
+ </motion.div>
+ ) : isBroadcasting ? (
+ <motion.div key="broadcast" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }} className="bg-themePanel/5 backdrop-blur-3xl border border-themeBorder rounded-3xl md:rounded-[2rem] p-0 sm:p-4 md:p-8 overflow-hidden">
+ <FacultyBroadcastForm 
+ onCancel={() => setIsBroadcasting(false)}
+ onNoticePublished={async () => { setIsBroadcasting(false); await window.erpDialog?.alert("Notice successfully published to the notice board.", "Broadcast Sent"); window.location.reload(); }}
+ />
+ </motion.div>
+ ) : selectedNotice ? (
+ <motion.div key="detail" className="h-full flex flex-col">
+ {renderDetailView()}
+ </motion.div>
+ ) : (
+ <motion.div key="feed" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}>
+ {renderFeed()}
+ </motion.div>
+ )}
+ </AnimatePresence>
+ </div>
+ </div>
 
-                    {/* RIGHT: Sidebar Stats/Info */}
-                    <AnimatePresence>
-                        {!selectedNotice && !isBroadcasting && (
-                            <motion.div 
-                                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                className="hidden xl:flex flex-col w-full max-w-[22rem] shrink-0 gap-4 h-full overflow-hidden pb-2"
-                            >
-                                {/* Summary Card */}
-                                <div className="bg-white/5 backdrop-blur-[40px] border border-black/5 dark:border-white/10 rounded-[2rem] p-5 shadow-none relative overflow-hidden group shrink-0">
-                                    <h3 className="text-[13px] font-medium text-themeTextSec mb-4 flex items-center gap-2"><i className="fa-solid fa-chart-simple text-themeAccent"></i> Your Summary</h3>
-                                    <div className="grid grid-cols-3 gap-2 relative z-10">
-                                        <div className="flex flex-col gap-1 items-center">
-                                            <span className="text-3xl font-semibold tracking-tight text-themeText">{notices.filter(n => n.isUnread).length}</span>
-                                            <span className="text-[11px] font-medium text-themeTextSec">Unread</span>
-                                        </div>
-                                        <div className="flex flex-col gap-1 items-center border-l border-black/5 dark:border-white/10">
-                                            <span className="text-3xl font-semibold tracking-tight text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">{saved.size}</span>
-                                            <span className="text-[11px] font-medium text-themeTextSec">Saved</span>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
+ {/* RIGHT: Sidebar Stats/Info */}
+ <AnimatePresence>
+ {!selectedNotice && !isBroadcasting && (
+ <motion.div 
+ initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ type: "spring", stiffness: 400, damping: 30 }}
+ className="hidden xl:flex flex-col w-full max-w-[22rem] shrink-0 gap-4 h-full overflow-hidden pb-2"
+ >
+ {/* Summary Card */}
+ <div className="bg-themePanel/5 backdrop-blur-[40px] border border-themeBorder rounded-[2rem] p-5 shadow-none relative overflow-hidden group shrink-0">
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-4 flex items-center gap-2"><i className="fa-solid fa-chart-simple text-themeAccent"></i> Your Summary</h3>
+ <div className="grid grid-cols-3 gap-2 relative z-10">
+ <div className="flex flex-col gap-1 items-center">
+ <span className="text-3xl font-semibold tracking-tight text-themeText">{notices.filter(n => n.isUnread).length}</span>
+ <span className="text-[11px] font-medium text-themeTextSec">Unread</span>
+ </div>
+ <div className="flex flex-col gap-1 items-center border-l border-themeBorder ">
+ <span className="text-3xl font-semibold tracking-tight text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">{saved.size}</span>
+ <span className="text-[11px] font-medium text-themeTextSec">Saved</span>
+ </div>
+ 
+ </div>
+ </div>
 
-                                {/* Policies Card */}
-                                <div className="bg-white/5 backdrop-blur-[40px] border border-black/5 dark:border-white/10 rounded-[2rem] p-5 shadow-none relative overflow-hidden shrink-0">
-                                    <h3 className="text-[13px] font-medium text-themeTextSec mb-4"><i className="fa-solid fa-shield-halved mr-2 text-themeAccent opacity-70"></i> Notice Policies</h3>
-                                    <div className="flex flex-col gap-3 relative z-10">
-                                        <div className="flex gap-3 bg-rose-500/10 border border-rose-500/20 p-3.5 rounded-xl shadow-inner items-start">
-                                            <i className="fa-solid fa-circle-exclamation mt-0.5 text-rose-400 text-[11px]"></i>
-                                            <p className="text-[9px] font-bold text-rose-400/90 leading-relaxed uppercase tracking-wide">
-                                                CRITICAL notices require mandatory digital acknowledgement.
-                                            </p>
-                                        </div>
-                                        <div className="flex gap-3 bg-gray-50 dark:bg-black/20 dark:bg-white/5 border border-black/5 dark:border-white/10 p-3.5 rounded-xl shadow-inner items-start">
-                                            <i className="fa-solid fa-clock-rotate-left mt-0.5 text-themeTextSec text-[11px]"></i>
-                                            <p className="text-[9px] font-bold text-themeTextSec leading-relaxed uppercase tracking-wide">
-                                                Expired notices remain available via search for 1 academic year.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+ {/* Policies Card */}
+ <div className="bg-themePanel/5 backdrop-blur-[40px] border border-themeBorder rounded-[2rem] p-5 shadow-none relative overflow-hidden shrink-0">
+ <h3 className="text-[13px] font-medium text-themeTextSec mb-4"><i className="fa-solid fa-shield-halved mr-2 text-themeAccent opacity-70"></i> Notice Policies</h3>
+ <div className="flex flex-col gap-3 relative z-10">
+ <div className="flex gap-3 bg-rose-500/10 border border-rose-500/20 p-3.5 rounded-xl shadow-inner items-start">
+ <i className="fa-solid fa-circle-exclamation mt-0.5 text-rose-400 text-[11px]"></i>
+ <p className="text-[9px] font-bold text-rose-400/90 leading-relaxed uppercase tracking-wide">
+ CRITICAL notices require mandatory digital acknowledgement.
+ </p>
+ </div>
+ <div className="flex gap-3 bg-themeApp /20 border border-themeBorder p-3.5 rounded-xl shadow-inner items-start">
+ <i className="fa-solid fa-clock-rotate-left mt-0.5 text-themeTextSec text-[11px]"></i>
+ <p className="text-[9px] font-bold text-themeTextSec leading-relaxed uppercase tracking-wide">
+ Expired notices remain available via search for 1 academic year.
+ </p>
+ </div>
+ </div>
+ </div>
 
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </div>
-        </div>
-    );
+ </motion.div>
+ )}
+ </AnimatePresence>
+ </div>
+ </div>
+ </div>
+ );
 }

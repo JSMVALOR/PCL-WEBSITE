@@ -100,7 +100,7 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  </div>
 
  <div className="w-full px-4 lg:px-8 mt-2 mb-8 flex overflow-x-auto no-scrollbar pb-2">
-    <div className="flex p-1.5 bg-themeElevated rounded-2xl border border-themeBorder relative z-10 gap-1.5 w-max">
+ <div className="flex p-1.5 bg-themeElevated rounded-2xl border border-themeBorder relative z-10 gap-1.5 w-max">
  {[
  { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-simple' },
  { id: 'schedule-builder', label: 'Timetable Builder', icon: 'fa-layer-group' },
@@ -111,20 +111,20 @@ export default function AdminTimetableHQ({ isHubView = false }) {
  onClick={() => setActiveTab(tab.id)}
  className={`px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap flex items-center justify-center gap-2 min-w-max ${
  activeTab === tab.id 
- ? 'bg-themePanel/85 backdrop-blur-2xl text-themeAccent border border-white dark:border-white/20 scale-100 shadow-sm' 
- : 'text-black/60 dark:text-white/70 hover:text-black dark:hover:text-themeText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 border border-transparent scale-95 hover:scale-100'
+ ? 'bg-themePanel/85 backdrop-blur-2xl text-themeAccent border border-white scale-100 shadow-sm' 
+ : 'text-themeText/60 hover:text-themeText dark:hover:text-themeText hover:bg-themeElevated border border-transparent scale-95 hover:scale-100'
  }`}
  >
  <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? 'animate-pulse text-blue-500' : ''}`}></i> {tab.label}
  </button>
  ))}
-    </div>
+ </div>
  </div>
 
  <div className={`${isHubView ? 'w-full mt-2' : 'w-full mx-auto p-6 mt-4'}`}>
  {activeTab === 'dashboard' && renderDashboard()}
  {activeTab === 'schedule-builder' && <ScheduleBuilder />}
-  
+ 
  {activeTab === 'auto-gen' && <AutoGenerator />}
  </div>
  

@@ -18,7 +18,7 @@ const SUBJECT_COLORS = {
 };
 
 export default function FacultyTimetable({ isEmbedded = false }) {
-  const navigate = useNavigate();
+ const navigate = useNavigate();
  const { userSession } = useERP();
  const [activeTab, setActiveTab] = useState('timeline');
  const [selectedLecture, setSelectedLecture] = useState(null);
@@ -107,17 +107,17 @@ export default function FacultyTimetable({ isEmbedded = false }) {
 
  // 3. Fetch Subjects (Extract unique from schedule)
  if (schedData) {
-    const uniqueSubs = [];
-    const seen = new Set();
-    schedData.forEach(s => {
-      if (s.subject && !seen.has(s.subject.id)) {
-         seen.add(s.subject.id);
-         uniqueSubs.push(s.subject);
-      }
-    });
-    setMySubjects(uniqueSubs);
-    sessionStorage.setItem(`fac_scheduleSubs_${userSession.db_id}`, JSON.stringify(uniqueSubs));
-    if (uniqueSubs.length > 0 && !reqSubjectId) setReqSubjectId(uniqueSubs[0].id);
+ const uniqueSubs = [];
+ const seen = new Set();
+ schedData.forEach(s => {
+ if (s.subject && !seen.has(s.subject.id)) {
+ seen.add(s.subject.id);
+ uniqueSubs.push(s.subject);
+ }
+ });
+ setMySubjects(uniqueSubs);
+ sessionStorage.setItem(`fac_scheduleSubs_${userSession.db_id}`, JSON.stringify(uniqueSubs));
+ if (uniqueSubs.length > 0 && !reqSubjectId) setReqSubjectId(uniqueSubs[0].id);
  }
 
  } catch (err) { console.error(err); if (window.toast) window.toast.error("An error occurred. Please try again."); }
@@ -170,9 +170,9 @@ export default function FacultyTimetable({ isEmbedded = false }) {
 
 
  if (todayClasses.length === 0) return (
- <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-black/5 dark:border-white/5 border-dashed rounded-[2rem] text-center px-4 mt-8">
- <div className="w-20 h-20 bg-black/5 dark:bg-white/5 rounded-[2rem] flex items-center justify-center mb-6"><i className="fa-regular fa-calendar text-3xl text-themeTextSec dark:text-white/30"></i></div>
- <h3 className="text-xl font-semibold tracking-tight text-themeText dark:text-themeText">No classes scheduled for today.</h3><p className="text-xs lg:text-sm text-themeTextSec dark:text-white/50 opacity-70 mt-2 max-w-xs mx-auto">Your timeline is completely clear.</p>
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-transparent border border-themeBorder border-dashed rounded-[2rem] text-center px-4 mt-8">
+ <div className="w-20 h-20 bg-themeElevated rounded-[2rem] flex items-center justify-center mb-6"><i className="fa-regular fa-calendar text-3xl text-themeTextSec /30"></i></div>
+ <h3 className="text-xl font-semibold tracking-tight text-themeText ">No classes scheduled for today.</h3><p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">Your timeline is completely clear.</p>
  </div>
  );
 
@@ -199,12 +199,12 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div className="flex-1 pb-8 pt-2">
  <div 
  onClick={() => setSelectedLecture(lec)}
- className={`w-full rounded-[1.5rem] p-6 border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer flex justify-between items-start relative overflow-hidden ${isCurrent ? `${c.bg} ${c.border} scale-[1.02] shadow-2xl z-10` : "bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl border-black/5 dark:border-white/5 hover:shadow-xl hover:scale-[1.01]"}`}
+ className={`w-full rounded-[1.5rem] p-6 border transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer flex justify-between items-start relative overflow-hidden ${isCurrent ? `${c.bg} ${c.border} scale-[1.02] shadow-2xl z-10` : "bg-themePanel/40 dark:bg-themePanel/40 backdrop-blur-3xl border-themeBorder hover:shadow-xl hover:scale-[1.01]"}`}
  >
  <div>
  <div className="flex items-center gap-2 mb-2">
  <div className={`w-2 h-2 rounded-full ${c.solid}`}></div>
- <h3 className={`text-lg font-semibold tracking-tight ${isCurrent ? c.text : "text-themeText dark:text-themeText"} line-clamp-2 leading-snug mb-0.5`} title={lec.subject}>{lec.subject ? lec.subject.toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : ''}</h3>
+ <h3 className={`text-lg font-semibold tracking-tight ${isCurrent ? c.text : "text-themeText "} line-clamp-2 leading-snug mb-0.5`} title={lec.subject}>{lec.subject ? lec.subject.toLowerCase().replace(/\b\w/g, l => l.toUpperCase()) : ''}</h3>
  </div>
  <div className="flex items-center gap-4 mt-3">
  <span className="text-xs font-bold text-themeTextSec flex items-center gap-1.5"><i className="fa-solid fa-graduation-cap"></i> {lec.semester}</span>
@@ -226,8 +226,8 @@ export default function FacultyTimetable({ isEmbedded = false }) {
 
  const renderWeeklyGrid = () => (
  <div className="flex flex-col gap-4 animate-fade-in w-full">
-            <WeeklyList schedule={schedule} onLectureClick={(lecture) => setSelectedLecture(lecture)} role="faculty" />
-        </div>
+ <WeeklyList schedule={schedule} onLectureClick={(lecture) => setSelectedLecture(lecture)} role="faculty" />
+ </div>
  );
 
  const renderRequests = () => (
@@ -327,7 +327,7 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  <div className={`absolute top-0 right-0 w-48 h-48 ${c.solid} opacity-10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none`}></div>
  <div className="flex justify-between items-start mb-6 relative z-10">
  <Badge variant="outline" className={`${c.text} ${c.border}`}>{selectedLecture.day}, {selectedLecture.time} - {selectedLecture.endTime}</Badge>
- <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-gray-50 dark:bg-black/20 text-themeText flex items-center justify-center transition-colors">
+ <button type="button" onClick={() => setSelectedLecture(null)} className="w-8 h-8 rounded-full bg-black/10 hover:bg-themeApp /20 text-themeText flex items-center justify-center transition-colors">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -356,12 +356,12 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  subtitle="Manage syllabus, attendance, and timetable requests."
  rightContent={
  <div className="relative z-10 w-full lg:w-auto shrink-0 mt-4 md:mt-0">
- <div className="flex bg-black/[0.04] dark:bg-white/[0.04] p-1.5 rounded-2xl border border-black/5 dark:border-white/5 overflow-x-auto no-scrollbar w-fit max-w-full gap-1">
+ <div className="flex bg-black/[0.04] dark:bg-themePanel/[0.04] p-1.5 rounded-2xl border border-themeBorder overflow-x-auto no-scrollbar w-fit max-w-full gap-1">
  {['Timeline', 'Week'].map(tab => (
  <button type="button" 
  key={tab}
  onClick={() => setActiveTab(tab.toLowerCase())}
- className={`flex-1 min-w-[110px] px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === tab.toLowerCase() ? "bg-white dark:bg-themeElevated shadow-sm border border-black/5 dark:border-white/5 text-themeText dark:text-white" : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-black/5 dark:hover:bg-white/10"}`}
+ className={`flex-1 min-w-[110px] px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 ${activeTab === tab.toLowerCase() ? "bg-themePanel dark:bg-themeElevated shadow-sm border border-themeBorder text-themeText " : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-themeElevated "}`}
  >
  {tab}
  </button>
@@ -384,12 +384,12 @@ export default function FacultyTimetable({ isEmbedded = false }) {
  </div>
 
  <div className="w-full xl:w-80 shrink-0 flex flex-col gap-6 sticky top-32">
- <div className="bg-white/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-black/5 dark:border-white/5 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
+ <div className="bg-themePanel/40 dark:bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] border border-themeBorder p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
  <div className="absolute top-0 right-0 w-40 h-40 bg-[#FF9500]/10 rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none blur-3xl"></div>
  <h3 className="text-[14px] font-bold text-themeTextSec tracking-tight mb-4">Today's Pulse</h3>
  <div className="grid grid-cols-2 gap-4">
  <div className="flex flex-col gap-1">
- <span className="text-4xl font-semibold tracking-tight text-themeText dark:text-themeText">{schedule.filter(s => s.day === { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' }[new Date().getDay()]).length}</span>
+ <span className="text-4xl font-semibold tracking-tight text-themeText ">{schedule.filter(s => s.day === { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday' }[new Date().getDay()]).length}</span>
  <span className="text-[13px] font-medium text-themeTextSec">Classes</span>
  </div>
  

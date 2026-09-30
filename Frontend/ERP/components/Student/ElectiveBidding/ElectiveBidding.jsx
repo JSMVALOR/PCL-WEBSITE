@@ -69,7 +69,7 @@ export default function ElectiveBidding() {
 
  return (
  <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 pb-10 lg:pb-10 xl:pb-8 animate-fade-in">
- <div className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] p-6 border border-black/10 dark:border-white/20 flex flex-col gap-2">
+ <div className="bg-themePanel border-theme border-themeBorderStrong rounded-[2rem] p-6 border border-themeBorder flex flex-col gap-2">
  <h1 className={`${theme.text.heading} text-2xl tracking-tight text-themeText mb-1`}>Elective Bidding</h1>
  <p className={`${theme.text.secondary} text-sm font-medium`}>Bid for your preferred electives and faculty for the upcoming semester.</p>
  </div>
@@ -82,14 +82,14 @@ export default function ElectiveBidding() {
  const subjectAssignments = assignments.filter(a => (a.subject_id === subject.id || a.subject_name === subject.code || a.subject_id === subject.code));
  
  return (
- <div key={subject.id || subject.code} className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 p-6 rounded-[2rem] border border-black/10 dark:border-white/20 flex flex-col gap-4">
- <div className="flex justify-between items-center border-b-theme border-black/10 dark:border-white/20 pb-4">
+ <div key={subject.id || subject.code} className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder p-6 rounded-[2rem] border border-themeBorder flex flex-col gap-4">
+ <div className="flex justify-between items-center border-b-theme border-themeBorder pb-4">
  <div>
  <h3 className="text-xl font-bold text-themeText">{subject.name}</h3>
  <span className="text-xs font-bold text-themeAccent tracking-normal">{subject.code} • {subject.credits} Credits</span>
  </div>
  {subject.max_seats && (
- <div className="bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 px-4 py-2 rounded border border-black/5 dark:border-white/10 text-sm font-bold text-themeText">
+ <div className="bg-themeElevated backdrop-blur-[80px] border border-themeBorder px-4 py-2 rounded border border-themeBorder text-sm font-bold text-themeText">
  Max Seats: {subject.max_seats}
  </div>
  )}
@@ -107,7 +107,7 @@ export default function ElectiveBidding() {
  <div 
  key={assign.id} 
  onClick={() => handleBidChange(subject.id || subject.code, assign.faculty_id)}
- className={`p-4 rounded-[2rem] border-2 cursor-pointer transition ${isSelected ? 'border-themeAccent bg-themeAccent/10' : 'border-black/5 dark:border-white/10 bg-black/5 dark:bg-white/10 backdrop-blur-[80px] border border-black/10 dark:border-white/20 hover:border-themeAccent/50'}`}
+ className={`p-4 rounded-[2rem] border-2 cursor-pointer transition ${isSelected ? 'border-themeAccent bg-themeAccent/10' : 'border-themeBorder bg-themeElevated backdrop-blur-[80px] border border-themeBorder hover:border-themeAccent/50'}`}
  >
  <p className="font-bold text-themeText">{assign.faculty_name || 'Faculty ID: ' + assign.faculty_id}</p>
  <p className="text-xs text-themeTextSec mt-1">Section: {assign.section_name}</p>

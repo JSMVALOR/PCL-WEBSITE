@@ -39,34 +39,34 @@ export default function AdminHeroBanner({}) {
 
  const adminName = userSession?.name || "Administrator";
 
-  return (
-    <PageHeader 
-        icon="fa-solid fa-shield-halved" 
-        title={`Good Morning, ${adminName.split(' ')[0]}.`}
-        subtitle="Central Command Operations Center."
-        rightContent={
-            <div className="relative z-10 w-full lg:w-auto lg:min-w-[340px] shrink-0">
-                <h3 className="text-[10px] font-black text-themeText uppercase tracking-widest mb-4 pb-2 border-b border-black/5 dark:border-white/10 flex justify-between items-center">
-                    <span className="flex items-center gap-2"><i className="fa-solid fa-chart-pie opacity-70 text-themeAccent"></i> Today's Snapshot</span>
-                    {snapshot.loading && <i className="fa-solid fa-circle-notch fa-spin text-themeTextSec"></i>}
-                </h3>
-                <ul className="flex flex-col gap-3 text-xs font-bold text-themeTextSec">
-                    <li className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center"><i className="fa-solid fa-check"></i></div>
-                        <span className="text-themeText">{snapshot.pendingLeaves} Leave requests pending.</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center"><i className="fa-solid fa-headset"></i></div>
-                        <span className="text-themeText">{snapshot.pendingTickets} Unresolved support tickets.</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center"><i className="fa-solid fa-user-plus"></i></div>
-                        <span className="text-themeText">{snapshot.pendingAdmissions} Pending admissions.</span>
-                    </li>
-                </ul>
-            </div>
-        }
-    />
+ return (
+ <PageHeader 
+ icon="fa-solid fa-shield-halved" 
+ title={`Good Morning, ${adminName.split(' ')[0]}.`}
+ subtitle="Central Command Operations Center."
+ rightContent={
+ <div className="relative z-10 w-full lg:w-auto lg:min-w-[340px] shrink-0">
+ <h3 className="text-[10px] font-black text-themeText uppercase tracking-widest mb-4 pb-2 border-b border-themeBorder flex justify-between items-center">
+ <span className="flex items-center gap-2"><i className="fa-solid fa-chart-pie opacity-70 text-themeAccent"></i> Today's Snapshot</span>
+ {snapshot.loading && <i className="fa-solid fa-circle-notch fa-spin text-themeTextSec"></i>}
+ </h3>
+ <ul className="flex flex-col gap-3 text-xs font-bold text-themeTextSec">
+ <li className="flex items-center gap-3">
+ <div className="w-6 h-6 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center"><i className="fa-solid fa-check"></i></div>
+ <span className="text-themeText">{snapshot.pendingLeaves} Leave requests pending.</span>
+ </li>
+ <li className="flex items-center gap-3">
+ <div className="w-6 h-6 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center"><i className="fa-solid fa-headset"></i></div>
+ <span className="text-themeText">{snapshot.pendingTickets} Unresolved support tickets.</span>
+ </li>
+ <li className="flex items-center gap-3">
+ <div className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center"><i className="fa-solid fa-user-plus"></i></div>
+ <span className="text-themeText">{snapshot.pendingAdmissions} Pending admissions.</span>
+ </li>
+ </ul>
+ </div>
+ }
+ />
  );
 }
 

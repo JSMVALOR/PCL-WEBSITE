@@ -18,7 +18,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
 
  if (actionType === 'Reject') {
  if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm('Are you sure you want to reject this leave request?', r)))) { setIsProcessing(false); return; }
-            remarks = await window.erpDialog?.prompt('Please enter a reason for rejecting this leave:', 'Reject Leave') || '';
+ remarks = await window.erpDialog?.prompt('Please enter a reason for rejecting this leave:', 'Reject Leave') || '';
  if (!remarks) { setIsProcessing(false); return; } // cancelled
  updatePayload = { status: 'Rejected', admin_remarks: remarks };
  } 
@@ -38,26 +38,26 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  
  // Send Email
  try {
-    if (actionType === 'Reject') {
-        await sendSystemEmail('LEAVE_REJECTED', {
-            to_email: request.faculty?.email || 'admin@prudentia.edu',
-            student_name: request.faculty?.full_name || request.faculty_id,
-            leave_type: request.leave_type,
-            start_date: request.start_date,
-            end_date: request.end_date,
-            reason: remarks
-        });
-    } else {
-        await sendSystemEmail('LEAVE_APPROVED', {
-            to_email: request.faculty?.email || 'admin@prudentia.edu',
-            student_name: request.faculty?.full_name || request.faculty_id,
-            leave_type: request.leave_type,
-            start_date: request.start_date,
-            end_date: request.end_date
-        });
-    }
+ if (actionType === 'Reject') {
+ await sendSystemEmail('LEAVE_REJECTED', {
+ to_email: request.faculty?.email || 'admin@prudentia.edu',
+ student_name: request.faculty?.full_name || request.faculty_id,
+ leave_type: request.leave_type,
+ start_date: request.start_date,
+ end_date: request.end_date,
+ reason: remarks
+ });
+ } else {
+ await sendSystemEmail('LEAVE_APPROVED', {
+ to_email: request.faculty?.email || 'admin@prudentia.edu',
+ student_name: request.faculty?.full_name || request.faculty_id,
+ leave_type: request.leave_type,
+ start_date: request.start_date,
+ end_date: request.end_date
+ });
+ }
  } catch (emailErr) {
-    console.warn("Email dispatch failed:", emailErr);
+ console.warn("Email dispatch failed:", emailErr);
  }
 
  // Simple mock audit log
@@ -104,7 +104,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  
  {/* Header Profile Card */}
  <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 lg:p-8 flex flex-col md:flex-row items-start md:items-center gap-4 lg:gap-6 relative overflow-hidden">
- <div className="w-16 h-16 lg:w-20 lg:h-20 bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong rounded-full flex items-center justify-center text-xl lg:text-2xl text-themeTextSec shrink-0">
+ <div className="w-16 h-16 lg:w-20 lg:h-20 bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08]Strong rounded-full flex items-center justify-center text-xl lg:text-2xl text-themeTextSec shrink-0">
  <i className="fa-solid fa-user"></i>
  </div>
  <div>
@@ -129,7 +129,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  {/* Details Box */}
  <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-6">
  
- <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-themeBorder dark:border-white/5 pb-6">
+ <div className="flex justify-between items-start mb-6 border-b-[length:var(--border-width)] border-themeBorder pb-6">
  <div>
  <p className="text-[13px] font-medium text-themeTextSec">Leave Type</p>
  <div className="flex items-center gap-2 mt-1">
@@ -148,7 +148,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
 
  <div className="mb-6">
  <p className="text-[13px] font-medium text-themeTextSec mb-2">Reason Provided</p>
- <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-black/[0.04] dark:border-white/[0.08]Strong">
+ <div className="bg-themeElevated/90 backdrop-blur-2xl p-4 rounded-xl border border-themeBorder dark:border-white/[0.08]Strong">
  <p className="text-sm text-themeText italic leading-relaxed">"{request.reason}"</p>
  </div>
  </div>
@@ -158,7 +158,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  {affectedClasses.length > 0 ? (
  <div className="flex flex-wrap gap-2">
  {affectedClasses.map((cls, idx) => (
- <span key={idx} className="bg-white/40 dark:bg-white/5 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-black/[0.04] dark:border-white/[0.08]Strong px-3 py-1.5 rounded-md text-[10px] lg:text-xs font-bold text-themeText">
+ <span key={idx} className="bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08]Strong px-3 py-1.5 rounded-md text-[10px] lg:text-xs font-bold text-themeText">
  {cls}
  </span>
  ))}
@@ -168,7 +168,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  )}
  </div>
  
- <div className="mt-6 pt-6 border-t-[length:var(--border-width)] border-themeBorder dark:border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+ <div className="mt-6 pt-6 border-t-[length:var(--border-width)] border-themeBorder flex flex-col sm:flex-row sm:items-center justify-between gap-3">
  <p className="text-[13px] font-medium text-themeTextSec">Class Replacement Status</p>
  <span className="bg-rose-500/10 border-[length:var(--border-width)] border-rose-500/20 text-rose-500 px-3 py-1 rounded text-[9px] lg:text-[13px] font-medium w-fit">
  {request.replacement_status === 'Assigned' ? 'Assigned' : 'Not Assigned'}
@@ -196,35 +196,35 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  {request.status === 'Pending' && (
  <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 flex flex-col gap-3">
  <SlideCommit
-                label="Slide to Approve"
-                doneLabel="Done"
-                errorLabel="Failed"
-                onConfirm={() => handleAction('ApproveAndReplace')}
-                trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="var(--theme-accent)"
-                successColor="#10b981"
-                dangerColor="#f43f5e"
-                width={200}
-                height={48}
-                radius={12}
-            />
+ label="Slide to Approve"
+ doneLabel="Done"
+ errorLabel="Failed"
+ onConfirm={() => handleAction('ApproveAndReplace')}
+ trackColor="rgba(28, 28, 30, 0.05)"
+ handleColor="var(--theme-accent)"
+ successColor="#10b981"
+ dangerColor="#f43f5e"
+ width={200}
+ height={48}
+ radius={12}
+ />
  <SlideCommit
-                label="Slide to Approve"
-                doneLabel="Done"
-                errorLabel="Failed"
-                onConfirm={() => handleAction('Approve')}
-                trackColor="rgba(28, 28, 30, 0.05)"
-                handleColor="var(--theme-accent)"
-                successColor="#10b981"
-                dangerColor="#f43f5e"
-                width={200}
-                height={48}
-                radius={12}
-            />
+ label="Slide to Approve"
+ doneLabel="Done"
+ errorLabel="Failed"
+ onConfirm={() => handleAction('Approve')}
+ trackColor="rgba(28, 28, 30, 0.05)"
+ handleColor="var(--theme-accent)"
+ successColor="#10b981"
+ dangerColor="#f43f5e"
+ width={200}
+ height={48}
+ radius={12}
+ />
  <button type="button" 
  onClick={() => handleAction('Reject')}
  disabled={isProcessing}
- className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-themeText dark:text-white text-rose-500 border border-black/[0.04] dark:border-white/[0.08]Strong rounded-xl text-[14px] font-medium tracking-normal transition"
+ className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-themeText text-rose-500 border border-themeBorder dark:border-white/[0.08]Strong rounded-xl text-[14px] font-medium tracking-normal transition"
  >
  Reject
  </button>

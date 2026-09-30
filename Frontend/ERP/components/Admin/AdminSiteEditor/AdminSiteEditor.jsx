@@ -21,56 +21,56 @@ import LeadershipProfile from '../../../../Website/components/NAVBAR/ABOUT/Leade
 
 // Robust helper to perfectly calculate the DOM height of a CSS-scaled component
 function ScaledPreview({ isFullscreen, children }) {
-    const wrapperRef = React.useRef(null);
-    const [dimensions, setDimensions] = React.useState({ scale: 0.35, height: 1000 });
+ const wrapperRef = React.useRef(null);
+ const [dimensions, setDimensions] = React.useState({ scale: 0.35, height: 1000 });
 
-    React.useEffect(() => {
-        if (isFullscreen || !wrapperRef.current) return;
-        
-        const observer = new ResizeObserver((entries) => {
-            const { width, height } = entries[0].contentRect;
-            if (width === 0 || height === 0) return;
+ React.useEffect(() => {
+ if (isFullscreen || !wrapperRef.current) return;
+ 
+ const observer = new ResizeObserver((entries) => {
+ const { width, height } = entries[0].contentRect;
+ if (width === 0 || height === 0) return;
 
-            // Target desktop width
-            const targetWidth = 1440; 
-            
-            // Calculate scale to make 1440px fit exactly in the wrapper's width
-            const newScale = width / targetWidth;
-            
-            // Calculate the inner height needed to exactly fill the wrapper's height after scaling
-            const newHeight = height / newScale;
+ // Target desktop width
+ const targetWidth = 1440; 
+ 
+ // Calculate scale to make 1440px fit exactly in the wrapper's width
+ const newScale = width / targetWidth;
+ 
+ // Calculate the inner height needed to exactly fill the wrapper's height after scaling
+ const newHeight = height / newScale;
 
-            setDimensions({ scale: newScale, height: newHeight });
-        });
+ setDimensions({ scale: newScale, height: newHeight });
+ });
 
-        observer.observe(wrapperRef.current);
-        return () => observer.disconnect();
-    }, [isFullscreen]);
+ observer.observe(wrapperRef.current);
+ return () => observer.disconnect();
+ }, [isFullscreen]);
 
-    if (isFullscreen) {
-        return (
-            <div className="w-full h-full overflow-y-auto custom-scrollbar bg-themePanel">
-                {children}
-            </div>
-        );
-    }
+ if (isFullscreen) {
+ return (
+ <div className="w-full h-full overflow-y-auto custom-scrollbar bg-themePanel">
+ {children}
+ </div>
+ );
+ }
 
-    return (
-        <div ref={wrapperRef} className="w-full h-full relative overflow-hidden bg-themeElevated">
-            <div 
-                className="origin-top-left bg-white dark:bg-themeApp"
-                style={{ 
-                    width: '1440px', 
-                    height: `${dimensions.height}px`,
-                    transform: `scale(${dimensions.scale})`,
-                    overflowY: 'auto',
-                    overflowX: 'hidden'
-                }}
-            >
-                {children}
-            </div>
-        </div>
-    );
+ return (
+ <div ref={wrapperRef} className="w-full h-full relative overflow-hidden bg-themeElevated">
+ <div 
+ className="origin-top-left bg-themePanel dark:bg-themeApp"
+ style={{ 
+ width: '1440px', 
+ height: `${dimensions.height}px`,
+ transform: `scale(${dimensions.scale})`,
+ overflowY: 'auto',
+ overflowX: 'hidden'
+ }}
+ >
+ {children}
+ </div>
+ </div>
+ );
 }
 
 export default function AdminSiteEditor({ isHubView = false }) {
@@ -581,240 +581,240 @@ export default function AdminSiteEditor({ isHubView = false }) {
  {/* Header */}
  {!isHubView && (
  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2 shrink-0">
-     <div>
-         <h1 className="text-2xl font-black text-themeText tracking-tight flex items-center gap-3">
-             <div className="w-10 h-10 rounded-xl bg-themeElevated shadow-inner border border-black/5 dark:border-white/5 flex items-center justify-center text-[var(--theme-accent)]">
-                 <i className="fa-solid fa-wand-magic-sparkles text-lg"></i>
-             </div>
-             CMS Editor Engine
-         </h1>
-         <p className="text-sm font-medium text-themeTextSec mt-1 ml-13 pl-1">Live 1:1 Headless Content Management</p>
-     </div>
+ <div>
+ <h1 className="text-2xl font-black text-themeText tracking-tight flex items-center gap-3">
+ <div className="w-10 h-10 rounded-xl bg-themeElevated shadow-inner border border-themeBorder flex items-center justify-center text-[var(--theme-accent)]">
+ <i className="fa-solid fa-wand-magic-sparkles text-lg"></i>
+ </div>
+ CMS Editor Engine
+ </h1>
+ <p className="text-sm font-medium text-themeTextSec mt-1 ml-13 pl-1">Live 1:1 Headless Content Management</p>
+ </div>
  </div>
  )}
 
  {/* Top Navigation (Segmented Control Style) */}
  <div className="w-full shrink-0">
-     <div className="bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/5 rounded-2xl p-2 shadow-sm flex flex-wrap gap-1.5 relative overflow-hidden">
-     {navTree.map((item, idx) => {
-         if (item.isParent) {
-             return (
-                 <div key={idx} className="relative group/nav">
-                     <button type="button" onClick={(e) => e.preventDefault()} className={`px-4 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${selectedPage.startsWith(item.path) ? 'bg-themeAccent text-white shadow-[0_4px_12px_rgba(var(--accent-rgb),0.25)]' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 hover:text-themeText'}`}>
-                         {item.label} <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 group-hover/nav:rotate-180`}></i>
-                     </button>
-                     {/* Dropdown Menu */}
-                     <div className="absolute top-[calc(100%+8px)] left-0 min-w-[200px] bg-white dark:bg-themePanel border border-black/[0.04] dark:border-white/[0.08] rounded-2xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 z-50 overflow-hidden flex flex-col p-1.5 shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] translate-y-2 group-hover/nav:translate-y-0">
-                         {item.children.map(child => (
-                             <button type="button" 
-                                 key={child.path}
-                                 onClick={() => { setSelectedPage(child.path); setSelectedSection(siteStructure[child.path].sections[0].id); }}
-                                 className={`px-4 py-3 text-left text-[13px] font-bold rounded-xl transition-all duration-200 flex items-center justify-between group/child ${selectedPage === child.path ? 'bg-themeAccent/10 text-themeAccent' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 hover:text-themeText'}`}
-                             >
-                                 {child.label}
-                                 {selectedPage === child.path && <div className="w-1.5 h-1.5 rounded-full bg-themeAccent shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]"></div>}
-                             </button>
-                         ))}
-                     </div>
-                 </div>
-             );
-         }
-         return (
-             <button type="button" 
-                 key={idx}
-                 onClick={() => { setSelectedPage(item.path); setSelectedSection(siteStructure[item.path].sections[0].id); }}
-                 className={`px-4 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all duration-300 whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-white shadow-[0_4px_12px_rgba(var(--accent-rgb),0.25)]' : 'text-themeTextSec hover:bg-black/5 dark:hover:bg-white/5 hover:text-themeText'}`}
-             >
-                 {item.label}
-             </button>
-         )
-     })}
-     </div>
+ <div className="bg-themePanel/60 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-2xl p-2 shadow-sm flex flex-wrap gap-1.5 relative overflow-hidden">
+ {navTree.map((item, idx) => {
+ if (item.isParent) {
+ return (
+ <div key={idx} className="relative group/nav">
+ <button type="button" onClick={(e) => e.preventDefault()} className={`px-4 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all duration-300 flex items-center gap-2 whitespace-nowrap ${selectedPage.startsWith(item.path) ? 'bg-themeAccent text-themeApp shadow-[0_4px_12px_rgba(var(--accent-rgb),0.25)]' : 'text-themeTextSec hover:bg-themeElevated hover:text-themeText'}`}>
+ {item.label} <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 group-hover/nav:rotate-180`}></i>
+ </button>
+ {/* Dropdown Menu */}
+ <div className="absolute top-[calc(100%+8px)] left-0 min-w-[200px] bg-themePanel border border-themeBorder dark:border-white/[0.08] rounded-2xl opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 z-50 overflow-hidden flex flex-col p-1.5 shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_40px_rgb(0,0,0,0.4)] translate-y-2 group-hover/nav:translate-y-0">
+ {item.children.map(child => (
+ <button type="button" 
+ key={child.path}
+ onClick={() => { setSelectedPage(child.path); setSelectedSection(siteStructure[child.path].sections[0].id); }}
+ className={`px-4 py-3 text-left text-[13px] font-bold rounded-xl transition-all duration-200 flex items-center justify-between group/child ${selectedPage === child.path ? 'bg-themeAccent/10 text-themeAccent' : 'text-themeTextSec hover:bg-themeElevated hover:text-themeText'}`}
+ >
+ {child.label}
+ {selectedPage === child.path && <div className="w-1.5 h-1.5 rounded-full bg-themeAccent shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]"></div>}
+ </button>
+ ))}
+ </div>
+ </div>
+ );
+ }
+ return (
+ <button type="button" 
+ key={idx}
+ onClick={() => { setSelectedPage(item.path); setSelectedSection(siteStructure[item.path].sections[0].id); }}
+ className={`px-4 py-2.5 rounded-xl text-[12px] font-bold tracking-tight transition-all duration-300 whitespace-nowrap ${selectedPage === item.path ? 'bg-themeAccent text-themeApp shadow-[0_4px_12px_rgba(var(--accent-rgb),0.25)]' : 'text-themeTextSec hover:bg-themeElevated hover:text-themeText'}`}
+ >
+ {item.label}
+ </button>
+ )
+ })}
+ </div>
  </div>
 
  {fetchError && (
-     <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-xl text-rose-500 shadow-sm shrink-0">
-         <p className="font-bold tracking-tight text-[14px] flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i> Database Sync Error</p>
-         <p className="text-[13px] mt-1 font-medium opacity-80">Failed to fetch content. Ensure that the <code>website_content</code> table has been created.</p>
-     </div>
+ <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-xl text-rose-500 shadow-sm shrink-0">
+ <p className="font-bold tracking-tight text-[14px] flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i> Database Sync Error</p>
+ <p className="text-[13px] mt-1 font-medium opacity-80">Failed to fetch content. Ensure that the <code>website_content</code> table has been created.</p>
+ </div>
  )}
 
  {/* Click Tracking Insights */}
  {topClicks.length > 0 && (
-     <div className="bg-themePanel border border-emerald-500/20 rounded-2xl p-5 flex flex-col relative overflow-hidden shrink-0 shadow-lg">
-         <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-         <h2 className="text-[12px] font-black text-emerald-400 tracking-widest uppercase mb-4 flex items-center gap-2 relative z-10">
-             <i className="fa-solid fa-crosshairs"></i> Exact Click Tracking Insights
-         </h2>
-         <div className="flex flex-wrap gap-3 relative z-10">
-             {topClicks.map((click, idx) => (
-                 <div key={idx} className="bg-white/5 border border-emerald-500/10 px-3 py-2 rounded-xl flex items-center gap-3 backdrop-blur-md transition-transform hover:scale-105">
-                     <span className="text-[12px] font-bold text-white truncate max-w-[200px]">{click.text}</span>
-                     <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md shrink-0 border border-emerald-500/20 shadow-inner">{click.count} clicks</span>
-                 </div>
-             ))}
-         </div>
-     </div>
+ <div className="bg-themePanel border border-emerald-500/20 rounded-2xl p-5 flex flex-col relative overflow-hidden shrink-0 shadow-lg">
+ <div className="absolute -top-10 -right-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+ <h2 className="text-[12px] font-black text-emerald-400 tracking-widest uppercase mb-4 flex items-center gap-2 relative z-10">
+ <i className="fa-solid fa-crosshairs"></i> Exact Click Tracking Insights
+ </h2>
+ <div className="flex flex-wrap gap-3 relative z-10">
+ {topClicks.map((click, idx) => (
+ <div key={idx} className="bg-themePanel/5 border border-emerald-500/10 px-3 py-2 rounded-xl flex items-center gap-3 backdrop-blur-md transition-transform hover:scale-105">
+ <span className="text-[12px] font-bold text-themeApp truncate max-w-[200px]">{click.text}</span>
+ <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md shrink-0 border border-emerald-500/20 shadow-inner">{click.count} clicks</span>
+ </div>
+ ))}
+ </div>
+ </div>
  )}
 
  {/* Main Split Layout */}
  <div className="flex flex-col xl:flex-row gap-6 items-stretch relative h-[calc(100vh-130px)] min-h-[600px] w-full">
  
-     {/* Left Panel: Form Editor */}
-     <div className="bg-white/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-3xl border border-black/[0.04] dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col h-full xl:w-[450px] shrink-0 relative overflow-hidden">
-         
-         <div className="p-5 border-b border-black/[0.04] dark:border-white/[0.05] shrink-0 bg-white/40 dark:bg-black/10">
-             <label className="block text-[11px] font-black text-themeTextSec uppercase tracking-widest mb-3 pl-1">Page Section</label>
-             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                 {siteStructure[selectedPage]?.sections.map(section => (
-                     <button type="button"
-                         key={section.id}
-                         onClick={() => setSelectedSection(section.id)}
-                         className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all duration-300 whitespace-nowrap border shrink-0 ${selectedSection === section.id 
-                         ? 'bg-themeAccent text-white border-themeAccent shadow-[0_2px_8px_rgba(var(--accent-rgb),0.3)]' 
-                         : 'bg-white/50 dark:bg-white/5 text-themeText border-black/[0.04] dark:border-white/5 hover:border-black/10 dark:hover:border-white/10'}`}
-                     >
-                         {section.name}
-                     </button>
-                 ))}
-             </div>
-         </div>
+ {/* Left Panel: Form Editor */}
+ <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-3xl border border-themeBorder dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] flex flex-col h-full xl:w-[450px] shrink-0 relative overflow-hidden">
+ 
+ <div className="p-5 border-b border-themeBorder dark:border-white/[0.05] shrink-0 bg-themePanel/40 /10">
+ <label className="block text-[11px] font-black text-themeTextSec uppercase tracking-widest mb-3 pl-1">Page Section</label>
+ <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+ {siteStructure[selectedPage]?.sections.map(section => (
+ <button type="button"
+ key={section.id}
+ onClick={() => setSelectedSection(section.id)}
+ className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all duration-300 whitespace-nowrap border shrink-0 ${selectedSection === section.id 
+ ? 'bg-themeAccent text-themeApp border-themeAccent shadow-[0_2px_8px_rgba(var(--accent-rgb),0.3)]' 
+ : 'bg-themeElevated/50 text-themeText border-themeBorder hover:border-themeBorder '}`}
+ >
+ {section.name}
+ </button>
+ ))}
+ </div>
+ </div>
 
-         <div className="p-5 border-b border-black/[0.04] dark:border-white/[0.05] shrink-0 flex justify-between items-center bg-white/20 dark:bg-white/[0.02]">
-             <h2 className="text-[16px] font-black text-themeText tracking-tight">{currentSectionConfig?.name}</h2>
-             {loading && <i className="fa-solid fa-circle-notch fa-spin text-themeAccent"></i>}
-         </div>
+ <div className="p-5 border-b border-themeBorder dark:border-white/[0.05] shrink-0 flex justify-between items-center bg-themePanel/20 dark:bg-themePanel/[0.02]">
+ <h2 className="text-[16px] font-black text-themeText tracking-tight">{currentSectionConfig?.name}</h2>
+ {loading && <i className="fa-solid fa-circle-notch fa-spin text-themeAccent"></i>}
+ </div>
 
-         {/* Form Fields - Fully Scrollable Area */}
-         <div className="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-6 relative">
-             {currentSectionConfig?.fields.map(field => (
-                 <div key={field.key} className="relative group/field">
-                     <label className="block text-[12px] font-bold text-themeTextSec mb-2 pl-1 group-focus-within/field:text-themeAccent transition-colors">
-                         {field.label}
-                     </label>
-                     {field.type === 'select' ? (
-                         <div className="relative">
-                             <select
-                                 value={contentData[field.key] || ""}
-                                 onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                                 className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none appearance-none shadow-sm"
-                             >
-                                 <option value="" disabled>Select an option...</option>
-                                 {field.options?.map(opt => (
-                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                 ))}
-                             </select>
-                             <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-themeTextSec">
-                                 <i className="fa-solid fa-chevron-down text-[10px]"></i>
-                             </div>
-                         </div>
-                     ) : field.type === 'textarea' ? (
-                         <textarea
-                             value={contentData[field.key] || ""}
-                             onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                             placeholder={field.placeholder || ""}
-                             maxLength={field.maxLength || 800}
-                             rows="4"
-                             className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none resize-y shadow-sm placeholder:text-themeTextSec/40 leading-relaxed"
-                         ></textarea>
-                     ) : (
-                         <input
-                             type={field.type}
-                             value={contentData[field.key] || ""}
-                             onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                             onKeyDown={(e) => {
-                                 if (e.key === 'Enter') {
-                                     e.preventDefault();
-                                     handleSave();
-                                 }
-                             }}
-                             placeholder={field.placeholder || ""}
-                             maxLength={field.maxLength || 80}
-                             className="w-full bg-themePanel/40 border border-black/[0.08] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20 focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"
-                         />
-                     )}
-                 </div>
-             ))}
-             {/* Bottom padding for scrolling comfort */}
-             <div className="h-6 shrink-0"></div>
-         </div>
+ {/* Form Fields - Fully Scrollable Area */}
+ <div className="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-6 relative">
+ {currentSectionConfig?.fields.map(field => (
+ <div key={field.key} className="relative group/field">
+ <label className="block text-[12px] font-bold text-themeTextSec mb-2 pl-1 group-focus-within/field:text-themeAccent transition-colors">
+ {field.label}
+ </label>
+ {field.type === 'select' ? (
+ <div className="relative">
+ <select
+ value={contentData[field.key] || ""}
+ onChange={(e) => handleFieldChange(field.key, e.target.value)}
+ className="w-full bg-themePanel/40 border border-themeBorder dark:border-white/[0.08] hover:border-themeBorder focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none appearance-none shadow-sm"
+ >
+ <option value="" disabled>Select an option...</option>
+ {field.options?.map(opt => (
+ <option key={opt.value} value={opt.value}>{opt.label}</option>
+ ))}
+ </select>
+ <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-themeTextSec">
+ <i className="fa-solid fa-chevron-down text-[10px]"></i>
+ </div>
+ </div>
+ ) : field.type === 'textarea' ? (
+ <textarea
+ value={contentData[field.key] || ""}
+ onChange={(e) => handleFieldChange(field.key, e.target.value)}
+ placeholder={field.placeholder || ""}
+ maxLength={field.maxLength || 800}
+ rows="4"
+ className="w-full bg-themePanel/40 border border-themeBorder dark:border-white/[0.08] hover:border-themeBorder focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none resize-y shadow-sm placeholder:text-themeTextSec/40 leading-relaxed"
+ ></textarea>
+ ) : (
+ <input
+ type={field.type}
+ value={contentData[field.key] || ""}
+ onChange={(e) => handleFieldChange(field.key, e.target.value)}
+ onKeyDown={(e) => {
+ if (e.key === 'Enter') {
+ e.preventDefault();
+ handleSave();
+ }
+ }}
+ placeholder={field.placeholder || ""}
+ maxLength={field.maxLength || 80}
+ className="w-full bg-themePanel/40 border border-themeBorder dark:border-white/[0.08] hover:border-themeBorder focus:border-themeAccent focus:ring-2 focus:ring-themeAccent/30 text-themeText rounded-xl px-4 py-3 text-[13px] font-medium transition-all duration-300 outline-none shadow-sm placeholder:text-themeTextSec/40"
+ />
+ )}
+ </div>
+ ))}
+ {/* Bottom padding for scrolling comfort */}
+ <div className="h-6 shrink-0"></div>
+ </div>
 
-         {/* Sticky Footer for Publish */}
-         <div className="p-5 border-t border-black/[0.04] dark:border-white/[0.05] bg-white/80 dark:bg-black/40 backdrop-blur-md shrink-0">
-             <SlideCommit
-                 label="Slide to Publish Changes"
-                 doneLabel="Published"
-                 errorLabel="Failed"
-                 onConfirm={handleSave}
-                 trackColor="rgba(28, 28, 30, 0.05)"
-                 handleColor="var(--theme-accent)"
-                 successColor="#10b981"
-                 dangerColor="#f43f5e"
-                 width="100%"
-                 height={52}
-                 radius={16}
-             />
-         </div>
-     </div>
+ {/* Sticky Footer for Publish */}
+ <div className="p-5 border-t border-themeBorder dark:border-white/[0.05] bg-themePanel/80 /40 backdrop-blur-md shrink-0">
+ <SlideCommit
+ label="Slide to Publish Changes"
+ doneLabel="Published"
+ errorLabel="Failed"
+ onConfirm={handleSave}
+ trackColor="rgba(28, 28, 30, 0.05)"
+ handleColor="var(--theme-accent)"
+ successColor="#10b981"
+ dangerColor="#f43f5e"
+ width="100%"
+ height={52}
+ radius={16}
+ />
+ </div>
+ </div>
 
-     {/* Right Panel: Live Safari/Mac Window Preview */}
-     <div className={`transition-all duration-500 overflow-hidden flex flex-col h-full flex-1 min-w-0 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ${isPreviewFullscreen ? 'fixed inset-4 z-[99999] rounded-[24px] border border-white/10 bg-black' : 'rounded-[24px] border border-black/10 dark:border-white/10 bg-black relative'}`}>
-         
-         {/* Mac Window Header */}
-         <div className="h-12 bg-gradient-to-b from-[#e5e5e5] to-[#d4d4d4] dark:from-[#2d2d2d] dark:to-[#1c1c1c] w-full flex items-center justify-between px-4 shrink-0 border-b border-black/20 dark:border-black select-none relative z-10">
-             
-             {/* Traffic Lights */}
-             <div className="flex items-center gap-2">
-                 <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] shadow-inner"></div>
-                 <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] shadow-inner"></div>
-                 <div className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] shadow-inner"></div>
-             </div>
-             
-             {/* Address Bar / Title */}
-             <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
-                 <div className="bg-white/50 dark:bg-black/20 border border-black/5 dark:border-white/5 px-8 py-1 rounded-md shadow-sm">
-                     <span className="text-[11px] font-medium text-black/60 dark:text-white/60 font-mono tracking-tight flex items-center gap-2">
-                         <i className="fa-solid fa-lock text-[9px] opacity-50"></i>
-                         prudentia.edu{siteStructure[selectedPage]?.path || selectedPage}
-                     </span>
-                 </div>
-             </div>
-             
-             {/* Controls */}
-             <div className="flex items-center">
-                 <button type="button" 
-                     onClick={() => setIsPreviewFullscreen(!isPreviewFullscreen)} 
-                     className="text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors px-2 py-1.5 flex items-center justify-center rounded bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 shadow-sm border border-transparent hover:border-black/5 dark:hover:border-white/5"
-                     title={isPreviewFullscreen ? "Exit Fullscreen" : "Fullscreen Preview"}
-                 >
-                     <i className={`fa-solid ${isPreviewFullscreen ? 'fa-compress' : 'fa-expand'} text-[12px]`}></i>
-                 </button>
-             </div>
-         </div>
-         
-         {/* Preview Area Container */}
-         <div className="w-full h-full relative overflow-hidden bg-themePanel dark:bg-themePanel flex-1 flex flex-col">
-             {/* The Scaled Preview wraps the exact Website Render */}
-             <ScaledPreview isFullscreen={isPreviewFullscreen}>
-                 <div className="w-full min-h-screen bg-[var(--bg-color)]">
-                     <SiteProvider>
-                         <PreviewContext.Provider value={getPreviewProviderValue()}>
-                             {CurrentPageComponent ? (
-                                 <div className="min-h-full">
-                                     {React.cloneElement(CurrentPageComponent, { isPreview: true })}
-                                 </div>
-                             ) : (
-                                 <div className="w-full h-full flex flex-col items-center justify-center text-themeTextSec gap-3 pt-32">
-                                     <i className="fa-solid fa-code text-4xl opacity-20"></i>
-                                     <span className="font-mono text-sm">No preview component mounted for this route.</span>
-                                 </div>
-                             )}
-                         </PreviewContext.Provider>
-                     </SiteProvider>
-                 </div>
-             </ScaledPreview>
-         </div>
-     </div>
+ {/* Right Panel: Live Safari/Mac Window Preview */}
+ <div className={`transition-all duration-500 overflow-hidden flex flex-col h-full flex-1 min-w-0 shadow-[0_20px_60px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.4)] ${isPreviewFullscreen ? 'fixed inset-4 z-[99999] rounded-[24px] border border-white/10 bg-black' : 'rounded-[24px] border border-themeBorder bg-black relative'}`}>
+ 
+ {/* Mac Window Header */}
+ <div className="h-12 bg-gradient-to-b from-[#e5e5e5] to-[#d4d4d4] dark:from-[#2d2d2d] dark:to-[#1c1c1c] w-full flex items-center justify-between px-4 shrink-0 border-b border-themeBorder dark:border-black select-none relative z-10">
+ 
+ {/* Traffic Lights */}
+ <div className="flex items-center gap-2">
+ <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] shadow-inner"></div>
+ <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] shadow-inner"></div>
+ <div className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] shadow-inner"></div>
+ </div>
+ 
+ {/* Address Bar / Title */}
+ <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
+ <div className="bg-themePanel/50 /20 border border-themeBorder px-8 py-1 rounded-md shadow-sm">
+ <span className="text-[11px] font-medium text-themeText/60 /60 font-mono tracking-tight flex items-center gap-2">
+ <i className="fa-solid fa-lock text-[9px] opacity-50"></i>
+ prudentia.edu{siteStructure[selectedPage]?.path || selectedPage}
+ </span>
+ </div>
+ </div>
+ 
+ {/* Controls */}
+ <div className="flex items-center">
+ <button type="button" 
+ onClick={() => setIsPreviewFullscreen(!isPreviewFullscreen)} 
+ className="text-themeText/50 hover:text-themeText dark:hover:text-themeApp transition-colors px-2 py-1.5 flex items-center justify-center rounded bg-themeElevated hover:bg-black/10 shadow-sm border border-transparent hover:border-themeBorder "
+ title={isPreviewFullscreen ? "Exit Fullscreen" : "Fullscreen Preview"}
+ >
+ <i className={`fa-solid ${isPreviewFullscreen ? 'fa-compress' : 'fa-expand'} text-[12px]`}></i>
+ </button>
+ </div>
+ </div>
+ 
+ {/* Preview Area Container */}
+ <div className="w-full h-full relative overflow-hidden bg-themePanel dark:bg-themePanel flex-1 flex flex-col">
+ {/* The Scaled Preview wraps the exact Website Render */}
+ <ScaledPreview isFullscreen={isPreviewFullscreen}>
+ <div className="w-full min-h-screen bg-[var(--bg-color)]">
+ <SiteProvider>
+ <PreviewContext.Provider value={getPreviewProviderValue()}>
+ {CurrentPageComponent ? (
+ <div className="min-h-full">
+ {React.cloneElement(CurrentPageComponent, { isPreview: true })}
+ </div>
+ ) : (
+ <div className="w-full h-full flex flex-col items-center justify-center text-themeTextSec gap-3 pt-32">
+ <i className="fa-solid fa-code text-4xl opacity-20"></i>
+ <span className="font-mono text-sm">No preview component mounted for this route.</span>
+ </div>
+ )}
+ </PreviewContext.Provider>
+ </SiteProvider>
+ </div>
+ </ScaledPreview>
+ </div>
+ </div>
 
  </div>
  </div>
