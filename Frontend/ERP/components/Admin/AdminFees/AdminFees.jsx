@@ -175,8 +175,10 @@ export default function AdminFees({ isEmbedded = false, }) {
   const handleConfirmPayment = async (txn) => {
     setIsVerifying(true);
     try {
-      await supabase.from('fee_transactions').update({ status: 'successful' }).eq('id', txn.id);
-      await supabase.from('fee_invoices').update({ status: 'paid' }).eq('student_id', txn.student_id).eq('status', 'under_verification');
+      const { error: tErr } = await supabase.from('fee_transactions').update({ status: 'successful' }).eq('id', txn.id);
+      if (tErr) throw tErr;
+      const { error: iErr } = await supabase.from('fee_invoices').update({ status: 'paid' }).eq('student_id', txn.student_id).eq('status', 'under_verification');
+      if (iErr) throw iErr;
       
       setCurrentTxnPayload(txn);
       await new Promise(resolve => setTimeout(resolve, 500));
