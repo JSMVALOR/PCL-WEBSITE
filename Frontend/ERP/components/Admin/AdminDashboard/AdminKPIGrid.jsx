@@ -93,7 +93,7 @@ export default function AdminKPIGrid({ setActiveTab }) {
                 <button 
                     onClick={handleRefreshDatabase} 
                     disabled={refreshing || loading}
-                    className="flex items-center gap-2 bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 bg-themeAccent/10 text-themeAccent border border-themeAccent/20 hover:bg-themeAccent/20 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
                 >
                     <i className={`fa-solid fa-arrows-rotate ${refreshing ? 'animate-spin' : ''}`}></i> 
                     {refreshing ? 'Syncing DB...' : 'Refresh Database'}

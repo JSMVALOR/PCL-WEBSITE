@@ -143,7 +143,7 @@ export default function Login() {
             {/* Background Image & Overlay */}
             <div className="fixed inset-0 -z-10">
                 <img src={campusImg} alt="Campus Background" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-[var(--bg-color)]/80 backdrop-blur-sm"></div>
+                <div className="absolute inset-0 bg-[var(--bg-app)]/80 backdrop-blur-sm"></div>
             </div>
 
             {/* Back Button */}
@@ -168,10 +168,10 @@ export default function Login() {
                     <>
 
                 <div className="text-center mb-6">
-                    <img src={pclLogo} alt="PCL Logo" className="w-12 h-12 mx-auto mb-3 object-contain" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("marble")) ? { filter: "invert(1) drop-shadow(0px 0px 15px rgba(255,191,0,0.5))" } : { filter: "drop-shadow(0px 4px 6px rgba(0,0,0,0.1))" }} />
-                    <h2 className="text-xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
-                    <h3 className="text-xs font-medium text-[var(--text-muted)] mb-2 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
-                    <p className="text-[var(--primary-color)] text-[9px] uppercase tracking-[0.2em] font-bold border border-[var(--primary-color)]/30 rounded-md px-2 py-1 inline-block bg-[var(--primary-color)]/5">Centralized Academic Portal</p>
+                    <img src={pclLogo} alt="PCL Logo" className="w-12 h-12 mx-auto mb-3 object-contain theme-logo"  />
+                    <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
+                    <h3 className="text-xs font-medium text-[var(--text-secondary)] mb-2 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
+                    <p className="text-[var(--accent)] text-[9px] uppercase tracking-[0.2em] font-bold border border-[var(--accent)]/30 rounded-md px-2 py-1 inline-block bg-[var(--accent)]/5">Centralized Academic Portal</p>
                 </div>
 
                 <form id="login-form" className="flex flex-col gap-4 no-confirm-form" onSubmit={handleSubmit}>
@@ -187,16 +187,16 @@ export default function Login() {
                     <div className="flex flex-col gap-4">
                         {/* ID Input */}
                         <div className="relative group">
-                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)] mb-2 ml-1">
+                            <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] mb-2 ml-1">
                                 USER ID
                             </label>
                             <div className="relative">
-                                <i className="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm z-10"></i>
+                                <i className="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-sm z-10"></i>
                                 <input
                                     type="text"
                                     value={credential}
                                     onChange={(e) => setCredential(e.target.value)}
-                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-2.5 pl-12 pr-5 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50 uppercase"
+                                    className="w-full bg-[var(--bg-app)] border border-[var(--border-color)] focus:border-[var(--accent)] rounded-lg py-2.5 pl-12 pr-5 text-sm font-bold text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-secondary)]/50 uppercase"
                                     placeholder="Enter your User ID"
                                     maxLength={12}
                                     required
@@ -210,24 +210,24 @@ export default function Login() {
                         {/* Password Input */}
                         <div className="relative group">
                             <div className="flex justify-between items-center mb-2 px-1">
-                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)]">
+                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)]">
                                     Passcode
                                 </label>
                                 <button 
                                     type="button" 
                                     onClick={() => setShowForgotModal(true)}
-                                    className="text-[10px] font-bold text-[var(--primary-color)] hover:brightness-110 transition-colors"
+                                    className="text-[10px] font-bold text-[var(--accent)] hover:brightness-110 transition-colors"
                                 >
                                     Forgot?
                                 </button>
                             </div>
                             <div className="relative">
-                                <i className="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm z-10"></i>
+                                <i className="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] text-sm z-10"></i>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] focus:border-[var(--primary-color)] rounded-lg py-2.5 pl-12 pr-12 text-sm font-bold text-[var(--text-color)] outline-none transition placeholder:text-[var(--text-muted)]/50"
+                                    className="w-full bg-[var(--bg-app)] border border-[var(--border-color)] focus:border-[var(--accent)] rounded-lg py-2.5 pl-12 pr-12 text-sm font-bold text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-secondary)]/50"
                                     placeholder="••••••••"
                                     maxLength={64}
                                     required
@@ -239,7 +239,7 @@ export default function Login() {
                                     type="button"
                                     tabIndex="-1"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-color)] outline-none w-8 h-8 flex items-center justify-center rounded-md"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] outline-none w-8 h-8 flex items-center justify-center rounded-md"
                                 >
                                     <i className={`fa-regular ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                 </button>
@@ -252,7 +252,7 @@ export default function Login() {
                                 <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-rose-500 mb-2 ml-1">
                                     Security Verification
                                 </label>
-                                <div className="flex items-stretch w-full rounded-xl border border-rose-500/40 overflow-hidden focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all bg-[var(--bg-color)] shadow-inner">
+                                <div className="flex items-stretch w-full rounded-xl border border-rose-500/40 overflow-hidden focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20 transition-all bg-[var(--bg-app)] shadow-inner">
                                     <div className="flex items-center justify-center gap-2 bg-rose-500/10 px-6 border-r border-rose-500/30">
                                         <span className="text-xl font-semibold tracking-tight text-rose-500">{captcha.num1}</span>
                                         <i className="fa-solid fa-plus text-rose-400 text-[10px]"></i>
@@ -264,7 +264,7 @@ export default function Login() {
                                         pattern="\d*"
                                         value={captcha.answer}
                                         onChange={handleCaptchaChange}
-                                        className="flex-1 bg-transparent py-4 px-6 text-xl font-semibold tracking-tight text-[var(--text-color)] outline-none text-center"
+                                        className="flex-1 bg-transparent py-4 px-6 text-xl font-semibold tracking-tight text-[var(--text-primary)] outline-none text-center"
                                         placeholder="?"
                                         required
                                     />
@@ -308,13 +308,13 @@ export default function Login() {
             {/* Tribute Footer */}
             <div className="mt-8 flex flex-col items-center justify-center z-10 gap-2.5 drop-shadow-sm pb-4">
                 <div className="flex items-center gap-2.5 opacity-60 hover:opacity-100 transition duration-300">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-color)] translate-y-[1px]">Powered by</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-primary)] translate-y-[1px]">Powered by</span>
                     <a href="https://jsmvalor.in" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity flex items-center">
                         <span className="text-black dark:text-white font-bold tracking-widest text-sm">JSM </span>
                         <span className="text-black dark:text-white font-black tracking-tight ml-1 text-sm">VALOR<span className="text-red-500">.</span></span>
                     </a>
                 </div>
-                <span className="text-[var(--text-color)]/30 tracking-[0.4em] text-[8px] font-bold uppercase pointer-events-none">PCL ERP Framework v8.25</span>
+                <span className="text-[var(--text-primary)]/30 tracking-[0.4em] text-[8px] font-bold uppercase pointer-events-none">PCL ERP Framework v8.25</span>
             </div>
         </div>
     );

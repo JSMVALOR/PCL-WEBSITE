@@ -99,7 +99,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
                     onClick={() => setActiveTab('dashboard')}
                 >
                     <div className="w-10 h-10 rounded-xl bg-themeElevated flex items-center justify-center p-2 shadow-inner border border-black/5 dark:border-white/5">
-                        <img src={pclLogo} alt="PCL Logo" className="w-full h-full object-contain drop-shadow-sm" style={(!activeTheme || activeTheme.includes("dark") || activeTheme.includes("midnight") || activeTheme.includes("crimson") || activeTheme.includes("marble")) ? { filter: "invert(1) drop-shadow(0px 0px 5px rgba(255,255,255,0.2))" } : { filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.1))" }} />
+                        <img src={pclLogo} alt="PCL Logo" className="w-full h-full object-contain drop-shadow-sm theme-logo"  />
                     </div>
                     <div className="flex flex-col">
                         <span className="text-[16px] font-black tracking-widest text-themeText leading-none mb-1">

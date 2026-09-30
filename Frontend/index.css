@@ -1686,7 +1686,7 @@ html.home-snap {
     --bg-panel: #FFFFFF;
     --bg-elevated: #FFFFFF;
     --text-primary: #1a1a1a;
-    --text-secondary: #4A3B32;
+    --text-secondary: #78716c;
     --accent: #4A3B32;
     --accent-muted: #E5C07B;
     --border-color: rgba(74, 59, 50, 0.1);
@@ -2030,16 +2030,7 @@ html:not(.dark) input[type="date"] {
   }
 }
 
-html[data-theme="prudentia-classic"] .theme-logo,
-html[data-theme="apple-hig-light"] .theme-logo,
-html[data-theme="marble-executive"] .theme-logo,
-html[data-theme="emerald-chancery"] .theme-logo,
-html[data-theme="imperial-crown"] .theme-logo,
-html.light .theme-logo,
-html:not(.dark) .theme-logo,
-html[data-theme="structural-neo-brutalism"] .theme-logo {
-  filter: none !important; /* ERP light themes */
-}
+
 
 @media print {
     body * {
@@ -2059,3 +2050,11 @@ html[data-theme="structural-neo-brutalism"] .theme-logo {
     }
 }
 
+
+/* Global Reactive Logo */
+html.dark .theme-logo {
+  filter: invert(1) brightness(1.5) drop-shadow(0px 0px 5px rgba(255,255,255,0.2)) !important;
+}
+html:not(.dark) .theme-logo {
+  filter: none !important;
+}

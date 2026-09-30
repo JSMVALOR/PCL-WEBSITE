@@ -56,7 +56,7 @@ export default function AdminHeroBanner({}) {
                         <span className="text-themeText">{snapshot.pendingLeaves} Leave requests pending.</span>
                     </li>
                     <li className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center"><i className="fa-solid fa-headset"></i></div>
+                        <div className="w-6 h-6 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center"><i className="fa-solid fa-headset"></i></div>
                         <span className="text-themeText">{snapshot.pendingTickets} Unresolved support tickets.</span>
                     </li>
                     <li className="flex items-center gap-3">

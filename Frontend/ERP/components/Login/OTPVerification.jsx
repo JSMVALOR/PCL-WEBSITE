@@ -120,7 +120,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
       {/* Background Image & Overlay */}
       <div className="fixed inset-0 -z-10">
           <img src={campusImg} alt="Campus Background" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[var(--bg-color)]/80 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-[var(--bg-app)]/80 backdrop-blur-sm"></div>
       </div>
 
       <motion.div 
@@ -137,7 +137,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[var(--card-bg)] border border-[var(--primary-color)] text-[var(--primary-color)] px-5 py-2.5 rounded-md text-[13px] font-medium whitespace-nowrap shadow-[0_10px_30px_rgba(212,175,55,0.2)] z-50 flex items-center gap-2"
+              className="absolute -top-16 left-1/2 -translate-x-1/2 bg-[var(--card-bg)] border border-[var(--accent)] text-[var(--accent)] px-5 py-2.5 rounded-md text-[13px] font-medium whitespace-nowrap shadow-[0_10px_30px_rgba(212,175,55,0.2)] z-50 flex items-center gap-2"
             >
               <i className="fa-solid fa-paper-plane"></i> OTP Sent to Email
             </motion.div>
@@ -163,10 +163,10 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
             
             
             <div className="flex flex-col items-center mb-8">
-                <div className="w-16 h-16 rounded-md bg-[var(--primary-color)]/10 border border-[var(--primary-color)]/30 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.15)]">
-                    <i className="fa-solid fa-shield-halved text-2xl text-[var(--primary-color)]"></i>
+                <div className="w-16 h-16 rounded-md bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.15)]">
+                    <i className="fa-solid fa-shield-halved text-2xl text-[var(--accent)]"></i>
                 </div>
-                <h2 className="text-2xl font-bold text-[var(--text-color)] mb-1 font-['Outfit'] tracking-normal text-center">Verification</h2>
+                <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-1 font-['Outfit'] tracking-normal text-center">Verification</h2>
                 <p className="text-center text-xs font-bold tracking-normal text-neutral-500">Enter the 4-digit code</p>
             </div>
 
@@ -176,14 +176,14 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex flex-col items-center justify-center py-6"
             >
-                <div className="relative w-20 h-20 flex items-center justify-center rounded-md bg-[var(--primary-color)]/20 border-2 border-[var(--primary-color)] shadow-[0_0_40px_rgba(212,175,55,0.4)] mb-6">
+                <div className="relative w-20 h-20 flex items-center justify-center rounded-md bg-[var(--accent)]/20 border-2 border-[var(--accent)] shadow-[0_0_40px_rgba(212,175,55,0.4)] mb-6">
                     <motion.i 
                         initial={{ pathLength: 0 }}
                         animate={{ pathLength: 1 }}
-                        className="fa-solid fa-check text-[var(--primary-color)] text-4xl"
+                        className="fa-solid fa-check text-[var(--accent)] text-4xl"
                     ></motion.i>
                 </div>
-                <p className="text-[var(--primary-color)] font-black uppercase tracking-[0.2em] text-[10px]">Verified Successfully</p>
+                <p className="text-[var(--accent)] font-black uppercase tracking-[0.2em] text-[10px]">Verified Successfully</p>
             </motion.div>
             ) : (
             <div className="flex flex-col items-center w-full">
@@ -216,8 +216,8 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                                     key={index}
                                     className={`relative flex items-center justify-center w-14 h-16 md:w-16 md:h-20 rounded-lg transition duration-300 ${
                                         state === 'error' ? 'border-rose-500/50 bg-rose-500/5 shadow-[0_0_15px_rgba(244,63,94,0.2)]' :
-                                        isActiveSlot ? 'border-[var(--primary-color)] bg-[var(--primary-color)]/5 shadow-[0_0_20px_rgba(212,175,55,0.2)] scale-105 z-10' :
-                                        isFilled ? 'border-[var(--card-border)] bg-[var(--text-color)]/5' : 'border-[var(--card-border)] bg-[var(--bg-color)]/40'
+                                        isActiveSlot ? 'border-[var(--accent)] bg-[var(--accent)]/5 shadow-[0_0_20px_rgba(212,175,55,0.2)] scale-105 z-10' :
+                                        isFilled ? 'border-[var(--border-color)] bg-[var(--text-primary)]/5' : 'border-[var(--border-color)] bg-[var(--bg-app)]/40'
                                     } border-2 overflow-hidden`}
                                 >
                                     <AnimatePresence mode="popLayout">
@@ -228,7 +228,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                                                 animate={{ y: 0, opacity: 1, scale: 1 }}
                                                 exit={{ y: -10, opacity: 0, scale: 0.8 }}
                                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`text-2xl md:text-3xl font-semibold tracking-tight ${state === 'error' ? 'text-rose-500' : 'text-[var(--text-color)]'}`}
+                                                className={`text-2xl md:text-3xl font-semibold tracking-tight ${state === 'error' ? 'text-rose-500' : 'text-[var(--text-primary)]'}`}
                                             >
                                                 {char}
                                             </motion.span>
@@ -240,7 +240,7 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                                         <motion.div 
                                             animate={{ opacity: [1, 0, 1] }} 
                                             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                            className="absolute w-0.5 h-8 bg-[var(--primary-color)] rounded-md" 
+                                            className="absolute w-0.5 h-8 bg-[var(--accent)] rounded-md" 
                                         />
                                     )}
                                 </div>
@@ -252,8 +252,8 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                 <div className="h-10 flex items-center justify-center w-full mb-2">
                     {state === "loading" && (
                         <div className="flex items-center gap-3">
-                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-4 h-4 border-2 border-[var(--primary-color)] border-t-transparent rounded-md"></motion.div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--primary-color)]">Authenticating</span>
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-4 h-4 border-2 border-[var(--accent)] border-t-transparent rounded-md"></motion.div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--accent)]">Authenticating</span>
                         </div>
                     )}
 
@@ -270,13 +270,13 @@ export default function OTPVerification({ email, onVerify, onLogout }) {
                     )}
                 </div>
                 
-                <div className="flex flex-col items-center w-full gap-4 border-t border-[var(--card-border)] pt-6 mt-4">
+                <div className="flex flex-col items-center w-full gap-4 border-t border-[var(--border-color)] pt-6 mt-4">
                     <button type="button" 
                         onClick={handleResend}
                         disabled={resendTimer > 0 || resendCount >= 1 || state === 'locked'}
                         className={`w-full justify-center !py-4 text-xs font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-2 rounded-md ${
                             (resendTimer > 0 || resendCount >= 1 || state === 'locked') 
-                            ? "bg-[var(--card-border)]/50 text-[var(--text-muted)] cursor-not-allowed border border-[var(--card-border)]" 
+                            ? "bg-[var(--border-color)]/50 text-[var(--text-secondary)] cursor-not-allowed border border-[var(--border-color)]" 
                             : "tlh-btn"
                         }`}
                     >
