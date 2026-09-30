@@ -154,7 +154,7 @@ function FacilityCarousel({ facilities }) {
             scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
           } else {
             const card = scrollRef.current.querySelector('.carousel-item');
-            const scrollAmount = card ? card.clientWidth + 24 : clientWidth;
+            const scrollAmount = card ? card.clientWidth + (window.innerWidth >= 768 ? 32 : 24) : clientWidth;
             scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
           }
         }
@@ -166,7 +166,7 @@ function FacilityCarousel({ facilities }) {
   const scroll = (direction) => {
     if (scrollRef.current) {
       const card = scrollRef.current.querySelector('.carousel-item');
-      const scrollAmount = card ? card.clientWidth + 24 : scrollRef.current.clientWidth;
+      const scrollAmount = card ? card.clientWidth + (window.innerWidth >= 768 ? 32 : 24) : scrollRef.current.clientWidth;
       if (direction === 'start') {
         scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
       } else {
