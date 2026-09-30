@@ -270,7 +270,11 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  newPass += chars.charAt(Math.floor(Math.random() * chars.length));
  }
  
- const { error } = await provisionClient.auth.admin.updateUserById(user.db_id, { password: newPass });
+ const { error } = await supabase.rpc('admin_force_password_update', {
+ target_user_id: user.db_id,
+ new_password: newPass
+ });
+ 
  if (error) throw error;
  
  await sendSystemEmail('PASSCODE_RESET', { to_email: user.email, name: user.name, password: newPass, erp_id: user.id });
