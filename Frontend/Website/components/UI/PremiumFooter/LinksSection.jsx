@@ -10,17 +10,17 @@ export default function LinksSection() {
   const isAdmissionsOpen = siteContext?.isAdmissionsOpen;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-12 gap-y-8 md:gap-y-12 gap-x-4 md:gap-x-8 lg:gap-12 xl:gap-16 mb-8 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-8 md:pt-16">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-y-8 md:gap-y-12 gap-x-4 md:gap-x-8 lg:gap-12 xl:gap-16 mb-8 md:mb-20 relative z-10 border-t border-[var(--border-color)] pt-8 md:pt-16">
       {/* Brand & Identity */}
-      <div className="flex flex-col col-span-2 lg:col-span-5 pr-0 lg:pr-12">
-        <Link to="/" className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 group w-fit">
+      <div className="flex flex-col items-center text-center lg:items-start lg:text-left col-span-1 md:col-span-2 lg:col-span-5 pr-0 lg:pr-12">
+        <Link to="/" className="flex items-center gap-3 md:gap-4 mb-3 md:mb-6 group">
           <img decoding="async" loading="lazy" 
             src={logo} 
             alt="Prudentia College of Law Logo" 
             className="h-8 md:h-14 lg:h-16 w-auto group-hover:scale-105 transition-transform theme-logo"
             
           />
-          <div className="flex flex-col">
+          <div className="flex flex-col items-start lg:items-start">
             <span className="font-bold tracking-[0.2em] text-base md:text-xl lg:text-2xl text-[var(--text-primary)]">
               PRUDENTIA
             </span>
@@ -35,9 +35,9 @@ export default function LinksSection() {
       </div>
 
       {/* Navigation */}
-      <div className="flex flex-col col-span-1 lg:col-span-2">
+      <div className="flex flex-col items-center text-center lg:items-start lg:text-left col-span-1 md:col-span-1 lg:col-span-2">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Navigation</h4>
-        <ul className="flex flex-col gap-2 md:gap-4">
+        <ul className="flex flex-col items-center lg:items-start gap-2 md:gap-4">
           <li><Link to="/" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Home</Link></li>
           <li><Link to="/about" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">About Us</Link></li>
           <li><Link to="/programs" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Programs</Link></li>
@@ -47,9 +47,9 @@ export default function LinksSection() {
       </div>
 
       {/* Resources */}
-      <div className="flex flex-col col-span-1 lg:col-span-2">
+      <div className="flex flex-col items-center text-center lg:items-start lg:text-left col-span-1 md:col-span-1 lg:col-span-2">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Resources</h4>
-        <ul className="flex flex-col gap-2 md:gap-4">
+        <ul className="flex flex-col items-center lg:items-start gap-2 md:gap-4">
           {isAdmissionsOpen ? (
             <li><Link to="/apply" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Admissions</Link></li>
           ) : (
@@ -57,12 +57,12 @@ export default function LinksSection() {
           )}
                     <li><Link to="/academic-calendar" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Academic Calendar</Link></li>
           <li><Link to="/events" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium">Events</Link></li>
-          <li><a href="/login" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium flex items-center gap-2">IT Helpdesk <i className="fa-solid fa-lock text-[10px] text-[var(--accent)]"></i></a></li>
+          <li><a href="/login" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium inline-flex items-center justify-center gap-2">IT Helpdesk <i className="fa-solid fa-lock text-[10px] text-[var(--accent)]"></i></a></li>
         </ul>
       </div>
 
       {/* Social & Contact */}
-      <div className="flex flex-col items-center lg:items-start text-center lg:text-left col-span-2 lg:col-span-3 mt-4 lg:mt-0 w-full">
+      <div className="flex flex-col items-center lg:items-start text-center lg:text-left col-span-1 md:col-span-2 lg:col-span-3 mt-4 lg:mt-0 w-full">
         <h4 className="text-[10px] md:text-xs uppercase tracking-widest text-[var(--text-muted)] font-bold mb-3 md:mb-6">Connect</h4>
         <ul className="flex flex-col items-center lg:items-start gap-2 md:gap-4 mb-6 md:mb-8 w-full">
           <li><a href="mailto:info@prudentiacollegeoflaw.com" className="text-[var(--text-primary)]/80 hover:text-[var(--accent)] transition-colors text-xs md:text-sm font-medium break-all">info@prudentiacollegeoflaw.com</a></li>

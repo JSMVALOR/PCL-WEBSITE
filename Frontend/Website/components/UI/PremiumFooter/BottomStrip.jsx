@@ -13,7 +13,7 @@ export default function BottomStrip() {
   return (
     <>
       <div className={styles.animatedDivider}></div>
-      <div className="flex flex-col md:flex-row justify-between items-center flex-wrap gap-4 md:gap-6 pb-6 md:pb-10">
+      <div className="flex flex-col md:flex-row justify-between items-center flex-wrap gap-4 md:gap-6 pb-6 md:pb-10 text-center md:text-left">
         
         {/* Status */}
         <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 text-xs uppercase tracking-widest text-[var(--text-secondary)] order-2 md:order-1 font-semibold">
@@ -29,7 +29,7 @@ export default function BottomStrip() {
         </div>
 
         {/* Copyright */}
-        <div className="text-sm text-[var(--text-secondary)] order-3 md:order-2 text-center md:text-left">
+        <div className="text-sm text-[var(--text-secondary)] order-3 md:order-2 text-center">
           &copy; {new Date().getFullYear()} Prudentia College of Law. 
           <span className="hidden md:inline mx-2 text-black/20 dark:text-white/20">|</span> 
           <span className="inline-flex items-center gap-2 mt-1 md:mt-0 align-middle">
