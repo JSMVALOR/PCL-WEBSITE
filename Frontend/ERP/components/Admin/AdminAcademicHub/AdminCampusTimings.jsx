@@ -72,11 +72,11 @@ export default function AdminCampusTimings() {
                 <h3 className="text-lg font-black text-themeText mb-4">Academic Working Days</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {workingDays.map(day => (
-                        <div key={day.id} className={\`p-4 rounded-xl border flex flex-col gap-3 transition-colors \${day.is_active ? 'bg-themeAccent/10 border-themeAccent/20' : 'bg-black/5 dark:bg-white/5 border-themeBorder'}\`}>
+                        <div key={day.id} className={`p-4 rounded-xl border flex flex-col gap-3 transition-colors ${day.is_active ? 'bg-themeAccent/10 border-themeAccent/20' : 'bg-black/5 dark:bg-white/5 border-themeBorder'}`}>
                             <div className="flex justify-between items-center">
-                                <span className={\`font-black \${day.is_active ? 'text-themeAccent' : 'text-themeTextSec'}\`}>{day.name}</span>
-                                <button onClick={() => handleToggleDay(day.id, day.is_active)} className={\`w-10 h-6 rounded-full relative transition-colors \${day.is_active ? 'bg-themeAccent' : 'bg-black/20 dark:bg-white/20'}\`}>
-                                    <div className={\`w-4 h-4 bg-white rounded-full absolute top-1 transition-all \${day.is_active ? 'left-5' : 'left-1'}\`}></div>
+                                <span className={`font-black ${day.is_active ? 'text-themeAccent' : 'text-themeTextSec'}`}>{day.name}</span>
+                                <button onClick={() => handleToggleDay(day.id, day.is_active)} className={`w-10 h-6 rounded-full relative transition-colors ${day.is_active ? 'bg-themeAccent' : 'bg-black/20 dark:bg-white/20'}`}>
+                                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${day.is_active ? 'left-5' : 'left-1'}`}></div>
                                 </button>
                             </div>
                             {day.name === 'Saturday' && day.is_active && (

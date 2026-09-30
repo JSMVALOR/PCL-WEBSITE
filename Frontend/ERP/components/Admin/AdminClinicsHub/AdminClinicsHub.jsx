@@ -28,13 +28,13 @@ export default function AdminClinicsHub() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={\`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 \${
+                            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
                                 activeTab === tab.id 
                                     ? 'bg-themeAccent text-white shadow-lg scale-100' 
                                     : 'text-themeTextSec hover:text-themeText hover:bg-black/5 dark:hover:bg-white/5 scale-95 hover:scale-100'
-                            }\`}
+                            }`}
                         >
-                            <i className={\`fa-solid \${tab.icon}\`}></i> {tab.label}
+                            <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
                         </button>
                     ))}
                 </div>
