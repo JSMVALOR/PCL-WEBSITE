@@ -89,7 +89,7 @@ export default function About() {
       <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center pt-[120px] md:pt-[90px] md:pt-[120px] pb-[100px]">
 
         {/* Editorial Intro Section */}
-        <div className="w-full mb-32 flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+        <div className="w-full mb-32 flex flex-col lg:flex-row gap-8 lg:gap-24 items-start">
           <div className="lg:w-1/2">
             <motion.h1
               initial={{ opacity: shouldReduceMotion ? 1 : 0, y: shouldReduceMotion ? 0 : 30 }}
@@ -111,7 +111,7 @@ export default function About() {
 
           <div className="lg:w-1/2 text-[var(--text-muted)] text-base md:text-xl leading-relaxed text-justify space-y-8">
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-              <span className="font-semibold italic drop-cap block float-left mr-3 mt-1 mb-[-12px] text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.8' }}>
+              <span className="font-['Playfair_Display'] italic drop-cap block float-left mr-3 mt-1 mb-[-12px] text-[var(--primary-color)] drop-shadow-md" style={{ fontSize: '4.5rem', lineHeight: '0.8' }}>
                 {cms.hero_desc_1.charAt(0)}
               </span>
               {cms.hero_desc_1.slice(1)}

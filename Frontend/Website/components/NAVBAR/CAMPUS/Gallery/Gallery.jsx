@@ -77,16 +77,16 @@ export default function Gallery() {
 
         <div className={styles.contentContainer}>
           {/* Header */}
-          <div className="text-center mb-16 relative z-10">
-            <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
+          <div className="text-center mb-4 md:mb-12 relative z-10">
+            <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-4 md:mb-6 text-[var(--primary-color)] font-bold block">
               Campus Experience
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl  tracking-tight text-[var(--text-color)] mb-4 md:mb-8 leading-tight font-serif font-bold">
               The Prudentia <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Gallery</span>
             </h1>
             
             {/* View Mode Toggle */}
-            <div className="inline-flex mt-6 bg-[var(--card-bg)] rounded-full p-1.5 backdrop-blur-xl border border-[var(--card-border)] shadow-lg flex-wrap justify-center max-w-[90vw]">
+            <div className="inline-flex mt-4 md:mt-6 bg-[var(--card-bg)] rounded-full p-1.5 backdrop-blur-xl border border-[var(--card-border)] shadow-lg flex-wrap justify-center max-w-[90vw]">
               <button
                 onClick={() => setViewMode('masonry')}
                 className={`px-6 md:px-8 py-3 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 ${viewMode === 'masonry' ? 'bg-[var(--text-color)] text-[var(--bg-color)] shadow-md' : 'text-[var(--text-muted)] hover:text-[var(--text-color)]'}`}
