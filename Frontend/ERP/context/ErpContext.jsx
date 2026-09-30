@@ -561,7 +561,7 @@ export const ErpProvider = ({ children }) => {
                     priority: notice.priority || 'normal',
                     content: notice.content,
                     author_name: notice.author_name || userSession.name,
-                    author_id: userSession.id
+                    author_id: userSession.db_id || null
                 };
                 const { data, error } = await supabase.from('notices').insert([insertData]).select();
                 if (error) throw error;
@@ -608,7 +608,7 @@ export const ErpProvider = ({ children }) => {
                     image_url: eventData.image_url || null,
                     is_public: eventData.is_public || false,
                     author_name: userSession.name,
-                    author_id: userSession.id
+                    author_id: userSession.db_id || null
                 };
                 const { data, error } = await supabase.from('admin_events').insert([insertData]).select();
                 if (error) throw error;
