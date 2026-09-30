@@ -195,7 +195,7 @@ export default function FacultyProfile() {
                 {faculty.name}
                 </h1>
                 <h2 className="text-xs md:text-sm font-semibold text-[var(--primary-color)] uppercase tracking-[0.2em]">
-                {faculty.designation}
+                {faculty.designation?.replace(/,\s*prudentia college of law/i, "")?.replace(/prudentia college of law/i, "")}
                 </h2>
             </div>
 
@@ -230,7 +230,7 @@ export default function FacultyProfile() {
         </div>
 
         {/* RIGHT COLUMN: Luxury Editorial Content */}
-        <div className="w-full lg:w-7/12 flex flex-col pt-4 lg:pt-16">
+        <div className="w-full lg:w-7/12 flex flex-col pt-4 lg:pt-8">
           
           {/* Bio Section */}
           {faculty.bio && (
@@ -238,7 +238,7 @@ export default function FacultyProfile() {
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3 }}
-              className="mb-20"
+              className="mb-8"
             >
               <div className="text-lg text-[var(--text-color)]/80 leading-[2] font-light space-y-6 text-justify">
                 {faculty.bio.split('\n').filter(p => p.trim()).map((paragraph, i) => (
@@ -256,7 +256,7 @@ export default function FacultyProfile() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mb-20 py-10 border-y border-[var(--card-border)]/60"
+              className="mb-10 py-6 border-y border-[var(--card-border)]/60"
             >
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
                 {faculty.specialisation && (
