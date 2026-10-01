@@ -722,6 +722,11 @@ if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() +
  <i className="fa-solid fa-exchange-alt text-[10px]"></i>
  </button>
  )}
+ {user.role === 'faculty' && (
+ <button type="button" onClick={() => handleOpenTransfer(user)} className="w-8 h-8 rounded-lg bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] text-themeTextSec flex items-center justify-center transition-colors" title="Transfer Workload">
+ <i className="fa-solid fa-exchange-alt text-[10px]"></i>
+ </button>
+ )}
  <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-themeBorder dark:border-white/[0.08] hover:border-indigo-500 hover:text-themeAccent text-themeTextSec flex items-center justify-center transition-colors" title="Reset Password">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
@@ -776,6 +781,9 @@ if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() +
  <Badge variant="secondary">{user.batch || user.department || "Unassigned"}</Badge>
 
  <div className="flex gap-2">
+ <button type="button" onClick={() => setEditBasicUserId(user)} className="w-8 h-8 rounded-lg bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] text-themeTextSec flex items-center justify-center transition-colors" title="Edit Master Details">
+ <i className="fa-solid fa-pen text-[10px]"></i>
+ </button>
  {(user.role === 'faculty' || user.role === 'admin') && (
  <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeAccent/10 border border-themeBorder dark:border-white/[0.08]Accent/30 hover:bg-themeAccent/20 text-themeAccent flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
