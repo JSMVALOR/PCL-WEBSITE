@@ -756,7 +756,7 @@ M298.522583,98.246109
 z"/>
 </svg>`;
 
-const buildEmailHtml = (title, content) => `
+const buildEmailHtml = (title, content, preheader = "") => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -782,6 +782,7 @@ const buildEmailHtml = (title, content) => `
     </style>
 </head>
 <body>
+    ${preheader ? `<div style="display:none;font-size:1px;color:#333333;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${preheader}</div>` : ""}
     <div class="container">
         <div class="header">
             <div class="logo-container">
@@ -855,7 +856,19 @@ export const HTML_EMAIL_TEMPLATES = {
         <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #18181b; border-radius: 8px;">
             <span style="font-family: monospace; font-size: 32px; letter-spacing: 8px; color: #fecaca; font-weight: bold;">${params.otp}</span>
         </div>
-        <p style="font-size: 13px; color: #71717a;">This code will expire in 10 minutes.</p>`
+        <p style="font-size: 13px; color: #71717a;">This code will expire in 10 minutes.</p>`,
+        `Your login passcode is ${params.otp}. Use this to access your account.`
+    ),
+
+    RECOVERY_OTP: (params) => buildEmailHtml(
+        'Account Recovery OTP',
+        `<p>Dear User,</p>
+        <p>A request was made to reset the passcode for your account. Please use the verification code below to proceed.</p>
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #18181b; border-radius: 8px;">
+            <span style="font-family: monospace; font-size: 32px; letter-spacing: 8px; color: #fecaca; font-weight: bold;">${params.otp}</span>
+        </div>
+        <p style="font-size: 13px; color: #71717a;">If you did not request this, please ignore this email or contact support.</p>`,
+        `Your account recovery OTP is ${params.otp}.`
     ),
 
     PASSCODE_RESET: (params) => buildEmailHtml(

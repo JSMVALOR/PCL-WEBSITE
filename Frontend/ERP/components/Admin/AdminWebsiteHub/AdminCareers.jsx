@@ -49,7 +49,7 @@ export default function AdminCareers({ isEmbedded = false, isHubView = false }) 
  setFormData({
  title: job.title,
  department: job.department,
- type: job.type,
+ type: job.job_type,
  location: job.location,
  description: job.description || "",
  is_active: job.is_active
@@ -110,7 +110,7 @@ export default function AdminCareers({ isEmbedded = false, isHubView = false }) 
  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Job Type</label>
- <select className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
+ <select className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.job_type} onChange={e => setFormData({...formData, job_type: e.target.value})}>
  <option value="Full-time">Full-time</option>
  <option value="Part-time">Part-time</option>
  <option value="Contract">Contract</option>
@@ -127,9 +127,9 @@ export default function AdminCareers({ isEmbedded = false, isHubView = false }) 
  </div>
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Status</label>
- <select className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.is_active ? "active" : "inactive"} onChange={e => setFormData({...formData, is_active: e.target.value === "active"})}>
- <option value="active">Active (Visible)</option>
- <option value="inactive">Inactive (Hidden)</option>
+ <select className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
+ <option value="Active">Active (Visible)</option>
+ <option value="Inactive">Inactive (Hidden)</option>
  </select>
  </div>
  </div>
@@ -137,6 +137,13 @@ export default function AdminCareers({ isEmbedded = false, isHubView = false }) 
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec">Description / Requirements</label>
  <textarea className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent min-h-[200px]" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Job description..."></textarea>
+ </div>
+
+ 
+ <div className="flex flex-col gap-2 mt-4">
+ <label className="text-[13px] font-medium text-themeTextSec">Job Description PDF (Drive Link)</label>
+ <input type="url" className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm text-themeText outline-none focus:border-themeAccent" value={formData.pdf_link || ''} onChange={e => setFormData({...formData, pdf_link: e.target.value})} placeholder="https://drive.google.com/..." />
+ <span className="text-[11px] text-themeTextSec mt-1">To save server space, paste a public Google Drive link to the PDF instead of uploading files.</span>
  </div>
 
  <div className="flex justify-between mt-4">
@@ -218,9 +225,9 @@ export default function AdminCareers({ isEmbedded = false, isHubView = false }) 
  <tr key={job.id} className="border-b border-themeBorder hover:bg-themeElevated/50 transition-colors">
  <td className="p-4 text-sm font-bold text-themeText">{job.title}</td>
  <td className="p-4 text-xs font-bold text-themeTextSec">{job.department}</td>
- <td className="p-4 text-xs font-bold text-themeTextSec">{job.type} / {job.location}</td>
+ <td className="p-4 text-xs font-bold text-themeTextSec">{job.job_type} / {job.location}</td>
  <td className="p-4">
- {job.is_active ? (
+ {job.status === 'Active' ? (
  <span className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[12px] font-medium rounded whitespace-nowrap">Active</span>
  ) : (
  <span className="px-2 py-1 bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[12px] font-medium rounded whitespace-nowrap">Inactive</span>

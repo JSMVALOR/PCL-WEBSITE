@@ -11,7 +11,7 @@ import SecuritySettings from "./SecuritySettings";
 import AppearanceSettings from "./AppearanceSettings";
 import ProfileEditModal from "./ProfileEditModal";
 import QuestionnaireModal from "../../shared/QuestionnaireModal";
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 export default function Credentials() {
  const { userSession, refreshProfile } = useERP();
@@ -130,7 +130,7 @@ export default function Credentials() {
 
           <div className="relative group mb-6">
               <div className="w-40 h-40 rounded-3xl overflow-hidden border-4 border-themeElevated shadow-xl relative z-10 bg-themeElevated">
-                  <img src={getLocalAvatar(profileData)} alt="Profile" className="w-full h-full object-cover" />
+                  <img src={getAvatarUrl(profileData)} alt="Profile" className="w-full h-full object-cover" />
               </div>
           </div>
           
@@ -169,7 +169,7 @@ export default function Credentials() {
       </div>
 
       {/* RIGHT SIDEBAR: Content & Settings Tabs */}
-      <div className="flex-1 flex flex-col h-auto lg:h-full overflow-hidden bg-themePanel border border-themeBorder rounded-[2rem] shadow-sm">
+      <div className="flex-1 flex flex-col min-h-[700px] lg:h-full overflow-y-auto lg:overflow-hidden bg-themePanel border border-themeBorder rounded-[2rem] shadow-sm">
           {/* Top Tabs */}
           <div className="flex p-3 gap-2 border-b border-themeBorder bg-themeElevated/30 flex-wrap">
               {['profile', 'security', 'appearance'].map(tab => (

@@ -97,7 +97,7 @@ export default function AppearanceSettings() {
  <div className="grid grid-cols-1 gap-8 mt-4 pt-8 border-t border-themeBorder">
  
  {/* Desktop Navigation */}
- <div className="flex flex-col gap-5">
+ <div className="hidden lg:flex flex-col gap-5">
  <h3 className={`text-[14px] font-medium text-themeText tracking-normal flex items-center gap-2 px-1`}>
  <i className="fa-solid fa-layer-group text-themeAccent"></i> Desktop Navigation
  </h3>

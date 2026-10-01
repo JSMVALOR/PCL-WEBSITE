@@ -202,7 +202,7 @@ try {
  };
 
  const handleDeleteNotice = async (id) => {
- if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm("Are you sure you want to delete this notice?", r)))) return;
+ if (!(await window.erpDialog.confirm("Are you sure you want to delete this broadcast?"))) return;
  try {
  await supabase.from('notices').delete().eq('id', id);
  fetchNotices();
@@ -213,7 +213,7 @@ try {
  };
 
  const handleDeleteEvent = async (id) => {
- if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm("Are you sure you want to delete this event?", r)))) return;
+ if (!(await window.erpDialog.confirm("Are you sure you want to delete this event?"))) return;
  try {
  await supabase.from('academic_calendar').delete().eq('id', id);
  fetchEvents();
@@ -302,7 +302,7 @@ try {
  }`}>{n.priority}</span>
  <span className="text-[12px] font-medium px-2 py-1 rounded-md bg-themeElevated text-themeTextSec border border-themeBorder">{n.category}</span>
  </div>
- <HoldButton size="sm" onHold={() => handleDeleteNotice(n.id)} radius={8} backgroundColor="transparent" fillColor="#f43f5e" textColor="#8E8E93" doneLabel="" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
+ <button onClick={() => handleDeleteNotice(n.id)} className="text-themeTextSec hover:text-rose-500 transition p-2" title="Delete Broadcast"><HugeiconsIcon icon={Delete02Icon} size={16} /></button>
  </div>
  <h4 className="text-lg font-semibold tracking-tight text-themeText">{n.title}</h4>
  <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
@@ -402,7 +402,7 @@ try {
  )}
  </div>
  </div>
- <HoldButton size="sm" onHold={() => handleDeleteEvent(e.id)} radius={8} backgroundColor="transparent" fillColor="#f43f5e" textColor="#8E8E93" doneLabel="" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>{null}</HoldButton>
+ <button onClick={() => handleDeleteEvent(e.id)} className="text-themeTextSec hover:text-rose-500 transition p-2" title="Delete Event"><HugeiconsIcon icon={Delete02Icon} size={16} /></button>
  </div>
  ))}
  </div>

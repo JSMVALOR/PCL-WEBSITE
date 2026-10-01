@@ -61,7 +61,7 @@ export const ADMIN_NAV_GROUPS = [
  { id: "siteeditor", label: "CMS Editor", icon: "fa-solid fa-pen-nib" },
  { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
  { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
- { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" }
+ { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" }
  ]
  }
  ]
@@ -181,7 +181,7 @@ export const ADMIN_NAV_MEGA = [
  title: "External Relations",
  children: [
  { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
- { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" },
+ { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" },
  { id: "enquiries", label: "Website Enquiries", icon: "fa-solid fa-envelope-open-text" }
  ]
  }
@@ -191,7 +191,7 @@ export const ADMIN_NAV_MEGA = [
  { id: "blogs", label: "Blog Engine", icon: "fa-solid fa-blog" },
  { id: "gallery", label: "Gallery Manager", icon: "fa-regular fa-images" },
  { id: "careers", label: "Careers Manager", icon: "fa-solid fa-briefcase" },
- { id: "placements", label: "Placements API", icon: "fa-solid fa-briefcase" },
+ { id: "placements", label: "Placements", icon: "fa-solid fa-briefcase" },
  { id: "enquiries", label: "Website Enquiries", icon: "fa-solid fa-envelope-open-text" }
  ]
  },

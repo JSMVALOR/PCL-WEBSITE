@@ -50,16 +50,15 @@ export default function Programs() {
     const fetchEvents = async () => {
       try {
         const { data, error } = await supabase
-          .from('admin_events')
-          .select('*')
-          .eq('is_public', true)
-          .gte('event_date', new Date().toISOString())
-          .order('event_date', { ascending: true });
+          .from('system_settings')
+          .select('value')
+          .eq('key', 'academic_calendar_grid')
+          .single();
         
         if (error) throw error;
-        setCalendarEvents(data || []);
+        setCalendarEvents(data?.value || null);
       } catch (err) {
-        console.error("Error fetching academic calendar:", err);
+        console.error("Error fetching academic calendar grid:", err);
       } finally {
         setCalendarLoading(false);
       }
@@ -362,50 +361,45 @@ export default function Programs() {
               )}
 
               {activeTab === 'calendar' && (
-                <div className="text-center py-20 max-w-3xl mx-auto">
-                  <div className="relative w-full max-w-lg mx-auto mb-16">
-                    {/* Animated Timeline Placeholder */}
-                    <div className="absolute left-8 top-0 bottom-0 w-[2px] bg-[var(--card-border)]"></div>
-                    <div className="space-y-8 relative">
-                      {calendarLoading ? (
-                        <div className="flex justify-center py-12">
-                           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
-                        </div>
-                      ) : calendarEvents.length > 0 ? (
-                        calendarEvents.map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-8 group">
-                            <div className="w-4 h-4 rounded-full bg-[var(--primary-color)] ml-[26px] ring-4 ring-[var(--bg-color)] z-10 transition-transform group-hover:scale-150 shadow-[0_0_15px_var(--primary-glow)]"></div>
-                            <div className={`${styles.glassCard} p-6 flex-1 text-left flex flex-col md:flex-row gap-6 items-start md:items-center`}>
-                              <div className="flex-1">
-                                <h4 className="text-[var(--primary-color)] font-bold text-lg">{item.title}</h4>
-                                <p className="text-[var(--text-color)] font-medium mt-1 mb-2">
-                                  {new Date(item.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                                </p>
-                                {item.description && (
-                                  <p className="text-[var(--text-muted)] text-sm">{item.description}</p>
-                                )}
-                                <span className="inline-block mt-3 text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full border border-[var(--primary-color)]/30 text-[var(--primary-color)]">
-                                  {(item.location || "PCL Campus")}
-                                </span>
-                              </div>
-                              {item.image_url && (
-                                <div className="w-full md:w-48 h-32 shrink-0 rounded-xl overflow-hidden border border-[var(--card-border)] shadow-lg group-hover:shadow-[0_0_20px_var(--primary-glow)] transition-all duration-500 relative">
-                                  <img decoding="async" loading="lazy" src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-12">
-                            <p className="text-[var(--text-muted)] italic">No upcoming events scheduled at this time.</p>
-                        </div>
-                      )}
-                    </div>
+                <div className="py-20 w-full max-w-5xl mx-auto">
+                  <div className="relative w-full mx-auto mb-16">
+                    {calendarLoading ? (
+                      <div className="flex justify-center py-12">
+                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
+                      </div>
+                    ) : calendarEvents && calendarEvents.rows && calendarEvents.rows.length > 0 ? (
+                      <div className="overflow-x-auto rounded-3xl border border-[var(--card-border)] shadow-2xl bg-[var(--bg-color)]/60 backdrop-blur-3xl">
+                        <table className="w-full text-left border-collapse min-w-[600px]">
+                          <thead>
+                            <tr className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
+                              <th className="p-5 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest w-12 text-center">S.No</th>
+                              {calendarEvents.columns.map(col => (
+                                <th key={col} className="p-5 text-xs font-bold text-[var(--text-color)] uppercase tracking-widest min-w-[150px]">
+                                  {col}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-[var(--card-border)]">
+                            {calendarEvents.rows.map((row, idx) => (
+                              <tr key={row.id} className="hover:bg-[var(--card-bg)] transition-colors">
+                                <td className="p-5 text-center text-[10px] font-black text-[var(--text-muted)]">{idx + 1}</td>
+                                {calendarEvents.columns.map(col => (
+                                  <td key={col} className="p-5 text-sm font-medium text-[var(--text-color)]">
+                                    {row.data[col] || '-'}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 glassCard p-12 max-w-md mx-auto">
+                          <p className="text-[var(--text-muted)] italic text-lg">No academic calendar grid published yet.</p>
+                      </div>
+                    )}
                   </div>
-
-                  
                 </div>
               )}
 

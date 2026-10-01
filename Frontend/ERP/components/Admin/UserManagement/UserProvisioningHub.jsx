@@ -119,9 +119,10 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  
  const generatedId = `${prefix}${nextNum.toString().padStart(4, '0')}`;
  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$";
- let generatedPassword = "Pcl#";
+ let generatedPassword = "PCL";
+ const alphaNumChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
  for (let i = 0; i < 6; i++) {
- generatedPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+ generatedPassword += alphaNumChars.charAt(Math.floor(Math.random() * alphaNumChars.length));
  }
 
  const { data: rpcUserId, error: authError } = await supabase.rpc('admin_create_user', {
@@ -321,8 +322,8 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  };
 
  return (
- <div className="flex-1 w-full flex flex-col bg-themeApp animate-fade-in font-sans">
- <div className="flex h-16 items-center justify-between px-6 border-b border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8]">
+ <div className="flex-1 w-full flex flex-col min-h-0 bg-themeApp animate-fade-in font-sans">
+ <div className="flex min-h-[4rem] py-3 items-center justify-between px-4 md:px-6 border-b border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex-wrap gap-4">
  <div className="flex items-center gap-4">
  <div>
  <h2 className="text-sm font-bold text-themeText tracking-tight">Rapid Provisioning Hub</h2>
@@ -333,19 +334,26 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  {/* Stats */}
  <div className="flex items-center gap-6">
  <div className="flex flex-col items-end" title="Total accounts provisioned in this session">
- <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Accounts Created</span>
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest hidden sm:block">Accounts Created</span><span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest sm:hidden">Created</span>
  <span className="text-sm font-black text-themeText">{stats.provisionedCount}</span>
  </div>
  <div className="flex flex-col items-end" title="Total credential emails successfully sent">
- <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Emails Sent</span>
+ <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest hidden sm:block">Emails Sent</span><span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest sm:hidden">Sent</span>
  <span className="text-sm font-black text-emerald-500">{stats.mailSent}</span>
  </div>
+ {onClose && (
+     <div className="pl-4 md:pl-6 ml-auto md:ml-2 border-l border-themeBorder flex items-center">
+         <button onClick={onClose} className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition flex items-center justify-center">
+             <i className="fa-solid fa-xmark"></i>
+         </button>
+     </div>
+ )}
  </div>
  </div>
 
- <div className="flex flex-1 overflow-hidden">
+ <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-y-auto md:overflow-hidden">
  {/* LEFT SIDE: CREATION */}
- <div className="w-1/2 flex flex-col border-r border-themeBorder bg-themePanel/40 /20 overflow-y-auto custom-scrollbar">
+<div className="w-full md:w-1/2 flex flex-col border-b md:border-b-0 md:border-r border-themeBorder bg-themePanel/40 shrink-0 md:overflow-y-auto custom-scrollbar pb-10 md:pb-0">
  <div className="p-8 max-w-xl w-full mx-auto">
  <div className="mb-6">
  <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-xl mb-4 border border-themeAccent/20">
@@ -444,7 +452,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  </div>
 
  {/* RIGHT SIDE: EDITING */}
- <div className="w-1/2 flex flex-col bg-themeApp overflow-y-auto custom-scrollbar">
+<div className="w-full md:w-1/2 flex flex-col bg-themeApp shrink-0 md:overflow-y-auto custom-scrollbar min-h-[500px] md:min-h-0">
  {provisionedUser ? (
  <div className="p-8 max-w-xl w-full mx-auto animate-fade-in-up">
  <div className="mb-8 pb-8 border-b border-themeBorder flex items-start gap-5">

@@ -177,7 +177,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
  <div className="flex flex-col rounded-[20px] bg-themePanel /20 border border-themeBorder dark:border-white/[0.05] overflow-hidden">
  {group.links.flatMap(l => l.children ? l.children : [l]).map((link, i, arr) => {
  const isActive = activeTab === link.id;
- const hasNotice = link.id === 'notices' && notices?.length > 0;
+ const hasNotice = link.id === 'notices' && role !== 'admin' && notices?.length > 0;
  const isLast = i === arr.length - 1;
  return (
  <button type="button"

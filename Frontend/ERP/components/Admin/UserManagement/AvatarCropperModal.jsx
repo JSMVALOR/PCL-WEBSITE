@@ -119,7 +119,7 @@ export default function AvatarCropperModal({ user, currentImageUrl, isOpen, onCl
  <button 
  onClick={handleSave}
  disabled={isSaving}
- className="px-6 py-2 rounded-lg text-sm font-bold bg-amber-500 hover:bg-amber-600 text-themeText transition-colors flex items-center gap-2"
+ className="px-6 py-2 rounded-lg text-sm font-bold bg-themeAccent hover:bg-themeAccent/90 text-themeText transition-colors flex items-center gap-2"
  >
  {isSaving ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-check"></i>}
  Save Picture

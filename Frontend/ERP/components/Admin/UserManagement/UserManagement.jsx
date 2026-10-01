@@ -5,6 +5,7 @@ import PageHeader from "../../shared/PageHeader/PageHeader";
 import { Badge } from "../../ui/Badge";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from 'react-dom';
 import { sendSystemEmail } from '../../../lib/EmailService';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { theme } from '../../../../Shared/theme';
@@ -13,6 +14,7 @@ import AdminFacultyEditorModal from "../AdminFacultyDirectory/AdminFacultyEditor
 import AdminStudentCVModal from './AdminStudentCVModal';
 import AdminUserEditorModal from './AdminUserEditorModal';
 import AdminUserProfileModal from './AdminUserProfileModal';
+import UserProvisioningHub from './UserProvisioningHub';
 import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 // Safe provisioning client so admin doesn't get logged out
@@ -172,7 +174,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  setUsersData(updatedUsers);
 
- const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', user.db_id);
+ const { error } = await supabase.rpc('admin_update_profile_status', { target_user_id: user.db_id, new_status: newStatus });
  if (error) {
  fetchDirectory(); // revert
  throw error;
@@ -185,7 +187,10 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  } else {
  await sendSystemEmail('ACCOUNT_REACTIVATED', { to_email: user.email, name: user.name });
  }
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (err) { 
+  console.warn("Email dispatch skipped (template might not exist):", err); 
+}
+if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() + " successfully.", "success");
 
  } catch (error) {
  if(window.erpToast) window.erpToast.show("Failed to update status: " + error.message, "error");
@@ -213,7 +218,76 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  }
  };
 
+ 
+ 
+ const executeDeletion = async (user) => {
+   if (!(await window.erpDialog.confirm("Are you sure you want to permanently delete this user? This action cannot be undone."))) return;
+
+   setTransferModalState({ isOpen: false, sourceUser: null, classes: 0, subjects: 0, isDeactivating: false, selectedTarget: '' });
+   setIsLoading(true);
+
+   try {
+     const { error } = await supabase.rpc('admin_delete_user', { target_user_id: user.db_id });
+     if (error) throw error;
+     
+     if (window.erpToast) window.erpToast.show("User permanently deleted.", "success");
+     fetchDirectory();
+   } catch(e) {
+     if (window.erpToast) window.erpToast.show("Failed to delete user: " + e.message, "error");
+   } finally {
+     setIsLoading(false);
+   }
+ };
+
+ const executeSuspension = async (user) => {
+
+   const input = await window.erpDialog.prompt(
+     `You are about to suspend access for ${user.name}.\n\n` + 
+     `If suspended:\n` +
+     `• They will be immediately blocked from logging into the ERP.\n` +
+     `• Their account will not appear in allocations.\n\n` +
+     `Type "SUSPEND" below to confirm this action.`,
+     "Account Restriction Warning",
+     "",
+     true
+   );
+   if (input !== 'SUSPEND') {
+     if (input !== null) window.erpDialog.alert("Action cancelled. You must type SUSPEND exactly.");
+     return;
+   }
+
+   setTransferModalState({ isOpen: false, sourceUser: null, classes: 0, subjects: 0, isDeactivating: false, selectedTarget: '' });
+   setIsLoading(true);
+
+   try {
+     const newStatus = 'Suspended';
+     const { error: restrictError } = await supabase.from('profiles').update({ status: newStatus }).eq('id', user.db_id);
+     if (restrictError) throw restrictError;
+
+     const updatedUsers = { ...usersData };
+     const list = user.batch ? updatedUsers.students : updatedUsers.faculty;
+     const index = list.findIndex(u => u.db_id === user.db_id);
+     if (index !== -1) {
+       list[index].status = newStatus;
+       updatedUsers.disciplinary.push({...list[index], status: newStatus});
+     }
+     setUsersData(updatedUsers);
+
+     await supabase.rpc('admin_update_profile_status', { target_user_id: user.db_id, new_status: newStatus });
+     try {
+       await sendSystemEmail('ACCOUNT_LOCKED', { to_email: user.email, name: user.name });
+     } catch(e) {}
+     
+     if (window.erpToast) window.erpToast.show("Account suspended successfully.", "success");
+   } catch(e) {
+     if (window.erpToast) window.erpToast.show("Failed to suspend: " + e.message, "error");
+   } finally {
+     setIsLoading(false);
+   }
+ };
+
  const handleWorkloadTransferSubmit = async () => {
+
  const { sourceUser, isDeactivating, selectedTarget } = transferModalState;
  if (!selectedTarget) return window.erpDialog.alert("Please select a target faculty member.");
  
@@ -265,9 +339,10 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  if (!(await window.erpDialog.confirm(`Generate and email a new temporary passcode for ${user.name} (${user.email})?`))) return;
  try {
  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
- let newPass = "Pcl#";
+ let newPass = "PCL";
+ const alphaNumChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
  for (let i = 0; i < 6; i++) {
- newPass += chars.charAt(Math.floor(Math.random() * chars.length));
+ newPass += alphaNumChars.charAt(Math.floor(Math.random() * alphaNumChars.length));
  }
  
  const { error } = await supabase.rpc('admin_reset_password', {
@@ -462,7 +537,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 <div className="flex gap-3 w-full lg:w-auto">
  <button type="button"
  onClick={() => setShowProvisionModal(true)}
- className="flex-1 lg:flex-none px-6 py-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border-amber-500/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 "
+ className="flex-1 lg:flex-none px-6 py-3 bg-themeAccent/10 hover:bg-themeAccent/20 text-themeAccent border-themeAccent/20 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 "
  >
  <i className="fa-solid fa-user-plus text-base"></i> Rapid Provisioning
  </button>
@@ -476,7 +551,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex justify-end mb-4">
  <button type="button"
  onClick={() => setShowProvisionModal(true)}
- className="bg-amber-500 hover:bg-amber-500Muted text-themeText px-6 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex justify-center items-center gap-2 border border-themeBorder dark:border-white/[0.08]Accent active:scale-[0.98]"
+ className="bg-themeAccent hover:bg-themeAccent/90 text-themeText px-6 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition flex justify-center items-center gap-2 border border-themeBorder dark:border-white/[0.08]Accent active:scale-[0.98]"
  >
  <i className="fa-solid fa-user-plus text-base"></i> Rapid Provisioning
  </button>
@@ -493,13 +568,13 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex p-1.5 bg-themeApp rounded-2xl border border-themeBorder dark:border-white/[0.08] w-full lg:w-auto shrink-0">
  <button type="button"
  onClick={() => setActiveTab('students')}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'students' ? "bg-themeElevated dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/[0.08]" : "text-themeTextSec opacity-70 hover:text-themeText hover:bg-themeElevated dark:bg-themeApp/50 border border-transparent"}`}
+ className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'students' ? "bg-themeElevated dark:bg-themeApp text-themeAccent border border-themeBorder dark:border-white/[0.08]" : "text-themeTextSec opacity-70 hover:text-themeText hover:bg-themeElevated dark:bg-themeApp/50 border border-transparent"}`}
  >
  Students <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec ">{usersData.students.length}</span>
  </button>
  <button type="button"
  onClick={() => setActiveTab('faculty')}
- className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'faculty' ? "bg-themeElevated dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/[0.08]" : "text-themeTextSec opacity-70 hover:text-themeText hover:bg-themeElevated dark:bg-themeApp/50 border border-transparent"}`}
+ className={`flex-1 lg:flex-none px-4 lg:px-6 py-2.5 rounded-lg text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 ${activeTab === 'faculty' ? "bg-themeElevated dark:bg-themeApp text-themeAccent border border-themeBorder dark:border-white/[0.08]" : "text-themeTextSec opacity-70 hover:text-themeText hover:bg-themeElevated dark:bg-themeApp/50 border border-transparent"}`}
  >
  Faculty <span className="ml-2 px-1.5 py-0.5 bg-themeApp rounded-md text-[9px] text-themeTextSec ">{usersData.faculty.length}</span>
  </button>
@@ -509,7 +584,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 items-center">
  {/* Search */}
  <div className="relative w-full sm:w-64 group">
- <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-70 group-focus-within:text-amber-500 transition-colors text-sm"></i>
+ <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-70 group-focus-within:text-themeAccent transition-colors text-sm"></i>
  <input
  type="text"
  placeholder="Search Name, ID, Email..."
@@ -585,7 +660,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <img src={getAvatarUrl({ name: user.name, avatar_url: user.avatar_url })} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-20 h-20 rounded-[1.25rem] object-cover mb-4 border-4 border-themeBorder shadow-sm group-hover:scale-105 transition-transform duration-300" />
  <h4 className="text-[14px] font-bold text-center text-themeText truncate w-full px-2">{user.name}</h4>
  <span className="text-[11px] font-bold text-themeTextSec tracking-widest mt-1 uppercase">{user.id}</span>
- <span className="text-[10px] font-medium text-amber-500/80 truncate w-full text-center mt-1 px-2">{user.email}</span>
+ <span className="text-[10px] font-medium text-themeAccent/80 truncate w-full text-center mt-1 px-2">{user.email}</span>
  </div>
  ))}
  </div>
@@ -620,11 +695,11 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex items-center gap-4 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
  <img src={getAvatarUrl({ name: user.name, avatar_url: user.avatar_url })} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-themeBorder dark:border-white/[0.08]" />
  <div className="min-w-0">
- <p className="text-[15px] font-semibold text-themeText group-hover/profile:text-amber-500 transition-colors truncate">{user.name}</p>
+ <p className="text-[15px] font-semibold text-themeText group-hover/profile:text-themeAccent transition-colors truncate">{user.name}</p>
  <div className="flex items-center gap-2 mt-1">
  <span className={`text-[10px] font-bold text-themeTextSec tracking-normal shrink-0`}>{user.id}</span>
  <span className="w-1 h-1 bg-neutral-700 rounded-full shrink-0"></span>
- <span className={`text-[10px] font-medium text-amber-500/80 truncate`}>{user.email}</span>
+ <span className={`text-[10px] font-medium text-themeAccent/80 truncate`}>{user.email}</span>
  </div>
  </div>
  </div>
@@ -638,7 +713,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <i className="fa-solid fa-pen text-[10px]"></i>
  </button>
  {(user.role === 'faculty' || user.role === 'admin') && (
- <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-amber-500/10 border border-themeBorder dark:border-white/[0.08]Accent/30 hover:bg-amber-500/20 text-amber-500 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeAccent/10 border border-themeBorder dark:border-white/[0.08]Accent/30 hover:bg-themeAccent/20 text-themeAccent flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
@@ -647,7 +722,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <i className="fa-solid fa-exchange-alt text-[10px]"></i>
  </button>
  )}
- <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-themeBorder dark:border-white/[0.08] hover:border-indigo-500 hover:text-amber-500 text-themeTextSec flex items-center justify-center transition-colors" title="Reset Password">
+ <button type="button" onClick={() => handleResetPassword(user)} className="w-8 h-8 rounded-lg bg-themeApp border border-themeBorder dark:border-white/[0.08] hover:border-indigo-500 hover:text-themeAccent text-themeTextSec flex items-center justify-center transition-colors" title="Reset Password">
  <i className="fa-solid fa-key text-[10px]"></i>
  </button>
  <button type="button" onClick={() => handleToggleStatus(user)} className={`w-8 h-8 rounded-lg bg-themeApp border-themeBorder flex items-center justify-center transition-colors ${user.status === 'Active' ? 'border-themeBorder hover:border-rose-500 hover:text-rose-500 text-themeTextSec ' : 'border-rose-500/50 bg-rose-500/10 text-rose-500 hover:bg-emerald-500 hover:text-themeText hover:border-emerald-500'}`} title={user.status === 'Active' ? 'Suspend Account' : 'Reactivate'}>
@@ -681,7 +756,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <div className="flex items-center gap-3 min-w-0 cursor-pointer group/profile" onClick={() => { setSelectedProfileUser(user); setIsProfileModalOpen(true); }}>
  <img src={getAvatarUrl({ name: user.name, avatar_url: user.avatar_url })} alt={user.name} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff&rounded=true&bold=true`; }} className="w-10 h-10 rounded-2xl object-cover shrink-0 group-hover/profile:shadow-lg transition-shadow border border-themeBorder dark:border-white/[0.08]" />
  <div className="min-w-0">
- <p className="text-[15px] font-semibold text-themeText group-hover/profile:text-amber-500 transition-colors truncate">{user.name}</p>
+ <p className="text-[15px] font-semibold text-themeText group-hover/profile:text-themeAccent transition-colors truncate">{user.name}</p>
  <div className="flex items-center gap-2 mt-0.5">
  <span className={`text-[10px] font-bold text-themeTextSec tracking-normal shrink-0`}>{user.id}</span>
  </div>
@@ -693,7 +768,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </div>
  </div>
  
- <div className="flex items-center gap-2 text-xs font-medium text-amber-500/80 bg-themeElevated dark:bg-themeApp p-2 rounded-lg border border-themeBorder dark:border-white/[0.08] truncate">
+ <div className="flex items-center gap-2 text-xs font-medium text-themeAccent/80 bg-themeElevated dark:bg-themeApp p-2 rounded-lg border border-themeBorder dark:border-white/[0.08] truncate">
  <i className="fa-solid fa-envelope text-themeTextSec "></i> {user.email}
  </div>
 
@@ -702,7 +777,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
 
  <div className="flex gap-2">
  {(user.role === 'faculty' || user.role === 'admin') && (
- <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-amber-500/10 border border-themeBorder dark:border-white/[0.08]Accent/30 hover:bg-amber-500/20 text-amber-500 flex items-center justify-center transition-colors" title="Edit Website Profile">
+ <button type="button" onClick={() => setEditFacultyId(user.db_id)} className="w-8 h-8 rounded-lg bg-themeAccent/10 border border-themeBorder dark:border-white/[0.08]Accent/30 hover:bg-themeAccent/20 text-themeAccent flex items-center justify-center transition-colors" title="Edit Website Profile">
  <i className="fa-solid fa-globe text-[10px]"></i>
  </button>
  )}
@@ -726,142 +801,20 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </div>
 
  {/* 3. PROVISIONING WIZARD MODAL */}
- {showProvisionModal && (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
- <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] w-full max-w-2xl rounded-2xl rounded-2xl overflow-hidden border border-themeBorder dark:border-white/[0.08] flex flex-col max-h-[90vh]">
-
- {/* Modal Header */}
- <div className="bg-themeElevated dark:bg-themeApp p-5 lg:p-6 text-themeText relative shrink-0 border-b border-themeBorder ">
- <div className="flex justify-between items-start relative z-10">
- <div>
- <h3 className="text-lg lg:text-xl font-semibold tracking-tight tracking-tight mb-1 text-themeText ">Provision New Account</h3>
- <p className={`text-[10px] lg:text-xs text-amber-500 font-medium`}>Generate credentials and assign records.</p>
- </div>
- <button aria-label="Action button" type="button" onClick={closeProvisionWizard} className="w-8 h-8 flex items-center justify-center rounded-full bg-themeApp hover:bg-themeBorder border border-themeBorder dark:border-white/[0.08] text-themeText transition-colors shrink-0"><i className="fa-solid fa-xmark text-sm"></i></button>
- </div>
- </div>
-
- {/* Modal Form Content */}
- <div className="overflow-y-auto p-5 lg:p-6 flex-1 bg-themeApp no-scrollbar">
- {provisionSuccess ? (
- <div className="flex flex-col items-center justify-center py-8 lg:py-10 animate-fade-in text-center">
- <div className="w-16 h-16 lg:w-20 lg:h-20 bg-themeElevated dark:bg-themeApp text-emerald-400 border-themeBorder border-emerald-500/30 rounded-full flex items-center justify-center text-3xl lg:text-4xl mb-4">
- <i className="fa-solid fa-check"></i>
- </div>
- <h3 className={`font-bold tracking-tight text-xl lg:text-2xl text-themeText mb-1`}>Account Provisioned!</h3>
- <p className={`text-xs lg:text-sm text-themeTextSec mb-6 lg:mb-8`}>Securely share these credentials.</p>
-
- <div className="w-full max-w-sm bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl p-5 lg:p-6 border border-themeBorder dark:border-white/[0.08] flex flex-col gap-4 relative overflow-hidden text-left">
- <div className="absolute top-0 left-0 w-full h-1.5 bg-emerald-500"></div>
-
- <div className="border-t border-themeBorder pt-3 lg:pt-4">
- <span className={`text-[9px] lg:text-[13px] font-medium text-themeTextSec mb-2 block`}>Automation Logs</span>
- <div className="bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-lg p-3 text-left font-mono text-[10px] lg:text-xs h-32 overflow-y-auto">
- {provisionLogs.map((log, i) => (
- <div key={i} className={`mb-1 ${log.includes('SUCCESS') ? 'text-emerald-400' : log.includes('ERROR') || log.includes('WARNING') ? 'text-rose-400' : 'text-themeTextSec '}`}>
- &gt; {log}
- </div>
- ))}
- </div>
- </div>
- </div>
-
- <button type="button" onClick={closeProvisionWizard} className="mt-6 lg:mt-8 text-[10px] lg:text-[14px] font-medium tracking-normal text-themeTextSec opacity-70 hover:text-themeText transition-colors">
- Done & Close
- </button>
- </div>
- ) : (
- <form onSubmit={handleProvisionSubmit} className="flex flex-col gap-5 lg:gap-6">
-
- {/* Role Selector */}
- <div className="flex p-1.5 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-2xl border border-themeBorder dark:border-white/[0.08] w-full">
- <button type="button" onClick={() => setNewUserRole("student")} className={`flex-1 py-3 rounded-lg text-[9px] lg:text-[13px] font-medium transition ${newUserRole === 'student' ? 'bg-themeElevated dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/[0.08]' : 'text-neutral-600 hover:text-themeText '}`}>Student</button>
- <button type="button" onClick={() => setNewUserRole("faculty")} className={`flex-1 py-3 rounded-lg text-[9px] lg:text-[13px] font-medium transition ${newUserRole === 'faculty' ? 'bg-themeElevated dark:bg-themeApp text-amber-500 border border-themeBorder dark:border-white/[0.08]' : 'text-neutral-600 hover:text-themeText '}`}>Faculty</button>
- </div>
-
- <div className="grid grid-cols-1 gap-4 lg:gap-5">
- <div>
- <label className={`block text-[9px] lg:text-[13px] font-medium text-themeTextSec mb-1.5 ml-1`}>
- Assign Batch (Programme & Year)
- </label>
- <div className="relative">
- <select
- value={assignment}
- onChange={(e) => setAssignment(e.target.value)}
- className="w-full border border-themeBorder dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] text-themeText focus:bg-themeElevated dark:bg-themeApp focus:border-themeBorder Accent outline-none transition appearance-none cursor-pointer"
- required
- >
- 
- <option value="">Select Batch...</option>
- <option value="BBA LLB (2024-2029)">BBA LLB (2024-2029)</option>
- <option value="BA LLB (2024-2029)">BA LLB (2024-2029)</option>
- <option value="LLB (2024-2027)">LLB (2024-2027)</option>
- <option value="BBA LLB (2023-2028)">BBA LLB (2023-2028)</option>
- <option value="BA LLB (2023-2028)">BA LLB (2023-2028)</option>
- <option value="LLB (2023-2026)">LLB (2023-2026)</option>
- <option value="BBA LLB (2022-2027)">BBA LLB (2022-2027)</option>
- <option value="BA LLB (2022-2027)">BA LLB (2022-2027)</option>
- <option value="LLB (2022-2025)">LLB (2022-2025)</option>
-
- </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec opacity-70 pointer-events-none text-xs"></i>
- </div>
- </div>
-
- <div>
- <label className={`block text-[9px] lg:text-[13px] font-medium text-themeTextSec mb-1.5 ml-1`}>User Name</label>
- <input
- type="text"
- value={newUserName}
- onChange={(e) => setNewUserName(e.target.value)}
- placeholder="e.g. John Doe"
- className="w-full border border-themeBorder dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] text-themeText focus:bg-themeElevated dark:bg-themeApp focus:border-themeBorder Accent outline-none transition placeholder:text-neutral-600"
- required
- />
- </div>
- <div>
- <label className={`block text-[9px] lg:text-[13px] font-medium text-themeTextSec mb-1.5 ml-1`}>Email Address</label>
- <input
- type="email"
- value={newUserEmail}
- onChange={(e) => setNewUserEmail(e.target.value)}
- placeholder="e.g. john@prudentia.edu"
- className="w-full border border-themeBorder dark:border-white/[0.08] rounded-2xl px-4 py-3 text-xs lg:text-sm font-bold bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] text-themeText focus:bg-themeElevated dark:bg-themeApp focus:border-themeBorder Accent outline-none transition placeholder:text-neutral-600"
- required
- />
- </div>
- </div>
-
- {/* Logs Display during provisioning */}
- {isProvisioning && (
- <div className="bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-lg p-3 text-left font-mono text-[10px] h-32 overflow-y-auto mt-2">
- {provisionLogs.map((log, i) => (
- <div key={i} className={`mb-1 ${log.includes('SUCCESS') ? 'text-emerald-400' : log.includes('ERROR') || log.includes('WARNING') ? 'text-rose-400' : 'text-themeTextSec '}`}>
- &gt; {log}
- </div>
- ))}
- </div>
+ {showProvisionModal && createPortal(
+    <div className="fixed inset-0 z-[200] bg-themeApp animate-fade-in flex flex-col">
+        
+        <UserProvisioningHub 
+            onClose={() => setShowProvisionModal(false)} 
+            provisionClient={provisionClient} 
+            onProvisioned={() => {
+                fetchDirectory();
+            }} 
+        />
+    </div>,
+    document.body
  )}
 
- </form>
- )}
- </div>
-
- {/* Modal Footer */}
- {!provisionSuccess && (
- <div className="p-4 lg:p-5 border-t border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shrink-0 flex flex-col sm:flex-row gap-3">
- <button type="button" onClick={closeProvisionWizard} className="w-full sm:w-auto px-6 py-3.5 bg-themeElevated dark:bg-themeApp hover:bg-themeBorder text-themeTextSec hover:text-themeText rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition-colors border border-themeBorder dark:border-white/[0.08] active:scale-95">Cancel</button>
- <button type="button" onClick={handleProvisionSubmit} disabled={isProvisioning || !newUserName || !newUserEmail || !assignment} className="w-full sm:flex-1 bg-amber-500 hover:bg-amber-500Muted text-themeText rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition disabled:opacity-50 disabled:shadow-none flex justify-center items-center gap-2 group relative overflow-hidden active:scale-[0.98] disabled:cursor-not-allowed">
- {!isProvisioning && newUserName && newUserEmail && assignment && (
- <div className="absolute inset-0 w-full h-full -translate-x-full group-hover:"></div>
- )}
- {isProvisioning ? <><i className="fa-solid fa-circle-notch fa-spin text-sm"></i> Provisioning...</> : <><i className="fa-solid fa-server text-sm"></i> Execute Provisioning</>}
- </button>
- </div>
- )}
- </div>
- </div>
- )}
 
  {/* 4. ADMIN QUESTIONNAIRE OVERRIDE MODAL */}
  {selectedQuestionnaireUser && (
@@ -1018,7 +971,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <p className="text-xs text-themeTextSec mt-1">
  {transferModalState.sourceUser.name} is currently assigned to <strong>{transferModalState.subjects} subjects</strong> and <strong>{transferModalState.classes} classes</strong>.
  </p>
- <p className="text-[10px] text-amber-600 dark:text-amber-500 mt-2 bg-amber-50 dark:bg-amber-500/10 p-2 rounded-lg border border-amber-500/20">
+ <p className="text-[10px] text-themeAccent dark:text-themeAccent mt-2 bg-themeApp dark:bg-themeAccent/10 p-2 rounded-lg border border-themeAccent/20">
  <strong>Important:</strong> Transferring workload will permanently merge these classes into the target faculty's schedule. If you are hiring a dedicated replacement later, it is recommended to cancel this and leave the workload on this deactivated account, then transfer directly to the new hire when they join.
  </p>
  <button onClick={() => setTransferModalState({ ...transferModalState, isOpen: false })} className="absolute top-6 right-6 text-themeTextSec hover:text-themeText transition-colors">
@@ -1043,7 +996,26 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  </select>
  </div>
  
- <div className="p-6 border-t border-themeBorder dark:border-white/[0.05] flex justify-end gap-3 bg-themePanel">
+ <div className="p-6 border-t border-themeBorder dark:border-white/[0.05] flex justify-between gap-3 bg-themePanel">
+ <div className="flex gap-3">
+ {transferModalState.isDeactivating && (
+ <>
+ <button 
+ onClick={() => executeSuspension(transferModalState.sourceUser)}
+ className="px-5 py-2.5 rounded-xl font-bold text-xs bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-themeApp transition-colors flex items-center gap-2"
+ >
+ <i className="fa-solid fa-ban"></i> Suspend
+ </button>
+ <button 
+ onClick={() => executeDeletion(transferModalState.sourceUser)}
+ className="px-5 py-2.5 rounded-xl font-bold text-xs bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white transition-colors flex items-center gap-2"
+ >
+ <i className="fa-solid fa-trash-can"></i> Delete
+ </button>
+ </>
+ )}
+ </div>
+ <div className="flex gap-3">
  <button 
  onClick={() => setTransferModalState({ ...transferModalState, isOpen: false })}
  className="px-5 py-2.5 rounded-xl font-semibold text-xs text-themeTextSec hover:text-themeText hover:bg-themeElevated transition-colors"
@@ -1058,6 +1030,7 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  <i className="fa-solid fa-exchange-alt"></i>
  Transfer Workload
  </button>
+ </div>
  </div>
  </div>
  </div>

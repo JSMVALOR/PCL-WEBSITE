@@ -23,6 +23,10 @@ export const EMAIL_TEMPLATES = {
         subject: `Your ERP Login Passcode`,
         message_body: HTML_EMAIL_TEMPLATES.ERP_LOGIN_OTP(params) }),
 
+    RECOVERY_OTP: (params) => ({
+        subject: `Your Account Recovery OTP`,
+        message_body: HTML_EMAIL_TEMPLATES.RECOVERY_OTP(params) }),
+
     PASSCODE_RESET: (params) => ({
         subject: `Your ERP Password has been Reset`,
         message_body: HTML_EMAIL_TEMPLATES.PASSCODE_RESET(params) }),

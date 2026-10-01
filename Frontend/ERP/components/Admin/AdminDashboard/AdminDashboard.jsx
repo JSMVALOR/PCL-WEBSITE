@@ -39,10 +39,7 @@ export default function AdminDashboard({ isEmbedded = false, setActiveTab }) {
  {/* Row 2: 6 KPI Cards */}
  <AdminKPIGrid setActiveTab={setActiveTab} />
 
-{/* MAIN CONTENT WIDGETS */}
- <div className="flex flex-col w-full animate-fade-in-up">
- <AdminSystemVitals />
- </div>
+
 
  
  

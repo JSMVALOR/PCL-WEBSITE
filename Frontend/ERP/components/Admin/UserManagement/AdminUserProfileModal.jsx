@@ -1,5 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { getLocalAvatar } from '../../../utils/avatarUtils';
 import AvatarCropperModal from './AvatarCropperModal';
@@ -115,9 +116,11 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
 
  if (!isOpen || !user) return null;
 
- return (
- <div className="w-full flex flex-col bg-themeApp animate-fade-in font-sans border border-themeBorder rounded-3xl overflow-hidden shadow-sm">
- <div className="w-full mx-auto flex flex-col relative z-10 bg-themePanel/85 backdrop-blur-2xl">
+ return createPortal(
+ <div className="fixed inset-0 z-[150] flex flex-col bg-themeApp animate-fade-in font-sans overflow-hidden">
+ <div className="flex-1 overflow-y-auto w-full mx-auto flex flex-col relative z-10 bg-themePanel/85 custom-scrollbar">
+ {/* Wrapper inside portal */}
+ <div className="w-full mx-auto flex flex-col relative z-10">
  
  {/* Header Profile Card */}
  <div className={`p-6 lg:p-8 bg-themePanel shadow-sm border-b border-themeBorder dark:border-white/[0.08] relative overflow-hidden shrink-0`}>
@@ -309,7 +312,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  </div>
  <div className="bg-themePanel/85 backdrop-blur-2xl border border-themeBorder rounded-xl p-5 text-center col-span-2 lg:col-span-1">
  <span className={`text-[12px] font-medium text-themeTextSec block mb-1`}>Student Avg Att.</span>
- <span className={`text-2xl font-semibold tracking-tight ${stats.studentAvgAttendance >= 75 ? 'text-emerald-500' : 'text-amber-500'}`}>
+ <span className={`text-2xl font-semibold tracking-tight ${stats.studentAvgAttendance >= 75 ? 'text-emerald-500' : 'text-themeAccent'}`}>
  {stats.studentAvgAttendance}%
  </span>
  </div>
@@ -331,9 +334,9 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  <span className="text-xl font-semibold tracking-tight text-emerald-500">{stats.approvedLeaves}</span>
  <span className={`text-[12px] font-medium text-emerald-500/70`}>Approved</span>
  </div>
- <div className="bg-amber-500/5 border-theme border-amber-500/20 rounded-xl p-4 flex flex-col gap-1 items-center justify-center text-center">
- <span className="text-xl font-semibold tracking-tight text-amber-500">{stats.pendingLeaves}</span>
- <span className={`text-[12px] font-medium text-amber-500/70`}>Pending</span>
+ <div className="bg-themeAccent/5 border-theme border-themeAccent/20 rounded-xl p-4 flex flex-col gap-1 items-center justify-center text-center">
+ <span className="text-xl font-semibold tracking-tight text-themeAccent">{stats.pendingLeaves}</span>
+ <span className={`text-[12px] font-medium text-themeAccent/70`}>Pending</span>
  </div>
  </div>
  </div>
@@ -352,5 +355,7 @@ export default function AdminUserProfileModal({ user, isOpen, onClose }) {
  onSaved={(base64) => setLocalAvatarUrl(base64)}
  />
  </div>
+ </div>,
+ document.body
  );
 }

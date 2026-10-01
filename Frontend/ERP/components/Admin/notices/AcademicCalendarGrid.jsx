@@ -58,6 +58,20 @@ export default function AcademicCalendarGrid() {
  setRows(rows.map(r => ({ ...r, data: { ...r.data, [name]: '' } })));
  };
 
+ 
+ const editColumn = async (oldName) => {
+ const newName = await window.erpDialog.prompt("Enter new column name:", oldName);
+ if (!newName || newName === oldName || columns.includes(newName)) return;
+ 
+ setColumns(columns.map(c => c === oldName ? newName : c));
+ setRows(rows.map(r => {
+ const newData = { ...r.data };
+ newData[newName] = newData[oldName];
+ delete newData[oldName];
+ return { ...r, data: newData };
+ }));
+ };
+
  const deleteColumn = async (colName) => {
  if (!(await window.erpDialog.confirm(`Delete column "${colName}"?`))) return;
  setColumns(columns.filter(c => c !== colName));
@@ -104,12 +118,16 @@ export default function AcademicCalendarGrid() {
  <table className="w-full text-left border-collapse">
  <thead>
  <tr className="border-b border-themeBorder">
+ <th className="p-4 text-[10px] font-black text-themeTextSec uppercase tracking-widest w-12 text-center">S.No</th>
  {columns.map(col => (
- <th key={col} className="p-4 text-xs font-bold text-themeText uppercase tracking-widest min-w-[150px] group relative">
+ <th key={col} className="p-4 text-xs font-bold text-themeText uppercase tracking-widest min-w-[150px] group relative group/th">
+ <span className="flex items-center gap-2">
  {col}
+ <button onClick={() => editColumn(col)} className="opacity-0 group-hover/th:opacity-100 text-themeTextSec hover:text-themeAccent transition-opacity" title="Edit Column Name"><i className="fa-solid fa-pen-to-square text-[10px]"></i></button>
+ </span>
  <button 
  onClick={() => deleteColumn(col)} 
- className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 text-rose-500 hover:text-rose-600 transition-opacity"
+ className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/th:opacity-100 text-rose-500 hover:text-rose-600 transition-opacity"
  title="Delete Column"
  >
  <i className="fa-solid fa-trash-can"></i>
@@ -122,6 +140,7 @@ export default function AcademicCalendarGrid() {
  <tbody>
  {rows.map((row, idx) => (
  <tr key={row.id} className="border-b border-themeBorder last:border-none hover:bg-themeElevated transition-colors group">
+ <td className="p-2 text-center text-[10px] font-black text-themeTextSec">{idx + 1}</td>
  {columns.map(col => (
  <td key={col} className="p-2">
  <input

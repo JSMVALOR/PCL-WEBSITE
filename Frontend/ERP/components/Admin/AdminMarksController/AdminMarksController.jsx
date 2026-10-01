@@ -173,8 +173,8 @@ export default function AdminMarksController() {
  {/* TAB 1: LOCKED SUBMISSIONS */}
  {activeTab === "submissions" && (
  <div className="bg-themeElevated/20 border border-themeBorder/50 rounded-2xl overflow-hidden backdrop-blur-xl">
- <table className="w-full text-left border-collapse">
- <thead>
+ <table className="w-full text-left border-collapse block md:table">
+ <thead className="hidden md:table-header-group">
  <tr className="bg-themeElevated/30 border-b border-themeBorder/50">
  <th className="px-6 py-4 text-[10px] font-black tracking-widest uppercase text-themeTextSec">Assessment</th>
  <th className="px-6 py-4 text-[10px] font-black tracking-widest uppercase text-themeTextSec">Batch & Subject</th>
@@ -187,22 +187,22 @@ export default function AdminMarksController() {
  {loadingSubs && <tr><td colSpan="5" className="p-8 text-center text-sm font-bold text-themeTextSec"><i className="fa-solid fa-spinner fa-spin mr-2"></i> Loading Locks...</td></tr>}
  {!loadingSubs && submissions.length === 0 && <tr><td colSpan="5" className="p-8 text-center text-sm font-bold text-themeTextSec">No locked assessments found.</td></tr>}
  {submissions.map(sub => (
- <tr key={sub.id} className="border-b border-themeBorder/50 hover:bg-themeElevated/20 transition-colors">
- <td className="px-6 py-4">
+ <tr key={sub.id} className="block md:table-row border-b border-themeBorder/50 hover:bg-themeElevated/20 transition-colors p-4 md:p-0">
+ <td className="block md:table-cell px-2 py-1 md:px-6 md:py-4">
  <span className="text-sm font-black text-themeText">{sub.assessment_type}</span>
  <p className="text-[10px] text-themeTextSec font-bold tracking-widest uppercase mt-1">{new Date(sub.submitted_at).toLocaleString()}</p>
  </td>
- <td className="px-6 py-4">
+ <td className="block md:table-cell px-2 py-1 md:px-6 md:py-4">
  <span className="text-sm font-bold text-themeText">{sub.batch}</span>
  <p className="text-[10px] text-themeTextSec mt-1">{sub.master_subjects?.name}</p>
  </td>
- <td className="px-6 py-4 text-sm font-bold text-themeText">
+ <td className="block md:table-cell px-6 py-4 text-sm font-bold text-themeText">
  {sub.profiles?.full_name}
  </td>
- <td className="px-6 py-4 text-center">
+ <td className="block md:table-cell px-2 py-1 md:px-6 md:py-4 md:text-center">
  <span className="px-3 py-1 bg-red-500/10 text-red-500 font-black text-[10px] uppercase tracking-widest rounded-md border border-red-500/20"><i className="fa-solid fa-lock"></i> Locked</span>
  </td>
- <td className="px-6 py-4 text-right">
+ <td className="block md:table-cell px-2 py-2 md:px-6 md:py-4 md:text-right mt-2 md:mt-0 flex items-center md:block gap-2">
  <div className="flex flex-col items-end gap-2 ml-auto w-fit">
  <button onClick={() => exportToCSV(sub)} className="px-4 py-2 w-full justify-center bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-themeText rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors flex items-center gap-2 border border-emerald-500/20 hover:border-emerald-500">
  <i className="fa-solid fa-file-csv text-sm"></i> Download CSV
@@ -353,7 +353,7 @@ const ManualOverrideTab = () => {
  {loading ? <div className="text-center py-10"><i className="fa-solid fa-spinner fa-spin"></i></div> : (
  <div className="overflow-x-auto">
  <table className="w-full text-left">
- <thead>
+ <thead className="hidden md:table-header-group">
  <tr className="text-[10px] font-black uppercase tracking-widest text-themeTextSec border-b border-themeBorder">
  <th className="py-3 pr-4">Subject</th>
  <th className="py-3 px-4">Type</th>
@@ -364,9 +364,9 @@ const ManualOverrideTab = () => {
  <tbody>
  {marks.map(m => (
  <tr key={m.id} className="border-b border-themeBorder dark:border-white/[0.03]">
- <td className="py-3 pr-4 text-sm font-bold">{m.master_subjects?.name}</td>
- <td className="py-3 px-4 text-xs font-bold text-themeTextSec">{m.assessment_type}</td>
- <td className="py-3 px-4">
+ <td className="block md:table-cell py-3 pr-4 text-sm font-bold">{m.master_subjects?.name}</td>
+ <td className="block md:table-cell py-3 px-4 text-xs font-bold text-themeTextSec">{m.assessment_type}</td>
+ <td className="block md:table-cell py-3 px-4">
  {editMark?.id === m.id ? (
  <div className="flex gap-2 items-center">
  <input type="number" value={editMark.marks_obtained} onChange={e => setEditMark({...editMark, marks_obtained: Number(e.target.value)})} className="w-16 bg-themeElevated border border-themeBorder rounded px-2 py-1 outline-none text-sm font-bold text-center" title="Marks Obtained" />
@@ -377,7 +377,7 @@ const ManualOverrideTab = () => {
  <span className="text-sm font-bold">{m.marks_obtained}/{m.max_marks || m.total_marks}</span>
  )}
  </td>
- <td className="py-3 pl-4 text-right">
+ <td className="block md:table-cell py-3 pl-4 text-right">
  {editMark?.id === m.id ? (
  <div className="flex gap-2 justify-end">
  <button onClick={handleSaveOverride} className="text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded text-xs font-bold">Save</button>

@@ -402,7 +402,7 @@ export default function App() {
  {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
  <div className={`shrink-0 w-full pointer-events-none transition duration-500 hidden lg:block ${navLayout === 'classic' ? 'hidden' : 'h-[84px]'}`}></div>
 
- <div className="flex-1 p-2 pb-[110px] lg:pb-0 lg:p-6 lg:pt-0 flex flex-col relative z-10">
+ <div className="flex-1 p-0 pb-[110px] lg:pb-0 flex flex-col relative z-10">
  <ErrorBoundary>
  {renderContent()}
  </ErrorBoundary>

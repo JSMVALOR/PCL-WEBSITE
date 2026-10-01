@@ -50,7 +50,7 @@ export default function ForgotPasswordModal({ onClose }) {
  
  setEmail(emailToLogin);
  
- await sendSystemEmail('ERP_LOGIN_OTP', {
+ await sendSystemEmail('RECOVERY_OTP', {
  to_email: emailToLogin,
  otp: generated
  });
@@ -159,11 +159,11 @@ export default function ForgotPasswordModal({ onClose }) {
  </p>
  </div>
 
- <div className="bg-themePanel/40 /20 backdrop-blur-3xl border border-themeBorder p-8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
+ <div className="bg-themePanel/40 backdrop-blur-3xl border border-themeBorder p-8 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.05)]">
  {error && (
- <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-xl text-xs font-bold flex items-start gap-3 mb-6">
+ <div className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-xl text-xs font-bold flex items-start gap-3 mb-6 overflow-hidden">
  <i className="fa-solid fa-circle-exclamation shrink-0 mt-0.5"></i> 
- <span className="leading-relaxed">{error}</span>
+ <span className="leading-relaxed break-words break-all">{error}</span>
  </div>
  )}
 
@@ -177,7 +177,7 @@ export default function ForgotPasswordModal({ onClose }) {
  type="text"
  value={institutionalId}
  onChange={(e) => setInstitutionalId(e.target.value)}
- className="w-full bg-themePanel /50 border border-themeBorder focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec/50 placeholder:font-normal placeholder:normal-case shadow-inner"
+ className="w-full bg-themePanel border border-themeBorder focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText uppercase outline-none transition placeholder:text-themeTextSec/50 placeholder:font-normal placeholder:normal-case shadow-inner"
  placeholder="e.g. PCL-STU-2026"
  required
  />
@@ -209,7 +209,7 @@ export default function ForgotPasswordModal({ onClose }) {
  value={otpValue[index]}
  onChange={(e) => handleOtpChange(index, e.target.value)}
  onKeyDown={(e) => handleOtpKeyDown(index, e)}
- className="w-14 h-16 md:w-16 md:h-20 bg-themePanel /50 border border-themeBorder focus:border-themeAccent rounded-xl text-center text-2xl font-black text-themeText outline-none transition-all focus:scale-105 shadow-inner"
+ className="w-14 h-16 md:w-16 md:h-20 bg-themeElevated border border-themeBorder focus:border-themeAccent rounded-xl text-center text-2xl font-black text-themeText outline-none transition-all focus:scale-105 shadow-inner"
  />
  ))}
  </div>
@@ -235,7 +235,7 @@ export default function ForgotPasswordModal({ onClose }) {
  type="password"
  value={newPassword}
  onChange={(e) => setNewPassword(e.target.value)}
- className="w-full bg-themePanel /50 border border-themeBorder focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec/50 placeholder:font-normal shadow-inner"
+ className="w-full bg-themeElevated border border-themeBorder focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec/50 placeholder:font-normal shadow-inner"
  placeholder="••••••••"
  required
  />
@@ -248,7 +248,7 @@ export default function ForgotPasswordModal({ onClose }) {
  type="password"
  value={confirmPassword}
  onChange={(e) => setConfirmPassword(e.target.value)}
- className="w-full bg-themePanel /50 border border-themeBorder focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec/50 placeholder:font-normal shadow-inner"
+ className="w-full bg-themeElevated border border-themeBorder focus:border-themeAccent rounded-xl py-4 px-5 text-sm font-bold text-themeText outline-none transition placeholder:text-themeTextSec/50 placeholder:font-normal shadow-inner"
  placeholder="••••••••"
  required
  />

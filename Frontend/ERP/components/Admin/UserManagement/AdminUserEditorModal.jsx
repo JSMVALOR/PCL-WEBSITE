@@ -1,5 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useRef } from "react";
+import { useERP } from "../../../context/ErpContext";
 import { createPortal } from 'react-dom';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -15,6 +16,7 @@ function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
 }
 
 export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }) {
+  const { userSession, refreshProfile } = useERP();
  const [activeTab, setActiveTab] = useState('master'); // master, kyc, faculty
  const [formData, setFormData] = useState({
  full_name: '',
@@ -171,13 +173,70 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  });
  };
 
+ 
+ const handleSuspendUser = async () => {
+   if (!(await window.erpDialog.confirm(`Are you sure you want to ${user.status === 'Active' ? 'suspend' : 'reactivate'} this user?`))) return;
+   onClose();
+   try {
+     const newStatus = user.status === 'Active' ? 'Suspended' : 'Active';
+     const { error } = await supabase.rpc('admin_update_profile_status', { target_user_id: user.db_id, new_status: newStatus });
+     if (error) throw error;
+     if (onUpdate) onUpdate();
+     if (window.erpToast) window.erpToast.show(`User ${newStatus.toLowerCase()} successfully.`, "success");
+   } catch (e) {
+     if (window.erpToast) window.erpToast.show("Failed to update status.", "error");
+   }
+ };
+
+ 
+ const handleDeleteUser = async () => {
+   if (!(await window.erpDialog.confirm("Are you sure you want to permanently delete this user? This action cannot be undone."))) return;
+   
+   onClose();
+   
+   try {
+     const { error } = await supabase.rpc('admin_delete_user', { target_user_id: user.db_id });
+     if (error) throw error;
+     if (onUpdate) onUpdate();
+     if (window.erpToast) window.erpToast.show("User permanently deleted.", "success");
+   } catch (e) {
+     if (window.erpToast) window.erpToast.show("Delete Failed: " + (e.message || JSON.stringify(e)), "error"); 
+     console.error("DELETE ERROR:", e);
+   }
+ };
+
  const handleSubmit = async (e) => {
+
  e.preventDefault();
  if (!user) return;
  setIsSaving(true);
  
  try {
- let finalImageUrl = formData.image_url;
+ 
+    const newErpId = formData.erp_id?.trim();
+    if (user.role === 'faculty' && !/^FAC\d+$/.test(newErpId)) {
+        if (window.erpToast) window.erpToast.show("Faculty ERP ID must follow the format 'FACXXXX' (e.g. FAC1010).", "error");
+        setIsSaving(false);
+        return;
+    }
+    if (user.role === 'student' && !/^\d{2}[A-Z]+\d+$/.test(newErpId)) {
+        if (window.erpToast) window.erpToast.show("Student ERP ID must follow the format 'YYCOURSENNNN' (e.g. 26BAL0004).", "error");
+        setIsSaving(false);
+        return;
+    }
+    
+    // Uniqueness check
+    if (newErpId !== user.erp_id) {
+        const { data: existing } = await supabase.from('profiles').select('id').eq('erp_id', newErpId).neq('id', user.db_id).maybeSingle();
+        if (existing) {
+            if (window.erpToast) window.erpToast.show(`The ERP ID ${newErpId} is already in use by another account!`, "error");
+            setIsSaving(false);
+            return;
+        }
+    }
+    
+    let finalImageUrl = formData.image_url;
+
 
  // Handle Image Upload
  if (completedCrop && completedCrop.width && completedCrop.height && imgRef.current) {
@@ -231,24 +290,31 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
 
  if (formData.dob) profilePayload.dob = formData.dob;
 
- const { error: profileError } = await supabase.from('profiles').update(profilePayload).eq('id', user.db_id);
- if (profileError) throw profileError;
+ const { error: profileError } = await supabase.rpc('admin_update_master_record', {
+      target_user_id: user.db_id,
+      payload: profilePayload
+    });
+    if (profileError) throw profileError;
 
- // Update Faculty Profile
- if (user.role === 'faculty') {
- const researchArray = formData.research.split(',').map(s => s.trim()).filter(Boolean);
- const { error: facError } = await supabase.from('faculty_profiles').upsert({
- id: user.db_id,
- designation: formData.designation,
- specialisation: formData.specialisation,
- image_url: finalImageUrl,
- bio: formData.bio,
- research: researchArray,
- is_public: formData.is_public,
- phone: formData.phone
- }, { onConflict: 'id' });
- if (facError) throw facError;
- }
+    // Update Faculty Profile
+    if (user.role === 'faculty') {
+      const researchArray = formData.research.split(',').map(s => s.trim()).filter(Boolean);
+      const facPayload = {
+        designation: formData.designation,
+        specialisation: formData.specialisation,
+        image_url: finalImageUrl,
+        bio: formData.bio,
+        research: researchArray,
+        is_public: formData.is_public,
+        phone: formData.phone
+      };
+      
+      const { error: facError } = await supabase.rpc('admin_update_faculty_record', {
+        target_user_id: user.db_id,
+        payload: facPayload
+      });
+      if (facError) throw facError;
+    }
  
  if (window.erpToast) window.erpToast.show("User details updated successfully!", "success"); else if (window.erpToast && typeof window.erpToast.success === 'function') {
  window.erpToast.show("User details updated successfully!", "success");
@@ -259,7 +325,10 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  }
  
  onUpdate();
- onClose();
+    if (user.db_id === userSession?.db_id) {
+      refreshProfile();
+    }
+    onClose();
  } catch (err) { 
  console.error("Save Error:", err); 
  if (window.erpDialog) if(window.erpToast) window.erpToast.show("Failed to save changes: " + err.message, "error"); 
@@ -272,11 +341,11 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  if (!isOpen || !user) return null;
 
  return createPortal(
- <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
- <div className="bg-themePanel w-full max-w-4xl h-[90vh] rounded-[2rem] flex flex-col overflow-hidden border border-themeBorder shadow-2xl">
+ <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md animate-fade-in">
+ <div className="bg-themeApp w-full h-full flex flex-col overflow-hidden shadow-2xl">
  
  {/* Header */}
- <div className="bg-themePanel/95 backdrop-blur-3xl px-8 py-6 relative shrink-0 border-b border-themeBorder flex justify-between items-center z-10">
+ <div className="bg-themePanel/60 backdrop-blur-3xl px-6 lg:px-8 py-5 relative shrink-0 border-b border-themeBorder flex justify-between items-center z-10 shadow-sm">
  <div>
  <h2 className="text-xl font-bold text-themeText mb-1">Edit {user.role === 'student' ? 'Student' : 'Staff'} Record</h2>
  <p className="text-[13px] font-medium text-themeTextSec">Master override for {user.name} ({user.id})</p>
@@ -295,7 +364,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  KYC & Confidential
  </button>
  {user.role === 'faculty' && (
- <button type="button" onClick={() => setActiveTab('faculty')} className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'faculty' ? 'border-amber-500 text-themeText ' : 'border-transparent text-themeTextSec hover:text-themeText'}`}>
+ <button type="button" onClick={() => setActiveTab('faculty')} className={`pb-3 text-sm font-bold border-b-2 transition-colors ${activeTab === 'faculty' ? 'border-themeAccent text-themeText ' : 'border-transparent text-themeTextSec hover:text-themeText'}`}>
  Website Display (Faculty)
  </button>
  )}
@@ -436,9 +505,9 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
 
  {user.role === 'faculty' && (
  <div className={activeTab === 'faculty' ? 'block' : 'hidden'}>
- <h3 className="text-lg font-bold text-amber-500 mb-4 flex items-center gap-2"><i className="fa-solid fa-globe"></i> Website Profile Display</h3>
+ <h3 className="text-lg font-bold text-themeAccent mb-4 flex items-center gap-2"><i className="fa-solid fa-globe"></i> Website Profile Display</h3>
  <div className="grid grid-cols-1 gap-6 bg-themePanel p-6 rounded-[1.5rem] border border-themeBorder shadow-sm">
- <div className="flex items-center gap-3 bg-amber-500/10 p-4 rounded-xl border border-amber-500/20">
+ <div className="flex items-center gap-3 bg-themeAccent/10 p-4 rounded-xl border border-themeAccent/20">
  <input type="checkbox" name="is_public" checked={formData.is_public} onChange={handleInputChange} className="w-5 h-5 rounded accent-amber-500 cursor-pointer" id="is_public_toggle" />
  <label htmlFor="is_public_toggle" className="text-sm font-bold text-themeText cursor-pointer select-none">
  Publish to Public Website Directory
@@ -447,19 +516,19 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  </div>
  <div className="flex flex-col gap-1.5">
  <label className="text-[12px] font-bold text-themeTextSec ml-1">Designation</label>
- <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} placeholder="Founder & Professor" className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition" />
+ <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} placeholder="Founder & Professor" className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none transition" />
  </div>
  <div className="flex flex-col gap-1.5">
  <label className="text-[12px] font-bold text-themeTextSec ml-1">Specialisation</label>
- <input type="text" name="specialisation" value={formData.specialisation} onChange={handleInputChange} placeholder="Constitutional Law" className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition" />
+ <input type="text" name="specialisation" value={formData.specialisation} onChange={handleInputChange} placeholder="Constitutional Law" className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none transition" />
  </div>
  <div className="flex flex-col gap-1.5">
  <label className="text-[12px] font-bold text-themeTextSec ml-1">Research Interests (Comma separated)</label>
- <input type="text" name="research" value={formData.research} onChange={handleInputChange} placeholder="Corporate Law, Human Rights" className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition" />
+ <input type="text" name="research" value={formData.research} onChange={handleInputChange} placeholder="Corporate Law, Human Rights" className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none transition" />
  </div>
  <div className="flex flex-col gap-1.5">
  <label className="text-[12px] font-bold text-themeTextSec ml-1">Biography</label>
- <textarea rows="4" name="bio" value={formData.bio} onChange={handleInputChange} className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-medium text-themeText focus:border-amber-500 outline-none transition resize-none"></textarea>
+ <textarea rows="4" name="bio" value={formData.bio} onChange={handleInputChange} className="w-full bg-themeElevated /40 border border-themeBorder rounded-xl px-4 py-3 text-sm font-medium text-themeText focus:border-themeAccent outline-none transition resize-none"></textarea>
  </div>
  </div>
  </div>
@@ -468,17 +537,27 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  </div>
 
  {/* Footer */}
- <div className="bg-themePanel/95 backdrop-blur-3xl p-6 border-t border-themeBorder flex justify-end shrink-0 gap-4 z-10">
+ <div className="bg-themePanel/95 backdrop-blur-3xl p-6 border-t border-themeBorder flex justify-between shrink-0 gap-4 z-10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+ <div className="flex gap-4">
  <button type="button" onClick={onClose} disabled={isSaving} className="px-8 py-3 rounded-xl font-bold tracking-normal text-[12px] text-themeTextSec hover:bg-themeElevated transition">
  Cancel
  </button>
- <button form="master-user-form" type="submit" disabled={isSaving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText px-10 py-3 rounded-xl font-black tracking-normal text-[12px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
+ </div>
+ <div className="flex items-center gap-3">
+ <button type="button" onClick={handleSuspendUser} disabled={isSaving} className="text-amber-500 bg-amber-500/10 hover:bg-amber-500 hover:text-themeApp px-5 py-3 rounded-xl font-bold tracking-normal text-[12px] transition-colors flex items-center gap-2 border border-amber-500/20">
+ <i className="fa-solid fa-ban"></i> {user.status === 'Active' ? 'Suspend' : 'Reactivate'}
+ </button>
+ <button type="button" onClick={handleDeleteUser} disabled={isSaving} className="text-rose-500 bg-rose-500/10 hover:bg-rose-500 hover:text-white px-5 py-3 rounded-xl font-bold tracking-normal text-[12px] transition-colors flex items-center gap-2 border border-rose-500/20">
+ <i className="fa-solid fa-trash-can"></i> Delete
+ </button>
+ <button form="master-user-form" type="submit" disabled={isSaving} className="bg-themeAccent hover:bg-themeAccent/90 text-themeText px-8 py-3 rounded-xl font-black tracking-normal text-[12px] transition hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
  {isSaving ? (
  <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div> Saving Changes...</>
  ) : (
  <><i className="fa-solid fa-check"></i> Save Record</>
  )}
  </button>
+ </div>
  </div>
  </div>
  </div>,
