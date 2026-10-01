@@ -248,6 +248,12 @@ export default function AssistantWidget() {
   const [isTyping, setIsTyping] = useState(false);
   const botEndRef = useRef(null);
 
+  // Refs for current view state to avoid reconnecting realtime channels on UI interactions
+  const viewStateRef = useRef({ isOpen, activeTab, activeConversationUserId: activeConversation?.userId });
+  useEffect(() => {
+    viewStateRef.current = { isOpen, activeTab, activeConversationUserId: activeConversation?.userId };
+  }, [isOpen, activeTab, activeConversation]);
+
   // 1. Listen for global events to open specific chat or inbox
   useEffect(() => {
     const handleOpenGlobalChat = (e) => {
@@ -265,53 +271,54 @@ export default function AssistantWidget() {
   }, []);
 
   // 2. Fetch Inbox Conversations
+  const loadInbox = async () => {
+    if (!userSession?.db_id) return;
+    const { data, error } = await supabase
+      .from('erp_chat_messages')
+      .select(`
+        id, sender_id, receiver_id, message, read_status, created_at,
+        sender:profiles!erp_chat_messages_sender_id_fkey(full_name, role, profile_picture_url),
+        receiver:profiles!erp_chat_messages_receiver_id_fkey(full_name, role, profile_picture_url)
+      `)
+      .or(`sender_id.eq.${userSession.db_id},receiver_id.eq.${userSession.db_id}`)
+      .order('created_at', { ascending: false });
+      
+    if (data && !error) {
+      // Group by user
+      const convoMap = new Map();
+      let unreadTotal = 0;
+
+      data.forEach(msg => {
+        const isMeSender = msg.sender_id === userSession.db_id;
+        const otherId = isMeSender ? msg.receiver_id : msg.sender_id;
+        const otherProfile = isMeSender ? msg.receiver : msg.sender;
+        
+        if (!convoMap.has(otherId)) {
+          convoMap.set(otherId, {
+            userId: otherId,
+            name: otherProfile?.full_name || 'Unknown',
+            role: otherProfile?.role,
+            avatar: otherProfile?.profile_picture_url,
+            last_message: msg.message,
+            last_message_at: msg.created_at,
+            unread: 0
+          });
+        }
+        
+        if (!isMeSender && !msg.read_status) {
+          convoMap.get(otherId).unread += 1;
+          unreadTotal++;
+        }
+      });
+      
+      setConversations(Array.from(convoMap.values()));
+      setGlobalUnreadCount(unreadTotal);
+    }
+  };
+
   useEffect(() => {
     if (!userSession?.db_id) return;
     
-    const loadInbox = async () => {
-      const { data, error } = await supabase
-        .from('erp_chat_messages')
-        .select(`
-          id, sender_id, receiver_id, message, read_status, created_at,
-          sender:profiles!erp_chat_messages_sender_id_fkey(full_name, role, profile_picture_url),
-          receiver:profiles!erp_chat_messages_receiver_id_fkey(full_name, role, profile_picture_url)
-        `)
-        .or(`sender_id.eq.${userSession.db_id},receiver_id.eq.${userSession.db_id}`)
-        .order('created_at', { ascending: false });
-        
-      if (data && !error) {
-        // Group by user
-        const convoMap = new Map();
-        let unreadTotal = 0;
-
-        data.forEach(msg => {
-          const isMeSender = msg.sender_id === userSession.db_id;
-          const otherId = isMeSender ? msg.receiver_id : msg.sender_id;
-          const otherProfile = isMeSender ? msg.receiver : msg.sender;
-          
-          if (!convoMap.has(otherId)) {
-            convoMap.set(otherId, {
-              userId: otherId,
-              name: otherProfile?.full_name || 'Unknown',
-              role: otherProfile?.role,
-              avatar: otherProfile?.profile_picture_url,
-              last_message: msg.message,
-              last_message_at: msg.created_at,
-              unread: 0
-            });
-          }
-          
-          if (!isMeSender && !msg.read_status) {
-            convoMap.get(otherId).unread += 1;
-            unreadTotal++;
-          }
-        });
-        
-        setConversations(Array.from(convoMap.values()));
-        setGlobalUnreadCount(unreadTotal);
-      }
-    };
-
     loadInbox();
 
     // Global realtime listener for unread count updates
@@ -321,13 +328,34 @@ export default function AssistantWidget() {
         schema: 'public', 
         table: 'erp_chat_messages',
         filter: `receiver_id=eq.${userSession.db_id}` 
-      }, () => {
+      }, async (payload) => {
         loadInbox(); // Reload inbox on new message
+        
+        // Notify user if they are NOT actively reading this chat
+        const currentView = viewStateRef.current;
+        const isReadingChat = currentView.isOpen && currentView.activeTab === 'chat' && currentView.activeConversationUserId === payload.new.sender_id;
+        
+        if (!isReadingChat && window.erpToast) {
+           try {
+               const { data } = await supabase.from('profiles').select('full_name').eq('id', payload.new.sender_id).single();
+               const senderName = data?.full_name || 'Someone';
+               window.erpToast.show(`New message from ${senderName}`, "info");
+           } catch (e) {
+               window.erpToast.show(`New message received`, "info");
+           }
+        }
       })
       .subscribe();
 
     return () => supabase.removeChannel(channel);
-  }, [userSession?.db_id, isOpen, activeTab, activeConversation]); // Re-run when closing chat to refresh unreads
+  }, [userSession?.db_id]); 
+
+  // Re-run loadInbox when closing chat to refresh unreads
+  useEffect(() => {
+    if (!isOpen) {
+      loadInbox();
+    }
+  }, [isOpen]);
 
   // Bot Logic
   const handleBotSend = (e) => {
