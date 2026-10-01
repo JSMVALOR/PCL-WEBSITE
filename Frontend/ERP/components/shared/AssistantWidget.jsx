@@ -114,10 +114,10 @@ function ActiveChatView({ conversation, onBack, userSession }) {
       {/* Chat Header */}
       <div className="flex items-center gap-3 p-3 border-b border-themeBorder bg-themeElevated/50 backdrop-blur-xl shrink-0">
         <button type="button" onClick={onBack} className="w-8 h-8 rounded-full hover:bg-themePanel flex items-center justify-center text-themeText transition">
-          <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
+          <i className="fa-solid fa-arrow-left text-xs"></i>
         </button>
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-themePanel">
-          <img src={conversation.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(conversation.name)}`} alt="User" />
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-themePanel border border-themeBorder shrink-0">
+          <img src={conversation.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(conversation.name)}&background=random&color=fff`} alt="User" className="w-full h-full object-cover" />
         </div>
         <div>
           <h4 className="text-sm font-bold text-themeText leading-none mb-1">{conversation.name}</h4>
@@ -130,12 +130,18 @@ function ActiveChatView({ conversation, onBack, userSession }) {
         {messages.map((msg) => {
           const isMe = msg.sender_id === userSession.db_id;
           return (
-            <div key={msg.id} className={`max-w-[85%] px-4 py-2 text-[13px] leading-relaxed shadow-sm ${
+            <div key={msg.id} className={`max-w-[85%] px-4 py-2 text-[13px] leading-relaxed shadow-sm flex flex-col gap-1 ${
               isMe 
-                ? 'bg-gradient-to-br from-themeAccent to-[#0056b3] text-white self-end rounded-2xl rounded-tr-sm ml-auto'
+                ? 'bg-themeAccent text-white self-end rounded-2xl rounded-tr-sm ml-auto'
                 : 'bg-themeElevated border border-themeBorder text-themeText self-start rounded-2xl rounded-tl-sm'
             }`}>
-              {msg.message}
+              <div>{msg.message}</div>
+              <div className="flex justify-end items-center gap-1.5 opacity-80">
+                <span className="text-[9px]">{new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                {isMe && (
+                  <i className={`fa-solid ${msg.read_status ? 'fa-check-double text-blue-300' : 'fa-check'} text-[10px]`}></i>
+                )}
+              </div>
             </div>
           );
         })}
@@ -143,7 +149,10 @@ function ActiveChatView({ conversation, onBack, userSession }) {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSend} className="p-3 bg-themeElevated/50 border-t border-themeBorder flex gap-2 shrink-0">
+      <form onSubmit={handleSend} className="p-3 bg-themeElevated/50 border-t border-themeBorder flex items-center gap-2 shrink-0">
+        <button type="button" onClick={() => { if(window.erpToast) window.erpToast.show("Image attachments require Supabase Storage setup.", "warning"); }} className="w-10 h-10 rounded-full hover:bg-themePanel flex items-center justify-center text-themeTextSec transition">
+          <i className="fa-solid fa-paperclip"></i>
+        </button>
         <input 
           type="text" 
           value={input} 
@@ -206,7 +215,7 @@ function NewChatPicker({ onSelect, onBack, userSession }) {
           filtered.map(c => (
             <div key={c.id} onClick={() => onSelect({ userId: c.id, name: c.full_name, role: c.role, avatar: c.profile_picture_url })} className="p-3 flex items-center gap-3 hover:bg-themeElevated cursor-pointer transition border-b border-themeBorder/50">
               <div className="w-9 h-9 rounded-full bg-themePanel overflow-hidden border border-themeBorder shrink-0">
-                <img src={c.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.full_name)}&background=random`} alt="" className="w-full h-full object-cover" />
+                <img src={c.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.full_name)}&background=random&color=fff&background=random`} alt="" className="w-full h-full object-cover" />
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="text-sm font-bold text-themeText truncate">{c.full_name}</h4>
