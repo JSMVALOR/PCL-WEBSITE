@@ -8,7 +8,7 @@ export default function AdminWhatsAppQueue() {
  const [queue, setQueue] = useState([]);
  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
- const ENGINE_URL = 'http://localhost:3005';
+ const ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
 
  const fetchStatus = async () => {
    try {
