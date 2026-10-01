@@ -113,14 +113,14 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  // If the constraint isn't set up, fallback to simple insert/update manually
  const { data: existing } = await supabase.from('faculty_daily_presence').select('id').eq('faculty_id', facultyId).eq('date', selectedDate).maybeSingle();
  if (existing) {
- await supabase.from('faculty_daily_presence').update({ status: newStatus }).eq('id', existing.id);
+ await supabase.from('faculty_daily_presence').update({ status: newStatus, late_minutes: newStatus === 'absent' ? 480 : 0 }).eq('id', existing.id);
  } else {
  await supabase.from('faculty_daily_presence').insert([payload]);
  }
  }
 
  // 3. Write to Audit Trail
- await supabase.from('attendance_audit_logs').insert([{
+ const { error: auditError } = await supabase.from('attendance_audit_logs').insert([{
  faculty_id: facultyId,
  admin_id: userSession.db_id,
  date: selectedDate,
@@ -128,6 +128,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  new_status: newStatus,
  action_reason: auditReason
  }]);
+      if (auditError) console.warn("Audit log failed, table might be missing:", auditError);
 
  fetchAttendanceData();
  } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
