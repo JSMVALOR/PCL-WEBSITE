@@ -13,7 +13,6 @@ import pclLogo from '../Shared/Assets/LOGOS/pcl_logo_gold.svg';
 // 1. AUTH & LAYOUT IMPORTS
 // ==========================================
 import Login from './components/Login/Login';
-import ParentDashboard from './components/Parent/ParentDashboard/ParentDashboard';
 import TopNav from './components/shared/TopNav';
 import MobileNav from './components/shared/MobileNav';
 import Sidebar from './components/Student/sidebar/Sidebar';
@@ -23,97 +22,102 @@ import AdminSidebar from './components/Admin/AdminSidebar/AdminSidebar';
 // ==========================================
 // 2. SHARED PORTAL MODULES
 // ==========================================
-import NotificationsCenter from "./components/shared/NotificationsCenter/NotificationsCenter";
-import Notices from './components/Student/Notices/Notices';
-import Helpdesk from './components/Student/Helpdesk/Helpdesk';
-import Credentials from './components/Student/Credentials/Credentials';
 import QuestionnaireModal from './components/shared/QuestionnaireModal';
 import ForcePasswordChangeModal from './components/shared/ForcePasswordChangeModal';
 import DialogContainer from './components/shared/DialogContainer';
 import ToastContainer from './components/shared/ToastContainer';
 import './utils/ToastManager';
-import CredentialVerification from './components/Public/CredentialVerification';
 import GlobalSearch from './components/shared/GlobalSearch';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
 // ==========================================
 // 3. STUDENT PORTAL MODULES
 // ==========================================
-import StudentDashboard from './components/Student/StudentDashboard/StudentDashboard';
-import StudentAcademicHub from './components/Student/StudentAcademicHub/StudentAcademicHub';
-import StudentCareerHub from './components/Student/StudentCareerHub/StudentCareerHub';
-import StudentSupportHub from './components/Student/StudentSupportHub/StudentSupportHub';
 
 // Standalone Student Components for Expanded Mode
-import CourseVault from './components/Student/CourseVault/CourseVault';
-import Attendance from './components/Student/Attendance/Attendance';
-import Assignments from './components/Student/Assignments/Assignments';
-import Timetable from './components/Student/Timetable/Timetable';
-import Mentorship from './components/Student/Mentorship/Mentorship';
-import Internships from './components/Student/Internships/Internships';
-import MootCourt from './components/Student/MootCourt/MootCourt';
-import Fees from './components/Student/Fees/Fees';
-import Leave from './components/Student/Leave/Leave';
-import StudentApprovals from './components/Student/Approvals/StudentApprovals';
-import Portfolio from './components/Student/Portfolio/Portfolio';
 
 // ==========================================
 // 4. FACULTY PORTAL MODULES
 // ==========================================
-import FacultyDashboard from './components/Faculty/FacultyDashboard/FacultyDashboard';
-import FacultyAssignments from './components/Faculty/FacultyAssignments/FacultyAssignments';
-import FacultyPayroll from './components/Faculty/FacultyPayroll/FacultyPayroll';
-import FacultyMarks from './components/Faculty/FacultyMarks/FacultyMarks';
-import Approvals from './components/Faculty/Approvals/Approvals';
 
-import FacultyAcademicHub from './components/Faculty/FacultyAcademicHub/FacultyAcademicHub';
-import FacultyAdvisingHub from './components/Faculty/FacultyAdvisingHub/FacultyAdvisingHub';
-import FacultyAdminHub from './components/Faculty/FacultyAdminHub/FacultyAdminHub';
 
-import ClassRoster from './components/Faculty/ClassRoster/ClassRoster';
-import FacultyTimetable from './components/Faculty/FacultyTimetable/FacultyTimetable';
-import FacultyCourses from './components/Faculty/FacultyCourses/FacultyCourses';
-import FacultyMentorship from './components/Faculty/FacultyMentorship/FacultyMentorship';
-import FacultyClinicsHub from './components/Faculty/FacultyClinicsHub/FacultyClinicsHub';
-import FacultyLeave from './components/Faculty/FacultyLeave/FacultyLeave';
-import FacultyAttendance from './components/Faculty/FacultyAttendance/FacultyAttendance';
 
 // ==========================================
 // 5. ADMIN PORTAL MODULES
 // ==========================================
-import AdminFacultyAttendance from './components/Admin/AdminFacultyAttendance/AdminFacultyAttendance';
-import AdminDashboard from './components/Admin/AdminDashboard/AdminDashboard';
-import UserManagement from './components/Admin/UserManagement/UserManagement';
-import AdminCourseBuilder from './components/Admin/AdminTimetableBuilder/AdminCourseBuilder';
-import AdminTimetableHQ from './components/Admin/AdminTimetableBuilder/AdminTimetableHQ';
-import AdminMarksController from './components/Admin/AdminMarksController/AdminMarksController';
-import AdminCampusTimings from './components/Admin/AdminAcademicHub/AdminCampusTimings';
-import AdminMentorship from './components/Admin/AdminMentorship/AdminMentorship';
-import AdminApprovals from './components/Admin/AdminApprovals/AdminApprovals';
-import AdminLeaveManagement from './components/Admin/LeaveManagement/AdminLeaveManagement';
-import AdminNotices from './components/Admin/notices/AdminNotices';
-import AdminFees from './components/Admin/AdminFees/AdminFees';
-import AdminMootCourt from './components/Admin/AdminMootCourt/AdminMootCourt';
-import AdminPlacements from './components/Admin/AdminPlacements/AdminPlacements';
-import AdminWebsiteInquiries from './components/Admin/AdminWebsiteHub/AdminWebsiteInquiries';
-import AdminGalleryManager from './components/Admin/AdminWebsiteHub/AdminGalleryManager';
-import AdminLegalAid from './components/Admin/AdminLegalAid/AdminLegalAid';
-import AdminAdmissions from './components/Admin/AdminAdmissions/AdminAdmissions';
-import AdminWhatsAppQueue from './components/Admin/AdminWhatsApp/AdminWhatsAppQueue';
-import AdminAttendanceIssues from './components/Admin/AdminAttendanceIssues/AdminAttendanceIssues';
-import AdminPayroll from './components/Admin/AdminPayroll/AdminPayroll';
 
-import SQLStudio from './components/Admin/AdminDashboard/SQLStudio';
-import AdminHelpdesk from './components/Admin/AdminHelpdesk/AdminHelpdesk';
-import AdminSiteEditor from './components/Admin/AdminSiteEditor/AdminSiteEditor';
-import EventsBoard from './components/notices/EventsBoard';
-import AdminAcademicHub from './components/Admin/AdminAcademicHub/AdminAcademicHub';
-import AdminClinicsHub from './components/Admin/AdminClinicsHub/AdminClinicsHub';
-import BlogManager from './components/Admin/BlogManager/BlogManager';
-import AdminCareers from './components/Admin/AdminWebsiteHub/AdminCareers';
 import SessionTimeoutGuard from './components/shared/SessionTimeoutGuard';
 import { RoleActionButton } from './components/shared/LiveHeaderComponents';
 import IntelligentBot from './components/shared/IntelligentBot';
+
+// --- LAZY LOADED ROUTE COMPONENTS ---
+const ParentDashboard = React.lazy(() => import('./components/Parent/ParentDashboard/ParentDashboard'));
+const NotificationsCenter = React.lazy(() => import('./components/shared/NotificationsCenter/NotificationsCenter'));
+const Notices = React.lazy(() => import('./components/Student/Notices/Notices'));
+const Helpdesk = React.lazy(() => import('./components/Student/Helpdesk/Helpdesk'));
+const Credentials = React.lazy(() => import('./components/Student/Credentials/Credentials'));
+const CredentialVerification = React.lazy(() => import('./components/Public/CredentialVerification'));
+const StudentDashboard = React.lazy(() => import('./components/Student/StudentDashboard/StudentDashboard'));
+const StudentAcademicHub = React.lazy(() => import('./components/Student/StudentAcademicHub/StudentAcademicHub'));
+const StudentCareerHub = React.lazy(() => import('./components/Student/StudentCareerHub/StudentCareerHub'));
+const StudentSupportHub = React.lazy(() => import('./components/Student/StudentSupportHub/StudentSupportHub'));
+const CourseVault = React.lazy(() => import('./components/Student/CourseVault/CourseVault'));
+const Attendance = React.lazy(() => import('./components/Student/Attendance/Attendance'));
+const Assignments = React.lazy(() => import('./components/Student/Assignments/Assignments'));
+const Timetable = React.lazy(() => import('./components/Student/Timetable/Timetable'));
+const Mentorship = React.lazy(() => import('./components/Student/Mentorship/Mentorship'));
+const Internships = React.lazy(() => import('./components/Student/Internships/Internships'));
+const MootCourt = React.lazy(() => import('./components/Student/MootCourt/MootCourt'));
+const Fees = React.lazy(() => import('./components/Student/Fees/Fees'));
+const Leave = React.lazy(() => import('./components/Student/Leave/Leave'));
+const StudentApprovals = React.lazy(() => import('./components/Student/Approvals/StudentApprovals'));
+const Portfolio = React.lazy(() => import('./components/Student/Portfolio/Portfolio'));
+const FacultyDashboard = React.lazy(() => import('./components/Faculty/FacultyDashboard/FacultyDashboard'));
+const FacultyAssignments = React.lazy(() => import('./components/Faculty/FacultyAssignments/FacultyAssignments'));
+const FacultyPayroll = React.lazy(() => import('./components/Faculty/FacultyPayroll/FacultyPayroll'));
+const FacultyMarks = React.lazy(() => import('./components/Faculty/FacultyMarks/FacultyMarks'));
+const Approvals = React.lazy(() => import('./components/Faculty/Approvals/Approvals'));
+const FacultyAcademicHub = React.lazy(() => import('./components/Faculty/FacultyAcademicHub/FacultyAcademicHub'));
+const FacultyAdvisingHub = React.lazy(() => import('./components/Faculty/FacultyAdvisingHub/FacultyAdvisingHub'));
+const FacultyAdminHub = React.lazy(() => import('./components/Faculty/FacultyAdminHub/FacultyAdminHub'));
+const ClassRoster = React.lazy(() => import('./components/Faculty/ClassRoster/ClassRoster'));
+const FacultyTimetable = React.lazy(() => import('./components/Faculty/FacultyTimetable/FacultyTimetable'));
+const FacultyCourses = React.lazy(() => import('./components/Faculty/FacultyCourses/FacultyCourses'));
+const FacultyMentorship = React.lazy(() => import('./components/Faculty/FacultyMentorship/FacultyMentorship'));
+const FacultyClinicsHub = React.lazy(() => import('./components/Faculty/FacultyClinicsHub/FacultyClinicsHub'));
+const FacultyLeave = React.lazy(() => import('./components/Faculty/FacultyLeave/FacultyLeave'));
+const FacultyAttendance = React.lazy(() => import('./components/Faculty/FacultyAttendance/FacultyAttendance'));
+const AdminFacultyAttendance = React.lazy(() => import('./components/Admin/AdminFacultyAttendance/AdminFacultyAttendance'));
+const AdminDashboard = React.lazy(() => import('./components/Admin/AdminDashboard/AdminDashboard'));
+const UserManagement = React.lazy(() => import('./components/Admin/UserManagement/UserManagement'));
+const AdminCourseBuilder = React.lazy(() => import('./components/Admin/AdminTimetableBuilder/AdminCourseBuilder'));
+const AdminTimetableHQ = React.lazy(() => import('./components/Admin/AdminTimetableBuilder/AdminTimetableHQ'));
+const AdminMarksController = React.lazy(() => import('./components/Admin/AdminMarksController/AdminMarksController'));
+const AdminCampusTimings = React.lazy(() => import('./components/Admin/AdminAcademicHub/AdminCampusTimings'));
+const AdminMentorship = React.lazy(() => import('./components/Admin/AdminMentorship/AdminMentorship'));
+const AdminApprovals = React.lazy(() => import('./components/Admin/AdminApprovals/AdminApprovals'));
+const AdminLeaveManagement = React.lazy(() => import('./components/Admin/LeaveManagement/AdminLeaveManagement'));
+const AdminNotices = React.lazy(() => import('./components/Admin/notices/AdminNotices'));
+const AdminFees = React.lazy(() => import('./components/Admin/AdminFees/AdminFees'));
+const AdminMootCourt = React.lazy(() => import('./components/Admin/AdminMootCourt/AdminMootCourt'));
+const AdminPlacements = React.lazy(() => import('./components/Admin/AdminPlacements/AdminPlacements'));
+const AdminWebsiteInquiries = React.lazy(() => import('./components/Admin/AdminWebsiteHub/AdminWebsiteInquiries'));
+const AdminGalleryManager = React.lazy(() => import('./components/Admin/AdminWebsiteHub/AdminGalleryManager'));
+const AdminLegalAid = React.lazy(() => import('./components/Admin/AdminLegalAid/AdminLegalAid'));
+const AdminAdmissions = React.lazy(() => import('./components/Admin/AdminAdmissions/AdminAdmissions'));
+const AdminWhatsAppQueue = React.lazy(() => import('./components/Admin/AdminWhatsApp/AdminWhatsAppQueue'));
+const AdminAttendanceIssues = React.lazy(() => import('./components/Admin/AdminAttendanceIssues/AdminAttendanceIssues'));
+const AdminPayroll = React.lazy(() => import('./components/Admin/AdminPayroll/AdminPayroll'));
+const SQLStudio = React.lazy(() => import('./components/Admin/AdminDashboard/SQLStudio'));
+const AdminHelpdesk = React.lazy(() => import('./components/Admin/AdminHelpdesk/AdminHelpdesk'));
+const AdminSiteEditor = React.lazy(() => import('./components/Admin/AdminSiteEditor/AdminSiteEditor'));
+const EventsBoard = React.lazy(() => import('./components/notices/EventsBoard'));
+const AdminAcademicHub = React.lazy(() => import('./components/Admin/AdminAcademicHub/AdminAcademicHub'));
+const AdminClinicsHub = React.lazy(() => import('./components/Admin/AdminClinicsHub/AdminClinicsHub'));
+const BlogManager = React.lazy(() => import('./components/Admin/BlogManager/BlogManager'));
+const AdminCareers = React.lazy(() => import('./components/Admin/AdminWebsiteHub/AdminCareers'));
+
+
 
 export default function App() {
  useEffect(() => {
@@ -400,11 +404,14 @@ export default function App() {
  {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
  <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'h-[72px] lg:hidden' : 'h-[72px] lg:h-[84px]'}`}></div>
 
- <div className="flex-1 p-0 pb-[130px] lg:pb-0 flex flex-col relative z-10">
- <ErrorBoundary>
- {renderContent()}
- </ErrorBoundary>
- </div>
+ 
+      <div className="flex-1 p-0 pb-[130px] lg:pb-0 flex flex-col relative z-10">
+        <ErrorBoundary>
+          <React.Suspense fallback={<div className="flex items-center justify-center w-full h-full min-h-[400px]"><i className="fa-solid fa-circle-notch fa-spin text-themeAccent text-3xl"></i></div>}>
+            {renderContent()}
+          </React.Suspense>
+        </ErrorBoundary>
+      </div>
 
  {/* ERP Footer with Privacy & Terms */}
  <div className="hidden lg:flex w-full shrink-0 flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-themeBorder bg-themeApp/90 backdrop-blur-md text-xs font-medium text-themeTextSec mt-auto z-10 relative">
@@ -445,7 +452,7 @@ export default function App() {
  return (
  <>
  <Routes>
- <Route path="/verify/:id" element={<CredentialVerification />} />
+ <Route path="/verify/:id" element={<React.Suspense fallback={<div className="p-8">Loading...</div>}><CredentialVerification /></React.Suspense>} />
  <Route path="/student/*" element={renderLayout("student")} />
  <Route path="/faculty/*" element={renderLayout("faculty")} />
  <Route path="/admin/*" element={renderLayout("admin")} />

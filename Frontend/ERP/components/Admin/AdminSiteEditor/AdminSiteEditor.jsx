@@ -442,8 +442,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  useEffect(() => {
  const fetchInteractions = async () => {
  try {
- const query = `SELECT element_text, count(*) as click_count FROM website_clicks GROUP BY element_text ORDER BY click_count DESC LIMIT 5`;
- const { data, error } = await supabase.rpc('admin_exec_sql', { query_text: query });
+ const { data, error } = await supabase.rpc('get_top_website_clicks');
  if (data && !error) {
  setTopClicks(data.map(d => ({ text: d.element_text, count: d.click_count })));
  }
