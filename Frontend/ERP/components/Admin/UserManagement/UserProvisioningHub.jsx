@@ -22,6 +22,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  const [extField1, setExtField1] = useState("");
  const [extField2, setExtField2] = useState("");
  const [extField3, setExtField3] = useState("");
+ const [isPublic, setIsPublic] = useState(false);
  
  // Image Cropping
  const [imgSrc, setImgSrc] = useState('');
@@ -130,7 +131,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  new_password: generatedPassword,
  new_role: role,
  new_erp_id: generatedId,
- new_name: name,
+ new_name: name, student_name: name,
  new_assignment: assign
  });
 
@@ -148,7 +149,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
 
  let emailSent = false;
  try {
- await sendSystemEmail('ERP_NEW_ACCOUNT', {
+ await sendSystemEmail('FIRST_CREDENTIALS', {
  to_email: email,
  name: name,
  erp_id: generatedId,
@@ -159,7 +160,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  console.error("Email send failed for", email, err);
  }
 
- return { profilePayload, emailSent, generatedId, nextNum: nextNum + 1 };
+ return { profilePayload, emailSent, generatedId, nextNum: nextNum + 1, password: generatedPassword };
  };
 
  const handleProvisionSubmit = async (e) => {
@@ -307,6 +308,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  payload.phone = extField1 || null;
  payload.department = extField2 || null;
  payload.faculty_type = extField3 || null;
+    payload.is_public = isPublic;
  }
 
  const { error } = await supabase.from('profiles').update(payload).eq('id', provisionedUser.id);
@@ -426,6 +428,14 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  <button type="button" onClick={() => removeBulkRow(idx)} className="col-span-1 text-themeTextSec hover:text-rose-500 transition text-sm flex justify-center"><i className="fa-solid fa-xmark"></i></button>
  </div>
  ))}
+ 
+ </div>
+ <div className="flex items-center gap-3 bg-themeAccent/10 p-4 mt-2 rounded-xl border border-themeAccent/20">
+ <input type="checkbox" checked={isPublic} onChange={e => setIsPublic(e.target.checked)} className="w-5 h-5 rounded accent-amber-500 cursor-pointer" id="is_public_toggle" />
+ <label htmlFor="is_public_toggle" className="text-xs font-bold text-themeText cursor-pointer select-none">
+ Publish to Public Website Directory
+ <p className="text-[10px] text-themeTextSec mt-1">If unchecked, this profile is hidden from the faculty page.</p>
+ </label>
  </div>
  </div>
  )}
@@ -441,10 +451,15 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  <span className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block">Live Execution Stream</span>
  <button onClick={() => navigator.clipboard.writeText(provisionLogs.join('\n'))} className="text-[10px] font-bold text-themeTextSec hover:text-themeText transition flex items-center gap-1"><i className="fa-regular fa-copy"></i> Copy Logs</button>
  </div>
- <div className="bg-black text-emerald-400 p-4 rounded-xl font-mono text-[10px] h-32 overflow-y-auto border border-themeBorder shadow-inner">
- {provisionLogs.map((log, i) => (
- <div key={i} className={log.includes('ERROR') ? 'text-rose-400' : ''}>&gt; {log}</div>
- ))}
+ <div className="bg-black p-4 rounded-xl font-mono text-[10px] h-32 overflow-y-auto border border-themeBorder shadow-inner">
+ {provisionLogs.map((log, i) => {
+   let colorClass = 'text-emerald-400';
+   if (log.includes('[ERROR]')) colorClass = 'text-rose-500 font-bold';
+   else if (log.includes('[WARNING]')) colorClass = 'text-amber-400 font-bold';
+   else if (log.includes('[SUCCESS]')) colorClass = 'text-emerald-400 font-bold';
+   else if (log.includes('[INIT]') || log.includes('[COMPLETE]')) colorClass = 'text-blue-300';
+   return <div key={i} className={colorClass}>&gt; {log}</div>;
+ })}
  </div>
  </div>
  )}
