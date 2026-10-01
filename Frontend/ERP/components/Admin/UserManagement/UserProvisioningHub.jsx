@@ -308,11 +308,17 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  payload.phone = extField1 || null;
  payload.department = extField2 || null;
  payload.faculty_type = extField3 || null;
-    payload.is_public = isPublic;
  }
 
  const { error } = await supabase.from('profiles').update(payload).eq('id', provisionedUser.id);
  if (error) throw error;
+ 
+ if (provisionedUser.role !== 'student') {
+   const { error: facError } = await supabase.from('faculty_profiles')
+     .update({ is_public: isPublic, phone: extField1 || null })
+     .eq('id', provisionedUser.id);
+   if (facError && facError.code !== 'PGRST116') console.warn("Failed to update faculty_profiles", facError);
+ }
  
  if(window.erpToast) window.erpToast.show("Extended Profile Updated Successfully.", "success");
  } catch (e) {
