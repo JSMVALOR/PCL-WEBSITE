@@ -23,8 +23,8 @@ const client = new Client({
     authStrategy: new LocalAuth({ dataPath: './.wwebjs_auth' }),
     puppeteer: {
         headless: true,
-        executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--disable-gpu']
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-accelerated-2d-canvas', '--disable-gpu', '--single-process']
     }
 });
 
@@ -129,7 +129,7 @@ async function processQueue() {
 // Run the queue every 20 seconds
 setInterval(processQueue, 20000);
 
-const PORT = process.env.WA_PORT || 3005;
+const PORT = process.env.PORT || process.env.WA_PORT || 3005;
 app.listen(PORT, () => {
     console.log(`Backend WhatsApp Engine listening on port ${PORT}`);
 });
