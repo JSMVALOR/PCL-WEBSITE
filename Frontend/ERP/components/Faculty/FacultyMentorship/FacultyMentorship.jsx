@@ -390,7 +390,7 @@ export default function FacultyMentorship() {
  
  {mentees.length === 0 ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-users-slash text-2xl text-gray-300 /20 mb-3"></i>
+ <i className="fa-solid fa-users-slash text-2xl text-themeTextSec/50 /20 mb-3"></i>
  <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec ">No mentees assigned.</p>
  </div>
  ) : (

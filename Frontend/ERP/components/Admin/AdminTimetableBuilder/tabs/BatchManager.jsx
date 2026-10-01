@@ -177,7 +177,7 @@ export default function CohortManager() {
  <h2 className="text-xl font-black tracking-tight text-themeText ">Degree Programs</h2>
  <p className="text-xs font-bold text-themeTextSec tracking-wide mt-1">Foundational degree structures.</p>
  </div>
- <button type="button" onClick={() => { setIsCreatingProg(!isCreatingProg); setEditingProgId(null); setProgName(''); setProgCode(''); }} className="px-5 py-2.5 bg-gray-900 dark:bg-themePanel text-themeApp font-black text-xs tracking-wide rounded-xl transition shadow-sm hover:opacity-90">
+ <button type="button" onClick={() => { setIsCreatingProg(!isCreatingProg); setEditingProgId(null); setProgName(''); setProgCode(''); }} className="px-5 py-2.5 bg-themeText dark:bg-themePanel text-themeApp font-black text-xs tracking-wide rounded-xl transition shadow-sm hover:opacity-90">
  {isCreatingProg ? 'Cancel' : 'New Program'}
  </button>
  </div>
@@ -187,15 +187,15 @@ export default function CohortManager() {
  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
  <div className="md:col-span-1">
  <label className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block mb-1.5">Program Code</label>
- <input required type="text" placeholder="e.g. BALLB" value={progCode} onChange={e => setProgCode(e.target.value)} className="w-full bg-themeApp border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-gray-500" />
+ <input required type="text" placeholder="e.g. BALLB" value={progCode} onChange={e => setProgCode(e.target.value)} className="w-full bg-themeApp border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder" />
  </div>
  <div className="md:col-span-2">
  <label className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block mb-1.5">Full Name</label>
- <input required type="text" placeholder="e.g. BA.LLB (Hons.)" value={progName} onChange={e => setProgName(e.target.value)} className="w-full bg-themeApp border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-gray-500" />
+ <input required type="text" placeholder="e.g. BA.LLB (Hons.)" value={progName} onChange={e => setProgName(e.target.value)} className="w-full bg-themeApp border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder" />
  </div>
  <div className="md:col-span-1">
  <label className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block mb-1.5">Duration (Yrs)</label>
- <select required value={progDuration} onChange={e => setProgDuration(e.target.value)} className="w-full bg-themeApp border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-gray-500 appearance-none">
+ <select required value={progDuration} onChange={e => setProgDuration(e.target.value)} className="w-full bg-themeApp border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder appearance-none">
  {[1,2,3,4,5,6].map(y => <option key={y} value={y}>{y} Years</option>)}
  </select>
  </div>
@@ -208,7 +208,7 @@ export default function CohortManager() {
  ))}
  </div>
  </div>
- <button type="submit" className="w-full bg-gray-900 dark:bg-themePanel text-themeApp font-black text-xs uppercase tracking-widest px-6 py-4 rounded-xl transition hover:opacity-90 mt-2">
+ <button type="submit" className="w-full bg-themeText dark:bg-themePanel text-themeApp font-black text-xs uppercase tracking-widest px-6 py-4 rounded-xl transition hover:opacity-90 mt-2">
  {editingProgId ? 'Save Changes' : 'Deploy Degree Program'}
  </button>
  </form>
@@ -323,7 +323,7 @@ export default function CohortManager() {
  Semester {b.current_semester}
  </div>
  <div className="flex items-center gap-2 relative z-10 shrink-0">
- <button onClick={() => handleEditBatch(b)} className="w-8 h-8 rounded-lg bg-gray-100 text-themeTextSec opacity-0 group-hover:opacity-100 transition hover:bg-amber-500 hover:text-themeApp flex items-center justify-center shrink-0">
+ <button onClick={() => handleEditBatch(b)} className="w-8 h-8 rounded-lg bg-themeElevated text-themeTextSec opacity-0 group-hover:opacity-100 transition hover:bg-amber-500 hover:text-themeApp flex items-center justify-center shrink-0">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
  <HoldButton size="sm" onHold={() => handleDeleteBatch(b.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>

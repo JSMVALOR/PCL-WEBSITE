@@ -171,7 +171,7 @@ export default function MobileNav({ userSession, activeTab, setActiveTab, onLogo
  <div className="flex flex-col gap-6">
  {navGroups.map((group, idx) => (
  <div key={idx} className="animate-slide-up" style={{ animationDelay: `${idx * 40}ms` }}>
- <p className="text-[10px] font-black text-[#3A3A3C]/70 dark:text-[#EBEBF5]/70 tracking-normal mb-3 pl-1">
+ <p className="text-[10px] font-black text-themeTextSec tracking-normal mb-3 pl-1">
  {group.category}
  </p>
  <div className="flex flex-col rounded-[20px] bg-themePanel /20 border border-themeBorder dark:border-white/[0.05] overflow-hidden">

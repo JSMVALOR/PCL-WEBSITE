@@ -194,7 +194,7 @@ export default function Fees({ isEmbedded = false }) {
  };
  
  return (
- <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText " : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-themeElevated dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText " : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  <div className="w-full flex flex-col gap-6 lg:gap-8 animate-fade-in relative z-20">
 
@@ -429,7 +429,7 @@ export default function Fees({ isEmbedded = false }) {
  onClick={initiatePayment}
  disabled={currentTotal === 0 || isProcessing}
  className={`relative z-10 w-full mt-6 lg:mt-8 py-4 rounded-2xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 flex justify-center items-center gap-2 overflow-hidden ${currentTotal > 0 && !isProcessing
- ? 'bg-amber-500 text-[#050505] hover:bg-amber-400 hover:-translate-y-0.5 active:scale-[0.98]'
+ ? 'bg-amber-500 text-[var(--theme-app)] hover:bg-amber-400 hover:-translate-y-0.5 active:scale-[0.98]'
  : 'bg-transparent text-themeTextSec cursor-not-allowed border border-transparent'
  }`}
  >
@@ -497,7 +497,7 @@ export default function Fees({ isEmbedded = false }) {
  readOnly
  className="peer appearance-none w-5 h-5 lg:w-6 lg:h-6 bg-transparent border border-themeBorder rounded-md lg:rounded-lg checked:bg-amber-500 checked:border-amber-500 transition outline-none"
  />
- <i className="fa-solid fa-check text-[#050505] text-[10px] lg:text-xs absolute opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+ <i className="fa-solid fa-check text-[var(--theme-app)] text-[10px] lg:text-xs absolute opacity-0 peer-checked:opacity-100 transition-opacity"></i>
  </div>
  )}
  </div>

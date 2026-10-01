@@ -15,7 +15,7 @@ export default function ZohoMainContent({ session, role }) {
  return (
  <div className="flex flex-col gap-6 w-full animate-fade-in">
  {/* Tabs */}
- <div className="bg-[#18181A] rounded-2xl border border-white/[0.04] px-4 flex items-center overflow-x-auto no-scrollbar shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
+ <div className="bg-themeElevated border border-themeBorder rounded-2xl border border-white/[0.04] px-4 flex items-center overflow-x-auto no-scrollbar shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
  {tabs.map((tab) => (
  <button 
  key={tab}
@@ -30,7 +30,7 @@ export default function ZohoMainContent({ session, role }) {
  </div>
 
  {/* Greeting Card */}
- <div className="bg-[#18181A] rounded-2xl border border-white/[0.04] p-8 flex items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
+ <div className="bg-themeElevated border border-themeBorder rounded-2xl border border-white/[0.04] p-8 flex items-center gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.4)]">
  <div className="w-16 h-16 bg-themePanel/5 rounded-2xl flex items-center justify-center shrink-0 p-3 border border-themeBorder ">
  <img src="/favicon.svg" alt="Logo" className="w-full h-full object-contain drop-shadow-md" />
  </div>
@@ -45,7 +45,7 @@ export default function ZohoMainContent({ session, role }) {
 
  {/* Work Schedule - Hidden for Admin, Visible for Faculty/Student */}
  {role !== 'admin' && (
- <div className="bg-[#18181A] rounded-2xl border border-white/[0.04] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col gap-6">
+ <div className="bg-themeElevated border border-themeBorder rounded-2xl border border-white/[0.04] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col gap-6">
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-3 text-themeTextSec">
  <i className="fa-regular fa-clock text-lg"></i>
@@ -62,7 +62,7 @@ export default function ZohoMainContent({ session, role }) {
 
  {/* Alerts & Notifications - Always present but clean */}
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <div className="bg-[#18181A] rounded-2xl border border-white/[0.04] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col gap-6">
+ <div className="bg-themeElevated border border-themeBorder rounded-2xl border border-white/[0.04] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col gap-6">
  <div className="flex items-center gap-3 text-themeTextSec">
  <i className="fa-solid fa-umbrella-beach text-lg"></i>
  <h3 className="text-[15px] font-semibold tracking-tight text-themeText">Upcoming Holidays</h3>
@@ -72,7 +72,7 @@ export default function ZohoMainContent({ session, role }) {
  </div>
  </div>
  
- <div className="bg-[#18181A] rounded-2xl border border-white/[0.04] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col gap-6">
+ <div className="bg-themeElevated border border-themeBorder rounded-2xl border border-white/[0.04] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col gap-6">
  <div className="flex items-center gap-3 text-themeTextSec">
  <i className="fa-solid fa-bell text-lg"></i>
  <h3 className="text-[15px] font-semibold tracking-tight text-themeText">Action Alerts</h3>

@@ -275,7 +275,7 @@ export default function AutoGenerator({}) {
  <div className="flex gap-3">
  <button 
  onClick={() => setConfirmState({ isOpen: false, batchId: null, countdown: 5 })}
- className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-themeText rounded-xl font-bold text-sm transition"
+ className="flex-1 px-4 py-3 bg-themeElevated hover:bg-themeBorder/50 text-themeText rounded-xl font-bold text-sm transition"
  >
  Cancel / Undo
  </button>

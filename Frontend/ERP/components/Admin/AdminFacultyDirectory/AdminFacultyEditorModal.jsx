@@ -251,7 +251,7 @@ export default function AdminFacultyEditorModal({ facultyId, onClose, onSave }) 
 
  return createPortal(
  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
- <div className="bg-[#fcfcfc] w-full max-w-4xl rounded-[2rem] flex flex-col max-h-[90vh] overflow-hidden border border-themeBorder ">
+ <div className="bg-[var(--theme-panel)] w-full max-w-4xl rounded-[2rem] flex flex-col max-h-[90vh] overflow-hidden border border-themeBorder ">
  
  {/* HEADER */}
  <div className="bg-themePanel/85 backdrop-blur-2xl px-8 py-6 relative shrink-0 border-b border-themeBorder flex justify-between items-center z-10">

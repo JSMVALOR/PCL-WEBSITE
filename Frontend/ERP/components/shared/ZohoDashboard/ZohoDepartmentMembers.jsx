@@ -3,8 +3,8 @@ import React from 'react';
 
 export default function ZohoDepartmentMembers({ title = "Department Members", members = [] }) {
  return (
- <div className="bg-[#18181A] rounded-xl border border-themeBorder p-4 shadow-lg flex flex-col gap-4 max-h-[300px] overflow-y-auto no-scrollbar">
- <h4 className="text-themeTextSec text-xs font-semibold uppercase tracking-wider sticky top-0 bg-[#18181A] pb-2 z-10">
+ <div className="bg-themeElevated border border-themeBorder rounded-xl border border-themeBorder p-4 shadow-lg flex flex-col gap-4 max-h-[300px] overflow-y-auto no-scrollbar">
+ <h4 className="text-themeTextSec text-xs font-semibold uppercase tracking-wider sticky top-0 bg-themeElevated border border-themeBorder pb-2 z-10">
  {title}
  </h4>
  

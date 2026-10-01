@@ -43,7 +43,7 @@ const InlineCalendar = ({ value, onChange, minDate, maxDate, placeholder }) => {
  <div className="relative" ref={wrapperRef}>
  <div 
  onClick={() => setIsOpen(!isOpen)}
- className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText hover:border-amber-500 cursor-pointer transition flex items-center justify-between"
+ className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText hover:border-amber-500 cursor-pointer transition flex items-center justify-between"
  >
  {value ? new Date(value).toLocaleDateString('en-GB') : placeholder}
  <i className="fa-solid fa-calendar text-themeTextSec /30 pointer-events-none"></i>
@@ -299,7 +299,7 @@ export default function Leave({ isEmbedded = false, }) {
  rightContent={
  <button type="button"
  onClick={() => setShowRequestModal(true)}
- className="w-full lg:w-auto bg-amber-500 hover:bg-amber-400 text-[#050505] px-6 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition active:scale-95 flex justify-center items-center gap-2"
+ className="w-full lg:w-auto bg-amber-500 hover:bg-amber-400 text-[var(--theme-app)] px-6 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition active:scale-95 flex justify-center items-center gap-2"
  >
  <i className="fa-solid fa-paper-plane"></i> New Request
  </button>
@@ -389,7 +389,7 @@ export default function Leave({ isEmbedded = false, }) {
  <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
  <div className="bg-themePanel w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-white/[0.08] shadow-2xl flex flex-col max-h-[90vh]">
  
- <div className="p-6 border-b border-white/[0.08] shrink-0 flex justify-between items-start bg-[#161616]">
+ <div className="p-6 border-b border-white/[0.08] shrink-0 flex justify-between items-start bg-[var(--theme-panel)]">
  <div>
  <h3 className="text-xl font-black tracking-tight mb-1 text-themeText ">Apply for Leave</h3>
  <p className="text-[10px] text-themeTextSec font-bold uppercase tracking-widest">Routed to your mentor or HOD.</p>
@@ -424,7 +424,7 @@ export default function Leave({ isEmbedded = false, }) {
 <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Leave Category</label>
  <div className="relative">
- <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
+ <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
  <option value="Medical Leave">Medical Leave</option>
  <option value="Official Duty">Official Duty (Moot, Sports, etc.)</option>
  <option value="Personal Leave">Personal / Family Leave</option>
@@ -446,7 +446,7 @@ export default function Leave({ isEmbedded = false, }) {
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Reason for Leave</label>
- <textarea rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide specific details..." className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-medium text-themeText focus:border-amber-500 outline-none transition resize-none placeholder:text-themeTextSec /30" required></textarea>
+ <textarea rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide specific details..." className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-medium text-themeText focus:border-amber-500 outline-none transition resize-none placeholder:text-themeTextSec /30" required></textarea>
  </div>
 
  <div>
@@ -460,7 +460,7 @@ export default function Leave({ isEmbedded = false, }) {
  }
  setDocumentFile(file);
  }} className="hidden" accept=".pdf,.jpg,.png" />
- <div onClick={() => fileInputRef.current.click()} className="bg-gray-100 dark:bg-themeApp border border-themeBorder hover:border-amber-500/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
+ <div onClick={() => fileInputRef.current.click()} className="bg-themeElevated dark:bg-themeApp border border-themeBorder hover:border-amber-500/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
  <div className="w-12 h-12 rounded-full bg-themePanel/5 text-themeTextSec group-hover:text-amber-500 flex items-center justify-center mb-3 transition-colors">
  <i className="fa-solid fa-cloud-arrow-up text-lg"></i>
  </div>

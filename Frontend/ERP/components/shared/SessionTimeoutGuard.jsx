@@ -103,7 +103,7 @@ export default function SessionTimeoutGuard({ children }) {
  animate={{ scale: 1, opacity: 1, y: 0 }}
  exit={{ scale: 0.95, opacity: 0, y: 20 }}
  transition={{ type: "spring", damping: 30, stiffness: 400 }}
- className="w-full max-w-sm bg-[#161616] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative"
+ className="w-full max-w-sm bg-[var(--theme-panel)] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative"
  >
  {/* Ambient Glow */}
  <div className="absolute -top-32 -left-32 w-64 h-64 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>

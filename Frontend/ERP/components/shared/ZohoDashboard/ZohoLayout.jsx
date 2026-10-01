@@ -18,12 +18,12 @@ export default function ZohoLayout({
  const { userSession } = useERP();
 
  return (
- <div className="w-full min-h-screen bg-[#050505] font-sans selection:bg-blue-500/30">
+ <div className="w-full min-h-screen bg-themeApp font-sans selection:bg-blue-500/30">
  {/* Top Banner with Leafy/Campus Image */}
  <div className="w-full h-[320px] relative">
  <div className="absolute inset-0">
  <img src={bannerImg} alt="Banner" className="w-full h-full object-cover opacity-60 saturate-[1.2]" />
- <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/80 via-transparent to-[#050505]"></div>
+ <div className="absolute inset-0 bg-gradient-to-b from-themeApp/80 via-transparent to-themeApp"></div>
  </div>
  
  {/* Top Nav Tabs - Aligned to match the Right Content grid */}

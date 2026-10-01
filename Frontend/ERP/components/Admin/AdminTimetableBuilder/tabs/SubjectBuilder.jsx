@@ -184,7 +184,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
  </div>
 
  </div>
- <button type="submit" className="w-full mt-2 bg-gray-900 dark:bg-themePanel text-themeApp py-4 rounded-xl text-sm font-black tracking-wide hover:opacity-90 transition">
+ <button type="submit" className="w-full mt-2 bg-themeText dark:bg-themePanel text-themeApp py-4 rounded-xl text-sm font-black tracking-wide hover:opacity-90 transition">
  {editingId ? 'Save Edits' : 'Save to Master Vault'}
  </button>
  </form>
@@ -269,8 +269,8 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
  Semester {sem}
  </h3>
  <div className="flex gap-2">
- <span className="px-2 py-1 bg-gray-100 rounded-md text-[10px] font-bold text-themeTextSec /40 tracking-wider uppercase">{semSubjects.length} Subjects</span>
- <span className="px-2 py-1 bg-gray-100 rounded-md text-[10px] font-bold text-themeTextSec /40 tracking-wider uppercase">{semCredits} Credits</span>
+ <span className="px-2 py-1 bg-themeElevated rounded-md text-[10px] font-bold text-themeTextSec /40 tracking-wider uppercase">{semSubjects.length} Subjects</span>
+ <span className="px-2 py-1 bg-themeElevated rounded-md text-[10px] font-bold text-themeTextSec /40 tracking-wider uppercase">{semCredits} Credits</span>
  </div>
  </div>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -285,7 +285,7 @@ export default function SubjectBuilder({ _isEmbedded = false }) {
  {sub.code}
  </div>
  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition" onClick={e => e.stopPropagation()}>
- <button onClick={() => handleEdit(sub)} className="w-8 h-8 rounded-lg bg-gray-100 text-themeTextSec hover:bg-amber-500 hover:text-themeText flex items-center justify-center transition">
+ <button onClick={() => handleEdit(sub)} className="w-8 h-8 rounded-lg bg-themeElevated text-themeTextSec hover:bg-amber-500 hover:text-themeText flex items-center justify-center transition">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
  <HoldButton size="sm" onHold={() => handleDelete(sub.id)} radius={8} backgroundColor="rgba(244,63,94,0.1)" fillColor="#f43f5e" textColor="#f43f5e" doneLabel="Deleted" icon={<HugeiconsIcon icon={Delete02Icon} size={16} />}>

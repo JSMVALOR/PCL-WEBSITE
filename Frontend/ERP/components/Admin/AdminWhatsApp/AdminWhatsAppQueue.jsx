@@ -100,7 +100,7 @@ export default function AdminWhatsAppQueue() {
                    
                    {/* Real QR Code UI */}
                    {qrCode ? (
-                     <div className="w-64 h-64 bg-white p-4 rounded-2xl mb-6 shadow-lg border border-gray-200 flex items-center justify-center">
+                     <div className="w-64 h-64 bg-themeElevated p-4 rounded-2xl mb-6 shadow-lg border border-themeBorder flex items-center justify-center">
                        <img src={qrCode} alt="WhatsApp QR Code" className="w-full h-full object-contain" />
                      </div>
                    ) : (

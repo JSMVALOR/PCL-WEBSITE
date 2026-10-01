@@ -62,7 +62,7 @@ const IDCardTemplate = React.forwardRef(({ profileData, roleTitle, userSession }
  <img src={profileData.profile_picture_url} alt="ID" className="w-full h-full object-cover" />
  ) : (
  <div className="w-full h-full bg-themeApp flex items-center justify-center">
- <i className="fa-solid fa-user text-4xl text-gray-300"></i>
+ <i className="fa-solid fa-user text-4xl text-themeTextSec/50"></i>
  </div>
  )}
  </div>
@@ -82,27 +82,27 @@ const IDCardTemplate = React.forwardRef(({ profileData, roleTitle, userSession }
  {profileData?.full_name || 'STUDENT NAME'}
  </h4>
  
- <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-6 max-w-full truncate px-2">
+ <p className="text-[11px] font-bold uppercase tracking-wider text-themeTextSec mb-6 max-w-full truncate px-2">
  {profileData?.programme || profileData?.department || (userSession?.role === 'student' ? "B.B.A. LL.B. (Hons.)" : "Department")}
  </p>
 
  {/* Info Grid */}
- <div className="w-full bg-themePanel border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col gap-2.5 relative overflow-hidden">
+ <div className="w-full bg-themePanel border border-themeBorder rounded-2xl p-4 shadow-sm flex flex-col gap-2.5 relative overflow-hidden">
  {/* Accent strip left */}
  <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: theme.main }}></div>
  
  <div className="flex justify-between items-center text-[11px]">
- <span className="font-bold text-gray-400 uppercase tracking-widest text-[9px]">ID NO</span>
+ <span className="font-bold text-themeTextSec/70 uppercase tracking-widest text-[9px]">ID NO</span>
  <span className="font-black text-themeText tracking-tight">{profileData?.erp_id || "PCL-00000"}</span>
  </div>
  <div className="w-full h-px bg-themeApp"></div>
  <div className="flex justify-between items-center text-[11px]">
- <span className="font-bold text-gray-400 uppercase tracking-widest text-[9px]">DOB</span>
+ <span className="font-bold text-themeTextSec/70 uppercase tracking-widest text-[9px]">DOB</span>
  <span className="font-bold text-gray-800">{profileData?.dob ? new Date(profileData.dob).toLocaleDateString('en-GB') : "XX-XX-XXXX"}</span>
  </div>
  <div className="w-full h-px bg-themeApp"></div>
  <div className="flex justify-between items-center text-[11px]">
- <span className="font-bold text-gray-400 uppercase tracking-widest text-[9px]">BLOOD GRP</span>
+ <span className="font-bold text-themeTextSec/70 uppercase tracking-widest text-[9px]">BLOOD GRP</span>
  <span className="font-black text-[#FF3B30]">{profileData?.blood_group || "O+"}</span>
  </div>
  </div>
@@ -111,7 +111,7 @@ const IDCardTemplate = React.forwardRef(({ profileData, roleTitle, userSession }
  {/* Footer / Barcode */}
  <div className="w-full pt-4 pb-5 px-6 flex flex-col items-center justify-end relative z-10 mt-auto bg-themeApp/50">
  <div className="w-48 h-8 bg-[url('https://upload.wikimedia.org/wikipedia/commons/e/e9/UPC-A-036000291452.svg')] bg-cover opacity-[0.65] mix-blend-multiply mb-3 grayscale"></div>
- <p className="text-[7px] text-gray-400 font-bold uppercase tracking-[0.15em]">Property of Prudentia College of Law</p>
+ <p className="text-[7px] text-themeTextSec/70 font-bold uppercase tracking-[0.15em]">Property of Prudentia College of Law</p>
  </div>
  
  </div>

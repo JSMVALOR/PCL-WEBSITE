@@ -91,7 +91,7 @@ export default function AdminBatchManager({}) {
  </div>
 
  {isCreating && (
- <form onSubmit={handleCreate} className="bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-2xl p-6 flex flex-col gap-4 animate-fade-in">
+ <form onSubmit={handleCreate} className="bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-2xl p-6 flex flex-col gap-4 animate-fade-in">
  <h3 className="text-[15px] font-semibold text-themeText mb-2">Create New Academic Batch</h3>
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  <div>
@@ -151,8 +151,8 @@ export default function AdminBatchManager({}) {
  </div>
 
  <div className="flex items-center gap-2 mt-2">
- <span className="bg-gray-100 dark:bg-themeApp border border-themeBorder px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec ">Start: {batch.start_year}</span>
- <span className="bg-gray-100 dark:bg-themeApp border border-themeBorder px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec ">Grad: {batch.graduation_year}</span>
+ <span className="bg-themeElevated dark:bg-themeApp border border-themeBorder px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec ">Start: {batch.start_year}</span>
+ <span className="bg-themeElevated dark:bg-themeApp border border-themeBorder px-2.5 py-1 rounded text-[12px] font-medium text-themeTextSec ">Grad: {batch.graduation_year}</span>
  </div>
 
  <div className="mt-auto border-t border-themeBorder pt-4">

@@ -74,13 +74,13 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Notice Title</label>
- <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-gray-100 /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-blue-500 outline-none transition" placeholder="e.g. Rescheduling Tomorrow's Lecture" />
+ <input type="text" value={title} onChange={e => setTitle(e.target.value)} required className="w-full bg-themeElevated /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-blue-500 outline-none transition" placeholder="e.g. Rescheduling Tomorrow's Lecture" />
  </div>
  
  <div className="grid grid-cols-2 gap-4">
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Category</label>
- <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-gray-100 /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-blue-500 outline-none appearance-none transition">
+ <select value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-themeElevated /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-blue-500 outline-none appearance-none transition">
  <option value="Academic">Academic</option>
  <option value="Assignment">Assignment</option>
  <option value="Examination">Examination</option>
@@ -89,7 +89,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  </div>
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Priority</label>
- <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-gray-100 /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-blue-500 outline-none appearance-none transition">
+ <select value={priority} onChange={e => setPriority(e.target.value)} className="w-full bg-themeElevated /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-blue-500 outline-none appearance-none transition">
  <option value="normal">Normal</option>
  <option value="high">High</option>
  <option value="urgent">Urgent</option>
@@ -99,7 +99,7 @@ export default function FacultyBroadcastForm({ onNoticePublished, onCancel }) {
  
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Content</label>
- <textarea value={content} onChange={e => setContent(e.target.value)} required rows="6" className="w-full bg-gray-100 /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-medium text-themeText focus:border-blue-500 outline-none resize-none transition shadow-inner" placeholder="Draft your message here..."></textarea>
+ <textarea value={content} onChange={e => setContent(e.target.value)} required rows="6" className="w-full bg-themeElevated /20 border border-themeBorder rounded-2xl px-4 py-3.5 text-sm font-medium text-themeText focus:border-blue-500 outline-none resize-none transition shadow-inner" placeholder="Draft your message here..."></textarea>
  </div>
  
  

@@ -366,7 +366,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  <>
  {/* QR CODE MODAL (NEW FEATURE) */}
  {showQR && (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050505]/95 backdrop-blur-md p-4 animate-fade-in no-print">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--theme-app)]/95 backdrop-blur-md p-4 animate-fade-in no-print">
  <div className="bg-gradient-to-b from-[#1a1a1a] to-[#121212] border border-[#2a2a2a] p-10 rounded-2xl flex flex-col items-center max-w-lg w-full relative">
  <button type="button" onClick={() => setShowQR(false)} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-[#888888] hover:text-themeText bg-[#222222] rounded-full border border-themeBorder Strong transition-colors hover:scale-110">
  <i className="fa-solid fa-xmark text-lg"></i>
@@ -378,7 +378,7 @@ export default function ClassRoster({ isEmbedded = false }) {
  </div>
  <h3 className="text-3xl font-semibold tracking-tight text-themeText mb-2 tracking-tight text-center">Scan to Mark Present</h3>
  <div className="flex items-center gap-3 mb-8 text-center bg-themeApp px-5 py-2.5 rounded-lg border border-themeBorder Strong">
- <span className="text-sm text-gray-300 font-bold">{qrCodeData?.subject}</span>
+ <span className="text-sm text-themeTextSec/50 font-bold">{qrCodeData?.subject}</span>
  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
  <span className="text-sm text-blue-400 font-bold tracking-widest">{qrCodeData?.batch}</span>
  </div>

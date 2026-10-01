@@ -14,9 +14,9 @@ export default function ZohoProfileCard({ session, roleLabel }) {
  };
 
  return (
- <div className="bg-[#18181A] rounded-2xl border border-white/[0.04] flex flex-col items-center pt-14 pb-8 px-6 shadow-[0_8px_30px_rgb(0,0,0,0.5)] mt-12 relative backdrop-blur-xl">
+ <div className="bg-themeElevated border border-themeBorder rounded-2xl border border-white/[0.04] flex flex-col items-center pt-14 pb-8 px-6 shadow-[0_8px_30px_rgb(0,0,0,0.5)] mt-12 relative backdrop-blur-xl">
  {/* Floating Profile Image */}
- <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-2xl overflow-hidden shadow-2xl border-[4px] border-[#050505]">
+ <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-2xl overflow-hidden shadow-2xl border-[4px] border-[var(--theme-app)]">
  {session?.avatar_url ? (
  <img src={session.avatar_url} alt="Profile" className="w-full h-full object-cover" />
  ) : (

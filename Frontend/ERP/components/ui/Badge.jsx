@@ -2,7 +2,7 @@
 import React from "react";
 
 const badgeVariants = {
- default: "bg-themeAccent text-[#050505] hover:bg-themeAccent/90 border-transparent",
+ default: "bg-themeAccent text-[var(--theme-app)] hover:bg-themeAccent/90 border-transparent",
  secondary: "bg-themeElevated text-themeText hover:bg-themeBorder border-themeBorder",
  destructive: "bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border-rose-500/20",
  outline: "text-themeText border-themeBorder hover:bg-themeElevated",

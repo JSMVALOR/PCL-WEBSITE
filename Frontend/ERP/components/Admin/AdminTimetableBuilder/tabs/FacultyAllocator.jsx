@@ -204,7 +204,7 @@ export default function FacultyAllocator() {
         return (
           <tr key={master.id} className="border-b border-themeBorder hover:bg-themeElevated/50 transition">
             <td className="py-4 px-6 text-sm font-black text-themeText">{master.code}</td>
-            <td className="py-4 px-6 text-sm font-bold text-themeTextSec dark:text-gray-300">{master.name}</td>
+            <td className="py-4 px-6 text-sm font-bold text-themeTextSec dark:text-themeTextSec/50">{master.name}</td>
             <td className="py-4 px-6 text-sm font-bold text-themeTextSec">{master.credits}</td>
             <td className="py-4 px-6">
               <select 

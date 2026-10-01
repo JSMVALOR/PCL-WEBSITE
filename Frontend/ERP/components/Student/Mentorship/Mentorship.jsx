@@ -196,7 +196,7 @@ export default function Mentorship() {
  {showRequestModal && (
  <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
  <div className="bg-themePanel w-full max-w-md rounded-t-[2rem] sm:rounded-[2rem] overflow-y-auto max-h-[90vh] border border-white/[0.08] shadow-2xl flex flex-col pb-28 sm:pb-0">
- <div className="p-6 border-b border-white/[0.08] flex justify-between items-start bg-[#161616]">
+ <div className="p-6 border-b border-white/[0.08] flex justify-between items-start bg-[var(--theme-panel)]">
  <div>
  <h3 className="text-xl font-black tracking-tight mb-1 text-themeText ">Request Session</h3>
  <p className="text-[10px] text-themeTextSec font-bold uppercase tracking-widest">Connect with your mentor.</p>
@@ -216,14 +216,14 @@ export default function Mentorship() {
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Discussion Topic</label>
- <input type="text" required value={requestForm.topic} onChange={e => setRequestForm({...requestForm, topic: e.target.value})} placeholder="e.g. Career Guidance, Academic Help" className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition placeholder:text-gray-300 /20" />
+ <input type="text" required value={requestForm.topic} onChange={e => setRequestForm({...requestForm, topic: e.target.value})} placeholder="e.g. Career Guidance, Academic Help" className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition placeholder:text-themeTextSec/50 /20" />
  </div>
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Preferred Date & Time (Optional)</label>
  
  {/* INLINE CALENDAR & TIME PICKER */}
- <div className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-2xl p-4 selection:bg-transparent">
+ <div className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-2xl p-4 selection:bg-transparent">
  <div className="flex justify-between items-center mb-4">
  <button type="button" onClick={() => {
  const d = new Date(requestForm.preferred_date || new Date());

@@ -725,7 +725,7 @@ export default function CVBuilder({ isEmbedded = false }) {
  onChange={() => handleToggle(toggle.id)}
  className="peer appearance-none w-10 h-5 bg-themePanel border-themeBorder dark:border-white/[0.08] rounded-full checked:bg-amber-500 checked:border-amber-500 transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-amber-500/30 focus:ring-offset-1 focus:ring-offset-themePanel"
  />
- <div className="absolute left-[3px] top-[2.5px] w-3.5 h-3.5 bg-neutral-400 peer-checked:bg-[#050505] rounded-full peer-checked:translate-x-5 transition-transform duration-300 ease-out pointer-events-none"></div>
+ <div className="absolute left-[3px] top-[2.5px] w-3.5 h-3.5 bg-neutral-400 peer-checked:bg-[var(--theme-app)] rounded-full peer-checked:translate-x-5 transition-transform duration-300 ease-out pointer-events-none"></div>
  </div>
  </label>
  ))}

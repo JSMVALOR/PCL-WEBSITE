@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function ZohoReportingCard({ mode = "reporting", users = [] }) {
  return (
- <div className="bg-[#18181A] rounded-xl border border-themeBorder p-4 shadow-lg flex flex-col gap-3">
+ <div className="bg-themeElevated border border-themeBorder rounded-xl border border-themeBorder p-4 shadow-lg flex flex-col gap-3">
  <h4 className="text-themeTextSec text-xs font-semibold uppercase tracking-wider mb-1">
  {mode === 'reporting' ? 'Reporting To' : 'Mentoring'}
  </h4>

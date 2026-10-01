@@ -385,7 +385,7 @@ export default function Internships({ isEmbedded = false }) {
  ];
 
  return (
- <div className={`w-full animate-fade-in selection:bg-gray-100 dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
+ <div className={`w-full animate-fade-in selection:bg-themeElevated dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  <PageHeader 
  icon="fa-solid fa-briefcase" 
@@ -505,7 +505,7 @@ export default function Internships({ isEmbedded = false }) {
  </div>
 
  {isExpanded && (
- <div className="border-themeBorder dark:border-white/[0.08] border-themeBorder animate-fade-in bg-gray-100 dark:bg-themeApp/20 rounded-b-themePanel">
+ <div className="border-themeBorder dark:border-white/[0.08] border-themeBorder animate-fade-in bg-themeElevated dark:bg-themeApp/20 rounded-b-themePanel">
  <div className="px-5 lg:px-6 py-5">
  <p className={`text-[12px] font-medium ${theme.text.muted} mb-2`}>Description</p>
  <p className="text-[11px] lg:text-xs text-themeTextSec leading-relaxed bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border-themeBorder dark:border-white/[0.08] border-themeBorder dark:border-white/[0.08] p-4 rounded-[2rem] italic">
@@ -613,7 +613,7 @@ export default function Internships({ isEmbedded = false }) {
  </div>
  <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText mb-1.5 group-hover:text-themeAccent transition-colors">{log.title}</h3>
  <p className={`text-[8px] lg:text-[9px] font-bold text-themeTextSec opacity-70 tracking-normal mb-4`}><i className="fa-regular fa-calendar mr-1"></i> {new Date(log.date_logged).toLocaleDateString('en-GB')}</p>
- <p className="text-[10px] lg:text-xs font-medium text-themeTextSec bg-gray-100 dark:bg-themeApp/50 p-3 lg:p-4 rounded-[2rem] border-l-2 border-themeBorder dark:border-white/[0.08]Accent italic leading-relaxed line-clamp-3">
+ <p className="text-[10px] lg:text-xs font-medium text-themeTextSec bg-themeElevated dark:bg-themeApp/50 p-3 lg:p-4 rounded-[2rem] border-l-2 border-themeBorder dark:border-white/[0.08]Accent italic leading-relaxed line-clamp-3">
  "{log.description}"
  </p>
  </div>
@@ -794,7 +794,7 @@ export default function Internships({ isEmbedded = false }) {
  {submitSuccess ? (
  <div className="w-full py-4 bg-emerald-500/10 border-themeBorder dark:border-white/[0.08] border-emerald-500/20 text-emerald-400 rounded-[2rem] text-[13px] font-medium flex items-center justify-center gap-2"><i className="fa-solid fa-check-circle text-lg"></i> Practical Hours Logged</div>
  ) : (
- <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[#050505] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
+ <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-[var(--theme-app)] rounded-[2rem] text-[10px] lg:text-[14px] font-medium tracking-normal transition active:scale-[0.98] disabled:opacity-50">{isSubmitting ? "Logging..." : "Submit Practical Log"}</button>
  )}
  </form>
  </div>

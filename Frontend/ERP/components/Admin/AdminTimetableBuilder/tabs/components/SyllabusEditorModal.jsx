@@ -109,7 +109,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
  <div className="bg-themePanel border border-themeBorder rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl">
  
  {/* Header */}
- <div className="flex items-center justify-between p-6 border-b border-gray-100 shrink-0">
+ <div className="flex items-center justify-between p-6 border-b border-themeBorder shrink-0">
  <div>
  <h2 className="text-xl font-black text-themeText flex items-center gap-2">
  <i className="fa-solid fa-book-open text-amber-500"></i>
@@ -117,7 +117,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
  </h2>
  <p className="text-xs font-bold text-themeTextSec mt-1">{subject.name}</p>
  </div>
- <button aria-label="Action button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 hover:bg-gray-200 transition"><i className="fa-solid fa-xmark"></i></button>
+ <button aria-label="Action button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg bg-themeElevated hover:bg-themeBorder/50 transition"><i className="fa-solid fa-xmark"></i></button>
  </div>
 
  {/* Body */}
@@ -125,7 +125,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
  
  {/* Basic Info */}
  <div className="space-y-4">
- <h3 className="text-sm font-black text-themeText border-b border-gray-100 pb-2">Overview</h3>
+ <h3 className="text-sm font-black text-themeText border-b border-themeBorder pb-2">Overview</h3>
  <div>
  <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Course Objectives</label>
  <textarea 
@@ -152,7 +152,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
 
  {/* Units */}
  <div className="space-y-4">
- <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+ <div className="flex items-center justify-between border-b border-themeBorder pb-2">
  <h3 className="text-sm font-black text-themeText ">Course Content (Units)</h3>
  {!isReadOnly && (
  <button onClick={addUnit} className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-500 hover:opacity-80 transition bg-amber-500/10 px-2 py-1 rounded">
@@ -193,7 +193,7 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
 
  {/* Readings and Cases */}
  <div className="space-y-4">
- <h3 className="text-sm font-black text-themeText border-b border-gray-100 pb-2">References</h3>
+ <h3 className="text-sm font-black text-themeText border-b border-themeBorder pb-2">References</h3>
  <div>
  <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Suggested Case Laws</label>
  <textarea 
@@ -219,8 +219,8 @@ export default function SyllabusEditorModal({ subject, onClose, onRefresh, isRea
  </div>
 
  {/* Footer */}
- <div className="p-6 border-t border-gray-100 shrink-0 flex gap-3">
- <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold text-sm bg-gray-100 text-themeTextSec hover:bg-gray-200 transition">
+ <div className="p-6 border-t border-themeBorder shrink-0 flex gap-3">
+ <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold text-sm bg-themeElevated text-themeTextSec hover:bg-themeBorder/50 transition">
  {isReadOnly ? 'Close Viewer' : 'Cancel'}
  </button>
  {!isReadOnly && (

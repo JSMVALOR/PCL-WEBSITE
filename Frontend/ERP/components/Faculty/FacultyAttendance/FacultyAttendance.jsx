@@ -1253,7 +1253,7 @@ export default function FacultyAttendance({ subjectContext }) {
  {/* RISK ANALYTICS VIEW */}
  
 {showQR && qrCodeData && (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#050505]/95 backdrop-blur-md p-4 animate-fade-in no-print">
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--theme-app)]/95 backdrop-blur-md p-4 animate-fade-in no-print">
  <div className="bg-gradient-to-b from-[#1a1a1a] to-[#121212] border border-[#2a2a2a] p-10 rounded-2xl flex flex-col items-center max-w-lg w-full relative">
  <button type="button" onClick={() => setShowQR(false)} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-[#888888] hover:text-themeApp bg-[#222222] rounded-full border border-white/5 transition-colors hover:scale-110">
  <i className="fa-solid fa-xmark text-lg"></i>
@@ -1306,7 +1306,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <div className="flex flex-col gap-6">
  <div className="flex items-center gap-4">
  <button onClick={() => setSelectedUnmarkedSubject(null)} className="w-10 h-10 rounded-full bg-themeElevated hover:bg-black/10 flex items-center justify-center transition-colors">
- <i className="fa-solid fa-arrow-left text-themeTextSec dark:text-gray-300"></i>
+ <i className="fa-solid fa-arrow-left text-themeTextSec dark:text-themeTextSec/50"></i>
  </button>
  <div>
  <h2 className="text-xl font-bold tracking-tight text-themeText ">{selectedUnmarkedSubject.name}</h2>

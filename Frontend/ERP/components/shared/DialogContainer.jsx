@@ -54,15 +54,15 @@ export default function DialogContainer() {
  initial={{ scale: 0 }}
  animate={{ scale: 1 }}
  transition={{ type: "spring", delay: 0.1, stiffness: 400, damping: 25 }}
- className={`w-12 h-12 rounded-full flex items-center justify-center ${dialogState.isSuccess ? "bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10 dark:text-emerald-400" : (isConfirm || isPrompt) ? "bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400" : isDanger ? "bg-rose-50 text-rose-500 dark:bg-rose-500/10 dark:text-rose-400" : isAlert ? (isError ? "bg-rose-50 text-rose-500 dark:bg-rose-500/10 dark:text-rose-400" : "bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10 dark:text-emerald-400") : "bg-gray-100 text-gray-600 "}`}
+ className={`w-12 h-12 rounded-full flex items-center justify-center ${dialogState.isSuccess ? "bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10 dark:text-emerald-400" : (isConfirm || isPrompt) ? "bg-themeAccent/10 text-themeAccent" : isDanger ? "bg-rose-50 text-rose-500 dark:bg-rose-500/10 dark:text-rose-400" : isAlert ? (isError ? "bg-rose-50 text-rose-500 dark:bg-rose-500/10 dark:text-rose-400" : "bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10 dark:text-emerald-400") : "bg-themeElevated text-themeTextSec "}`}
  >
  <i className={`fa-solid text-lg ${dialogState.isSuccess ? "fa-check" : (isConfirm || isPrompt) ? "fa-circle-question" : isDanger ? "fa-triangle-exclamation" : (isError ? "fa-xmark" : "fa-check")}`}></i>
  </motion.div>
  <div className="space-y-1 mt-1">
- <h3 className="font-semibold text-gray-900 text-[15px] tracking-tight">
+ <h3 className="font-semibold text-themeText text-[15px] tracking-tight">
  {dialogState.title}
  </h3>
- <p className="text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-wrap px-2">
+ <p className="text-[13px] text-themeTextSec leading-relaxed whitespace-pre-wrap px-2">
  {dialogState.message}
  </p>
  </div>
@@ -79,29 +79,29 @@ export default function DialogContainer() {
  if (e.key === 'Enter') dialogState.onConfirm(dialogState.inputValue);
  if (e.key === 'Escape') dialogState.onCancel();
  }}
- className={`w-full bg-themeApp /50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-900 focus:border-blue-500 outline-none transition placeholder:text-gray-400 dark:placeholder:text-gray-500 ${dialogState.uppercase ? "uppercase" : ""}`}
+ className={`w-full bg-themeApp /50 border border-themeBorder rounded-xl px-4 py-2.5 text-sm font-medium text-themeText focus:border-themeAccent outline-none transition placeholder:text-themeTextSec/70 dark:placeholder:text-themeTextSec ${dialogState.uppercase ? "uppercase" : ""}`}
  placeholder="Type here..."
  />
  </div>
  )}
 
- <div className="p-4 bg-themeApp/50 /20 border-t border-gray-100 flex flex-col gap-2 relative z-10 w-full items-center">
+ <div className="p-4 bg-themeApp/50 /20 border-t border-themeBorder flex flex-col gap-2 relative z-10 w-full items-center">
  {isPrompt ? (
  <div className="flex gap-2 w-full">
  <button 
  onClick={dialogState.onCancel}
- className="flex-1 py-2.5 bg-themePanel hover:bg-themeApp dark:hover:bg-[#2a2a2a] text-gray-700 dark:text-gray-300 border border-gray-200 rounded-xl font-medium text-[13px] transition-all"
+ className="flex-1 py-2.5 bg-themePanel hover:bg-themeApp hover:bg-themeBorder/50 text-themeTextSec hover:text-themeText border border-themeBorder rounded-xl font-medium text-[13px] transition-all"
  >Cancel</button>
  <button 
  onClick={() => dialogState.onConfirm(dialogState.inputValue)}
- className="flex-1 py-2.5 rounded-xl font-medium text-[13px] transition-colors bg-blue-600 hover:bg-blue-700 text-themeApp shadow-sm"
+ className="flex-1 py-2.5 rounded-xl font-medium text-[13px] transition-colors bg-themeAccent hover:bg-themeAccent/90 text-themeApp shadow-sm"
  >Submit</button>
  </div>
  ) : isDanger ? (
  <div className="flex gap-2 w-full mt-1">
  <button 
  onClick={dialogState.onCancel}
- className="flex-1 py-2.5 bg-themePanel hover:bg-themeApp dark:hover:bg-[#2a2a2a] text-gray-700 dark:text-gray-300 border border-gray-200 rounded-xl font-medium text-[13px] transition-all"
+ className="flex-1 py-2.5 bg-themePanel hover:bg-themeApp hover:bg-themeBorder/50 text-themeTextSec hover:text-themeText border border-themeBorder rounded-xl font-medium text-[13px] transition-all"
  >Cancel</button>
  <button 
  onClick={() => dialogState.onConfirm()}
@@ -113,18 +113,18 @@ export default function DialogContainer() {
  <div className="flex gap-2 w-full">
  <button 
  onClick={dialogState.onCancel}
- className="flex-1 py-2.5 bg-themePanel hover:bg-themeApp dark:hover:bg-[#2a2a2a] text-gray-700 dark:text-gray-300 border border-gray-200 rounded-xl font-medium text-[13px] transition-all"
+ className="flex-1 py-2.5 bg-themePanel hover:bg-themeApp hover:bg-themeBorder/50 text-themeTextSec hover:text-themeText border border-themeBorder rounded-xl font-medium text-[13px] transition-all"
  >Cancel</button>
  <button 
  onClick={() => dialogState.onConfirm()}
- className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-themeApp rounded-xl font-medium text-[13px] transition-colors shadow-sm"
+ className="flex-1 py-2.5 bg-themeAccent hover:bg-themeAccent/90 text-themeApp rounded-xl font-medium text-[13px] transition-colors shadow-sm"
  >Confirm</button>
  </div>
  </div>
  ) : (
  <button 
  onClick={() => dialogState.onConfirm()}
- className="w-full py-2.5 rounded-xl font-medium text-[13px] transition-colors bg-gray-900 hover:bg-black dark:bg-themePanel dark:hover:bg-gray-100 text-themeApp shadow-sm"
+ className="w-full py-2.5 rounded-xl font-medium text-[13px] transition-colors bg-themeText text-themeApp hover:opacity-90 shadow-sm"
  >
  OK
  </button>

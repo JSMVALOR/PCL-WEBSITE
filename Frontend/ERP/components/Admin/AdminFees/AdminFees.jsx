@@ -466,7 +466,7 @@ export default function AdminFees({ isEmbedded = false, }) {
  <div className="py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
  ) : !selectedBatch ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
- <div className="w-16 h-16 rounded-full bg-themePanel/5 flex items-center justify-center text-gray-300 /20 mb-4 border border-themeBorder dark:border-white/[0.08]">
+ <div className="w-16 h-16 rounded-full bg-themePanel/5 flex items-center justify-center text-themeTextSec/50 /20 mb-4 border border-themeBorder dark:border-white/[0.08]">
  <i className="fa-solid fa-layer-group text-2xl"></i>
  </div>
  <h4 className="text-themeText font-black text-sm">Select a Batch</h4>
@@ -474,7 +474,7 @@ export default function AdminFees({ isEmbedded = false, }) {
  </div>
  ) : students.length === 0 ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
- <div className="w-16 h-16 rounded-full bg-themePanel/5 flex items-center justify-center text-gray-300 /20 mb-4 border border-themeBorder dark:border-white/[0.08]">
+ <div className="w-16 h-16 rounded-full bg-themePanel/5 flex items-center justify-center text-themeTextSec/50 /20 mb-4 border border-themeBorder dark:border-white/[0.08]">
  <i className="fa-solid fa-users-slash text-2xl"></i>
  </div>
  <h4 className="text-themeText font-black text-sm">No Students Found</h4>
@@ -572,7 +572,7 @@ export default function AdminFees({ isEmbedded = false, }) {
  <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
  {invoiceHistory.filter(i => i.status === 'pending').length === 0 ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-file-invoice text-gray-300 /20 text-xl mb-3"></i>
+ <i className="fa-solid fa-file-invoice text-themeTextSec/50 /20 text-xl mb-3"></i>
  <p className="text-themeTextSec text-xs font-bold">No pending dues found.</p>
  </div>
  ) : invoiceHistory.filter(i => i.status === 'pending').map(inv => (
@@ -599,7 +599,7 @@ export default function AdminFees({ isEmbedded = false, }) {
  <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
  {invoiceHistory.filter(i => i.status === 'paid' || i.status === 'successful').length === 0 ? (
  <div className="w-full py-16 lg:py-20 flex flex-col items-center justify-center bg-themeElevated backdrop-blur-2xl border-2 border-dashed border-themeBorder rounded-[2rem] text-center px-4">
- <i className="fa-solid fa-receipt text-gray-300 /20 text-xl mb-3"></i>
+ <i className="fa-solid fa-receipt text-themeTextSec/50 /20 text-xl mb-3"></i>
  <p className="text-themeTextSec text-xs font-bold">No cleared invoices yet.</p>
  </div>
  ) : invoiceHistory.filter(i => i.status === 'paid' || i.status === 'successful').map(inv => (

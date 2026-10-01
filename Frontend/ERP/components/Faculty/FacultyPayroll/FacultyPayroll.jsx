@@ -278,7 +278,7 @@ export default function FacultyPayroll() {
  <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
  <div className="bg-themePanel w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-white/[0.08] shadow-2xl flex flex-col">
  
- <div className="p-6 border-b border-white/[0.08] flex justify-between items-start bg-[#161616]">
+ <div className="p-6 border-b border-white/[0.08] flex justify-between items-start bg-[var(--theme-panel)]">
  <div>
  <h3 className="text-xl font-black tracking-tight mb-1 text-themeText ">Direct Deposit Setup</h3>
  <p className="text-[10px] text-themeTextSec font-bold uppercase tracking-widest">Securely sync your payroll destination.</p>
@@ -291,12 +291,12 @@ export default function FacultyPayroll() {
  <form onSubmit={handleSaveAccount} className="p-6 flex flex-col gap-6">
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Bank Name</label>
- <input type="text" required value={accountDetails.bank_name} onChange={(e) => setAccountDetails({...accountDetails, bank_name: e.target.value.replace(/[^a-zA-Z\s]/g, '')})} placeholder="e.g. HDFC Bank" className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition placeholder:text-gray-300 /20" />
+ <input type="text" required value={accountDetails.bank_name} onChange={(e) => setAccountDetails({...accountDetails, bank_name: e.target.value.replace(/[^a-zA-Z\s]/g, '')})} placeholder="e.g. HDFC Bank" className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition placeholder:text-themeTextSec/50 /20" />
  </div>
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Account Number</label>
- <input type="text" required value={accountDetails.account_number} onChange={(e) => setAccountDetails({...accountDetails, account_number: e.target.value.replace(/\D/g, "").slice(0, 18)})} placeholder="9 to 18 Digit Account Number" minLength={9} maxLength={18} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition font-mono placeholder:font-sans placeholder:text-gray-400 dark:placeholder:text-themeApp/30" />
+ <input type="text" required value={accountDetails.account_number} onChange={(e) => setAccountDetails({...accountDetails, account_number: e.target.value.replace(/\D/g, "").slice(0, 18)})} placeholder="9 to 18 Digit Account Number" minLength={9} maxLength={18} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition font-mono placeholder:font-sans placeholder:text-themeTextSec/70 dark:placeholder:text-themeApp/30" />
  </div>
 
  <div>
@@ -307,7 +307,7 @@ export default function FacultyPayroll() {
  if (val.length > 0) val = val.substring(0, 4).replace(/[^A-Z]/g, '') + val.substring(4);
  if (val.length > 4) val = val.substring(0, 4) + '0' + val.substring(5);
  setAccountDetails({...accountDetails, ifsc_code: val});
- }} placeholder="HDFC0001234" maxLength={11} className="w-full bg-gray-100 dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition uppercase placeholder:normal-case placeholder:text-gray-400 dark:placeholder:text-themeApp/30" />
+ }} placeholder="HDFC0001234" maxLength={11} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 focus:ring-0 focus:outline-none outline-none transition uppercase placeholder:normal-case placeholder:text-themeTextSec/70 dark:placeholder:text-themeApp/30" />
  </div>
 
  <button type="submit" disabled={isSaving} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-themeText font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
@@ -358,7 +358,7 @@ export default function FacultyPayroll() {
  
  {/* Financial Table */}
  <div className="w-full border border-black rounded-lg overflow-hidden mb-8">
- <div className="flex bg-gray-100 border-b border-black">
+ <div className="flex bg-themeElevated border-b border-black">
  <div className="w-1/2 p-3 border-r border-black font-bold uppercase text-xs">Earnings</div>
  <div className="w-1/2 p-3 font-bold uppercase text-xs">Deductions</div>
  </div>
@@ -384,7 +384,7 @@ export default function FacultyPayroll() {
  </div>
  </div>
  </div>
- <div className="flex border-t border-black bg-gray-100">
+ <div className="flex border-t border-black bg-themeElevated">
  <div className="w-1/2 p-3 border-r border-black flex justify-between items-center">
  <span className="font-bold uppercase text-xs">Gross Earnings</span>
  <span className="font-bold">₹{((selectedPayslip.basic_salary || 0) + (selectedPayslip.allowances || 0)).toLocaleString('en-IN')}</span>

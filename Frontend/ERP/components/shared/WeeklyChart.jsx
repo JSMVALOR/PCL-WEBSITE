@@ -142,7 +142,7 @@ export default function WeeklyChart({ schedule = [], onLectureClick, role = 'stu
  onLectureClick(cls);
  }
  }}
- className={`h-full rounded-xl cursor-grab active:cursor-grabbing p-3 flex flex-col ${cls.isDraft ? 'border-2 border-dashed border-amber-500/50 bg-amber-500/5 opacity-80' : ''} ${cls.color ? (SUBJECT_COLORS[cls.color]?.bg + ' border border-themeBorder ') : 'bg-gray-100 border border-themeBorder '} ${!isDrawMode && !onSlotSwap ? 'cursor-pointer hover:scale-[1.02] transition-transform shadow-sm' : 'hover:scale-[1.02] transition-transform shadow-sm'}`}
+ className={`h-full rounded-xl cursor-grab active:cursor-grabbing p-3 flex flex-col ${cls.isDraft ? 'border-2 border-dashed border-amber-500/50 bg-amber-500/5 opacity-80' : ''} ${cls.color ? (SUBJECT_COLORS[cls.color]?.bg + ' border border-themeBorder ') : 'bg-themeElevated border border-themeBorder '} ${!isDrawMode && !onSlotSwap ? 'cursor-pointer hover:scale-[1.02] transition-transform shadow-sm' : 'hover:scale-[1.02] transition-transform shadow-sm'}`}
  >
  <h4 className={`text-xs font-bold leading-snug line-clamp-2 ${cls.color ? SUBJECT_COLORS[cls.color]?.text : 'text-themeText'}`}>{cls.subject}</h4>
  <div className="mt-auto pt-2 flex justify-between items-end">

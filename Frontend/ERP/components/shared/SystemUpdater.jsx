@@ -92,14 +92,14 @@ export default function SystemUpdater({ children }) {
  <span className="text-[11px] font-bold tracking-normal text-themeTextSec">Version</span>
  <span className="text-[13px] font-bold text-themeAccent">v {updateInfo.version_name}</span>
  </div>
- <div className="text-[13px] font-medium text-[#3A3A3C] dark:text-[#EBEBF5]/60 whitespace-pre-line leading-relaxed">
+ <div className="text-[13px] font-medium text-themeTextSec whitespace-pre-line leading-relaxed">
  {updateInfo.release_notes || "Performance optimizations and stability improvements."}
  </div>
  </div>
 
  <button type="button" 
  onClick={handleDownloadUpdate}
- className="w-full py-3.5 rounded-xl bg-[var(--theme-accent)] text-themeText font-bold text-[13px] tracking-normal flex justify-center items-center gap-3 shadow-sm hover:bg-[#006DEB] transition-colors"
+ className="w-full py-3.5 rounded-xl bg-[var(--theme-accent)] text-themeText font-bold text-[13px] tracking-normal flex justify-center items-center gap-3 shadow-sm hover:bg-themeAccent/80 transition-colors"
  >
  <i className="fa-solid fa-download"></i>
  Download & Install
