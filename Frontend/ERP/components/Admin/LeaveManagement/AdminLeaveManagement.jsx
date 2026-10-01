@@ -35,7 +35,7 @@ export default function AdminLeaveManagement({ isHubView = false }) {
  ];
 
  return (
- <div className={`w-full mx-auto flex flex-col gap-6 animate-fade-in pb-20 lg:pb-8 ${isHubView ? 'bg-transparent text-themeText font-sans' : ''}`}>
+ <div className={`w-full mx-auto flex flex-col gap-6 animate-fade-in ${isHubView ? 'bg-transparent text-themeText font-sans pb-20 lg:pb-8' : 'p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8 min-h-[calc(100vh-80px)]'}`}>
  
  {/* Header and Tab Navigation */}
  {!isHubView && (

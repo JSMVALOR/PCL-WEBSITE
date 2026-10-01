@@ -49,7 +49,7 @@ export default function LeaveRequests({ onReviewRequest }) {
  <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Review and approve faculty requests</p>
  </div>
  
- <div className="flex bg-themeElevated p-1 rounded-xl border border-themeBorder ">
+ <div className="flex bg-themeElevated p-1 rounded-xl border border-themeBorder w-full sm:w-auto overflow-x-auto no-scrollbar">
  {['all', 'pending', 'approved', 'rejected'].map(f => (
  <button 
  key={f}
