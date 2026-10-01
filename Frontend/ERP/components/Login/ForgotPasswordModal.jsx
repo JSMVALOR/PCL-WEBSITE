@@ -77,7 +77,7 @@ export default function ForgotPasswordModal({ onClose }) {
  
  if (newOtp.every(v => v !== '')) {
  const code = newOtp.join('');
- if (code === expectedOtpRef.current || code === '1234') { // 1234 for testing fallback
+ if (code === expectedOtpRef.current) {
  setStep('password');
  setError('');
  } else {

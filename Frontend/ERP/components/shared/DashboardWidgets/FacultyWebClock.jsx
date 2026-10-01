@@ -102,7 +102,7 @@ export default function FacultyWebClock() {
  const rules = FACULTY_ATTENDANCE_RULES.getWorkingHours(new Date());
 
  return (
- <div className="w-full bg-themePanel rounded-2xl p-6 text-themeApp relative overflow-hidden border border-[#2C2C2E]">
+ <div className="w-full bg-themeElevated/50 border border-themeBorder/50 p-6 rounded-3xl relative overflow-hidden flex flex-col h-full">
  {/* Background elements */}
  <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
  
@@ -133,7 +133,7 @@ export default function FacultyWebClock() {
  </div>
  </div>
 
- <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-2 gap-4 relative z-10">
+ <div className="mt-5 pt-4 border-t border-themeBorder grid grid-cols-2 gap-4 relative z-10">
  <button
  onClick={handleClockIn}
  disabled={!isWorkingDay || loading || attendanceRecord?.clock_in}
