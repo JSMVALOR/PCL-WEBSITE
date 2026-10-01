@@ -48,7 +48,7 @@ import ErrorBoundary from './components/shared/ErrorBoundary';
 
 import SessionTimeoutGuard from './components/shared/SessionTimeoutGuard';
 import { RoleActionButton } from './components/shared/LiveHeaderComponents';
-import IntelligentBot from './components/shared/IntelligentBot';
+import AssistantWidget from './components/shared/AssistantWidget';
 
 // --- LAZY LOADED ROUTE COMPONENTS ---
 const ParentDashboard = React.lazy(() => import('./components/Parent/ParentDashboard/ParentDashboard'));
@@ -469,7 +469,7 @@ export default function App() {
  <ForcePasswordChangeModal onComplete={handlePasswordChangeComplete} />
  )}
  
- {/* {userSession && !isAppLoading && <IntelligentBot />} */}
+ {userSession && !isAppLoading && <AssistantWidget />}
  </>
  );
 }

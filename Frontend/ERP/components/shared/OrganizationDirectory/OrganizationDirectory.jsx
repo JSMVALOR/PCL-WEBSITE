@@ -3,12 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { useERP } from '../../../context/ErpContext';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Chatting01Icon } from '@hugeicons/core-free-icons';
 
 export default function OrganizationDirectory() {
  const [members, setMembers] = useState({ faculty: [], student: [] });
  const [isLoading, setIsLoading] = useState(true);
  const [activeTab, setActiveTab] = useState('faculty');
  const [searchQuery, setSearchQuery] = useState('');
+ const { userSession } = useERP();
 
  useEffect(() => {
  fetchDirectory();
@@ -139,9 +143,22 @@ export default function OrganizationDirectory() {
  <span className="truncate">{member.department || member.phone}</span>
  </div>
  )}
- </div>
- </div>
- </motion.div>
+ 
+              </div>
+              
+              {/* Message Action Button */}
+              {!(userSession?.role === 'student' && member.role === 'student') && member.id !== userSession?.db_id && (
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('openGlobalChat', { detail: { userId: member.id, name: member.full_name, role: member.role, avatar: member.profile_picture_url } }))}
+                  className="mt-3 w-full py-2 rounded-lg bg-themeElevated hover:bg-themeAccent hover:text-white border border-themeBorder text-themeTextSec text-[11px] font-bold transition flex items-center justify-center gap-2 group/btn"
+                >
+                  <HugeiconsIcon icon={Chatting01Icon} size={14} className="group-hover/btn:scale-110 transition-transform" />
+                  Direct Message
+                </button>
+              )}
+            </div>
+          </motion.div>
+
  ))}
  </AnimatePresence>
  </div>
