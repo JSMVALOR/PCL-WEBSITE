@@ -379,8 +379,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  </div>
 
  {/* MODAL */}
- {showRequestModal && (
- <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 /80 backdrop-blur-xl animate-fade-in">
+ {showRequestModal && createPortal(<div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 /80 backdrop-blur-xl animate-fade-in">
  <div className="bg-themePanel/90 dark:bg-themePanel/90 backdrop-blur-3xl saturate-[1.8] w-full max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden border border-themeBorder dark:border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col max-h-[90vh]">
  
  <div className="p-6 sm:p-8 border-b border-themeBorder dark:border-white/[0.08] shrink-0 flex justify-between items-start bg-transparent">
@@ -487,7 +486,7 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  </form>
  </div>
  </div>
- </div>
+ </div>, document.body
  )}
  </div>
  </div>

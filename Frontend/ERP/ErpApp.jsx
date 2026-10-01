@@ -220,7 +220,7 @@ export default function App() {
 
  if (isAppLoading) {
  return (
- <div className="w-full h-screen bg-themeApp flex flex-col items-center justify-center selection:bg-themeAccent/20">
+ <div className="w-full h-[100dvh] bg-themeApp flex flex-col items-center justify-center selection:bg-themeAccent/20">
  <div 
  style={{
  width: '64px', 
@@ -378,7 +378,7 @@ export default function App() {
  <SessionTimeoutGuard>
  <DialogContainer />
  <ToastContainer />
- <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-screen w-full bg-themeApp text-themeText premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
+ <div className={`flex ${navLayout === 'classic' ? 'flex-row' : 'flex-col'} h-[100dvh] w-full bg-themeApp text-themeText premium-bg font-sans overflow-hidden selection:bg-themeAccent/20`}>
  
  {/* CLASSIC SIDEBAR RENDER (Desktop Only) */}
  {navLayout === 'classic' && (
@@ -395,12 +395,12 @@ export default function App() {
  {/* MOBILE NAV (Bottom Bar & Drawer Menu) - Active when using TopNav Layout */}
  {<MobileNav userSession={userSession} activeTab={activeTab} setActiveTab={setActiveTab} onLogout={logout} />}
 
- <main className="flex-1 flex flex-col h-screen overflow-hidden bg-themeApp relative min-w-0">
+ <main className="flex-1 flex flex-col h-[100dvh] overflow-hidden bg-themeApp relative min-w-0">
  <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 flex flex-col" id="jsm-main-scroll-container">
  {/* Spacer for TopNav - Always present on Mobile because TopNav is always the mobile header! */}
  <div className={`shrink-0 w-full pointer-events-none transition duration-500 ${navLayout === 'classic' ? 'h-[72px] lg:hidden' : 'h-[72px] lg:h-[84px]'}`}></div>
 
- <div className="flex-1 p-0 pb-[110px] lg:pb-0 flex flex-col relative z-10">
+ <div className="flex-1 p-0 pb-[130px] lg:pb-0 flex flex-col relative z-10">
  <ErrorBoundary>
  {renderContent()}
  </ErrorBoundary>

@@ -914,7 +914,7 @@ export const HTML_EMAIL_TEMPLATES = {
 
     FIRST_CREDENTIALS: (params) => buildEmailHtml(
         'Welcome to PCL ERP',
-        `<p>Dear ${params.student_name || 'Student'},</p>
+        `<p>Dear ${params.name || params.student_name || "User"},</p>
         <p>Welcome to the JSM Academic Infrastructure. Your official ERP credentials have been generated.</p>
         <div class="data-box">
             <div class="data-row"><span class="data-label">Official ERP ID</span><span class="data-value">${params.erp_id}</span></div>

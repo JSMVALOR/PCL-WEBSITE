@@ -845,7 +845,7 @@ export default function FacultyAttendance({ subjectContext }) {
  title="Attendance Engine" 
  subtitle="Manage automated class sessions, QR marking, and engagement analytics." 
  rightContent={
- <div className="flex bg-black/[0.04] dark:bg-themePanel/[0.04] p-1.5 rounded-2xl border border-themeBorder overflow-x-auto no-scrollbar w-[calc(100vw-32px)] lg:w-fit gap-1">
+ <div className="flex bg-black/[0.04] dark:bg-themePanel/[0.04] p-1.5 rounded-2xl border border-themeBorder overflow-x-auto no-scrollbar w-full lg:w-fit gap-1">
  {[
  { id: "today", label: "Daily Sessions", icon: "fa-calendar-day" },
  { id: "window", label: "Active Window", icon: "fa-clipboard-check", disabled: !activeSession },
@@ -856,7 +856,7 @@ export default function FacultyAttendance({ subjectContext }) {
  key={tab.id}
  disabled={tab.disabled}
  onClick={() => setActiveTab(tab.id)}
- className={`flex-1 min-w-[110px] px-5 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${activeTab === tab.id ? "bg-themePanel dark:bg-themeElevated shadow-sm border border-themeBorder text-themeText " : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-themeElevated "}`}
+ className={`flex-1 min-w-max shrink-0 px-4 py-2.5 rounded-xl text-[13px] font-bold tracking-tight transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed ${activeTab === tab.id ? "bg-themePanel dark:bg-themeElevated shadow-sm border border-themeBorder text-themeText " : "text-themeTextSec hover:text-themeText dark:hover:text-themeText border border-transparent hover:bg-themeElevated "}`}
  >
  <i className={`fa-solid ${tab.icon} ${activeTab === tab.id ? '' : 'opacity-70'}`}></i>
  {tab.label}

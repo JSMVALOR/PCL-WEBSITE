@@ -404,7 +404,7 @@ export default function Notices({ setActiveTab }) {
  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
  key={f}
  onClick={() => setActiveFilter(f)}
- className={`px-5 py-2 rounded-xl text-[12px] font-bold tracking-tight transition-all border ${
+ className={`px-4 py-1.5 rounded-full text-[11px] font-bold tracking-wide transition-all border ${
  activeFilter === f 
  ? 'bg-themePanel dark:bg-themeElevated text-themeText border-themeBorder shadow-sm scale-105' 
  : 'bg-themeElevated text-themeTextSec border-transparent hover:text-themeText dark:hover:text-themeText hover:border-themeBorder dark:hover:border-themeBorder '
