@@ -106,11 +106,13 @@ export default function FacultyAttendance({ subjectContext }) {
  if (sesError) throw sesError;
 
  // Fetch schedules and basic sessions for unmarked calculation
- const masterIds = cohortSubs.map(c => c.master_subjects?.id).filter(Boolean);
- // Fix: class_schedule.batch is a string name, cohort_subjects.batch_id is a UUID. 
- // We just fetch class_schedule for this faculty directly.
- const { data: fullSchedule } = await supabase.from('class_schedule').select('id, subject_id, day_of_week, start_time, batch').eq('faculty_id', userSession.db_id);
- const { data: allSessions } = await supabase.from('class_sessions').select('id, schedule_id, date, status').in('schedule_id', (fullSchedule||[]).map(s=>s.id));
+ const { data: fullSchedule } = await supabase.from('class_schedule')
+ .select('id, subject_id, day_of_week, start_time, batch, subject:master_subjects(id, name, code)')
+ .eq('faculty_id', userSession.db_id);
+ 
+ const { data: allSessions } = await supabase.from('class_sessions')
+ .select('id, schedule_id, date, status')
+ .in('schedule_id', (fullSchedule||[]).map(s=>s.id));
 
  // Calculate unmarked dates
  const today = new Date();
@@ -125,43 +127,44 @@ export default function FacultyAttendance({ subjectContext }) {
  const unmarkedMap = {};
  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
- cohortSubs.forEach(cs => {
- // Ignore batch string comparison, just match by subject_id.
- // In a real multi-batch scenario, we'd join academic_batches to match the name.
- const subSched = (fullSchedule||[]).filter(s => s.subject_id === cs.master_subjects?.id);
- if (subSched.length === 0) return;
-
- const missed = [];
- pastDates.forEach(dateObj => {
- const dayName = dayNames[dateObj.getDay()];
- // check if schedule has this day
- const classesOnThisDay = subSched.filter(s => String(s.day_of_week) === dayName || String(s.day_of_week) === String(dateObj.getDay()));
- 
- classesOnThisDay.forEach(sch => {
- // ignore if the semester wasn't active yet, but we'll assume last 30 days is fine for now
- const dateStr = getLocalDateString(dateObj);
- const sessionExists = (allSessions||[]).find(ses => ses.schedule_id === sch.id && (ses.date === dateStr || (ses.date && ses.date.startsWith(dateStr))));
- if (!sessionExists) {
- missed.push({ date: dateStr, time: sch.start_time, batch: sch.batch, sch_id: sch.id, subject: cs.master_subjects, isMarked: false });
- } else if (sessionExists.status !== 'completed') {
- missed.push({ date: dateStr, time: sch.start_time, batch: sch.batch, status: sessionExists.status, sch_id: sch.id, subject: cs.master_subjects, session_id: sessionExists.id, isMarked: false });
- } else {
- missed.push({ date: dateStr, time: sch.start_time, batch: sch.batch, status: sessionExists.status, sch_id: sch.id, subject: cs.master_subjects, session_id: sessionExists.id, isMarked: true });
- }
- });
- });
-
- if (missed.length > 0) {
- unmarkedMap[cs.id] = {
- id: cs.id,
- name: cs.master_subjects?.name || 'Unknown',
- code: cs.master_subjects?.code || 'Unknown',
- batch: missed[0]?.batch || 'Section I',
- missed: missed.sort((a,b) => new Date(b.date) - new Date(a.date))
+ (fullSchedule || []).forEach(sch => {
+ const groupKey = `${sch.subject_id}_${sch.batch}`;
+ if (!unmarkedMap[groupKey]) {
+ unmarkedMap[groupKey] = {
+ id: groupKey,
+ name: sch.subject?.name || 'Unknown',
+ code: sch.subject?.code || 'Unknown',
+ batch: sch.batch || 'Section I',
+ missed: []
  };
  }
+
+ pastDates.forEach(dateObj => {
+ const dayName = dayNames[dateObj.getDay()];
+ if (String(sch.day_of_week) === dayName || String(sch.day_of_week) === String(dateObj.getDay())) {
+ const dateStr = getLocalDateString(dateObj);
+ const sessionExists = (allSessions||[]).find(ses => ses.schedule_id === sch.id && (ses.date === dateStr || (ses.date && ses.date.startsWith(dateStr))));
+ 
+ if (!sessionExists) {
+ unmarkedMap[groupKey].missed.push({ date: dateStr, time: sch.start_time, batch: sch.batch, sch_id: sch.id, subject: sch.subject, isMarked: false });
+ } else if (sessionExists.status !== 'completed') {
+ unmarkedMap[groupKey].missed.push({ date: dateStr, time: sch.start_time, batch: sch.batch, status: sessionExists.status, sch_id: sch.id, subject: sch.subject, session_id: sessionExists.id, isMarked: false });
+ } else {
+ unmarkedMap[groupKey].missed.push({ date: dateStr, time: sch.start_time, batch: sch.batch, status: sessionExists.status, sch_id: sch.id, subject: sch.subject, session_id: sessionExists.id, isMarked: true });
+ }
+ }
  });
- setUnmarkedSubjects(Object.values(unmarkedMap));
+ });
+ 
+ // Sort missed items and remove groups with no misses
+ const finalUnmarked = Object.values(unmarkedMap)
+ .filter(group => group.missed.length > 0)
+ .map(group => {
+ group.missed.sort((a,b) => new Date(b.date) - new Date(a.date));
+ return group;
+ });
+
+ setUnmarkedSubjects(finalUnmarked);
 
  const subjectsWithStats = cohortSubs.map(cs => {
  const subSessions = (sessions || []).filter(s => s.class_schedule?.subject_id === cs.master_subjects?.id);
@@ -910,7 +913,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <span className="bg-themeElevated backdrop-blur-xl px-2 py-0.5 rounded text-[12px] font-medium text-themeTextSec ">Room {cls.room?.name || "TBD"}</span>
  </div>
  <h3 className="text-lg font-semibold tracking-tight text-themeText leading-tight">{cls.subject?.name}</h3>
- <p className="text-[10px] font-bold text-themeTextSec mt-1">{cls.batch} • Semester {cls.semester}</p>
+ <p className="text-[10px] font-bold text-themeTextSec mt-1">{cls.batch}</p>
  </div>
  {cls.session?.status === 'completed' ? (
  <button type="button" onClick={() => handleStartAttendance(cls)} className="w-full py-3 rounded-xl bg-themeElevated backdrop-blur-xl text-themeTextSec hover:bg-black/10 text-[13px] font-medium transition active:scale-[0.98]">
