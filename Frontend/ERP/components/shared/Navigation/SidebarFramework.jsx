@@ -68,14 +68,6 @@ export default function SidebarFramework({
  const filteredConfig = useMemo(() => {
  return config;
  
- return config.map(group => {
- const filteredLinks = group.links.filter(link => {
- const matchLabel = link.label.toLowerCase().includes(q);
- const matchChildren = link.children && link.children.some(child => child.label.toLowerCase().includes(q));
- return matchLabel || matchChildren;
- });
- return { ...group, links: filteredLinks };
- }).filter(group => group.links.length > 0);
  }, [config]);
 
  // --- Handlers ---

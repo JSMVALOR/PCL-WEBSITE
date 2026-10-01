@@ -16,8 +16,6 @@ export default function AdminCourseBuilder({ isHubView = false }) {
  const [stats, setStats] = useState({
  programmes: 0,
  activeSemesters: 0, pendingApprovals: 0, timetableRows: 0,
- pendingApprovals: 0,
- timetableRows: 0,
  loading: true
  });
 
