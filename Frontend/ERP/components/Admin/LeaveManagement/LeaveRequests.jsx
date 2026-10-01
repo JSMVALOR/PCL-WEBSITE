@@ -125,7 +125,7 @@ export default function LeaveRequests({ onReviewRequest }) {
 
  <button 
  onClick={() => onReviewRequest(req)}
- className="w-full sm:w-auto px-6 py-3 rounded-xl bg-themeAccent text-themeText font-black text-[11px] uppercase tracking-widest hover:bg-themeAccent/90 transition-colors shadow-sm whitespace-nowrap"
+ className="w-full sm:w-auto px-6 py-3 rounded-xl bg-themeAccent text-themeApp font-black text-[11px] uppercase tracking-widest hover:bg-themeAccent/90 transition-colors shadow-sm whitespace-nowrap"
  >
  Review & Action
  </button>

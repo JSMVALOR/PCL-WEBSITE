@@ -382,7 +382,7 @@ export default function AdminUserEditorModal({ user, isOpen, onClose, onUpdate }
  <div className="flex gap-3 mb-6">
  <div className="relative overflow-hidden group">
  <input type="file" accept="image/*" onChange={onSelectFile} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
- <div className="bg-themeAccent text-themeText px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition group-hover:bg-themeAccent/90 flex items-center gap-2 pointer-events-none">
+ <div className="bg-themeAccent text-themeApp px-5 py-2.5 rounded-xl text-[14px] font-bold tracking-normal transition group-hover:bg-themeAccent/90 flex items-center gap-2 pointer-events-none">
  <i className="fa-solid fa-upload"></i> Select File
  </div>
  </div>

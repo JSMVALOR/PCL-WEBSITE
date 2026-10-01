@@ -191,7 +191,7 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
  let iconColor = 'text-themeTextSec';
  
  if (isActive) {
- bgColor = 'bg-themeAccent text-themeText shadow-md border-themeAccent';
+ bgColor = 'bg-themeAccent text-themeApp shadow-md border-themeAccent';
  iconColor = 'text-themeApp/80';
  } else if (attStatus === 'present') {
  bgColor = 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-500';

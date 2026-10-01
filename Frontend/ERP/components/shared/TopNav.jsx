@@ -15,6 +15,25 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
  const { addFlag } = useNotification();
  const [activeDropdown, setActiveDropdown] = useState(null);
  const timeoutRef = useRef(null);
+ const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+ useEffect(() => {
+     const handler = (e) => {
+         e.preventDefault();
+         setDeferredPrompt(e);
+     };
+     window.addEventListener('beforeinstallprompt', handler);
+     return () => window.removeEventListener('beforeinstallprompt', handler);
+ }, []);
+
+ const handleInstallPWA = () => {
+     if (deferredPrompt) {
+         deferredPrompt.prompt();
+         deferredPrompt.userChoice.then(() => {
+             setDeferredPrompt(null);
+         });
+     }
+ };
 
  let config = [];
  if (userSession?.role === 'student') config = STUDENT_SIDEBAR_CONFIG;
@@ -193,6 +212,12 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
 
  {/* Right: Actions */}
  <div className="flex items-center gap-3 shrink-0">
+ {deferredPrompt && (
+     <button onClick={handleInstallPWA} className="hidden lg:flex items-center gap-2 bg-themeAccent text-themeApp px-4 py-2 rounded-xl text-xs font-bold shadow hover:bg-themeAccent/90 transition-all">
+         <i className="fa-solid fa-download"></i> Install App
+     </button>
+ )}
+
  
  {/* Global Search Inject */}
  <div className="hidden 2xl:block w-full max-w-[14rem]">

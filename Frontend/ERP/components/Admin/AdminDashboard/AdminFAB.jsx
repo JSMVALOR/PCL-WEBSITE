@@ -34,7 +34,7 @@ export default function AdminFAB({}) {
  {/* Main Toggle Button */}
  <button type="button" 
  onClick={() => setIsOpen(!isOpen)}
- className={`w-14 h-14 rounded-lg bg-themeAccent text-themeText flex items-center justify-center transition-transform hover:scale-110 active:scale-95 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
+ className={`w-14 h-14 rounded-lg bg-themeAccent text-themeApp flex items-center justify-center transition-transform hover:scale-110 active:scale-95 ${isOpen ? 'rotate-45' : 'rotate-0'}`}
  >
  <i className="fa-solid fa-plus text-xl"></i>
  </button>

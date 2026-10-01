@@ -240,7 +240,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  <PageHeader icon="fa-solid fa-stamp" title="Approvals & Disciplinary" subtitle="Manage mentee leave requests and investigate grievances." rightContent={<div className="flex bg-themePanel/40 backdrop-blur-3xl saturate-[1.8] shadow-sm border border-themeBorder dark:border-white/[0.08] p-1.5 rounded-xl border border-themeBorder w-fit relative z-10 overflow-x-auto max-w-full">
  <button type="button" 
  onClick={() => setActiveTab('mentee_leaves')}
- className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_leaves' ? 'bg-themeAccent text-themeText' : 'text-themeTextSec hover:text-themeText'}`}
+ className={`whitespace-nowrap px-6 py-2.5 rounded-lg text-xs lg:text-[15px] font-semibold tracking-normal transition ${activeTab === 'mentee_leaves' ? 'bg-themeAccent text-themeApp' : 'text-themeTextSec hover:text-themeText'}`}
  >
  Mentee Leaves
  </button>

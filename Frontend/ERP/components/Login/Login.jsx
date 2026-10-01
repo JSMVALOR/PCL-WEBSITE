@@ -8,7 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import ForgotPasswordModal from './ForgotPasswordModal';
 import ParentLogin from './ParentLogin';
 import campusImg from '../../../Shared/Assets/CAMPUS/PCL_CAMPUS.webp';
-import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo.svg';
+import pclLogo from '../../../Shared/Assets/LOGOS/pcl_logo_gold.svg';
 
 export default function Login() {
  const navigate = useNavigate();
@@ -168,7 +168,7 @@ export default function Login() {
  <>
 
  <div className="text-center mb-6">
- <img src={pclLogo} alt="PCL Logo" className="w-12 h-12 mx-auto mb-3 object-contain theme-logo" />
+ <img src={pclLogo} alt="PCL Logo" className="w-16 h-16 mx-auto mb-3 object-contain" />
  <h2 className="text-xl font-bold text-[var(--text-primary)] mb-1 font-['Outfit'] tracking-normal">Prudentia</h2>
  <h3 className="text-xs font-medium text-[var(--text-secondary)] mb-2 font-['Outfit'] uppercase tracking-[0.3em]">College of Law</h3>
  <p className="text-[var(--accent)] text-[9px] uppercase tracking-[0.2em] font-bold border border-[var(--accent)]/30 rounded-md px-2 py-1 inline-block bg-[var(--accent)]/5">Centralized Academic Portal</p>

@@ -274,7 +274,7 @@ export default function Fees({ isEmbedded = false }) {
  <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Transfer Date</label>
  <input type="date" required value={verificationData.transferDate} onChange={e => setVerificationData({...verificationData, transferDate: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder Accent" />
  </div>
- <button type="submit" disabled={isProcessing} className="w-full py-3.5 bg-themeAccent text-themeText font-black text-sm rounded-xl hover:bg-themeAccent/90 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+ <button type="submit" disabled={isProcessing} className="w-full py-3.5 bg-themeAccent text-themeApp font-black text-sm rounded-xl hover:bg-themeAccent/90 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
  {isProcessing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Submit for Verification'}
  </button>
  </form>

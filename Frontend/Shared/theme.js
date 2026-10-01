@@ -22,7 +22,7 @@ export const theme = {
         rowActive: "bg-themeElevated text-themeAccent border-theme border-themeBorderStrong shadow-sm",
         rowInactive: "text-themeTextSec hover:text-themeText hover:bg-themePanel border-theme border-transparent",
 
-        btnPrimary: "bg-themeAccent text-black font-bold px-6 py-3 rounded-themeBtn hover:bg-themeAccentMuted transition duration-300 flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-themeAccent/20 hover:shadow-themeAccent/40",
+        btnPrimary: "bg-themeAccent text-white font-bold px-6 py-3 rounded-themeBtn hover:bg-themeAccentMuted transition duration-300 flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-themeAccent/20 hover:shadow-themeAccent/40",
         btnSecondary: "bg-themePanel/80 backdrop-blur-md text-themeText border-theme border-themeBorder hover:border-themeBorderStrong px-6 py-3 rounded-themeBtn transition duration-300 flex items-center justify-center gap-2 active:scale-95 shadow-sm hover:shadow-md",
         btnDanger: "bg-[#1a0f0f]/80 backdrop-blur-md text-rose-500 border-theme border-rose-500/20 hover:border-rose-500 hover:bg-rose-950 px-6 py-3 rounded-themeBtn transition duration-300 flex items-center justify-center gap-2 active:scale-95",
         

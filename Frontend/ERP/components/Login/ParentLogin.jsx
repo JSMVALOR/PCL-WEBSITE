@@ -162,7 +162,7 @@ export default function ParentLogin({ onBack, onLoginSuccess }) {
  />
  ))}
  </div>
- <button disabled={loading} className="w-full bg-themeAccent text-themeText py-3.5 rounded-xl text-[14px] font-medium tracking-normal hover:bg-themeAccent/90 transition disabled:cursor-not-allowed">
+ <button disabled={loading} className="w-full bg-themeAccent text-themeApp py-3.5 rounded-xl text-[14px] font-medium tracking-normal hover:bg-themeAccent/90 transition disabled:cursor-not-allowed">
  {loading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : "Verify & Login"}
  </button>
  </form>

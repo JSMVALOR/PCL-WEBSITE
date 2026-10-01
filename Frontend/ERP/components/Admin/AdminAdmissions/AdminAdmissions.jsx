@@ -292,7 +292,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  onClick={() => setFilter(f)}
  className={`flex-1 lg:flex-none px-5 py-3 rounded-xl text-[10px] lg:text-[14px] font-medium tracking-normal transition duration-300 whitespace-nowrap min-w-max ${
  filter === f 
- ? 'bg-themeAccent text-themeText border border-themeBorder Accent scale-100' 
+ ? 'bg-themeAccent text-themeApp border border-themeBorder Accent scale-100' 
  : 'text-themeTextSec hover:text-themeText hover:bg-themePanel shadow-sm border border-transparent scale-95 hover:scale-100'
  }`}
  >

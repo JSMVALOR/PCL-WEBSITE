@@ -589,7 +589,7 @@ export default function Achievements({ isEmbedded = false, onNavigateToCV }) {
 
  <div className="p-6 border-t border-themeBorder bg-themePanel border border-themeBorder flex justify-end gap-3">
  <button type="button" onClick={() => setShowAddWizard(false)} className="px-6 py-3 rounded-lg text-sm font-bold text-themeTextSec hover:bg-themeBorder transition-colors">Cancel</button>
- <button type="button" onClick={handleAddSubmit} disabled={isSubmitting} className="px-6 py-3 rounded-lg text-sm font-bold bg-themeAccent text-themeText hover:brightness-110 transition flex items-center gap-2 disabled:cursor-not-allowed">
+ <button type="button" onClick={handleAddSubmit} disabled={isSubmitting} className="px-6 py-3 rounded-lg text-sm font-bold bg-themeAccent text-themeApp hover:brightness-110 transition flex items-center gap-2 disabled:cursor-not-allowed">
  {isSubmitting ? <i className="fa-solid fa-spinner fa-spin"></i> : "Submit to Mentor"}
  </button>
  </div>
