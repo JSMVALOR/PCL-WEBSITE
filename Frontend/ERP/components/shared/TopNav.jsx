@@ -232,6 +232,14 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
  
  <div 
  className="relative h-full flex items-center"
+ >
+ <button type="button" aria-label="Open Chat" onClick={() => window.dispatchEvent(new CustomEvent('openGlobalChat', { detail: { openInbox: true } }))} className="w-9 h-9 rounded-lg bg-themeElevated hover:bg-themeElevated/80 border border-themeBorder flex items-center justify-center text-themeTextSec hover:text-themeText dark:hover:text-themeText transition-all relative group focus:outline-none shadow-sm">
+ <i className="fa-regular fa-comment-dots text-[13px] group-hover:scale-110 transition-transform"></i>
+ </button>
+ </div>
+
+ <div 
+ className="relative h-full flex items-center"
  onMouseEnter={() => handleMouseEnter('notifications')}
  onMouseLeave={handleMouseLeave}
  >

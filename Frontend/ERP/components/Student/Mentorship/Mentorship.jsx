@@ -97,9 +97,9 @@ export default function Mentorship() {
 
  return (
  <div className="w-full min-h-screen bg-transparent text-themeText font-sans animate-fade-in pb-12">
- <div className="w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 lg:gap-8">
+ <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 flex flex-col gap-6 lg:gap-8">
  
- <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
+ <div className="mt-2 sm:mt-4 lg:mt-6 w-full">
  <PageHeader 
  icon="fa-solid fa-users-viewfinder" 
  title="Mentorship & Guidance" 
@@ -120,7 +120,7 @@ export default function Mentorship() {
  <div className="flex flex-col lg:flex-row gap-6">
  
  {/* Mentor Profile Card */}
- <div className="w-full lg:w-1/3 bg-themeApp border border-themeBorder rounded-[2rem] p-6 lg:p-8 flex flex-col items-center text-center h-fit relative overflow-hidden group hover:border-themeAccent/50 transition-all duration-300 shadow-sm hover:shadow-md">
+ <div className="w-full lg:w-1/3 bg-themeApp border border-themeBorder rounded-2xl sm:rounded-[2rem] p-5 sm:p-6 lg:p-8 flex flex-col items-center text-center h-fit relative overflow-hidden group hover:border-themeAccent/50 transition-all duration-300 shadow-sm hover:shadow-md">
  <div className="absolute top-0 right-0 w-32 h-32 bg-themeAccent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-themeAccent/20 transition-all"></div>
  <div className="relative w-28 h-28 mb-6">
  <div className="absolute inset-0 bg-themeAccent/10 rounded-full blur-xl animate-pulse"></div>

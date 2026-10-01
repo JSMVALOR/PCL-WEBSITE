@@ -159,6 +159,67 @@ function ActiveChatView({ conversation, onBack, userSession }) {
   );
 }
 
+// Subcomponent: New Chat Picker
+function NewChatPicker({ onSelect, onBack, userSession }) {
+  const [contacts, setContacts] = useState([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      const myRole = userSession?.role;
+      // Determine which roles this user can message
+      let allowedRoles = ['faculty', 'admin'];
+      if (myRole === 'faculty' || myRole === 'admin') allowedRoles = ['student', 'faculty', 'admin'];
+      
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, full_name, role, profile_picture_url')
+        .in('role', allowedRoles)
+        .neq('id', userSession.db_id)
+        .order('full_name', { ascending: true });
+      setContacts(data || []);
+      setLoading(false);
+    };
+    load();
+  }, []);
+
+  const filtered = contacts.filter(c => c.full_name?.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-2 p-3 border-b border-themeBorder bg-themeElevated/50 shrink-0">
+        <button type="button" onClick={onBack} className="w-8 h-8 rounded-full hover:bg-themePanel flex items-center justify-center text-themeText transition">
+          <i className="fa-solid fa-arrow-left text-xs"></i>
+        </button>
+        <input 
+          type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search contacts..." autoFocus
+          className="flex-1 bg-themePanel border border-themeBorder rounded-full px-3 py-1.5 text-xs text-themeText outline-none focus:border-themeAccent transition"
+        />
+      </div>
+      <div className="flex-1 overflow-y-auto no-scrollbar">
+        {loading ? (
+          <div className="flex items-center justify-center h-32"><i className="fa-solid fa-circle-notch fa-spin text-themeTextSec"></i></div>
+        ) : filtered.length === 0 ? (
+          <p className="text-center text-xs text-themeTextSec p-6">No contacts found</p>
+        ) : (
+          filtered.map(c => (
+            <div key={c.id} onClick={() => onSelect({ userId: c.id, name: c.full_name, role: c.role, avatar: c.profile_picture_url })} className="p-3 flex items-center gap-3 hover:bg-themeElevated cursor-pointer transition border-b border-themeBorder/50">
+              <div className="w-9 h-9 rounded-full bg-themePanel overflow-hidden border border-themeBorder shrink-0">
+                <img src={c.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.full_name)}&background=random`} alt="" className="w-full h-full object-cover" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-sm font-bold text-themeText truncate">{c.full_name}</h4>
+                <span className="text-[9px] font-bold text-themeAccent uppercase tracking-widest">{c.role}</span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AssistantWidget() {
   const { userSession } = useERP();
   const [isOpen, setIsOpen] = useState(false);
@@ -168,6 +229,7 @@ export default function AssistantWidget() {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [globalUnreadCount, setGlobalUnreadCount] = useState(0);
+  const [showNewChat, setShowNewChat] = useState(false);
 
   // Assistant States
   const [botMessages, setBotMessages] = useState([
@@ -177,13 +239,17 @@ export default function AssistantWidget() {
   const [isTyping, setIsTyping] = useState(false);
   const botEndRef = useRef(null);
 
-  // 1. Listen for global events to open specific chat
+  // 1. Listen for global events to open specific chat or inbox
   useEffect(() => {
     const handleOpenGlobalChat = (e) => {
-      const { userId, name, role, avatar } = e.detail;
+      const { userId, name, role, avatar, openInbox } = e.detail || {};
       setIsOpen(true);
       setActiveTab('chat');
-      setActiveConversation({ userId, name, role, avatar });
+      if (openInbox) {
+        setActiveConversation(null); // show inbox list
+      } else if (userId) {
+        setActiveConversation({ userId, name, role, avatar });
+      }
     };
     window.addEventListener('openGlobalChat', handleOpenGlobalChat);
     return () => window.removeEventListener('openGlobalChat', handleOpenGlobalChat);
@@ -355,19 +421,37 @@ export default function AssistantWidget() {
             {/* --- CHAT HUB TAB --- */}
             {activeTab === 'chat' && (
               <div className="flex flex-col h-full bg-themeApp">
-                {!activeConversation ? (
+                {showNewChat ? (
+                  <NewChatPicker 
+                    userSession={userSession} 
+                    onBack={() => setShowNewChat(false)} 
+                    onSelect={(convo) => { setShowNewChat(false); setActiveConversation(convo); }} 
+                  />
+                ) : !activeConversation ? (
                   // Inbox List
-                  <div className="flex-1 overflow-y-auto no-scrollbar">
+                  <div className="flex-1 overflow-y-auto no-scrollbar relative">
                     {conversations.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-themeTextSec p-6 text-center gap-3">
                         <HugeiconsIcon icon={Chatting01Icon} size={48} className="opacity-20" />
-                        <p className="text-xs">No active conversations. Open the Directory to message someone.</p>
+                        <p className="text-xs">No conversations yet.</p>
+                        <button onClick={() => setShowNewChat(true)} className="mt-2 px-4 py-2 rounded-xl bg-themeAccent text-white text-xs font-bold shadow-lg hover:scale-105 transition-transform">
+                          Start a Conversation
+                        </button>
                       </div>
                     ) : (
-                      conversations.map(convo => (
-                        <ChatInboxItem key={convo.userId} conversation={convo} onSelect={setActiveConversation} />
-                      ))
+                      <>
+                        {conversations.map(convo => (
+                          <ChatInboxItem key={convo.userId} conversation={convo} onSelect={setActiveConversation} />
+                        ))}
+                      </>
                     )}
+                    {/* Floating + button */}
+                    <button 
+                      onClick={() => setShowNewChat(true)} 
+                      className="absolute bottom-4 right-4 w-11 h-11 rounded-full bg-themeAccent text-white shadow-xl shadow-themeAccent/30 flex items-center justify-center hover:scale-110 transition-transform active:scale-95"
+                    >
+                      <i className="fa-solid fa-plus text-sm"></i>
+                    </button>
                   </div>
                 ) : (
                   // Active Chat View

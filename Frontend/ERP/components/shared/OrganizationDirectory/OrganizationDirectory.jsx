@@ -21,7 +21,6 @@ export default function OrganizationDirectory() {
  const fetchDirectory = async () => {
  setIsLoading(true);
  try {
- // Fetch all active profiles
  const { data, error } = await supabase
  .from('profiles')
  .select('id, full_name, email, role, profile_picture_url, phone, erp_id, department')
@@ -38,7 +37,7 @@ export default function OrganizationDirectory() {
  });
  }
  setMembers(directory);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); } finally {
  setIsLoading(false);
  }
  };
@@ -49,12 +48,28 @@ export default function OrganizationDirectory() {
  (member.erp_id || '').toLowerCase().includes(searchQuery.toLowerCase())
  );
 
+ // Determine if the current user can message a given member
+ const canMessage = (member) => {
+ if (!userSession?.db_id || member.id === userSession.db_id) return false;
+ const myRole = userSession?.role;
+ const theirRole = member.role;
+ // Students & Parents can only message faculty/admin
+ if ((myRole === 'student' || myRole === 'parent') && theirRole === 'student') return false;
+ if (myRole === 'parent' && theirRole === 'parent') return false;
+ return true;
+ };
+
+ const openChat = (member) => {
+ window.dispatchEvent(new CustomEvent('openGlobalChat', { 
+ detail: { userId: member.id, name: member.full_name, role: member.role, avatar: member.profile_picture_url } 
+ }));
+ };
+
  return (
  <div className="w-full flex flex-col gap-6 relative z-10">
  {/* Header & Controls */}
  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
  <div className="flex bg-themeElevated p-1 rounded-xl backdrop-blur-xl border border-themeBorder shrink-0">
- 
  <button type="button" 
  onClick={() => setActiveTab('faculty')}
  className={`px-6 py-2 rounded-lg text-xs font-bold tracking-normal transition-all ${
@@ -71,9 +86,6 @@ export default function OrganizationDirectory() {
  >
  Students ({members.student.length})
  </button>
- 
- 
-
  </div>
 
  <div className="relative w-full md:w-64">
@@ -110,8 +122,9 @@ export default function OrganizationDirectory() {
  exit={{ opacity: 0, scale: 0.9 }}
  transition={{ duration: 0.2 }}
  key={member.id}
- className="bg-themePanel/70 dark:bg-themePanel/[0.03] backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-5 flex items-center gap-4 group"
+ className="bg-themePanel/70 dark:bg-themePanel/[0.03] backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)] rounded-2xl p-5 flex flex-col group"
  >
+ <div className="flex items-center gap-4">
  <div className="w-16 h-16 rounded-xl bg-themeElevated border border-themeBorder shadow-inner overflow-hidden flex items-center justify-center shrink-0">
  <img 
  src={
@@ -143,22 +156,21 @@ export default function OrganizationDirectory() {
  <span className="truncate">{member.department || member.phone}</span>
  </div>
  )}
- 
-              </div>
-              
-              {/* Message Action Button */}
-              {!(userSession?.role === 'student' && member.role === 'student') && member.id !== userSession?.db_id && (
-                <button 
-                  onClick={() => window.dispatchEvent(new CustomEvent('openGlobalChat', { detail: { userId: member.id, name: member.full_name, role: member.role, avatar: member.profile_picture_url } }))}
-                  className="mt-3 w-full py-2 rounded-lg bg-themeElevated hover:bg-themeAccent hover:text-white border border-themeBorder text-themeTextSec text-[11px] font-bold transition flex items-center justify-center gap-2 group/btn"
-                >
-                  <HugeiconsIcon icon={Chatting01Icon} size={14} className="group-hover/btn:scale-110 transition-transform" />
-                  Direct Message
-                </button>
-              )}
-            </div>
-          </motion.div>
+ </div>
+ </div>
+ </div>
 
+ {/* Message Action Button — at card level, not nested */}
+ {canMessage(member) && (
+ <button 
+ onClick={() => openChat(member)}
+ className="mt-4 w-full py-2.5 rounded-xl bg-themeElevated hover:bg-themeAccent hover:text-white border border-themeBorder text-themeTextSec text-[11px] font-bold transition-all flex items-center justify-center gap-2 group/btn active:scale-[0.98]"
+ >
+ <HugeiconsIcon icon={Chatting01Icon} size={14} className="group-hover/btn:scale-110 transition-transform" />
+ Direct Message
+ </button>
+ )}
+ </motion.div>
  ))}
  </AnimatePresence>
  </div>

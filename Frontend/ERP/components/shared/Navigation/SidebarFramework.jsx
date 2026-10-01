@@ -292,6 +292,13 @@ export default function SidebarFramework({
  )}
  </button>
  <button 
+ onClick={(e) => { e.stopPropagation(); window.dispatchEvent(new CustomEvent('openGlobalChat', { detail: { openInbox: true } })); }}
+ className="w-8 h-8 rounded-lg flex items-center justify-center text-themeTextSec hover:text-themeAccent hover:bg-themeAccent/10 transition-colors relative tooltip-trigger"
+ title="Chat Hub"
+ >
+ <i className="fa-regular fa-comment-dots text-[13px]"></i>
+ </button>
+ <button 
  onClick={(e) => { e.stopPropagation(); onLogout?.(); }}
  className="w-8 h-8 rounded-lg flex items-center justify-center text-themeTextSec hover:text-rose-500 hover:bg-rose-500/10 transition-colors shrink-0 tooltip-trigger"
  title="Log Out"

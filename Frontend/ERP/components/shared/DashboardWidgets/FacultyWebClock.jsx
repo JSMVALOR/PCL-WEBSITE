@@ -32,7 +32,7 @@ export default function FacultyWebClock() {
  .maybeSingle();
  
  if (data) setAttendanceRecord(data);
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -64,7 +64,7 @@ export default function FacultyWebClock() {
  } else {
  setAttendanceRecord(data);
  }
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again."); } finally {
  setLoading(false);
  }
  };
@@ -82,18 +82,25 @@ export default function FacultyWebClock() {
  total_missed_minutes: (attendanceRecord.late_minutes || 0) + earlyMins
  };
 
- const { data, error } = await supabase
- .from('faculty_daily_presence')
- .update(payload).eq('faculty_id', userSession.db_id).eq('date', format(new Date(), 'yyyy-MM-dd'))
- .select()
- .single();
+ // Use the record id if available, otherwise fallback to faculty_id + date filter
+ let query = supabase.from('faculty_daily_presence').update(payload);
+ if (attendanceRecord?.id) {
+ query = query.eq('id', attendanceRecord.id);
+ } else {
+ query = query.eq('faculty_id', userSession.db_id).eq('date', format(new Date(), 'yyyy-MM-dd'));
+ }
+
+ const { data, error } = await query.select().single();
  
  if (error) {
+ console.warn('Clock out DB error, applying locally:', error.message);
  setAttendanceRecord({ ...attendanceRecord, ...payload });
+ if (window.erpToast) window.erpToast.show("Clocked out (offline mode)", "warning");
  } else {
  setAttendanceRecord(data);
+ if (window.erpToast) window.erpToast.show("Clocked out successfully!", "success");
  }
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("Clock out failed. Try again.", "error"); } finally {
  setLoading(false);
  }
  };
