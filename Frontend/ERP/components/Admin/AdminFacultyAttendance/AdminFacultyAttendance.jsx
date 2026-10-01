@@ -102,7 +102,8 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  status: newStatus,
  // if they are marked absent, we count the full day as late_minutes so payroll deducts it
  // OR we just rely on the status 'absent' in the payroll module.
- };
+        };
+        if (newStatus === 'On Time' || newStatus === 'present') payload.late_minutes = 0;
 
  const { error } = await supabase
  .from('faculty_daily_presence')
@@ -219,7 +220,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  <i className="fa-solid fa-check"></i> Present
  </span>
  <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest">
- {fac.source === 'auto_class' ? '(Auto: Class Taken)' : '(Manual Override)'}
+ {fac.source === 'auto_class' ? '(Auto: Class Taken)' : fac.source.includes('WebClock') ? `(${fac.source})` : '(Manual Override)'}
  </span>
  </div>
  ) : fac.status === 'absent' ? (
@@ -245,7 +246,17 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
 
  {/* Action Buttons */}
  <div className="flex items-center gap-2 shrink-0">
- {fac.status !== 'present' && (
+ {fac.source && fac.source.includes('Late') && (
+                        <button 
+                          onClick={() => handleMarkStatus(fac.id, 'On Time', 'Late')}
+                          disabled={actionLoading === fac.id}
+                          className="w-8 h-8 rounded-lg bg-themeElevated hover:bg-emerald-500/20 text-themeTextSec hover:text-emerald-500 transition-colors flex items-center justify-center border border-transparent hover:border-emerald-500/30"
+                          title="Waive Late Penalty (Mark On Time)"
+                        >
+                          {actionLoading === fac.id ? <i className="fa-solid fa-spinner fa-spin text-[10px]"></i> : <i className="fa-solid fa-wand-magic-sparkles text-[10px]"></i>}
+                        </button>
+                      )}
+                      {fac.status !== 'present' && (
  <button 
  onClick={() => handleMarkStatus(fac.id, 'present', fac.status)}
  disabled={actionLoading === fac.id}

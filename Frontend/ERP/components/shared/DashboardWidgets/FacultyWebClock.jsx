@@ -133,11 +133,11 @@ export default function FacultyWebClock() {
  </div>
  </div>
 
- <div className="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-4 relative z-10">
+ <div className="mt-5 pt-4 border-t border-white/10 grid grid-cols-2 gap-4 relative z-10">
  <button
  onClick={handleClockIn}
  disabled={!isWorkingDay || loading || attendanceRecord?.clock_in}
- className={`p-4 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${
+ className={`py-3 px-4 rounded-xl flex flex-row items-center justify-center gap-2 transition-all ${
  attendanceRecord?.clock_in 
  ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 opacity-80' 
  : isWorkingDay ? 'bg-emerald-500 hover:bg-emerald-400 text-themeText active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-themePanel/5 text-themeTextSec cursor-not-allowed'
@@ -152,7 +152,7 @@ export default function FacultyWebClock() {
  <button
  onClick={handleClockOut}
  disabled={!isWorkingDay || loading || !attendanceRecord?.clock_in || attendanceRecord?.clock_out}
- className={`p-4 rounded-xl flex flex-col items-center justify-center gap-2 transition-all ${
+ className={`py-3 px-4 rounded-xl flex flex-row items-center justify-center gap-2 transition-all ${
  attendanceRecord?.clock_out 
  ? 'bg-amber-500/20 border border-amber-500/30 text-amber-400 opacity-80' 
  : (attendanceRecord?.clock_in && isWorkingDay) ? 'bg-amber-500 hover:bg-amber-400 text-themeText active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'bg-themePanel/5 text-themeTextSec cursor-not-allowed'
