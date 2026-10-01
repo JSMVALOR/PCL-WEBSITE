@@ -148,6 +148,7 @@ export default function Leave({ isEmbedded = false }) {
  }
  } catch (error) {
  console.error("Failed to sync leave history:", error);
+ }
  };
 
  useEffect(() => {
