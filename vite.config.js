@@ -21,8 +21,8 @@ export default defineConfig({
         name: 'Prudentia College of Law ERP',
         short_name: 'PCL ERP',
         description: 'Enterprise Resource Planning for Prudentia College of Law',
-        theme_color: '#050505',
-        background_color: '#050505',
+        theme_color: '#5D4037',
+        background_color: '#F4EFE6',
         display: 'standalone',
         icons: [
           {

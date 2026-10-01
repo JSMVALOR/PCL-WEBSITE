@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState, useEffect, useMemo } from 'react';
 import { useERP } from '../../../context/ErpContext';
-import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo.svg';
+import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo_gold.svg';
 import { getLocalAvatar } from '../../../utils/avatarUtils';
 
 // --- Constants & Config ---
@@ -202,7 +202,7 @@ export default function SidebarFramework({
  <div className="h-20 flex items-center justify-between px-5 shrink-0 border-b border-themeBorder ">
  <div className="flex items-center gap-3 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity" onClick={() => handleTabSwitch('dashboard')}>
  <div className="w-9 h-9 rounded-xl bg-themeElevated backdrop-blur-md border border-themeBorder dark:border-themeBorder flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden">
- <img src={pclLogo} alt="PCL" className="w-5 h-5 theme-logo transition-transform duration-300" />
+ <img src={pclLogo} alt="PCL" className="w-5 h-5  transition-transform duration-300" />
  </div>
  {!isCompact && (
  <div className="flex flex-col min-w-0 animate-fade-in whitespace-nowrap">
