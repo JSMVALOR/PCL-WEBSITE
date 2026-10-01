@@ -18,6 +18,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       manifest: {
+        start_url: '/login',
+        scope: '/',
         name: 'Prudentia College of Law ERP',
         short_name: 'PCL ERP',
         description: 'Enterprise Resource Planning for Prudentia College of Law',
