@@ -109,7 +109,7 @@ export default function Mentorship() {
 
  <div className="flex flex-col gap-6">
  {isLoading ? (
- <div className="w-full py-16 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
+ <div className="w-full py-16 flex justify-center"><div className="w-6 h-6 border-2 border-themeAccent border-t-transparent rounded-full animate-spin"></div></div>
  ) : !mentorData ? (
  <div className="w-full py-20 lg:py-32 text-center flex flex-col items-center justify-center">
  <i className="fa-solid fa-user-slash text-4xl lg:text-5xl text-neutral-800 mb-4 lg:mb-6"></i>
@@ -179,7 +179,7 @@ export default function Mentorship() {
  meeting.status === 'completed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
  meeting.status === 'scheduled' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
  meeting.status === 'cancelled' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' :
- 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+ 'bg-themeAccent/10 text-themeAccent border-themeAccent/20'
  }`}>
  {meeting.status}
  </span>
@@ -216,14 +216,14 @@ export default function Mentorship() {
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Discussion Topic</label>
- <input type="text" required value={requestForm.topic} onChange={e => setRequestForm({...requestForm, topic: e.target.value})} placeholder="e.g. Career Guidance, Academic Help" className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition placeholder:text-themeTextSec/50 /20" />
+ <input type="text" required value={requestForm.topic} onChange={e => setRequestForm({...requestForm, topic: e.target.value})} placeholder="e.g. Career Guidance, Academic Help" className="w-full bg-themeElevated  border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-themeAccent outline-none transition placeholder:text-themeTextSec/50 /20" />
  </div>
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Preferred Date & Time (Optional)</label>
  
  {/* INLINE CALENDAR & TIME PICKER */}
- <div className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-2xl p-4 selection:bg-transparent">
+ <div className="w-full bg-themeElevated  border border-themeBorder rounded-2xl p-4 selection:bg-transparent">
  <div className="flex justify-between items-center mb-4">
  <button type="button" onClick={() => {
  const d = new Date(requestForm.preferred_date || new Date());
@@ -246,7 +246,7 @@ export default function Mentorship() {
  
  <div className="grid grid-cols-7 gap-1 text-center mb-2">
  {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
- <div key={d} className="text-[10px] font-bold text-themeTextSec /40">{d}</div>
+ <div key={d} className="text-[10px] font-bold text-themeTextSec/40">{d}</div>
  ))}
  </div>
  <div className="grid grid-cols-7 gap-1">
@@ -279,9 +279,9 @@ export default function Mentorship() {
  }}
  className={`aspect-square flex items-center justify-center rounded-full text-xs font-bold transition-all ${
  isSelected 
- ? 'bg-amber-500 text-themeText shadow-md scale-105 z-10' 
+ ? 'bg-themeAccent text-themeText shadow-md scale-105 z-10' 
  : isPast 
- ? 'text-themeTextSec /20 opacity-50 cursor-not-allowed'
+ ? 'text-themeTextSec/20 opacity-50 cursor-not-allowed'
  : 'text-themeText hover:bg-themeElevated '
  }`}
  >
@@ -307,7 +307,7 @@ export default function Mentorship() {
  setRequestForm({...requestForm, preferred_date: new Date(old - old.getTimezoneOffset() * 60000).toISOString().slice(0, 16)});
  }}
  className={`px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors border ${
- isSelectedTime ? 'bg-amber-500 text-themeText border-amber-500 shadow-sm' : 'bg-themeElevated/50 border-themeBorder text-themeTextSec /60 hover:text-themeText dark:hover:text-themeApp hover:border-themeAccent/30'
+ isSelectedTime ? 'bg-themeAccent text-themeText border-themeAccent shadow-sm' : 'bg-themeElevated/50 border-themeBorder text-themeTextSec/60 hover:text-themeText  hover:border-themeAccent/30'
  }`}
  >
  {parseInt(time.split(':')[0]) > 12 ? parseInt(time.split(':')[0]) - 12 + ':00 PM' : time === '12:00' ? '12:00 PM' : time + ' AM'}
@@ -318,7 +318,7 @@ export default function Mentorship() {
  </div>
  </div>
 
- <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-themeText font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
+ <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-themeAccent text-themeText font-black text-sm hover:bg-themeAccent/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
  {isSubmitting ? <div className="w-4 h-4 border-2 border-themeBorder border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> Submit Request</>}
  </button>
  </form>

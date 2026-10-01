@@ -43,10 +43,10 @@ const InlineCalendar = ({ value, onChange, minDate, maxDate, placeholder }) => {
  <div className="relative" ref={wrapperRef}>
  <div 
  onClick={() => setIsOpen(!isOpen)}
- className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText hover:border-amber-500 cursor-pointer transition flex items-center justify-between"
+ className="w-full bg-themeElevated  border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText hover:border-themeAccent cursor-pointer transition flex items-center justify-between"
  >
  {value ? new Date(value).toLocaleDateString('en-GB') : placeholder}
- <i className="fa-solid fa-calendar text-themeTextSec /30 pointer-events-none"></i>
+ <i className="fa-solid fa-calendar text-themeTextSec/30 pointer-events-none"></i>
  </div>
  {isOpen && (
  <div className="absolute z-[100] top-full mt-2 left-0 w-full bg-themePanel border border-themeBorder shadow-2xl rounded-2xl p-4">
@@ -63,7 +63,7 @@ const InlineCalendar = ({ value, onChange, minDate, maxDate, placeholder }) => {
  </div>
  <div className="grid grid-cols-7 gap-1 mb-2">
  {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
- <div key={d} className="text-[10px] font-bold text-themeTextSec /40 text-center">{d}</div>
+ <div key={d} className="text-[10px] font-bold text-themeTextSec/40 text-center">{d}</div>
  ))}
  </div>
  <div className="grid grid-cols-7 gap-1">
@@ -82,9 +82,9 @@ const InlineCalendar = ({ value, onChange, minDate, maxDate, placeholder }) => {
  onClick={() => handleSelect(date)}
  className={`aspect-square flex items-center justify-center rounded-full text-xs font-bold transition-all ${
  isSelected 
- ? 'bg-amber-500 text-themeText shadow-md scale-105 z-10' 
+ ? 'bg-themeAccent text-themeText shadow-md scale-105 z-10' 
  : disabled 
- ? 'text-themeTextSec /20 opacity-50 cursor-not-allowed'
+ ? 'text-themeTextSec/20 opacity-50 cursor-not-allowed'
  : 'text-themeText hover:bg-themeElevated '
  }`}
  >
@@ -99,7 +99,7 @@ const InlineCalendar = ({ value, onChange, minDate, maxDate, placeholder }) => {
  );
 };
 
-export default function Leave({ isEmbedded = false, }) {
+export default function Leave({ isEmbedded = false }) {
  const { userSession, events = [] } = useERP();
 
  // --- MAIN STATE ---
@@ -148,7 +148,6 @@ export default function Leave({ isEmbedded = false, }) {
  }
  } catch (error) {
  console.error("Failed to sync leave history:", error);
- }
  };
 
  useEffect(() => {
@@ -289,8 +288,9 @@ export default function Leave({ isEmbedded = false, }) {
  };
 
  return (
- <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText" : ""}`}>
- <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
+ <div className="w-full min-h-screen bg-transparent text-themeText font-sans animate-fade-in pb-12">
+ <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 flex flex-col gap-6 lg:gap-8">
+
 
  <PageHeader 
  icon="fa-solid fa-calendar-minus"
@@ -299,7 +299,7 @@ export default function Leave({ isEmbedded = false, }) {
  rightContent={
  <button type="button"
  onClick={() => setShowRequestModal(true)}
- className="w-full lg:w-auto bg-amber-500 hover:bg-amber-400 text-[var(--theme-app)] px-6 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition active:scale-95 flex justify-center items-center gap-2"
+ className="w-full lg:w-auto bg-themeAccent hover:bg-themeAccent/80 text-[var(--theme-app)] px-6 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition active:scale-95 flex justify-center items-center gap-2"
  >
  <i className="fa-solid fa-paper-plane"></i> New Request
  </button>
@@ -411,12 +411,12 @@ export default function Leave({ isEmbedded = false, }) {
 
  
  {conflictingEvents.length > 0 && (
- <div className="p-4 rounded-xl text-xs font-bold uppercase tracking-widest flex flex-col gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-500">
+ <div className="p-4 rounded-xl text-xs font-bold uppercase tracking-widest flex flex-col gap-2 bg-themeAccent/10 border border-themeAccent/20 text-themeAccent">
  <div className="flex items-center gap-2">
  <i className="fa-solid fa-triangle-exclamation"></i>
  <span>WARNING: LEAVE BLOCKED DURING COLLEGE EVENTS</span>
  </div>
- <span className="text-[9px] text-amber-500/80 normal-case tracking-normal">
+ <span className="text-[9px] text-themeAccent/80 normal-case tracking-normal">
  You are applying for leave during <strong>{conflictingEvents.map(e => e.title).join(', ')}</strong>. Leaves during events are strictly blocked and will only be approved in urgent emergencies.
  </span>
  </div>
@@ -424,12 +424,12 @@ export default function Leave({ isEmbedded = false, }) {
 <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Leave Category</label>
  <div className="relative">
- <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-amber-500 outline-none transition appearance-none cursor-pointer">
+ <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-themeElevated  border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-bold text-themeText focus:border-themeAccent outline-none transition appearance-none cursor-pointer">
  <option value="Medical Leave">Medical Leave</option>
  <option value="Official Duty">Official Duty (Moot, Sports, etc.)</option>
  <option value="Personal Leave">Personal / Family Leave</option>
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec /30 pointer-events-none text-xs"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec/30 pointer-events-none text-xs"></i>
  </div>
  </div>
 
@@ -446,7 +446,7 @@ export default function Leave({ isEmbedded = false, }) {
 
  <div>
  <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Reason for Leave</label>
- <textarea rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide specific details..." className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-medium text-themeText focus:border-amber-500 outline-none transition resize-none placeholder:text-themeTextSec /30" required></textarea>
+ <textarea rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide specific details..." className="w-full bg-themeElevated  border border-themeBorder rounded-xl px-4 py-3.5 text-sm font-medium text-themeText focus:border-themeAccent outline-none transition resize-none placeholder:text-themeTextSec/30" required></textarea>
  </div>
 
  <div>
@@ -460,12 +460,12 @@ export default function Leave({ isEmbedded = false, }) {
  }
  setDocumentFile(file);
  }} className="hidden" accept=".pdf,.jpg,.png" />
- <div onClick={() => fileInputRef.current.click()} className="bg-themeElevated dark:bg-themeApp border border-themeBorder hover:border-amber-500/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
- <div className="w-12 h-12 rounded-full bg-themePanel/5 text-themeTextSec group-hover:text-amber-500 flex items-center justify-center mb-3 transition-colors">
+ <div onClick={() => fileInputRef.current.click()} className="bg-themeElevated  border border-themeBorder hover:border-themeAccent/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
+ <div className="w-12 h-12 rounded-full bg-themePanel/5 text-themeTextSec group-hover:text-themeAccent flex items-center justify-center mb-3 transition-colors">
  <i className="fa-solid fa-cloud-arrow-up text-lg"></i>
  </div>
  <p className="text-xs font-bold text-themeText mb-1">Upload Medical Cert. or Proof</p>
- <p className="text-[10px] font-medium text-themeTextSec /30 uppercase tracking-widest">PDF, JPG or PNG (Max 5MB)</p>
+ <p className="text-[10px] font-medium text-themeTextSec/30 uppercase tracking-widest">PDF, JPG or PNG (Max 5MB)</p>
  {documentFile && (
  <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-lg text-xs font-bold flex items-center gap-2">
  <i className="fa-solid fa-file-check"></i> {documentFile.name}
@@ -474,7 +474,7 @@ export default function Leave({ isEmbedded = false, }) {
  </div>
  </div>
 
- <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-amber-500 text-themeText font-black text-sm hover:bg-amber-400 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+ <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-themeAccent text-themeText font-black text-sm hover:bg-themeAccent/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
  {isSubmitting ? <div className="w-4 h-4 border-2 border-themeBorder border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> Submit Application</>}
  </button>
  </form>
