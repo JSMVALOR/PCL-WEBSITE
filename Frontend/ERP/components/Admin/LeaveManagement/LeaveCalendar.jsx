@@ -48,7 +48,7 @@ export default function LeaveCalendar({}) {
  
  // Blank days before 1st
  for (let i = 0; i < firstDay; i++) {
- days.push(<div key={`blank-${i}`} className="min-h-[100px] border border-themeBorder dark:border-white/[0.08]/50 bg-themeElevated /30 rounded-xl"></div>);
+ days.push(<div key={`blank-${i}`} className="min-h-[60px] md:min-h-[100px] border border-themeBorder dark:border-white/[0.08]/50 bg-themeElevated /30 rounded-xl"></div>);
  }
 
  // Days of month
@@ -63,7 +63,7 @@ export default function LeaveCalendar({}) {
  const isToday = new Date().toISOString().split('T')[0] === dateStr;
 
  days.push(
- <div key={day} className={`min-h-[80px] lg:min-h-[100px] border-[length:var(--border-width)] rounded-xl p-1.5 lg:p-2 transition relative flex flex-col gap-1 overflow-hidden group
+ <div key={day} className={`min-h-[50px] md:min-h-[80px] lg:min-h-[60px] md:min-h-[100px] border-[length:var(--border-width)] rounded-xl p-1.5 lg:p-2 transition relative flex flex-col gap-1 overflow-hidden group
  ${isToday ? 'border-indigo-500 bg-indigo-500/5' : 'border-themeBorder bg-themePanel shadow-sm/85 backdrop-blur-2xl hover:bg-themeElevated /90 backdrop-blur-2xl hover:border-themeBorder '}
  `}>
  <div className="flex justify-between items-center mb-0.5 lg:mb-1">
@@ -101,7 +101,7 @@ export default function LeaveCalendar({}) {
  </div>
  </div>
 
- <div className="grid grid-cols-7 gap-3 mb-2">
+ <div className="grid grid-cols-7 gap-1 md:gap-3 mb-2">
  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
  <div key={day} className="text-center text-[13px] font-medium text-themeTextSec">
  {day}
@@ -109,7 +109,7 @@ export default function LeaveCalendar({}) {
  ))}
  </div>
 
- <div className="grid grid-cols-7 gap-3 relative">
+ <div className="grid grid-cols-7 gap-1 md:gap-3 relative">
  {isLoading && (
  <div className="absolute inset-0 z-10 bg-themePanel shadow-sm/50 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl">
  <i className="fa-solid fa-circle-notch fa-spin text-4xl text-indigo-500 mb-4"></i>

@@ -79,7 +79,7 @@ export default function LeaveRequests({ onReviewRequest }) {
  ) : (
  <div className="flex flex-col gap-4">
  {filtered.map(req => (
- <div key={req.id} className="bg-themePanel shadow-sm border border-themeBorder dark:border-white/[0.08] rounded-[2rem] p-5 lg:p-6 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 hover:border-themeAccent/30 transition-colors group">
+ <div key={req.id} className="bg-themePanel shadow-sm border border-themeBorder dark:border-white/[0.08] rounded-2xl lg:rounded-[2rem] p-4 lg:p-6 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 lg:gap-6 hover:border-themeAccent/30 transition-colors group">
  
  <div className="flex items-start gap-4 flex-1">
  <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0 border border-blue-500/20 font-black">
@@ -112,7 +112,7 @@ export default function LeaveRequests({ onReviewRequest }) {
  req.status === 'rejected' ? 'bg-rose-500' : 'bg-amber-500 animate-pulse'
  }`}></span>
  </div>
- <div className="w-px h-6 bg-black/10 "></div>
+ <div className="w-px h-6 bg-black/10 mx-1"></div>
  <div className="flex flex-col items-center">
  <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mb-1">Substitute</span>
  {req.replacement_faculty_id ? (

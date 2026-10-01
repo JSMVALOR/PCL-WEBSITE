@@ -53,7 +53,7 @@ export default function LeavePolicies() {
  return (
  <div className="w-full flex flex-col gap-6 animate-fade-in">
  {/* Header Section */}
- <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-themeElevated border border-themeBorder rounded-2xl p-6 backdrop-blur-3xl">
+ <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-themeElevated border border-themeBorder rounded-2xl p-4 lg:p-6 backdrop-blur-3xl">
  <div>
  <h2 className="text-xl font-black tracking-tight text-themeText mb-1">Leave Policies Configuration</h2>
  <p className="text-xs font-bold text-themeTextSec tracking-widest uppercase">Manage annual limits and rules for different leave types.</p>
@@ -64,14 +64,14 @@ export default function LeavePolicies() {
  </div>
 
  {/* Policies Grid */}
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
  {policies.map((policy, idx) => {
  const c = getColorClasses(policy.color_theme);
  return (
- <div key={policy.id || idx} className={`bg-themePanel dark:bg-themeApp border border-themeBorder rounded-2xl p-6 relative overflow-hidden group hover:border-${policy.color_theme}-500/30 transition-colors`}>
+ <div key={policy.id || idx} className={`bg-themePanel dark:bg-themeApp border border-themeBorder rounded-2xl p-4 lg:p-6 relative overflow-hidden group hover:border-${policy.color_theme}-500/30 transition-colors`}>
  <div className={`absolute top-0 left-0 w-full h-1 bg-${policy.color_theme}-500`}></div>
  
- <div className="flex justify-between items-start mb-6">
+ <div className="flex justify-between items-start mb-4 lg:mb-6">
  <div className="flex items-center gap-4">
  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${c.bg} ${c.text} text-xl`}>
  <i className="fa-solid fa-scale-balanced"></i>
@@ -86,7 +86,7 @@ export default function LeavePolicies() {
  </button>
  </div>
 
- <p className="text-sm font-medium text-themeTextSec /60 mb-8 h-10">
+ <p className="text-sm font-medium text-themeTextSec /60 mb-4 lg:mb-8 h-auto lg:h-10">
  {policy.description}
  </p>
 
