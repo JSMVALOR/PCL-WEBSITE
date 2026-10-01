@@ -34,6 +34,15 @@ client.on('qr', async (qr) => {
     console.log('QR Code Generated - Ready to scan');
 });
 
+client.on('authenticated', () => {
+    console.log('AUTHENTICATED successfully!');
+});
+
+client.on('auth_failure', msg => {
+    console.error('AUTHENTICATION FAILURE', msg);
+    clientStatus = 'DISCONNECTED';
+});
+
 client.on('ready', () => {
     clientStatus = 'CONNECTED';
     qrDataURL = null;
