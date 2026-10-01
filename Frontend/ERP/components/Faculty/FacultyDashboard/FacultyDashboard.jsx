@@ -43,7 +43,7 @@ export default function FacultyDashboard({ setActiveTab }) {
  
  // C. Average Attendance (Real calculation from recent attendance records)
  // In a real app we'd join courses. For now, we fetch recent attendance where faculty might be involved or just system average if hod
- const { data: att } = await supabase.from('attendance').select('status').limit(100);
+ const { data: att } = await supabase.from('attendance_records').select('status').limit(100);
  let avgAtt = 0;
  if (att && att.length > 0) {
  const present = att.filter(a => a.status === 'present').length;
