@@ -72,7 +72,7 @@ export const ErpProvider = ({ children }) => {
  if (stored) return stored;
  
  // Auto-detect system preference
- if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+ if (false) {
  return 'midnight-justice';
  }
  return 'prudentia-classic';
