@@ -10,11 +10,31 @@ import AdminActivityFeed from "../../shared/DashboardWidgets/AdminActivityFeed";
 import AdminAttendanceDonut from "../../shared/DashboardWidgets/AdminAttendanceDonut";
 import AdminAdmissionsPipeline from "../../shared/DashboardWidgets/AdminAdmissionsPipeline";
 import AdminFeeProgress from "../../shared/DashboardWidgets/AdminFeeProgress";
+import { AdminLeaveWidget } from "../../shared/DashboardWidgets";
+import { supabase } from "../../../../Shared/lib/supabase/supabaseClient";
+import { useEffect } from "react";
 // AdminFAB removed to prevent overlap with IntelligentBot
 
 export default function AdminDashboard({ isEmbedded = false, setActiveTab }) {
+ 
  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
  const [viewMode, setViewMode] = useState('dashboard');
+ const [isAdmissionsOpen, setIsAdmissionsOpen] = useState(true);
+
+ useEffect(() => {
+   const checkAdmissions = async () => {
+     try {
+       const { data, error } = await supabase.from('system_settings').select('value').eq('key', 'admissions_status').single();
+       if (!error && data && data.value) {
+         setIsAdmissionsOpen(data.value.is_open !== false);
+       }
+     } catch (e) {
+       // Ignore
+     }
+   };
+   checkAdmissions();
+ }, []);
+
 
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated ${!isEmbedded ? "bg-themeApp text-themeText" : ""}`}>
@@ -46,7 +66,7 @@ export default function AdminDashboard({ isEmbedded = false, setActiveTab }) {
  {/* Row 3: Attendance + Admissions + Fees */}
  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
  <AdminAttendanceDonut />
- <AdminAdmissionsPipeline setActiveTab={setActiveTab} />
+ {isAdmissionsOpen ? <AdminAdmissionsPipeline setActiveTab={setActiveTab} /> : <AdminLeaveWidget setActiveTab={setActiveTab} />}
  <AdminFeeProgress />
  </div>
 
