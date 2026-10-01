@@ -415,11 +415,12 @@ export default function FacultyAttendance({ subjectContext }) {
  students = electiveStudents;
  } else {
  // Fetch students in the batch (text match)
+ const exactBatch = classData.batch ? classData.batch.split(' - ')[0] : '';
  const { data: batchStudents, error: bError } = await supabase
  .from('profiles')
  .select('id, full_name, erp_id')
  .eq('role', 'student')
- .ilike('academic_batch', `%${classData.batch.split(' ')[0]}%`)
+ .eq('academic_batch', exactBatch)
  .order('full_name');
  if (bError) throw bError;
  students = batchStudents;
@@ -465,16 +466,16 @@ export default function FacultyAttendance({ subjectContext }) {
  const updateAttendance = async (studentId, status) => {
  try {
  const currentRecord = attendanceRecords[studentId];
+ const isPhaseOneSkipped = currentRecord.isNew;
  
  // Optimistic update
  setAttendanceRecords(prev => ({
  ...prev,
- [studentId]: { ...prev[studentId], ...(status === 'arrived_late' ? { entry_status: 'late', exit_status: 'present' } : (attendancePhase === 'exit' && Object.values(prev).every(r => r.isNew)) ? { entry_status: 'present', exit_status: status } : attendancePhase === 'entry' ? { entry_status: status } : { exit_status: status }), isNew: false }
+ [studentId]: { ...prev[studentId], ...(status === 'arrived_late' ? { entry_status: 'late', exit_status: 'present' } : (attendancePhase === 'exit' && prev[studentId].isNew) ? { entry_status: 'present', exit_status: status } : attendancePhase === 'entry' ? { entry_status: status } : { exit_status: status }), isNew: false }
  }));
 
  // Sync to DB
  let payload;
- const isPhaseOneSkipped = Object.values(attendanceRecords).every(r => r.isNew);
  if (status === 'arrived_late') {
  payload = {
  session_id: activeSession.id,
