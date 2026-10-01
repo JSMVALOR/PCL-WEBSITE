@@ -6,6 +6,10 @@ import { AdminSystemVitals } from "../../shared/DashboardWidgets";
 import AdminKPIGrid from "./AdminKPIGrid";
 
 import AdminRightSidebar from "./AdminRightSidebar";
+import AdminActivityFeed from "../../shared/DashboardWidgets/AdminActivityFeed";
+import AdminAttendanceDonut from "../../shared/DashboardWidgets/AdminAttendanceDonut";
+import AdminAdmissionsPipeline from "../../shared/DashboardWidgets/AdminAdmissionsPipeline";
+import AdminFeeProgress from "../../shared/DashboardWidgets/AdminFeeProgress";
 // AdminFAB removed to prevent overlap with IntelligentBot
 
 export default function AdminDashboard({ isEmbedded = false, setActiveTab }) {
@@ -39,12 +43,15 @@ export default function AdminDashboard({ isEmbedded = false, setActiveTab }) {
  {/* Row 2: 6 KPI Cards */}
  <AdminKPIGrid setActiveTab={setActiveTab} />
 
+ {/* Row 3: Attendance + Admissions + Fees */}
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+ <AdminAttendanceDonut />
+ <AdminAdmissionsPipeline setActiveTab={setActiveTab} />
+ <AdminFeeProgress />
+ </div>
 
-
- 
- 
-
-
+ {/* Row 4: Activity Feed */}
+ <AdminActivityFeed />
 
 
  </div>

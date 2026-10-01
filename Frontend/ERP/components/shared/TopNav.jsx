@@ -254,7 +254,7 @@ export default function TopNav({ userSession, activeTab, setActiveTab, onLogout 
  onMouseLeave={handleMouseLeave}
  >
  <button type="button" aria-label="View Profile" 
- onClick={() => setActiveTab('credentials')}
+ onClick={(e) => { if (window.innerWidth < 1024) { e.preventDefault(); setActiveDropdown(activeDropdown === 'profile' ? null : 'profile'); } else { setActiveTab('credentials'); } }}
  className="flex items-center gap-3 hover:bg-themeElevated p-1 pr-1 xl:pr-3 rounded-xl transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-themeAccent focus-visible:ring-offset-2"
  >
  <div className="w-9 h-9 rounded-lg bg-themeElevated flex items-center justify-center font-black text-[11px] text-themeText shadow-inner border border-themeBorder group-hover/profile:border-themeAccent/30 transition-colors overflow-hidden relative">

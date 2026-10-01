@@ -94,7 +94,7 @@ export default function ScheduleBuilder({}) {
  const { data: schedData, error } = await supabase
  .from('class_schedule')
  .select(`
- id, batch, day_of_week, start_time, end_time, master_subject_id, faculty_id,
+ id, batch, day_of_week, start_time, end_time, subject_id, faculty_id,
  subject:master_subjects(name),
  
  faculty:profiles(full_name)
@@ -119,7 +119,7 @@ export default function ScheduleBuilder({}) {
  
  setSchedule(formatted);
  }
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show(err.message || "An error occurred", "error"); } finally {
  setLoading(false);
  }
  };
@@ -168,7 +168,7 @@ export default function ScheduleBuilder({}) {
  }
 
  return null; // no conflict
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show(err.message || "An error occurred", "error"); }
  };
 
  const handleSlotClick = async (dayString, timeStr, explicitEndTime) => {
@@ -236,7 +236,7 @@ export default function ScheduleBuilder({}) {
  setPendingDraws([]);
  fetchData();
  if(window.erpToast) window.erpToast.show(`Successfully saved ${inserts.length} classes!`, "success");
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show(err.message || "An error occurred", "error"); }
  };
 
  // Removed handleCreate as draw mode handles creation
@@ -257,7 +257,7 @@ export default function ScheduleBuilder({}) {
  
  setSelectedClass(null);
  fetchData();
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show(err.message || "An error occurred", "error"); }
  };
  
  const handleShuffleGrid = async () => {
@@ -267,12 +267,12 @@ export default function ScheduleBuilder({}) {
  setLoading(true);
  try {
  const slots = schedule.map(s => ({ id: s.raw.id }));
- const contents = schedule.map(s => ({ master_subject_id: s.raw.master_subject_id, faculty_id: s.raw.faculty_id }));
+ const contents = schedule.map(s => ({ subject_id: s.raw.subject_id, faculty_id: s.raw.faculty_id }));
 
  // Backup original state for undo
  const originalUpdates = slots.map((slot, idx) => ({
  id: slot.id,
- master_subject_id: contents[idx].master_subject_id,
+ subject_id: contents[idx].subject_id,
  faculty_id: contents[idx].faculty_id
  }));
 
@@ -283,7 +283,7 @@ export default function ScheduleBuilder({}) {
 
  const updates = slots.map((slot, idx) => ({
  id: slot.id,
- master_subject_id: contents[idx].master_subject_id,
+ subject_id: contents[idx].subject_id,
  faculty_id: contents[idx].faculty_id
  }));
 

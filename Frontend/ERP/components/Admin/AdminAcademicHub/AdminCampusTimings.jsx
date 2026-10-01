@@ -28,7 +28,19 @@ export default function AdminCampusTimings() {
  }
  };
 
- const handleToggleDay = async (id, currentStatus) => {
+ 
+  const handleUpdateTime = async (id, field, value) => {
+    try {
+      const { error } = await supabase.from('campus_timings').update({ [field]: value }).eq('id', id);
+      if (error) throw error;
+      if (window.erpToast) window.erpToast.show('Timing updated successfully.', 'success');
+      fetchTimings();
+    } catch (e) {
+      if (window.erpToast) window.erpToast.show("Failed to update timing.", "error");
+    }
+  };
+
+  const handleToggleDay = async (id, currentStatus) => {
  try {
  const { error } = await supabase.from('campus_timings').update({ is_active: !currentStatus }).eq('id', id);
  if (error) throw error;
@@ -74,11 +86,29 @@ export default function AdminCampusTimings() {
  {workingDays.map(day => (
  <div key={day.id} className={`p-4 rounded-xl border flex flex-col gap-3 transition-colors ${day.is_active ? 'bg-themeAccent/10 border-themeAccent/20' : 'bg-themeElevated border-themeBorder'}`}>
  <div className="flex justify-between items-center">
- <span className={`font-black ${day.is_active ? 'text-themeAccent' : 'text-themeTextSec'}`}>{day.name}</span>
- <button onClick={() => handleToggleDay(day.id, day.is_active)} className={`w-10 h-6 rounded-full relative transition-colors ${day.is_active ? 'bg-themeAccent' : 'bg-black/20 '}`}>
- <div className={`w-4 h-4 bg-themePanel rounded-full absolute top-1 transition-all ${day.is_active ? 'left-5' : 'left-1'}`}></div>
- </button>
- </div>
+                <span className={`font-black ${day.is_active ? 'text-themeAccent' : 'text-themeTextSec'}`}>{day.name}</span>
+                <button onClick={() => handleToggleDay(day.id, day.is_active)} className={`w-10 h-6 rounded-full relative transition-colors ${day.is_active ? 'bg-themeAccent' : 'bg-black/20 '}`}>
+                  <div className={`w-4 h-4 bg-themePanel rounded-full absolute top-1 transition-all ${day.is_active ? 'left-5' : 'left-1'}`}></div>
+                </button>
+              </div>
+              
+              {day.is_active && (
+                <div className="flex items-center gap-2 mt-2 pt-2 border-t border-themeBorder/50">
+                  <input 
+                    type="time" 
+                    value={day.start_time || ''} 
+                    onChange={(e) => handleUpdateTime(day.id, 'start_time', e.target.value)}
+                    className="flex-1 bg-themeApp/50 border border-themeBorder rounded-lg px-2 py-1.5 text-xs font-bold text-themeText outline-none" 
+                  />
+                  <span className="text-themeTextSec text-[10px] font-bold">to</span>
+                  <input 
+                    type="time" 
+                    value={day.end_time || ''} 
+                    onChange={(e) => handleUpdateTime(day.id, 'end_time', e.target.value)}
+                    className="flex-1 bg-themeApp/50 border border-themeBorder rounded-lg px-2 py-1.5 text-xs font-bold text-themeText outline-none" 
+                  />
+                </div>
+              )}
  {day.name === 'Saturday' && day.is_active && (
  <div className="flex flex-col gap-2 mt-2 pt-3 border-t border-themeAccent/20">
  <label className="flex items-center gap-2 text-xs font-bold text-themeText">
