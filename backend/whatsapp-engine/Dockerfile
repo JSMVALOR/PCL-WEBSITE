@@ -2,6 +2,7 @@ FROM node:22-slim
 
 # Install Chrome dependencies
 RUN apt-get update && apt-get install -y \
+    ca-certificates \
     chromium \
     git \
     openssh-client \
