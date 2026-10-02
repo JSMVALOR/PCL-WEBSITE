@@ -55,9 +55,15 @@ export default function AdminNotices({ isHubView = false }) {
  const { data, error } = await supabase
  .from('notices')
  .select('*')
+ .neq('category', 'System Alert') // Exclude personal system alerts
  .limit(300)
  .order('created_at', { ascending: false });
- if (!error && data) setNotices(data);
+ 
+ if (!error && data) {
+     // Additional client-side filtering to ensure no 'person' targeted broadcasts show up in the global broadcast manager
+     const globalBroadcasts = data.filter(n => n.target_audience !== 'person');
+     setNotices(globalBroadcasts);
+ }
  } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
 
@@ -125,16 +131,74 @@ try {
  }
  
  // Deduplicate
- recipientIds = [...new Set(recipientIds)];
+ recipientIds = [...new Set(recipientIds)];\n
+ // ---- WHATSAPP INTEGRATION FOR BROADCASTS ----
+ try {
+   let targetPhones = new Set();
+   
+   // 1. Check if Global
+   if (targetAudience.includes('All') || targetAudience.includes('Student') || targetAudience.includes('Faculty')) {
+       const { data: globalSet } = await supabase.from('system_settings').select('value').eq('key', 'global_whatsapp_groups').single();
+       if (globalSet && globalSet.value && Array.isArray(globalSet.value)) {
+           globalSet.value.forEach(id => targetPhones.add(id));
+       }
+   }
+   
+   // 2. Check for specific batches
+   const { data: allBatches } = await supabase.from('academic_batches').select('name, whatsapp_group_id');
+   if (allBatches) {
+       allBatches.forEach(b => {
+           if (targetAudience.includes(b.name) && b.whatsapp_group_id) {
+               targetPhones.add(b.whatsapp_group_id);
+           }
+       });
+   }
+   
+   // Insert into queue
+   if (targetPhones.size > 0) {
+       const waNotifs = Array.from(targetPhones).map(phone => ({
+           phone,
+           message: `*[${category.toUpperCase()}] ${title}*\n\n${content}${externalLink ? '\n\nLink: ' + externalLink : ''}\n\n- Prudentia College of Law`,
+           status: 'PENDING'
+       }));
+       await supabase.from('whatsapp_queue').insert(waNotifs);
+   }
+ } catch (e) {
+   console.error("Failed to queue WA messages for broadcast", e);
+ }
+ // --------------------------------------------
+
  
  if (recipientIds.length > 0) {
  const notifs = recipientIds.map(rid => ({
  recipient_id: rid,
  title: 'New Broadcast: ' + title,
  message: content.substring(0, 50) + '...',
- type: 'notice'
+ type: 'notice',
+ action_link: 'notices'
  }));
- await supabase.from('notifications').insert(notifs);
+ await supabase.from('notifications').insert(notifs);\n
+ // ---- WHATSAPP INTEGRATION ----
+ try {
+   if (eventType === 'holiday' || eventType === 'campus_leave') {
+     // Fetch global broadcast groups
+     const { data: globalSet } = await supabase.from('system_settings').select('value').eq('key', 'global_whatsapp_groups').single();
+     if (globalSet && globalSet.value && Array.isArray(globalSet.value)) {
+       const groupNotifs = globalSet.value.map(groupId => ({
+         phone: groupId.replace('@g.us', ''),
+         message: `*Official Notice: ${eventType === 'holiday' ? 'Holiday' : 'Campus Leave'}*\n\n${eventTitle}\nDate: ${new Date(eventStartDate).toLocaleDateString()}\n\n${eventDesc}`,
+         status: 'PENDING'
+       }));
+       if (groupNotifs.length > 0) {
+         await supabase.from('whatsapp_queue').insert(groupNotifs);
+       }
+     }
+   }
+ } catch (e) {
+   console.error("Failed to queue WhatsApp broadcasts", e);
+ }
+ // -----------------------------
+
  }
  }
 } catch(e) { console.error('Failed to send real-time notifications', e); }
@@ -188,6 +252,25 @@ try {
  }
 
  if (error) throw error;
+ 
+ // If it's a holiday or campus leave, notify everyone
+ if (eventType === 'holiday' || eventType === 'campus_leave') {
+   const { data: users } = await supabase.from('profiles').select('id, email, full_name');
+   if (users && users.length > 0) {
+     // Create bell notifications
+     const notifs = users.map(u => ({
+       recipient_id: u.id,
+       title: `Upcoming ${eventType === 'holiday' ? 'Holiday' : 'Campus Leave'}`,
+       message: `${eventTitle} is scheduled on ${new Date(eventStartDate).toLocaleDateString()}`,
+       type: 'notice',
+       action_link: 'notices'
+     }));
+     await supabase.from('notifications').insert(notifs);
+     
+     // Note: In production we would batch send an email to all users here using EmailService.
+     // For this prototype, we'll log it or send to a test group.
+   }
+ }
  
  setEventTitle("");
  setEventStartDate("");
@@ -344,6 +427,7 @@ try {
  <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="academic">Academic</option>
  <option value="holiday">Holiday</option>
+ <option value="campus_leave">Campus Leave</option>
  <option value="extracurricular">Extracurricular</option>
  </select>
  </div>

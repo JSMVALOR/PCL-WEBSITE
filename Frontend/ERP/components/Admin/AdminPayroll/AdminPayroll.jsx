@@ -298,6 +298,16 @@ export default function AdminPayroll() {
  author_name: 'Finance Department',
  author_id: null
  }]);
+ // Bell notification for payroll
+ if (fac.id) {
+   await supabase.from('notifications').insert([{
+     recipient_id: fac.id,
+     title: 'Payroll Disbursed',
+     message: 'Your salary slip has been processed.',
+     type: 'notice',
+     action_link: 'payroll'
+   }]);
+ }
 
  // 2. Generate Ultra Luxury PDF via NATIVE ENGINE (Zero DOM Dependency)
  const base64Pdf = await generateNativePayslip(

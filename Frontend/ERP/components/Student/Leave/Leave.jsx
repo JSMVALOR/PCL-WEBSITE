@@ -254,6 +254,17 @@ export default function Leave({ isEmbedded = false }) {
  author_name: userSession?.name || 'System',
  author_id: studentId
  }]);
+ // Bell notification for all admins about new leave request
+ const { data: adminProfiles } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ if (adminProfiles && adminProfiles.length > 0) {
+   await supabase.from('notifications').insert(adminProfiles.map(a => ({
+     recipient_id: a.id,
+     title: 'New Leave Request',
+     message: `A student has requested ${leaveType} leave for ${diffDays} day(s).`,
+     type: 'leave',
+     action_link: 'leavemanagement'
+   })));
+ }
 
  setStatusMessage({ type: "success", text: "Leave application routed to administration." });
  fetchLeaveHistory();

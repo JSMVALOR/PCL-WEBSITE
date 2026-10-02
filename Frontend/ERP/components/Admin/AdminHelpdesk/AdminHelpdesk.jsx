@@ -67,6 +67,16 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  author_name: 'Admin',
  author_id: null
  }]);
+ // Bell notification for ticket update
+ if (ticket.profile_id) {
+   await supabase.from('notifications').insert([{
+     recipient_id: ticket.profile_id,
+     title: 'Support Ticket Update',
+     message: 'Your support ticket has been updated by admin.',
+     type: 'attendance',
+     action_link: 'helpdesk'
+   }]);
+ }
  }
  
  

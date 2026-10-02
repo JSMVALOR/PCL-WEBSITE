@@ -964,7 +964,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <p className="text-xl font-semibold text-rose-500">{Object.values(attendanceRecords).filter(r => (attendancePhase === 'entry' ? r.entry_status : r.exit_status) === 'absent').length}</p>
  </div>
  <div className="bg-themeElevated p-3 rounded-xl">
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider mb-1">Medical</p>
+ <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-wider mb-1">Exempted</p>
  <p className="text-xl font-semibold text-amber-500">{Object.values(attendanceRecords).filter(r => (attendancePhase === 'entry' ? r.entry_status : r.exit_status) === 'medical').length}</p>
  </div>
  <div className="bg-themeElevated p-3 rounded-xl">
@@ -1055,6 +1055,15 @@ export default function FacultyAttendance({ subjectContext }) {
  status: 'open',
  system_metadata: JSON.stringify({ session_id: activeSession.id, student_id: studentId, record_id: record?.id })
  });
+ }
+ // Notify all admins
+ const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ if (admins && admins.length > 0) {
+   await supabase.from('notifications').insert(admins.map(a => ({
+     recipient_id: a.id, type: 'system', title: 'Attendance Correction Request',
+     message: `A faculty member requested attendance corrections for ${activeSession.classData?.subject?.name || 'a class'}.`,
+     action_link: 'approvals'
+   })));
  }
  if (window.erpDialog) window.erpDialog.alert("Correction requests submitted to Admin!", "success");
  else alert("Correction requests submitted to Admin!");
@@ -1157,7 +1166,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <>
  <button type="button" onClick={() => handleAction('present')} disabled={activeSession.status === 'completed' && !editMode} className={`w-12 h-9 rounded-lg text-[13px] font-bold tracking-tight transition-all ${(editMode && stagedChanges[student.id] === 'present') || (!editMode && record.entry_status === 'present') ? 'bg-themePanel dark:bg-themeElevated text-emerald-500 shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}>P</button>
  <button type="button" onClick={() => handleAction('absent')} disabled={activeSession.status === 'completed' && !editMode} className={`w-12 h-9 rounded-lg text-[13px] font-bold tracking-tight transition-all ${(editMode && stagedChanges[student.id] === 'absent') || (!editMode && record.entry_status === 'absent') ? 'bg-themePanel dark:bg-themeElevated text-rose-500 shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}>A</button>
- <button type="button" onClick={() => handleAction('medical')} disabled={activeSession.status === 'completed' && !editMode} className={`w-12 h-9 rounded-lg text-[13px] font-bold tracking-tight transition-all ${(editMode && stagedChanges[student.id] === 'medical') || (!editMode && (record.entry_status === 'medical' || record.entry_status === 'approved_leave')) ? 'bg-themePanel dark:bg-themeElevated text-amber-500 shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}>M</button>
+ <button type="button" onClick={() => handleAction('medical')} disabled={activeSession.status === 'completed' && !editMode} className={`w-12 h-9 rounded-lg text-[13px] font-bold tracking-tight transition-all ${(editMode && stagedChanges[student.id] === 'medical') || (!editMode && (record.entry_status === 'medical' || record.entry_status === 'approved_leave')) ? 'bg-themePanel dark:bg-themeElevated text-amber-500 shadow-sm' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeText'}`}>E</button>
  </>
  ) : (
  <>
@@ -1199,7 +1208,7 @@ export default function FacultyAttendance({ subjectContext }) {
  attendancePhase === 'entry' ? [
  { id: 'absent', label: 'Absent', color: '#f43f5e', icon: <HugeiconsIcon icon={Cancel01Icon} size={20} /> },
  { id: 'present', label: 'Present', color: '#10b981', icon: <HugeiconsIcon icon={CheckmarkBadge01Icon} size={20} />, dismiss: true },
- { id: 'medical', label: 'Medical', color: '#f59e0b', icon: <HugeiconsIcon icon={Add01Icon} size={20} />, dismiss: true }
+ { id: 'medical', label: 'Exempt', color: '#f59e0b', icon: <HugeiconsIcon icon={Add01Icon} size={20} />, dismiss: true }
  ] : isPhaseOneSkipped || ['present', 'late'].includes(record.entry_status) ? [
  { id: 'early_leave', label: 'Left Early', color: '#f59e0b', icon: <HugeiconsIcon icon={Cancel01Icon} size={20} /> },
  { id: 'present', label: 'Stayed', color: '#10b981', icon: <HugeiconsIcon icon={CheckmarkBadge01Icon} size={20} />, dismiss: true }
@@ -1235,7 +1244,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <div className="shrink-0 flex gap-2">
  {currentStatus === 'present' && <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">Present</span>}
  {currentStatus === 'absent' && <span className="bg-rose-500/10 text-rose-500 border border-rose-500/20 px-3 py-1 rounded-full text-xs font-bold">Absent</span>}
- {(currentStatus === 'medical' || currentStatus === 'early_leave') && <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 rounded-full text-xs font-bold">{currentStatus === 'medical' ? 'Medical' : 'Left Early'}</span>}
+ {(currentStatus === 'medical' || currentStatus === 'early_leave') && <span className="bg-amber-500/10 text-amber-500 border border-amber-500/20 px-3 py-1 rounded-full text-xs font-bold">{currentStatus === 'medical' ? 'Exempted' : 'Left Early'}</span>}
  {currentStatus === 'late' && <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">Late</span>}
  {!currentStatus && <span className="bg-themeElevated text-themeTextSec px-3 py-1 rounded-full text-xs font-bold">Unmarked</span>}
  </div>

@@ -481,6 +481,8 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  )}
  </div>
  </div>
+ </div>
+ </div>, document.body
  )}
 
  {selectedSubject && !selectedAssessmentType && (
@@ -529,7 +531,7 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
 
  {selectedSubject && !selectedAssessmentType && (
  <div className="flex flex-col gap-6 animate-fade-in">
- <div className="bg-black/[0.02] dark:bg-themePanel/[0.02] border border-themeBorder rounded-[2rem] p-6 lg:p-8">
+ <div className="bg-themePanel/40 backdrop-blur-3xl border border-themeBorder rounded-[2rem] p-6 lg:p-8 shadow-sm">
  <div className="flex items-center gap-3 mb-6">
  <div className="w-10 h-10 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center text-lg shadow-inner border border-amber-500/20">
  <i className="fa-solid fa-bolt"></i>
@@ -674,9 +676,9 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  </div>
  </div>
  )}
- {viewingSubmission && (
- <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 lg:p-8 animate-fade-in">
- <div className="bg-themeApp w-full max-w-4xl h-full max-h-[85vh] rounded-[2rem] border border-themeBorder shadow-2xl flex flex-col overflow-hidden animate-slide-up">
+ {viewingSubmission && createPortal(
+ <div className="fixed inset-0 z-[200] bg-themeApp animate-fade-in flex flex-col overflow-y-auto">
+ <div className="flex-1 w-full max-w-[1200px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col bg-themeApp shadow-none border-none rounded-none">
  <div className="p-6 border-b border-themeBorder flex items-center justify-between bg-themePanel/80">
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-full bg-themeElevated border border-themeBorder flex items-center justify-center text-xl font-black text-themeText">

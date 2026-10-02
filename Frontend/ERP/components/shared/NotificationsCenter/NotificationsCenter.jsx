@@ -69,6 +69,11 @@ export default function NotificationsCenter({ setActiveTab }) {
  case 'leave': return { icon: 'fa-plane-departure', color: 'text-amber-500', bg: 'bg-amber-500/10' };
  case 'meeting': return { icon: 'fa-calendar-check', color: 'text-emerald-500', bg: 'bg-emerald-500/10' };
  case 'attendance': return { icon: 'fa-user-clock', color: 'text-rose-500', bg: 'bg-rose-500/10' };
+ case 'notice': return { icon: 'fa-bullhorn', color: 'text-indigo-500', bg: 'bg-indigo-500/10' };
+ case 'grievance': return { icon: 'fa-triangle-exclamation', color: 'text-orange-500', bg: 'bg-orange-500/10' };
+ case 'helpdesk': return { icon: 'fa-headset', color: 'text-cyan-500', bg: 'bg-cyan-500/10' };
+ case 'payroll': return { icon: 'fa-indian-rupee-sign', color: 'text-emerald-500', bg: 'bg-emerald-500/10' };
+ case 'assignment': return { icon: 'fa-file-signature', color: 'text-violet-500', bg: 'bg-violet-500/10' };
  default: return { icon: 'fa-bell', color: 'text-themeAccent', bg: 'bg-themeAccent/10' };
  }
  };
@@ -133,7 +138,11 @@ export default function NotificationsCenter({ setActiveTab }) {
  initial={{ opacity: 0, y: 10 }}
  animate={{ opacity: 1, y: 0 }}
  exit={{ opacity: 0, scale: 0.95 }}
- className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl border transition-colors ${!n.is_read ? 'bg-themeElevated border-themeAccent/20' : 'bg-transparent border-themeBorder '}`}
+ onClick={() => {
+  if (!n.is_read) markAsRead(n.id);
+  if (n.action_link) setActiveTab(n.action_link);
+ }}
+ className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl border transition-colors cursor-pointer ${!n.is_read ? 'bg-themeElevated border-themeAccent/20 hover:bg-themeElevated/80' : 'bg-transparent border-themeBorder hover:bg-themeElevated/30'}`}
  >
  <div className={`w-10 h-10 shrink-0 rounded-xl flex items-center justify-center ${style.bg}`}>
  <i className={`fa-solid ${style.icon} ${style.color}`}></i>
@@ -154,19 +163,20 @@ export default function NotificationsCenter({ setActiveTab }) {
  
  {n.action_link && (
  <button
- onClick={() => {
+ onClick={(e) => {
+ e.stopPropagation();
  if (!n.is_read) markAsRead(n.id);
  setActiveTab(n.action_link);
  }}
  className="px-3 py-1.5 bg-themeElevated hover:bg-themeAccent hover:text-themeApp rounded-lg text-xs font-bold text-themeText transition-colors"
  >
- View Details
+ View
  </button>
  )}
 
  {!n.is_read && (
  <button
- onClick={() => markAsRead(n.id)}
+ onClick={(e) => { e.stopPropagation(); markAsRead(n.id); }}
  className="w-8 h-8 rounded-lg border border-themeBorder hover:bg-themeElevated flex items-center justify-center text-themeTextSec hover:text-themeText transition-colors tooltip-trigger"
  title="Mark as Read"
  >

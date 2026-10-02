@@ -206,7 +206,6 @@ export default function ParentDashboard({ onLogout }) {
  <div className="w-28 h-28 rounded-[24px] bg-themeElevated flex items-center justify-center shrink-0 overflow-hidden">
  <img 
  src={getAvatarUrl(studentData)}
- } 
  alt={studentData.full_name}
  className="w-full h-full object-cover" 
  />

@@ -128,7 +128,6 @@ export default function OrganizationDirectory() {
  <div className="w-16 h-16 rounded-xl bg-themeElevated border border-themeBorder shadow-inner overflow-hidden flex items-center justify-center shrink-0">
  <img 
  src={getAvatarUrl(member)}
- } 
  alt={member.full_name} 
  className="w-full h-full object-cover" 
  />

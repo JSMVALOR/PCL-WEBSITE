@@ -208,6 +208,19 @@ export default function FacultyApprovals({ isEmbedded = false }) {
 
  const { error } = await supabase.from('grievances').insert([payload]);
  if (error) throw error;
+ 
+ // Notify Admins
+ const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ if (admins && admins.length > 0) {
+   const notifications = admins.map(a => ({
+     recipient_id: a.id,
+     type: 'system',
+     title: 'New Faculty Grievance Report',
+     message: `A faculty member has filed a grievance (${grievanceData.category}) that requires admin review.`,
+     action_link: 'approvals'
+   }));
+   await supabase.from('notifications').insert(notifications);
+ }
 
  window.erpDialog.alert("Grievance submitted successfully. It has been escalated directly to the Admin.");
  setGrievanceData({ accusedId: "", category: "Academics", description: "" });

@@ -325,8 +325,17 @@ export default function FacultyMentorship() {
  <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec ">{selectedMentee.erp_id} • {selectedMentee.programme}</p>
  </div>
  </div>
- <div className={`ml-auto px-3 py-1 rounded-lg text-xs font-black ${selectedMentee.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+ <div className="ml-auto flex items-center gap-3">
+ <MentorshipChatHub 
+ receiverId={selectedMentee.id}
+ receiverName={selectedMentee.full_name}
+ receiverRole="Mentee"
+ receiverAvatar={selectedMentee.profile_picture_url}
+ variant="banner"
+ />
+ <div className={`px-3 py-1 rounded-lg text-xs font-black ${selectedMentee.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
  {selectedMentee.attendance_percentage}% Attendance
+ </div>
  </div>
  </div>
 
@@ -379,7 +388,47 @@ export default function FacultyMentorship() {
  </div>
  ) : (
  /* ──── MAIN DASHBOARD ──── */
- <div className="flex flex-col gap-8">
+ <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+ 
+ {/* Left Column: Mentees List */}
+ <div className="xl:col-span-4 flex flex-col gap-4">
+    <h3 className="text-lg font-black tracking-tight text-themeText flex items-center gap-2">
+        <i className="fa-solid fa-user-graduate text-themeAccent"></i> My Mentees
+    </h3>
+    {mentees.length === 0 ? (
+        <div className="w-full py-12 flex flex-col items-center justify-center bg-themeElevated/50 border-2 border-dashed border-themeBorder rounded-3xl text-center px-4">
+            <i className="fa-solid fa-users-slash text-3xl text-themeTextSec/30 mb-3"></i>
+            <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec">No mentees assigned yet.</p>
+        </div>
+    ) : (
+        <div className="grid grid-cols-1 gap-3">
+            {mentees.map(m => (
+                <div 
+                    key={m.id} 
+                    onClick={() => setSelectedMentee(m)}
+                    className="bg-themePanel/80 backdrop-blur-xl border border-themeBorder rounded-2xl p-4 flex flex-row items-center gap-4 group hover:border-themeAccent/40 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-themeAccent/5 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
+                    <div className="w-12 h-12 rounded-xl bg-themeElevated shadow-sm border border-themeBorder flex items-center justify-center font-black text-lg overflow-hidden shrink-0">
+                        <img src={getAvatarUrl(m)} alt={m.full_name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex flex-col flex-1 min-w-0">
+                        <h4 className="text-sm font-black text-themeText truncate group-hover:text-themeAccent transition-colors">{m.full_name}</h4>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-0.5 truncate">{m.erp_id} • {m.programme}</p>
+                    </div>
+                    <div className="shrink-0 flex items-center justify-center">
+                        <div className={`px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest ${m.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'}`}>
+                            {m.attendance_percentage}%
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    )}
+ </div>
+
+ {/* Right Column: Stats and Actions */}
+ <div className="xl:col-span-8 flex flex-col gap-6">
  
  {/* Quick Stats Bar */}
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -403,48 +452,6 @@ export default function FacultyMentorship() {
         <h4 className="text-2xl font-black text-themeText">{achievements.length}</h4>
         <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Unverified Achievements</p>
     </div>
- </div>
-
- {/* Mentees Grid */}
- <div className="flex flex-col gap-4">
-    <h3 className="text-lg font-black tracking-tight text-themeText flex items-center gap-2">
-        <i className="fa-solid fa-user-graduate text-themeAccent"></i> My Mentees
-    </h3>
-    {mentees.length === 0 ? (
-        <div className="w-full py-12 flex flex-col items-center justify-center bg-themeElevated/50 border-2 border-dashed border-themeBorder rounded-3xl text-center px-4">
-            <i className="fa-solid fa-users-slash text-3xl text-themeTextSec/30 mb-3"></i>
-            <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec">No mentees assigned yet.</p>
-        </div>
-    ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {mentees.map(m => (
-                <div 
-                    key={m.id} 
-                    onClick={() => setSelectedMentee(m)}
-                    className="bg-themePanel/80 backdrop-blur-xl border border-themeBorder rounded-2xl p-5 flex flex-col gap-4 group hover:border-themeAccent/40 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
-                >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-themeAccent/5 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
-                    <div className="flex justify-between items-start">
-                        <div className="w-14 h-14 rounded-2xl bg-themeElevated shadow-sm border border-themeBorder flex items-center justify-center font-black text-lg overflow-hidden shrink-0">
-                            <img src={getAvatarUrl(m)} alt={m.full_name} className="w-full h-full object-cover" />
-                        </div>
-                        <div className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${m.attendance_percentage >= 75 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'}`}>
-                            {m.attendance_percentage}% Att
-                        </div>
-                    </div>
-                    <div>
-                        <h4 className="text-base font-black text-themeText truncate group-hover:text-themeAccent transition-colors">{m.full_name}</h4>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-1">{m.erp_id}</p>
-                        <p className="text-xs font-semibold text-themeText/70 mt-1 truncate">{m.programme}</p>
-                    </div>
-                    <div className="pt-3 border-t border-themeBorder/50 flex items-center justify-between mt-auto">
-                        <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">View 360° Profile</span>
-                        <i className="fa-solid fa-arrow-right text-xs text-themeTextSec group-hover:text-themeAccent group-hover:translate-x-1 transition-all"></i>
-                    </div>
-                </div>
-            ))}
-        </div>
-    )}
  </div>
 
  {/* Action Center (Split View) */}
@@ -614,14 +621,7 @@ export default function FacultyMentorship() {
     </div>
  </div>
  </div>
- )}
- {selectedMentee && (
- <MentorshipChatHub 
- receiverId={selectedMentee.id}
- receiverName={selectedMentee.full_name}
- receiverRole="Mentee"
- receiverAvatar={selectedMentee.profile_picture_url}
- />
+ </div>
  )}
  </div>
  {showScheduleModal && selectedMentee && (

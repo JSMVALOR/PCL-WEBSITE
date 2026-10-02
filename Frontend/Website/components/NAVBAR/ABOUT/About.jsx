@@ -68,7 +68,7 @@ export default function About() {
     founder_title: content?.founder_title || "Founder & Chairman",
     founder_image: content?.founder_image || founderImg,
     cofounder_name: content?.cofounder_name || "Mr. Bharat Krishna Buddala",
-    cofounder_title: content?.cofounder_title || "Co-Founder & Secretary",
+    cofounder_title: content?.cofounder_title || "Co-Founder & Managing Director",
     cofounder_image: content?.cofounder_image || coFounderImg };
 
   const dynamicTabs = [

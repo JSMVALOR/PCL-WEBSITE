@@ -327,9 +327,8 @@ export default function Notices({ setActiveTab }) {
  };
 
  return (
- <div className="w-full h-auto xl:h-[calc(100vh-9rem)] xl:min-h-[600px] min-h-full relative flex-1 bg-transparent text-themeText selection:bg-themeAccent/30 overflow-x-hidden xl:overflow-hidden font-sans flex flex-col">
- 
- <div className="relative z-20 w-full mx-auto flex flex-col h-full overflow-hidden">
+ <div className="w-full animate-fade-in selection:bg-themeAccent/30 min-h-screen bg-transparent text-themeText font-sans">
+ <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 xl:pb-8 h-screen overflow-hidden">
  
  {/* Header Container */}
  <div className="relative w-full overflow-hidden border-b border-themeBorder dark:border-white/[0.04] bg-gradient-to-r from-[var(--theme-accent)]/5 via-transparent to-transparent py-8 shrink-0">

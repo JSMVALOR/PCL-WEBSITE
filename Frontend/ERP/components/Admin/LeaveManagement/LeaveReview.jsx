@@ -82,6 +82,14 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  author_name: 'Admin',
  author_id: null
  }]);
+ // Bell notification
+ await supabase.from('notifications').insert([{
+   recipient_id: request.faculty_id,
+   title: `Leave ${actionType === 'Reject' ? 'Rejected' : 'Approved'}`,
+   message: `Your leave from ${new Date(request.from_date).toLocaleDateString()} to ${new Date(request.to_date).toLocaleDateString()} was ${actionType === 'Reject' ? 'rejected' : 'approved'}.`,
+   type: 'leave',
+   action_link: 'facultyleave'
+ }]);
  }
 
  if(window.erpToast) window.erpToast.show(`Leave request has been updated successfully.`, "success");

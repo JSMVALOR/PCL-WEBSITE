@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
@@ -91,6 +92,17 @@ export default function Helpdesk({ isEmbedded = false }) {
  author_name: userSession?.name || 'System',
  author_id: userId
  }]);
+ // Bell notification for all admins about new support ticket
+ const { data: adminUsers } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ if (adminUsers && adminUsers.length > 0) {
+   await supabase.from('notifications').insert(adminUsers.map(a => ({
+     recipient_id: a.id,
+     title: 'New Support Ticket',
+     message: `A new support ticket has been raised: ${ticketForm.subject}`,
+     type: 'attendance',
+     action_link: 'helpdesk'
+   })));
+ }
 
  setStatusMessage({ type: "success", text: "Ticket routed to the Support Team." });
  fetchTickets(); // Refresh list
@@ -179,17 +191,20 @@ export default function Helpdesk({ isEmbedded = false }) {
  </div>
 
  {/* NEW TICKET MODAL */}
- {showTicketModal && (
- <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
- <div className="w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden flex flex-col max-h-[90vh] bg-themePanel/90 dark:bg-themePanel/90 backdrop-blur-3xl border border-white/20 shadow-2xl">
+ {showTicketModal && createPortal(
+ <div className="fixed inset-0 z-[200] flex flex-col bg-themeApp animate-fade-in">
+ <div className="w-full max-w-[1200px] mx-auto flex flex-col h-full relative">
 
- <div className="border-b border-themeBorder p-6 lg:p-8 shrink-0 flex justify-between items-start relative z-10">
+ <div className="p-6 lg:p-8 shrink-0 flex justify-between items-start relative z-10 border-b border-themeBorder/50">
  <div>
- <h3 className="text-xl lg:text-2xl font-black tracking-tight mb-1 text-themeText">Create Support Ticket</h3>
- <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">We usually respond within 24 hours.</p>
+ <h3 className="text-2xl lg:text-3xl font-black tracking-tight mb-2 text-themeText flex items-center gap-3">
+ <i className="fa-solid fa-life-ring text-themeAccent"></i>
+ Create Support Ticket
+ </h3>
+ <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec">We usually respond within 24 hours.</p>
  </div>
- <button type="button" onClick={() => setShowTicketModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-themeElevated border border-themeBorder text-themeTextSec hover:text-themeText hover:bg-black/10 transition-colors shrink-0">
- <i className="fa-solid fa-xmark"></i>
+ <button type="button" onClick={() => setShowTicketModal(false)} className="w-10 h-10 flex items-center justify-center rounded-2xl bg-themeElevated border border-themeBorder text-themeTextSec hover:text-themeText hover:bg-black/10 transition-colors shrink-0">
+ <i className="fa-solid fa-xmark text-lg"></i>
  </button>
  </div>
 
@@ -228,7 +243,7 @@ export default function Helpdesk({ isEmbedded = false }) {
  </form>
  </div>
  </div>
- </div>
+ </div>, document.body
  )}
  </div>
  </div>

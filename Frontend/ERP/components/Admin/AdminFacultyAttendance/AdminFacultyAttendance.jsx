@@ -119,16 +119,19 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  }
  }
 
- // 3. Write to Audit Trail
- const { error: auditError } = await supabase.from('attendance_audit_logs').insert([{
- faculty_id: facultyId,
- admin_id: userSession.db_id,
- date: selectedDate,
- previous_status: previousStatus || 'pending',
- new_status: newStatus,
- action_reason: auditReason
+ // 3. Write to Audit Trail (via notices table)
+ const auditNoticeId = `AUDIT-${Date.now()}`;
+ const { error: auditError } = await supabase.from('notices').insert([{
+ notice_id: auditNoticeId,
+ title: `Override: ${(previousStatus || 'PENDING').toUpperCase()} ➔ ${newStatus.toUpperCase()} (${selectedDate})`,
+ category: 'Audit',
+ target_audience: 'faculty_attendance',
+ target_id: facultyId,
+ content: auditReason || 'No reason provided.',
+ author_name: userSession?.full_name || 'Admin',
+ author_id: userSession?.db_id
  }]);
-      if (auditError) console.warn("Audit log failed, table might be missing:", auditError);
+      if (auditError) console.warn("Audit log failed:", auditError);
 
  fetchAttendanceData();
  } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
@@ -138,15 +141,38 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
 
  const fetchAuditHistory = async (facultyId) => {
  try {
- const { data } = await supabase
- .from('attendance_audit_logs')
- .select('*, admin:admin_id(full_name)')
- .eq('faculty_id', facultyId)
+ const { data, error } = await supabase
+ .from('notices')
+ .select('*')
+ .eq('category', 'Audit')
+ .eq('target_audience', 'faculty_attendance')
+ .eq('target_id', facultyId)
  .order('created_at', { ascending: false })
  .limit(10);
+ 
+ if (error) {
+    console.error("Audit history error:", error);
+    if (window.erpToast) window.erpToast.show("Failed to load history.", "error");
+    return;
+ }
+ 
  if(data) {
- setAuditHistory(data);
- setShowHistoryModal(true);
+    // Map notice fields back to expected format for the UI
+    const enrichedData = data.map(d => {
+        let newStatus = 'present';
+        if (d.title.includes('➔ ABSENT')) newStatus = 'absent';
+        if (d.title.includes('➔ EXEMPTED')) newStatus = 'exempted';
+        
+        return {
+            id: d.id,
+            admin: { full_name: d.author_name || 'Admin' },
+            created_at: d.created_at,
+            new_status: newStatus,
+            action_reason: d.content
+        };
+    });
+    setAuditHistory(enrichedData);
+    setShowHistoryModal(true);
  }
  } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  };
@@ -197,7 +223,6 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center font-bold overflow-hidden border border-themeAccent/20 shrink-0">
  <img 
  src={getAvatarUrl(fac)}
- } 
  alt={fac.full_name} 
  className="w-full h-full object-cover" 
  />

@@ -1,5 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
+import { createPortal } from 'react-dom';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../../lib/EmailService';
 import { useERP } from "../../../context/ErpContext";
@@ -292,19 +293,27 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
 
  {/* CREATE FORM */}
  <div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
-{showForm && (
- <div className="bg-black/[0.02] dark:bg-themePanel/[0.02] backdrop-blur-xl border border-themeBorder rounded-2xl p-6 lg:p-8 animate-fade-in flex flex-col gap-6">
- <div className="flex items-center gap-3 mb-2">
- <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: tColor.bg, color: tColor.primary }}>
- <i className="fa-solid fa-file-signature"></i>
- </div>
- <div>
- <h2 className="text-xl font-semibold tracking-tight text-themeText ">{formData.id ? 'Edit Assignment' : 'Issue New Assignment'}</h2>
- <p className="text-[10px] font-bold text-themeTextSec tracking-normal mt-0.5">Offline Submission Tracker</p>
- </div>
- </div>
 
- <form onSubmit={handlePublish} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+{showForm && createPortal(
+    <div className="fixed inset-0 z-[200] bg-themeApp animate-fade-in flex flex-col overflow-y-auto">
+        <div className="flex-1 w-full max-w-[1000px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b border-themeBorder sticky top-0 bg-themeApp z-10 pt-4">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl" style={{ backgroundColor: tColor.bg, color: tColor.primary }}>
+                        <i className="fa-solid fa-file-signature"></i>
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black tracking-tight text-themeText">{formData.id ? 'Edit Assignment' : 'Issue New Assignment'}</h2>
+                        <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest mt-1">Offline Submission Tracker</p>
+                    </div>
+                </div>
+                <button type="button" onClick={() => setShowForm(false)} className="w-10 h-10 rounded-full bg-themeElevated border border-themeBorder flex items-center justify-center text-themeTextSec hover:text-rose-500 hover:bg-rose-500/10 transition-colors">
+                    <i className="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto bg-themePanel/40 backdrop-blur-3xl border border-themeBorder rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-xl mb-10">
+<form onSubmit={handlePublish} className="grid grid-cols-1 md:grid-cols-2 gap-5">
  {!subjectContext && (
  <div className="flex flex-col gap-2">
  <label className="text-[13px] font-medium text-themeTextSec ">Subject *</label>
@@ -423,10 +432,14 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  </button>
  </div>
  </form>
- </div>
- )}
+            </div>
+        </div>
+    </div>,
+    document.body
+)}
 
- {/* ASSIGNMENTS LIST */}
+
+{/* ASSIGNMENTS LIST */}
  <div className="flex flex-col gap-6 bg-themePanel shadow-sm border border-themeBorder dark:border-white/[0.08] shadow-none rounded-3xl p-6 lg:p-8">
  <h2 className="text-xl font-bold tracking-tight text-themeText flex items-center gap-3">
  <div className="w-8 h-8 rounded-lg bg-themeAccent/10 text-themeAccent flex items-center justify-center">
@@ -436,19 +449,22 @@ export default function FacultyAssignments({ subjectContext, isEmbedded = false 
  </h2>
  
  {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).length === 0 ? (
- <div className="w-full py-16 flex flex-col items-center justify-center bg-black/[0.02] dark:bg-themePanel/[0.02] rounded-2xl text-center px-4 border border-themeBorder border-dashed">
- <i className="fa-solid fa-folder-open text-4xl lg:text-5xl text-neutral-700 mb-4"></i>
- <h3 className="text-lg lg:text-xl text-themeText font-black">No Assignments Issued</h3>
- <p className="text-xs lg:text-sm text-themeTextSec opacity-70 mt-2 max-w-xs mx-auto">You haven't created any offline assignments yet.</p>
- </div>
+ <div className="w-full py-20 flex flex-col items-center justify-center bg-themePanel/40 backdrop-blur-3xl rounded-[2rem] text-center px-4 border border-themeBorder shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] relative overflow-hidden group">
+  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+  <div className="w-20 h-20 bg-themeElevated rounded-3xl flex items-center justify-center mb-6 shadow-inner border border-themeBorder group-hover:scale-110 transition-transform duration-500">
+      <i className="fa-solid fa-folder-open text-4xl text-themeTextSec"></i>
+  </div>
+  <h3 className="text-xl lg:text-2xl text-themeText font-black tracking-tight relative z-10">No Assignments Issued</h3>
+  <p className="text-sm lg:text-[15px] text-themeTextSec mt-3 max-w-sm mx-auto font-medium relative z-10">You haven't created any offline assignments yet.</p>
+</div>
  ) : (
- <div className="flex flex-col">
+ <div className="flex flex-col gap-4">
  {assignments.filter(a => subjectContext ? a.subject_id === (subjectContext.master_subjects?.id || subjectContext.subject_id || subjectContext.id) : true).map(assign => {
  const dueDate = new Date(assign.due_date);
  const isPastDue = dueDate < new Date();
  
  return (
- <div key={assign.id} className="py-5 border-b border-themeBorder hover:bg-black/[0.02] dark:hover:bg-themePanel/[0.02] transition-colors flex flex-col gap-4 group px-4">
+ <div key={assign.id} className="p-5 lg:p-6 bg-themePanel/40 backdrop-blur-3xl border border-themeBorder rounded-[1.5rem] shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.1)] transition-all duration-300 flex flex-col gap-4 group hover:border-amber-500/30">
  
  <div className="flex justify-between items-start">
  <div>

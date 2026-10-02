@@ -21,6 +21,19 @@ export default function MenteeReport({ menteeId, menteeName, setMenteeTab }) {
  status: 'pending'
  });
  if (error) throw error;
+ 
+ const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ if (admins && admins.length > 0) {
+   const notifications = admins.map(a => ({
+     recipient_id: a.id,
+     type: 'system',
+     title: 'New Faculty Grievance Report',
+     message: `A faculty member has filed a grievance (${formData.category}) against ${menteeName} that requires admin review.`,
+     action_link: 'approvals'
+   }));
+   await supabase.from('notifications').insert(notifications);
+ }
+
  window.erpDialog?.alert("Report successfully filed with Admin.");
  setMenteeTab('grievances');
  } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {

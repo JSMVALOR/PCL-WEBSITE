@@ -3,8 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../context/ErpContext';
 import { useNotification } from '../../../Shared/context/NotificationContext';
+import { getAvatarUrl } from '../../utils/avatarUtils';
 
-export default function MentorshipChatHub({ receiverId, receiverName, receiverRole, receiverAvatar }) {
+export default function MentorshipChatHub({ receiverId, receiverName, receiverRole, receiverAvatar, variant = "default" }) {
  const { userSession } = useERP();
  const { addFlag } = useNotification();
  const [unreadCount, setUnreadCount] = useState(0);
@@ -31,6 +32,21 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
  setTimeout(scrollToBottom, 100);
  }
  }, [isOpen]);
+
+ // Mark as read logic
+ useEffect(() => {
+ if (isOpen && messages.length > 0) {
+ const unreadMsgIds = messages.filter(m => m.receiver_id === userSession?.db_id && !m.read_at).map(m => m.id);
+ if (unreadMsgIds.length > 0) {
+ supabase.from('mentorship_messages').update({ read_at: new Date().toISOString() }).in('id', unreadMsgIds).then(({error}) => {
+ if(!error) {
+ setMessages(prev => prev.map(m => unreadMsgIds.includes(m.id) ? { ...m, read_at: new Date().toISOString() } : m));
+ }
+ });
+ }
+ }
+ }, [isOpen, messages, userSession?.db_id]);
+
 
  // Independent Realtime Listener (Always On)
  useEffect(() => {
@@ -115,9 +131,9 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
  {/* FAB */}
  <button 
  onClick={() => setIsOpen(true)}
- className={`fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-16 h-16 rounded-full bg-amber-500 text-themeText shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40 ${isOpen ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 scale-100'}`}
+ className={`${variant === "banner" ? "px-4 py-2 rounded-xl bg-amber-500/10 text-amber-500 font-bold text-xs flex items-center gap-2 hover:bg-amber-500/20 transition-colors z-40 relative" : "fixed bottom-6 right-6 lg:bottom-10 lg:right-10 w-16 h-16 rounded-full bg-amber-500 text-themeText shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-40"} ${isOpen ? 'opacity-0 pointer-events-none scale-50' : 'opacity-100 scale-100'}`}
  >
- <i className="fa-solid fa-message text-2xl"></i>
+ <i className={`fa-solid fa-message ${variant === "banner" ? "text-sm" : "text-2xl"}`}></i>{variant === "banner" && <span>Message Student</span>}
  {unreadCount > 0 && (
  <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full shadow-lg border-2 border-[#121212] flex items-center justify-center text-[10px] font-black text-themeApp animate-bounce">
  {unreadCount}
@@ -125,8 +141,8 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
  )}
  </button>
 
- {/* Chat Window */}
- <div className={`fixed bottom-4 right-4 lg:bottom-8 lg:right-8 w-[calc(100vw-32px)] sm:w-[380px] h-[600px] max-h-[80vh] bg-themeApp/95 dark:bg-themePanel/95 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[2rem] shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95 pointer-events-none'}`}>
+ {/* Chat Window — full-screen on mobile, floating card on desktop */}
+ <div className={`fixed inset-0 sm:inset-auto sm:bottom-4 sm:right-4 lg:bottom-8 lg:right-8 w-full sm:w-[380px] h-full sm:h-[600px] sm:max-h-[80vh] bg-themeApp sm:bg-themeApp/95 dark:bg-themePanel sm:dark:bg-themePanel/95 sm:backdrop-blur-3xl sm:saturate-[1.8] sm:border sm:border-themeBorder rounded-none sm:rounded-[2rem] sm:shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${isOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-full sm:translate-y-20 opacity-0 sm:scale-95 pointer-events-none'}`}>
  
  {/* Header */}
  <div className="flex items-center justify-between px-6 py-4 border-b border-themeBorder bg-black/[0.02] dark:bg-themePanel/[0.02]">
@@ -169,18 +185,24 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
  <div className="w-6 shrink-0 flex items-end pb-1">
  {showAvatar && (
  <div className="w-6 h-6 rounded-full bg-themeElevated flex items-center justify-center overflow-hidden">
- {receiverAvatar ? <img src={receiverAvatar} alt="" className="w-full h-full object-cover" /> : <i className="fa-solid fa-user text-[8px] opacity-50"></i>}
+ {receiverAvatar ? <img src={getAvatarUrl(receiverAvatar)} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.parentElement.innerHTML = '<i class="fa-solid fa-user text-[8px] opacity-50"></i>'; }} /> : <i className="fa-solid fa-user text-[8px] opacity-50"></i>}
  </div>
  )}
  </div>
  )}
 
- <div className={`px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed shadow-sm ${
+ <div className={`px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed shadow-sm flex flex-col ${
  isMe 
  ? 'bg-amber-500 text-themeText rounded-br-sm' 
  : 'bg-themePanel dark:bg-themeElevated border border-themeBorder text-themeText rounded-bl-sm'
  }`}>
- {msg.content}
+ <span>{msg.content}</span>
+ <div className={`text-[10px] flex items-center justify-end gap-1 mt-1 ${isMe ? 'text-themeText/70' : 'text-themeTextSec'}`}>
+ {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+ {isMe && (
+ <i className={`fa-solid fa-check-double ${msg.read_at ? 'text-blue-500' : 'opacity-50'}`}></i>
+ )}
+ </div>
  </div>
  </div>
  </div>

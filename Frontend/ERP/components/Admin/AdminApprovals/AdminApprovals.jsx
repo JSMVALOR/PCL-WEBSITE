@@ -134,32 +134,68 @@ export default function AdminApprovals({ isEmbedded = false }) {
  
  if (error) throw error;
 
- // Notify Requester
- const grievanceData = error ? null : (await supabase.from('grievances').select('reporter_id, category, reporter:profiles!grievances_reporter_id_fkey(full_name, email)').eq('id', grievanceId).single()).data;
- if (grievanceData && grievanceData.reporter_id) {
- const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
- await supabase.from('notices').insert([{
- notice_id: noticeId,
- title: `Grievance Update`,
- category: 'System Alert',
- target_audience: 'person',
- target_id: grievanceData.reporter_id,
- priority: 'high',
- content: `Your grievance regarding ${grievanceData.category} has been marked as ${newStatus}.`,
- author_name: 'Admin',
- author_id: null
- }]);
+ // Notify Requester and Accused
+ const grievanceData = error ? null : (await supabase.from('grievances').select('reporter_id, accused_id, category, reporter:profiles!grievances_reporter_id_fkey(full_name, email), accused:profiles!grievances_accused_id_fkey(full_name, email)').eq('id', grievanceId).single()).data;
  
- const email = grievanceData.reporter?.email;
- if (email) {
- await sendSystemEmail('GRIEVANCE_UPDATE', {
- to_email: email,
- student_name: grievanceData.reporter.full_name,
- category: grievanceData.category,
- new_status: newStatus.toUpperCase(),
- notes: notes || "No specific remarks provided."
- }).catch(e => console.error("Email failed:", e));
- }
+ if (grievanceData) {
+     const noticeIdPrefix = `CIR-${new Date().getFullYear()}-`;
+     const newNotices = [];
+     
+     // Notify Reporter
+     if (grievanceData.reporter_id) {
+         newNotices.push({
+             notice_id: noticeIdPrefix + (Math.floor(Math.random() * 9000) + 1000),
+             title: `Grievance Update`,
+             category: 'System Alert',
+             target_audience: 'person',
+             target_id: grievanceData.reporter_id,
+             priority: 'high',
+             content: `Your grievance regarding ${grievanceData.category} has been marked as ${newStatus}. ${notes ? "Notes: " + notes : ""}`,
+             author_name: 'Admin',
+             author_id: null
+         });
+         
+         const reporterEmail = grievanceData.reporter?.email;
+         if (reporterEmail) {
+             sendSystemEmail('GRIEVANCE_UPDATE', {
+                 to_email: reporterEmail,
+                 student_name: grievanceData.reporter.full_name,
+                 category: grievanceData.category,
+                 new_status: newStatus.toUpperCase(),
+                 notes: notes || "No specific remarks provided."
+             }).catch(e => console.error("Email failed:", e));
+         }
+     }
+     
+     // Notify Accused
+     if (grievanceData.accused_id) {
+         newNotices.push({
+             notice_id: noticeIdPrefix + (Math.floor(Math.random() * 9000) + 1000),
+             title: `Grievance Resolution`,
+             category: 'System Alert',
+             target_audience: 'person',
+             target_id: grievanceData.accused_id,
+             priority: 'high',
+             content: `A grievance filed against you regarding ${grievanceData.category} has been resolved. ${notes ? "Resolution Notes: " + notes : ""}`,
+             author_name: 'Admin',
+             author_id: null
+         });
+         
+         const accusedEmail = grievanceData.accused?.email;
+         if (accusedEmail) {
+             sendSystemEmail('GRIEVANCE_UPDATE', {
+                 to_email: accusedEmail,
+                 student_name: grievanceData.accused.full_name,
+                 category: grievanceData.category,
+                 new_status: newStatus.toUpperCase(),
+                 notes: notes || "You have been cleared/notified."
+             }).catch(e => console.error("Email failed:", e));
+         }
+     }
+     
+     if (newNotices.length > 0) {
+         await supabase.from('notices').insert(newNotices);
+     }
  }
  window.erpToast.show(`Escalated grievance marked as ${newStatus}.`, "success");
  fetchData();
@@ -325,7 +361,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <div className="relative z-10">
  
  {activeTab === 'faculty_leaves' && (
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+ <div>
  {facultyLeaves.length === 0 ? (
  <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending leave requests from Faculty.</p>
@@ -386,7 +422,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  )}
 
  {activeTab === 'escalated_grievances' && (
- <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+ <div>
  {grievances.length === 0 ? (
  <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No escalated grievances require admin attention.</p>
@@ -394,7 +430,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  ) : (
  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 {grievances.map(g => (
- <div key={g.id} className={"bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-themeBorder dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 flex flex-col gap-4 relative overflow-hidden"}>
+ <div key={g.id} className={"bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-themeBorder dark:border-white/[0.08] rounded-2xl border-rose-500/20 border p-5 md:p-7 flex flex-col gap-5 md:gap-6 relative overflow-hidden"}>
  <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>
  
  <div className="flex justify-between items-start pl-2">
@@ -413,20 +449,20 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
 
  {g.status === 'pending' || g.status === 'investigating' ? (
- <div className="flex flex-col gap-2 mt-auto">
+ <div className="flex flex-col gap-3 md:gap-4 mt-auto">
  {g.status === 'pending' && (
- <div className="flex gap-2">
- <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="flex-1 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText border border-blue-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
- <button type="button" onClick={() => handleCallMeeting(g)} disabled={isProcessing} className="flex-1 bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-themeText border border-amber-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Call Meeting</button>
+ <div className="flex gap-2 md:gap-3">
+ <button type="button" onClick={() => handleGrievanceAction(g.id, 'investigating')} disabled={isProcessing} className="flex-1 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-themeText border border-blue-500/20 py-2.5 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Start Investigation</button>
+ <button type="button" onClick={() => handleCallMeeting(g)} disabled={isProcessing} className="flex-1 bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-themeText border border-amber-500/20 py-2.5 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Call Meeting</button>
  </div>
  )}
- <div className="flex w-full gap-2">
+ <div className="flex w-full gap-2 md:gap-3">
  <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Resolution details:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'resolved', notes);
- }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText border border-emerald-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
+ }} disabled={isProcessing} className="flex-1 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText border border-emerald-500/20 py-2.5 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Resolve</button>
  <button type="button" onClick={async () => { const notes = await window.erpDialog.prompt("Reason for dismissal:", "Input Required");
  if(notes) handleGrievanceAction(g.id, 'dismissed', notes);
- }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText border border-rose-500/20 py-2 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
+ }} disabled={isProcessing} className="flex-1 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText border border-rose-500/20 py-2.5 rounded-lg text-[14px] font-medium tracking-normal transition-colors">Dismiss</button>
  </div>
  </div>
  ) : (
@@ -443,7 +479,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  </div>
  )}
  {activeTab === 'profile_updates' && (
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+ <div>
  {profileUpdates.length === 0 ? (
  <div className={`col-span-full ${theme.layout.panel} rounded-themePanel border border-themeBorder dark:border-white/[0.08] p-8 text-center opacity-60`}>
  <p className="text-sm font-semibold text-themeTextSec">No pending profile update requests.</p>

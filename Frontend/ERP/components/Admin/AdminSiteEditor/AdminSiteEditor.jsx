@@ -191,7 +191,7 @@ export default function AdminSiteEditor({ isHubView = false }) {
  { key: "founder_name", label: "Founder Name", type: "text", fallback: "Dr. Sneha Mula" },
  { key: "founder_title", label: "Founder Title", type: "text", fallback: "Founder & Chairman" },
  { key: "cofounder_name", label: "Co-Founder Name", type: "text", fallback: "Mr. Bharat Krishna Buddala" },
- { key: "cofounder_title", label: "Co-Founder Title", type: "text", fallback: "Co-Founder & Secretary" }
+ { key: "cofounder_title", label: "Co-Founder Title", type: "text", fallback: "Co-Founder & Managing Director" }
  ]
  }
  ]

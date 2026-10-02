@@ -135,7 +135,6 @@ export default function BirthdayWidget() {
  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF2D55]/10 to-[#FF9500]/10 border border-white/20 flex items-center justify-center overflow-hidden shrink-0 relative">
  <img 
  src={getAvatarUrl(person)}
- } 
  alt={person.full_name} 
  className="w-full h-full object-cover" 
  />
