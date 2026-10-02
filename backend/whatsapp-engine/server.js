@@ -148,12 +148,13 @@ async function processQueue() {
             
             let jid = '';
             let isGroup = msg.phone.length > 13 || msg.phone.startsWith('G:');
+            let formattedPhone = msg.phone;
             
             if (isGroup) {
                 const cleanId = msg.phone.replace('G:', '').replace('@g.us', '');
                 jid = cleanId + '@g.us';
             } else {
-                let formattedPhone = msg.phone.replace(/[^0-9]/g, '');
+                formattedPhone = msg.phone.replace(/[^0-9]/g, '');
                 if (!formattedPhone.startsWith('91') && formattedPhone.length === 10) {
                     formattedPhone = '91' + formattedPhone;
                 }
