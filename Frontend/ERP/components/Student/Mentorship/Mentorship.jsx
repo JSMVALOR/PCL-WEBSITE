@@ -126,7 +126,7 @@ export default function Mentorship() {
  <div className="absolute inset-0 bg-themeAccent/10 rounded-full blur-xl animate-pulse"></div>
  <div className="relative w-full h-full rounded-full bg-themeElevated border-2 border-themeBorder shadow-lg text-themeTextSec flex items-center justify-center text-4xl font-black overflow-hidden ring-4 ring-themeApp">
  <img 
- src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(mentorData)}
  } 
  alt={mentorData.full_name} 
  className="w-full h-full object-cover" 

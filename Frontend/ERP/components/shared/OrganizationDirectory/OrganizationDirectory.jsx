@@ -127,7 +127,7 @@ export default function OrganizationDirectory() {
  <div className="flex items-center gap-4">
  <div className="w-16 h-16 rounded-xl bg-themeElevated border border-themeBorder shadow-inner overflow-hidden flex items-center justify-center shrink-0">
  <img 
- src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(member)}
  } 
  alt={member.full_name} 
  className="w-full h-full object-cover" 

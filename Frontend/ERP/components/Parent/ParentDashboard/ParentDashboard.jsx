@@ -205,7 +205,7 @@ export default function ParentDashboard({ onLogout }) {
  <div className="col-span-1 md:col-span-6 lg:col-span-8 bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[24px] p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
  <div className="w-28 h-28 rounded-[24px] bg-themeElevated flex items-center justify-center shrink-0 overflow-hidden">
  <img 
- src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(studentData)}
  } 
  alt={studentData.full_name}
  className="w-full h-full object-cover" 

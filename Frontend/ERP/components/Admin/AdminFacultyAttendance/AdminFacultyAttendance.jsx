@@ -196,7 +196,7 @@ export default function AdminFacultyAttendance({ isEmbedded = false }) {
  <div className="flex items-center gap-4">
  <div className="w-12 h-12 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center font-bold overflow-hidden border border-themeAccent/20 shrink-0">
  <img 
- src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(fac)}
  } 
  alt={fac.full_name} 
  className="w-full h-full object-cover" 

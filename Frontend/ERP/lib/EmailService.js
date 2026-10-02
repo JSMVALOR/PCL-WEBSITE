@@ -129,7 +129,13 @@ export const sendSystemEmail = async (templateKey, params) => {
                 attachments: params.attachments ? params.attachments : (params.attachment ? [{ filename: params.attachment_name || "Document.pdf", content: params.attachment, encoding: "base64" }] : undefined)
             }) });
 
-        const result = await response.json();
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            throw new Error(response.status === 504 ? "Email gateway timeout. The server is taking too long." : "Email server returned an invalid response.");
+        }
         
         if (!response.ok) {
             throw new Error(result.error || 'Failed to dispatch email via Vercel Serverless Engine.');
