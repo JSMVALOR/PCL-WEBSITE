@@ -3,6 +3,7 @@ FROM node:22-slim
 # Install Chrome dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
+    git \
     fonts-liberation \
     libnss3 \
     libatk-bridge2.0-0 \
