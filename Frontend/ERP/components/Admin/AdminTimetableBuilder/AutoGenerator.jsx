@@ -77,7 +77,8 @@ export default function AutoGenerator({}) {
  if (s.faculty_id) {
  if (!facultySchedule[s.faculty_id]) facultySchedule[s.faculty_id] = {};
  if (!facultySchedule[s.faculty_id][s.day_of_week]) facultySchedule[s.faculty_id][s.day_of_week] = {};
- facultySchedule[s.faculty_id][s.day_of_week][s.start_time] = true;
+ const tStr = s.start_time.substring(0,5);
+ facultySchedule[s.faculty_id][s.day_of_week][tStr] = true;
  }
  });
  }

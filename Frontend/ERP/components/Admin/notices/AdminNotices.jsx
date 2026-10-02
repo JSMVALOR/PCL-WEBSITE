@@ -355,7 +355,7 @@ try {
  <label className="col-span-1 lg:col-span-2 flex items-center justify-between p-4 bg-themeElevated border border-themeBorder rounded-xl cursor-pointer h-fit">
  <div>
  <span className="text-sm font-bold text-themeText block">Publish to Public Website</span>
- <span className="text-[10px] font-bold text-themeTextSec">Make this broadcast visible on the main website</span>
+ <span className="text-[10px] font-bold text-themeTextSec">Push to Website Announcement Bar</span>
  </div>
  <div className={`w-10 h-6 rounded-full p-1 transition-colors ${isPublicWebsite ? 'bg-themeAccent' : 'bg-themeBorder'}`}>
  <div className={`w-4 h-4 bg-themePanel rounded-full transition-transform ${isPublicWebsite ? 'translate-x-4' : 'translate-x-0'}`}></div>
@@ -428,6 +428,7 @@ try {
  <select value={eventType} onChange={e => setEventType(e.target.value)} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText focus:border-themeAccent outline-none appearance-none">
  <option value="academic">Academic</option>
  <option value="holiday">Holiday</option>
+<option value="news">News</option>
  <option value="campus_leave">Campus Leave</option>
  <option value="extracurricular">Extracurricular</option>
  </select>

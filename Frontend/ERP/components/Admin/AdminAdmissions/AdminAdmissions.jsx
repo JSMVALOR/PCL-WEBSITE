@@ -16,6 +16,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  const [isLoading, setIsLoading] = useState(true);
  const [filter, setFilter] = useState("all");
  const [isAdmissionsOpen, setIsAdmissionsOpen] = useState(true);
+ const [isSpotOpen, setIsSpotOpen] = useState(false);
  const [isTogglingStatus, setIsTogglingStatus] = useState(false);
 
  // Automation Modal State

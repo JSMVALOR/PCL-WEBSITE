@@ -191,7 +191,7 @@ export default function EventsPage() {
                         transition={{ duration: 0.8 }}
                         className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold"
                     >
-                        Campus <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Events</span>
+                        Campus <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Events & News</span>
                     </motion.h1>
                     <motion.p 
                         initial={{ opacity: 0 }}
@@ -218,7 +218,7 @@ export default function EventsPage() {
                                         <div className="w-2 h-2 rounded-full bg-[var(--primary-color)] shadow-[0_0_10px_var(--primary-color)]"></div>Happening Today
                                     </span>
                                     <h2 className="text-3xl md:text-5xl font-bold text-[var(--text-color)] uppercase tracking-widest">
-                                        Present <span className="text-[var(--primary-color)] italic">Events</span>
+                                        Present <span className="text-[var(--primary-color)] italic">Events & News</span>
                                     </h2>
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
@@ -230,7 +230,7 @@ export default function EventsPage() {
                         {/* 2. UPCOMING EVENTS */}
                         <div className="mb-32">
                             <h2 className="text-3xl md:text-4xl font-bold text-[var(--text-color)] mb-12 uppercase tracking-widest flex items-center justify-center md:justify-start gap-4">
-                                Upcoming <span className="text-[var(--primary-color)] italic">Events</span>
+                                Upcoming <span className="text-[var(--primary-color)] italic">Events & News</span>
                             </h2>
                             {upcomingEvents.length === 0 ? (
                                 <div className={`${styles.glassCard} py-10 text-center border border-[var(--card-border)]`}>
@@ -249,7 +249,7 @@ export default function EventsPage() {
                         {pastEvents.length > 0 && (
                             <div>
                                 <h2 className="text-3xl md:text-4xl font-bold text-[var(--text-muted)] mb-12 uppercase tracking-widest flex items-center justify-center md:justify-start gap-4">
-                                    Past <span className="opacity-70 italic">Events</span>
+                                    Past <span className="opacity-70 italic">Events & News</span>
                                 </h2>
                                 <div className="opacity-90 hover:opacity-100 transition-opacity duration-700">
                                     {Object.entries(pastGrouped).map(([monthYear, evts]) => 
@@ -262,7 +262,7 @@ export default function EventsPage() {
                                             onClick={() => setPastVisibleCount((c) => c + PAST_EVENTS_PAGE_SIZE)}
                                             className="text-xs font-bold uppercase tracking-widest px-8 py-4 rounded-full border border-[var(--card-border)] text-[var(--text-muted)] hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10 transition-colors focus:outline-none"
                                         >
-                                            Load More Past Events
+                                            Load More Past Events & News
                                         </button>
                                     </div>
                                 )}

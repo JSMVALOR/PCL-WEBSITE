@@ -86,7 +86,7 @@ const MENU_ITEMS = [
         {
           title: 'Updates',
           items: [
-            { label: 'Campus Events', link: '/events' },
+            { label: 'Campus Events & News', link: '/events' },
             { label: 'Blogs', link: '/blogs' },
           ] },
       ]

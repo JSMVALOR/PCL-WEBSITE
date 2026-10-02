@@ -40,6 +40,7 @@ import TermsAndConditions from './Website/components/LEGAL/TermsAndConditions';
 import PrivacyPolicy from './Website/components/LEGAL/PrivacyPolicy';
 import CookieConsent from './Website/components/LEGAL/CookieConsent';
 import WebsiteTracker from './Website/components/UI/WebsiteTracker';
+import AnnouncementBar from './Website/components/UI/AnnouncementBar';
 
 function App() {
   // Clear any ERP themes that might bleed into the main website
@@ -56,6 +57,7 @@ function App() {
         Skip to main content
       </a>
       <WebsiteTracker />
+      <AnnouncementBar />
             <ScrollToTop />
             <Routes>
         <Route path="/" element={<><SEO title="Home | Prudentia College of Law" description="Premier legal education institution offering BA LLB, BBA LLB, and LLB programs with practical moot court experience." jsonLd={{ "@context": "https://schema.org", "@type": "CollegeOrUniversity", "name": "Prudentia College of Law", "url": "https://prudentiacollegeoflaw.com" }} /><Navbar /><main id="main-content"><Home /></main></>} />
@@ -86,7 +88,7 @@ function App() {
         <Route path="/careers/placement" element={<><SEO title="Placement Cell" description="Dedicated placement cell ensuring outstanding career opportunities for our students." /><Navbar /><PlacementCell /></>} />
 
         <Route path="/academic-calendar" element={<AcademicCalendar />} />
-        <Route path="/events" element={<><SEO title="Events" description="Stay updated with the latest events and academic conferences at Prudentia College of Law." /><Navbar /><EventsPage /></>} />
+        <Route path="/events" element={<><SEO title="Events & News" description="Stay updated with the latest events and academic conferences at Prudentia College of Law." /><Navbar /><EventsPage /></>} />
         <Route path="/events/:id" element={<><Navbar /><EventDetail /></>} />
         <Route path="/blogs" element={<><SEO title="Legal Blogs" description="Read insightful articles and legal analysis from our faculty and students." /><Navbar /><BlogsPage /></>} />
         <Route path="/blogs/submit" element={<><SEO title="Submit a Blog" description="Submit your legal articles for publication on the Prudentia College of Law blog." /><Navbar /><SubmitBlog /></>} />

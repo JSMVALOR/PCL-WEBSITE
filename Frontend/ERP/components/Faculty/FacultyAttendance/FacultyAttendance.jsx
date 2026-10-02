@@ -944,10 +944,7 @@ export default function FacultyAttendance({ subjectContext }) {
  <div className="mb-8">
  <div className="flex flex-col gap-2 mb-2">
  <h2 className="text-2xl font-semibold tracking-tight text-themeText leading-tight">{activeSession.classData?.subject?.name}</h2>
- <div className="flex bg-themeElevated rounded-lg p-0.5 border border-themeBorder shadow-inner w-fit">
- <button type="button" onClick={() => setAttendancePhase('entry')} className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase transition-all ${attendancePhase === 'entry' ? 'bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeTextSec dark:hover:text-themeApp/70'}`}>Phase 1: Entry</button>
- <button type="button" onClick={() => setAttendancePhase('exit')} className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase transition-all ${attendancePhase === 'exit' ? 'bg-themePanel text-themeText shadow-sm' : 'text-themeTextSec hover:text-themeTextSec dark:hover:text-themeApp/70'}`}>Phase 2: Exit</button>
- </div>
+ 
 </div>
  <div className="flex items-center gap-2">
  <span className="bg-themeElevated px-2 py-0.5 rounded text-[11px] font-bold text-themeTextSec">{activeSession.classData?.batch}</span>
