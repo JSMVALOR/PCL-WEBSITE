@@ -479,7 +479,6 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  )}
  </div>
  </div>
- </div>
  )}
 
  {selectedSubject && !selectedAssessmentType && (

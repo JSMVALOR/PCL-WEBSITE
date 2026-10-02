@@ -178,7 +178,7 @@ try {
  type: 'notice',
  action_link: 'notices'
  }));
- await supabase.from('notifications').insert(notifs);\n
+ await supabase.from('notifications').insert(notifs);
  // ---- WHATSAPP INTEGRATION ----
  try {
    if (eventType === 'holiday' || eventType === 'campus_leave') {
