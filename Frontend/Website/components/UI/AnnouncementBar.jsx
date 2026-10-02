@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 
 export default function AnnouncementBar() {
   const [announcement, setAnnouncement] = useState(null);
