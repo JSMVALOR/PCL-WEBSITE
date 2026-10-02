@@ -4,6 +4,7 @@ FROM node:22-slim
 RUN apt-get update && apt-get install -y \
     chromium \
     git \
+    openssh-client \
     fonts-liberation \
     libnss3 \
     libatk-bridge2.0-0 \
@@ -25,6 +26,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 WORKDIR /app
 
 COPY package.json ./
+RUN git config --global url."https://github.com/".insteadOf ssh://git@github.com/
 RUN npm install
 
 COPY . .
