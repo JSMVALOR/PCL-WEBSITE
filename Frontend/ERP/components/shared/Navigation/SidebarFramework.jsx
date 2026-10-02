@@ -266,7 +266,6 @@ export default function SidebarFramework({
  <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-themeBorder flex items-center justify-center font-black text-xs text-themeText relative shrink-0 overflow-hidden">
  <img 
  src={getAvatarUrl(userSession)}
- } 
  alt="Profile" 
  className="w-full h-full object-cover" 
  />
@@ -388,7 +387,6 @@ export default function SidebarFramework({
  <div className="w-14 h-14 rounded-2xl bg-themeElevated backdrop-blur-xl border border-themeBorder dark:border-themeBorder flex items-center justify-center font-black text-xl text-themeText relative shadow-lg overflow-hidden">
  <img 
  src={getAvatarUrl(userSession)}
- } 
  alt="Profile" 
  className="w-full h-full object-cover relative z-0" 
  />
