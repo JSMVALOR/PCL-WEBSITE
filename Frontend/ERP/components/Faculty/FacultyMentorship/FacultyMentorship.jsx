@@ -614,6 +614,7 @@ export default function FacultyMentorship() {
     </div>
  </div>
  </div>
+ )}
  {selectedMentee && (
  <MentorshipChatHub 
  receiverId={selectedMentee.id}
