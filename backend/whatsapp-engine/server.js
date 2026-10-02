@@ -197,7 +197,9 @@ app.post('/api/whatsapp/send', async (req, res) => {
         const { error } = await supabase.from('whatsapp_queue').insert({
             phone: to_phone,
             message: finalMessage,
-            status: 'PENDING'
+            status: 'PENDING',
+            recipient_name: recipient_name || null,
+            template_id: template_id || null,
         });
         if (error) throw error;
         res.json({ success: true, queued: true });
@@ -226,7 +228,9 @@ app.post('/api/whatsapp/send-batch', async (req, res) => {
             return {
                 phone: m.to_phone,
                 message: finalMessage || '',
-                status: 'PENDING'
+                status: 'PENDING',
+                recipient_name: m.recipient_name || null,
+                template_id: m.template_id || null,
             };
         }).filter(m => m.phone && m.message);
 
@@ -454,7 +458,9 @@ cron.schedule('0 17 * * *', async () => {
                 const groupNotifs = globalSet.value.map(groupId => ({
                     phone: groupId,
                     message,
-                    status: 'PENDING'
+                    status: 'PENDING',
+                    template_id: 'HOLIDAY_REMINDER',
+                    recipient_name: 'Global Broadcast'
                 }));
                 if (groupNotifs.length > 0) {
                     await supabase.from('whatsapp_queue').insert(groupNotifs);

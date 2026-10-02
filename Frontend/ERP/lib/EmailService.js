@@ -170,7 +170,9 @@ export const sendSystemWhatsApp = async (to_phone, message, options = {}) => {
             await supabase.from('whatsapp_queue').insert({
                 phone: to_phone,
                 message: message,
-                status: 'PENDING'
+                status: 'PENDING',
+                recipient_name: recipient_name || null,
+                template_id: template_id || null,
             });
             console.log("WhatsApp message queued via Supabase fallback.");
             return true;
@@ -199,7 +201,9 @@ export const sendSystemWhatsAppBatch = async (messages) => {
             const items = messages.map(m => ({
                 phone: m.to_phone,
                 message: m.message || '',
-                status: 'PENDING'
+                status: 'PENDING',
+                recipient_name: m.recipient_name || null,
+                template_id: m.template_id || null,
             })).filter(m => m.phone && m.message);
             if (items.length > 0) {
                 await supabase.from('whatsapp_queue').insert(items);

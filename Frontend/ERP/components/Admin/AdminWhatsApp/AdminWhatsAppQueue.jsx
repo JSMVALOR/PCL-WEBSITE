@@ -131,7 +131,8 @@ export default function AdminWhatsAppQueue() {
        const { error } = await supabase.from('whatsapp_queue').insert({
          phone: selectedGroup, // Keep the full group ID including @g.us
          message: broadcastMsg.trim(),
-         status: 'PENDING'
+         status: 'PENDING',
+         recipient_name: groups.find(g => g.id === selectedGroup)?.name || 'Group',
        });
        if (error) throw error;
      }
@@ -140,7 +141,8 @@ export default function AdminWhatsAppQueue() {
        const items = selectedContacts.map(c => ({
          phone: c.phone,
          message: broadcastMsg.trim(),
-         status: 'PENDING'
+         status: 'PENDING',
+         recipient_name: c.name,
        })).filter(item => item.phone);
        if (items.length > 0) {
          const { error } = await supabase.from('whatsapp_queue').insert(items);
@@ -282,7 +284,9 @@ export default function AdminWhatsAppQueue() {
            message: selectedTemplate === 'GENERIC' 
              ? (templateVars.message || '') 
              : `[${WA_TEMPLATES[selectedTemplate]?.label}] ${Object.entries(templateVars).map(([k,v]) => `${k}: ${v}`).join(', ')}`,
-           status: 'PENDING'
+           status: 'PENDING',
+           recipient_name: c.name,
+           template_id: selectedTemplate,
          });
        }
      }
@@ -293,7 +297,9 @@ export default function AdminWhatsAppQueue() {
          message: selectedTemplate === 'GENERIC' 
            ? (templateVars.message || '') 
            : `[${WA_TEMPLATES[selectedTemplate]?.label}] ${Object.entries(templateVars).map(([k,v]) => `${k}: ${v}`).join(', ')}`,
-         status: 'PENDING'
+         status: 'PENDING',
+         recipient_name: groups.find(g => g.id === selectedGroup)?.name || 'Group',
+         template_id: selectedTemplate,
        });
      }
      if (items.length > 0) {

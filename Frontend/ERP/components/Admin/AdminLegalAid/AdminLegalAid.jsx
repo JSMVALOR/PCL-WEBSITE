@@ -1,45 +1,96 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import StatCard from '../../../../Shared/components/UI/StatCard';
+import DataTable from '../../../../Shared/components/UI/DataTable';
+import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
 export default function AdminLegalAid() {
- return (
- <div className="w-full animate-fade-in selection:bg-rose-500/20 min-h-screen bg-themeApp text-themeText ">
- <div className="w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8">
- <PageHeader 
- icon="fa-solid fa-hand-holding-hand" 
- title="Legal Aid Clinic" 
- subtitle="Track pro-bono cases, community outreach, and student legal services." 
- />
+  const [cases, setCases] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
- <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl border border-themeBorder p-6 rounded-[2rem] shadow-sm flex flex-col gap-4">
- <h3 className="text-sm font-black tracking-tight text-themeTextSec uppercase">Active Cases</h3>
- <div className="text-4xl font-black text-themeText ">45</div>
- <p className="text-[11px] font-bold text-emerald-500 bg-emerald-500/10 w-fit px-2 py-0.5 rounded-md">12 Resolved this month</p>
- </div>
- <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl border border-themeBorder p-6 rounded-[2rem] shadow-sm flex flex-col gap-4">
- <h3 className="text-sm font-black tracking-tight text-themeTextSec uppercase">Total Pro-Bono Hours</h3>
- <div className="text-4xl font-black text-themeText ">1,240</div>
- <p className="text-[11px] font-bold text-amber-500 bg-amber-500/10 w-fit px-2 py-0.5 rounded-md">Across 80 students</p>
- </div>
- <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl border border-themeBorder p-6 rounded-[2rem] shadow-sm flex flex-col gap-4">
- <h3 className="text-sm font-black tracking-tight text-themeTextSec uppercase">Community Camps</h3>
- <div className="text-4xl font-black text-themeText ">3</div>
- <p className="text-[11px] font-bold text-indigo-500 bg-indigo-500/10 w-fit px-2 py-0.5 rounded-md">Upcoming: Rural Legal Drive</p>
- </div>
- </div>
+  useEffect(() => {
+    fetchCases();
+  }, []);
 
- <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl border border-themeBorder p-8 rounded-[2rem] shadow-sm flex flex-col items-center justify-center text-center min-h-[300px]">
- <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-4 border border-rose-500/20">
- <i className="fa-solid fa-file-contract text-2xl text-rose-500"></i>
- </div>
- <h2 className="text-xl font-black text-themeText mb-2">Case Management System V2 Deployment</h2>
- <p className="text-sm font-medium text-themeTextSec max-w-md">
- We are migrating to a secure, encrypted case ledger for legal aid records to ensure client confidentiality. The ledger will be live shortly.
- </p>
- </div>
- </div>
- </div>
- );
+  const fetchCases = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('legal_aid_cases')
+        .select('*, profiles(full_name)')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn("Could not fetch cases. Has the SQL script been executed?", error.message);
+      } else {
+        setCases(data || []);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const activeCasesCount = cases.filter(c => c.status === 'Open' || c.status === 'In Progress').length;
+  const resolvedCasesCount = cases.filter(c => c.status === 'Resolved' || c.status === 'Closed').length;
+  const totalHours = cases.reduce((acc, curr) => acc + (Number(curr.pro_bono_hours) || 0), 0);
+
+  const caseColumns = [
+    { key: 'case_number', label: 'Case Number', render: (row) => <span className="font-mono font-bold text-themeAccent">{row.case_number}</span> },
+    { key: 'title', label: 'Title / Subject', render: (row) => (
+        <div className="flex flex-col">
+            <span className="font-bold">{row.title}</span>
+            <span className="text-xs text-themeTextSec">Client: {row.client_name}</span>
+        </div>
+    )},
+    { key: 'assigned', label: 'Assigned Supervising Faculty', render: (row) => row.profiles?.full_name || 'Unassigned' },
+    { key: 'hours', label: 'Pro-Bono Hours', render: (row) => `${row.pro_bono_hours || 0} hrs` },
+    { key: 'status', label: 'Status', render: (row) => {
+        const color = row.status === 'Open' ? 'text-indigo-500 bg-indigo-500/10' : 
+                      row.status === 'In Progress' ? 'text-amber-500 bg-amber-500/10' : 
+                      row.status === 'Resolved' ? 'text-emerald-500 bg-emerald-500/10' : 'text-gray-500 bg-gray-500/10';
+        return <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${color}`}>{row.status}</span>;
+    }}
+  ];
+
+  return (
+    <div className="w-full animate-fade-in selection:bg-rose-500/20 text-themeText">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatCard 
+          title="Active Cases" 
+          value={activeCasesCount} 
+          badgeText="Currently in progress" 
+          badgeColor="rose" 
+        />
+        <StatCard 
+          title="Total Pro-Bono Hours" 
+          value={totalHours.toFixed(1)} 
+          badgeText="Across all cases" 
+          badgeColor="amber" 
+        />
+        <StatCard 
+          title="Resolved Cases" 
+          value={resolvedCasesCount} 
+          badgeText="Successfully Closed" 
+          badgeColor="emerald" 
+        />
+      </div>
+
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-black">Pro-Bono Case Ledger</h2>
+        <button onClick={() => window.erpToast && window.erpToast.show("Intake form coming soon.", "info")} className="bg-rose-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-rose-600 transition-colors">
+          <i className="fa-solid fa-plus mr-2"></i> New Case Intake
+        </button>
+      </div>
+
+      <DataTable 
+        columns={caseColumns} 
+        data={cases} 
+        isLoading={isLoading} 
+        emptyMessage="No Legal Aid cases recorded. The ledger is empty." 
+      />
+    </div>
+  );
 }
