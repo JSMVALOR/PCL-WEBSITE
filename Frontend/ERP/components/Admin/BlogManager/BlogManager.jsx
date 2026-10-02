@@ -7,6 +7,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon } from '@hugeicons/core-free-icons';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 export default function BlogManager({ isEmbedded = false, isHubView = false }) {
  const [blogs, setBlogs] = useState([]);
@@ -102,6 +103,7 @@ export default function BlogManager({ isEmbedded = false, isHubView = false }) {
  author_name: formData.author_name,
  author_erp_id: formData.author_erp_id || null,
  content: formData.content,
+ image_url: formData.image_url || null,
  is_public: formData.is_public,
  category: 'Blog'
  };
@@ -111,6 +113,49 @@ export default function BlogManager({ isEmbedded = false, isHubView = false }) {
  const { error } = await supabase.from('admin_notices').update(savePayload).eq('id', currentBlog.id);
  if (error) throw error;
  if(window.erpToast) window.erpToast.show("Blog updated successfully!", "success");
+ 
+ // Notify if published
+ if (savePayload.is_public) {
+   let contactEmail = currentBlog?.author_email || authorContact?.email;
+   let contactPhone = currentBlog?.author_phone || authorContact?.phone;
+   let isStudent = false;
+   
+   if (formData.author_erp_id) {
+     const { data: profile } = await supabase.from('profiles').select('id, contact_email, contact_phone, role').eq('erp_id', formData.author_erp_id).single();
+     if (profile) {
+       contactEmail = profile.contact_email || contactEmail;
+       contactPhone = profile.contact_phone || contactPhone;
+       isStudent = profile.role === 'Student' || profile.role?.toLowerCase() === 'student';
+       await supabase.from('notifications').insert([{
+         recipient_id: profile.id,
+         title: 'Blog Post Published',
+         message: `Your blog post "${savePayload.title}" has been published by the admin.`,
+         type: 'success',
+         action_link: '/dashboard'
+       }]);
+     }
+   }
+
+   if (contactEmail) {
+     try {
+       await sendSystemEmail('BLOG_UPDATE', {
+         to_email: contactEmail,
+         author_name: savePayload.author_name,
+         title: savePayload.title,
+         status: 'Published',
+         message: 'Your blog post has been approved and published to the live website!'
+       });
+       if(window.erpToast) window.erpToast.show("Author notified via Email.", "success");
+     } catch(e) { console.warn("Failed to send email", e); }
+   }
+   if (contactPhone && isStudent) {
+     try {
+       const waNumber = contactPhone.length === 10 ? `91${contactPhone}` : contactPhone;
+       await sendSystemWhatsApp(waNumber, `Hello ${savePayload.author_name},\n\nGood news! Your blog post "${savePayload.title}" has been published to the Prudentia College of Law website.`);
+       if(window.erpToast) window.erpToast.show("Author notified via WhatsApp.", "success");
+     } catch(e) { console.warn("Failed to send WA", e); }
+   }
+ }
  } else {
  // Insert
  const { error } = await supabase.from('admin_notices').insert([savePayload]);
@@ -129,12 +174,54 @@ export default function BlogManager({ isEmbedded = false, isHubView = false }) {
 
  const handleReject = async () => {
  const actionText = currentBlog?.is_public ? "delete" : "reject and permanently delete";
- if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm(`Are you sure you want to ${actionText} this post?`, r)))) return;
  try {
  if (currentBlog?.id) {
  const { error } = await supabase.from('admin_notices').delete().eq('id', currentBlog.id);
  if (error) throw error;
  if(window.erpToast) window.erpToast.show(`Blog ${currentBlog?.is_public ? 'deleted' : 'rejected'} and removed.`, 'success');
+ 
+ // Notify author of rejection
+ if (!currentBlog.is_public) {
+   let contactEmail = currentBlog.author_email;
+   let contactPhone = currentBlog.author_phone;
+   let isStudent = false;
+
+   if (currentBlog.author_erp_id) {
+     const { data: profile } = await supabase.from('profiles').select('id, contact_email, contact_phone, role').eq('erp_id', currentBlog.author_erp_id).single();
+     if (profile) {
+       contactEmail = profile.contact_email || contactEmail;
+       contactPhone = profile.contact_phone || contactPhone;
+       isStudent = profile.role === 'Student' || profile.role?.toLowerCase() === 'student';
+       await supabase.from('notifications').insert([{
+         recipient_id: profile.id,
+         title: 'Blog Post Rejected',
+         message: `Your blog post submission "${currentBlog.title}" was not approved.`,
+         type: 'error',
+         action_link: '/dashboard'
+       }]);
+     }
+   }
+
+   if (contactEmail) {
+     try {
+       await sendSystemEmail('BLOG_UPDATE', {
+         to_email: contactEmail,
+         author_name: currentBlog.author_name,
+         title: currentBlog.title,
+         status: 'Rejected',
+         message: 'Unfortunately, your blog post submission was not approved for publication at this time.'
+       });
+       if(window.erpToast) window.erpToast.show("Author notified via Email.", "success");
+     } catch(e) { console.warn("Failed to send email", e); }
+   }
+   if (contactPhone && isStudent) {
+     try {
+       const waNumber = contactPhone.length === 10 ? `91${contactPhone}` : contactPhone;
+       await sendSystemWhatsApp(waNumber, `Hello ${currentBlog.author_name},\n\nUnfortunately, your blog post submission "${currentBlog.title}" was not approved for publication at this time.`);
+       if(window.erpToast) window.erpToast.show("Author notified via WhatsApp.", "success");
+     } catch(e) { console.warn("Failed to send WA", e); }
+   }
+ }
  }
  setIsEditing(false);
  fetchBlogs();

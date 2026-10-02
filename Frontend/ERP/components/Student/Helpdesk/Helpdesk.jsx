@@ -6,9 +6,11 @@ import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { useNotification } from '../../../../Shared/context/NotificationContext';
 
 export default function Helpdesk({ isEmbedded = false }) {
  const { userSession } = useERP();
+ const { addFlag } = useNotification();
 
  // --- MAIN STATE ---
  const [tickets, setTickets] = useState(() => {
@@ -99,11 +101,12 @@ export default function Helpdesk({ isEmbedded = false }) {
      recipient_id: a.id,
      title: 'New Support Ticket',
      message: `A new support ticket has been raised: ${ticketForm.subject}`,
-     type: 'attendance',
+     type: 'notice',
      action_link: 'helpdesk'
    })));
  }
 
+ addFlag({ title: "Ticket Submitted", description: "Your support ticket has been routed to the Support Team.", type: "success" });
  setStatusMessage({ type: "success", text: "Ticket routed to the Support Team." });
  fetchTickets(); // Refresh list
 
@@ -115,6 +118,8 @@ export default function Helpdesk({ isEmbedded = false }) {
 
  } catch (error) {
  console.error("Ticket creation failed:", error);
+ addFlag({ title: "Submission Failed", description: "Failed to submit ticket. Please try again.", type: "error" });
+ addFlag({ title: "Submission Failed", description: "Failed to submit ticket. Please try again.", type: "error" });
  setStatusMessage({ type: "error", text: "Failed to submit ticket. Please try again." });
  } finally {
  setIsSubmitting(false);
@@ -179,10 +184,30 @@ export default function Helpdesk({ isEmbedded = false }) {
  {ticket.status === 'resolved' ? <i className="fa-solid fa-check-double"></i> : <i className="fa-solid fa-clock"></i>}
  {ticket.status === 'open' ? 'In Progress' : 'Resolved'}
  </span>
- <div className="bg-themeElevated p-3 rounded-xl border border-themeBorder text-xs font-medium text-themeTextSec w-full lg:max-w-xs flex items-start gap-3">
+ {(() => {
+ let thread = [];
+ try { thread = JSON.parse(ticket.admin_reply); if (!Array.isArray(thread)) throw new Error('Not array'); } catch {
+   if (ticket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: ticket.admin_reply, date: ticket.updated_at || ticket.created_at }];
+ }
+ return thread.length > 0 ? (
+ <div className="flex flex-col gap-2 w-full lg:max-w-md">
+ {thread.map((reply, idx) => (
+ <div key={idx} className="bg-themeElevated p-3 rounded-xl border border-themeBorder text-xs font-medium text-themeTextSec flex items-start gap-3">
  <i className="fa-solid fa-reply text-themeAccent mt-0.5"></i>
- <span className="leading-relaxed">{ticket.admin_reply}</span>
+ <div className="flex flex-col">
+ <span className="text-[10px] font-bold text-themeText/70 uppercase tracking-widest mb-1">{reply.date ? new Date(reply.date).toLocaleString() : 'Admin Reply'}</span>
+ <span className="leading-relaxed text-themeText">{reply.text}</span>
  </div>
+ </div>
+ ))}
+ </div>
+ ) : (
+ <div className="bg-themeElevated p-3 rounded-xl border border-themeBorder text-xs font-medium text-themeTextSec w-full lg:max-w-xs flex items-start gap-3">
+ <i className="fa-solid fa-clock text-themeAccent mt-0.5"></i>
+ <span className="leading-relaxed">Awaiting Support Team Review</span>
+ </div>
+ );
+ })()}
  </div>
  </div>
  ))}

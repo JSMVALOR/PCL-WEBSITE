@@ -91,7 +91,11 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  avatar_url: p.profile_picture_url,
  role: p.role,
  status: p.status || 'Active',
- questionnaire_data: p.questionnaire_data
+ questionnaire_data: p.questionnaire_data,
+ application_number: p.application_number,
+ admission_type: p.admission_type,
+ application_date: p.application_date,
+ joining_date: p.joining_date
  };
 
  if (mapped.status === 'Suspended') {

@@ -4,13 +4,38 @@ import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../context/ErpContext";
 import { motion } from 'framer-motion';
 import { getAvatarUrl } from '../../utils/avatarUtils';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../lib/EmailService';
 
-export default function BirthdayWidget() {
- const { userSession } = useERP();
- const isAdmin = userSession?.role === 'admin' || window.location.pathname.includes('admin');
- 
- const [birthdays, setBirthdays] = useState([]);
- const [loading, setLoading] = useState(true);
+ export default function BirthdayWidget() {
+  const { userSession } = useERP();
+  const isAdmin = userSession?.role === 'admin' || window.location.pathname.includes('admin');
+  
+  const [birthdays, setBirthdays] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState({});
+
+  const handleSendWishes = async (person) => {
+    if (sending[person.id]) return;
+    setSending(prev => ({ ...prev, [person.id]: true }));
+    try {
+      // 1. Send Email
+      if (person.email) {
+        await sendSystemEmail('HAPPY_BIRTHDAY', { to_email: person.email, name: person.full_name });
+      }
+      
+      // 2. Send WhatsApp if phone exists
+      if (person.phone) {
+        await sendSystemWhatsApp(person.phone, `🎉 Happy Birthday ${person.full_name}! 🎂\n\nThe entire faculty and administration at Prudentia College of Law wishes you a fantastic day ahead!`);
+      }
+      
+      window.erpDialog?.alert(`Successfully sent birthday wishes to ${person.full_name}!`, 'success');
+    } catch (e) {
+      console.error(e);
+      window.erpDialog?.alert(`Failed to send wishes to ${person.full_name}.`, 'error');
+    } finally {
+      setSending(prev => ({ ...prev, [person.id]: false }));
+    }
+  };
 
  useEffect(() => {
  let isMounted = true;
@@ -28,7 +53,7 @@ export default function BirthdayWidget() {
  // but for scale RPC is better. For this demo, let's just use an RPC if it existed, or filter in memory.
  const { data, error } = await supabase
  .from('profiles')
- .select('id, full_name, role, profile_picture_url, dob')
+ .select('id, full_name, role, profile_picture_url, dob, email, phone')
  .not('dob', 'is', null);
 
  if (!error && data) {
@@ -144,8 +169,8 @@ export default function BirthdayWidget() {
  <span className="text-[14px] font-semibold text-themeText leading-tight mb-0.5 group-hover:text-[#FF2D55] transition-colors line-clamp-1">{person.full_name}</span>
  <span className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec leading-none">{person.role}</span>
  </div>
- <div className="w-8 h-8 rounded-full bg-themeElevated flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all text-[#FF9500] hover:bg-[#FF9500] hover:text-themeApp cursor-pointer" onClick={() => window.erpDialog?.alert(`Sent birthday wishes to ${person.full_name}!`)}>
- <i className="fa-solid fa-paper-plane text-[10px]"></i>
+ <div className="w-8 h-8 rounded-full bg-themeElevated flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-all text-[#FF9500] hover:bg-[#FF9500] hover:text-themeApp cursor-pointer" onClick={() => handleSendWishes(person)}>
+ {sending[person.id] ? <i className="fa-solid fa-spinner fa-spin text-[10px]"></i> : <i className="fa-solid fa-paper-plane text-[10px]"></i>}
  </div>
  </motion.div>
  ))}

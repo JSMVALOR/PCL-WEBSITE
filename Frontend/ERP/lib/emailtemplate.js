@@ -805,6 +805,14 @@ const buildEmailHtml = (title, content, preheader = "") => `
 `;
 
 export const HTML_EMAIL_TEMPLATES = {
+    BLOG_UPDATE: (params) => buildEmailHtml(
+        'Blog Submission Update',
+        `<p>Dear ${params.author_name || 'Author'},</p>
+        <p>There is an update regarding your blog submission: <strong>${params.title}</strong>.</p>
+        <p>Status: <strong>${params.status}</strong></p>
+        <p>${params.message}</p>
+        <p>Thank you for contributing to Prudentia College of Law.</p>`
+    ),
     GRIEVANCE_UPDATE: (params) => buildEmailHtml(
         'Grievance Status Update',
         `<p>Dear ${params.student_name},</p>

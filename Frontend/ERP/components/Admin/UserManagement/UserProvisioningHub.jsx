@@ -1,7 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { sendSystemEmail } from '../../../lib/EmailService';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -12,9 +12,13 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  const [newUserRole, setNewUserRole] = useState("student");
  const [newUserName, setNewUserName] = useState("");
  const [newUserEmail, setNewUserEmail] = useState("");
+ const [newUserPhone, setNewUserPhone] = useState("");
+ const [newUserJoiningDate, setNewUserJoiningDate] = useState(new Date().toISOString().split('T')[0]);
+ const [newUserAdmissionType, setNewUserAdmissionType] = useState("Regular");
  const [assignment, setAssignment] = useState("");
  const [batches, setBatches] = useState([]);
  const [isProvisioning, setIsProvisioning] = useState(false);
+ const [enableWhatsApp, setEnableWhatsApp] = useState(true);
  const [provisionLogs, setProvisionLogs] = useState([]);
  
  // Right Side: Extended Edit Info (Only available when a user is loaded)
@@ -44,7 +48,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  }, []);
 
  const [provisionMode, setProvisionMode] = useState("single");
- const [bulkRows, setBulkRows] = useState([{ name: '', batch: '', email: '' }]);
+ const [bulkRows, setBulkRows] = useState([{ name: '', batch: '', email: '', phone: '', joinDate: new Date().toISOString().split('T')[0], admType: 'Regular' }]);
 
  const handleBulkPaste = (e, rowIndex, startCol) => {
  const pasteData = e.clipboardData.getData('text');
@@ -62,7 +66,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  let parts = line.split('\t');
  if (parts.length < 2 && line.includes(',')) parts = line.split(',');
 
- const cols = ['name', 'batch', 'email'];
+ const cols = ['name', 'batch', 'email', 'phone', 'joinDate', 'admType'];
  parts.forEach((part, colOffset) => {
  const targetCol = startCol + colOffset;
  if (targetCol < cols.length && part) {
@@ -72,7 +76,7 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  });
  
  if (newRows[newRows.length - 1].name || newRows[newRows.length - 1].email) {
- newRows.push({ name: '', batch: '', email: '' });
+ newRows.push({ name: '', batch: '', email: '', phone: '', joinDate: new Date().toISOString().split('T')[0], admType: 'Regular' });
  }
  setBulkRows(newRows);
  }
@@ -82,18 +86,18 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  const newRows = [...bulkRows];
  newRows[index][field] = value;
  if (index === newRows.length - 1 && value) {
- newRows.push({ name: '', batch: '', email: '' });
+ newRows.push({ name: '', batch: '', email: '', phone: '', joinDate: new Date().toISOString().split('T')[0], admType: 'Regular' });
  }
  setBulkRows(newRows);
  };
 
  const removeBulkRow = (index) => {
  const newRows = bulkRows.filter((_, i) => i !== index);
- if (newRows.length === 0) newRows.push({ name: '', batch: '', email: '' });
+ if (newRows.length === 0) newRows.push({ name: '', batch: '', email: '', phone: '', joinDate: new Date().toISOString().split('T')[0], admType: 'Regular' });
  setBulkRows(newRows);
  };
 
- const provisionUser = async (name, email, role, assign, currentNextNum) => {
+ const provisionUser = async (name, email, phone, role, assign, currentNextNum, sendWa, joinDate, admType) => {
  let shortcut = "BBL";
  if (assign.includes("BA LLB")) shortcut = "BAL";
  if (assign.includes("LLB") && !assign.includes("BA ")) shortcut = "LLB";
@@ -377,6 +381,12 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  </div>
 
  <form onSubmit={handleProvisionSubmit} className="flex flex-col gap-5">
+ <div className="flex items-center gap-3 bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20 mb-2">
+ <input type="checkbox" checked={enableWhatsApp} onChange={e => setEnableWhatsApp(e.target.checked)} className="w-4 h-4 rounded accent-emerald-500 cursor-pointer" id="wa_toggle" />
+ <label htmlFor="wa_toggle" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 cursor-pointer select-none">
+ Enable WhatsApp Dispatch
+ </label>
+ </div>
  <div className="flex p-1.5 bg-themeApp rounded-xl border border-themeBorder w-full shadow-inner">
  <button type="button" onClick={() => setNewUserRole("student")} className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition ${newUserRole === 'student' ? 'bg-themePanel shadow-sm text-themeAccent border border-themeBorder ' : 'text-themeTextSec hover:text-themeText'}`}>Student</button>
  <button type="button" onClick={() => setNewUserRole("faculty")} className={`flex-1 py-2.5 rounded-lg text-xs font-bold transition ${newUserRole === 'faculty' ? 'bg-themePanel shadow-sm text-themeAccent border border-themeBorder ' : 'text-themeTextSec hover:text-themeText'}`}>Faculty / Staff</button>
@@ -414,6 +424,18 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  <div className="flex flex-col gap-2">
  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-themeTextSec ml-1">Institution Email</label>
  <input type="email" value={newUserEmail} onChange={(e) => setNewUserEmail(e.target.value)} className="w-full bg-themePanel dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] focus:border-themeAccent rounded-xl py-3.5 px-4 text-xs font-bold text-themeText outline-none transition shadow-sm" placeholder="e.g. john@pcl.edu" required={provisionMode === 'single'} />
+ </div>
+ <div className="flex flex-col gap-2 md:col-span-2">
+ <label className="text-[10px] font-black uppercase tracking-[0.2em] text-themeTextSec ml-1">WhatsApp Number</label>
+ <input type="text" value={newUserPhone} onChange={(e) => setNewUserPhone(e.target.value)} className="w-full bg-themePanel dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] focus:border-themeAccent rounded-xl py-3.5 px-4 text-xs font-bold text-themeText outline-none transition shadow-sm" placeholder="+91..." />
+ </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-[0.2em] text-themeTextSec ml-1">Joining Date</label>
+ <input type="date" value={newUserJoiningDate} onChange={(e) => setNewUserJoiningDate(e.target.value)} className="w-full bg-themePanel dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] focus:border-themeAccent rounded-xl py-3.5 px-4 text-xs font-bold text-themeText outline-none transition shadow-sm" />
+ </div>
+ <div className="flex flex-col gap-2">
+ <label className="text-[10px] font-black uppercase tracking-[0.2em] text-themeTextSec ml-1">Admission Type / Wave</label>
+ <input type="text" value={newUserAdmissionType} onChange={(e) => setNewUserAdmissionType(e.target.value)} className="w-full bg-themePanel dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] focus:border-themeAccent rounded-xl py-3.5 px-4 text-xs font-bold text-themeText outline-none transition shadow-sm" placeholder="e.g. Regular, Management Quota" />
  </div>
  </div>
  ) : (

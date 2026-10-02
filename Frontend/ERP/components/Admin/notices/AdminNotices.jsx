@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useNotification } from '../../../../Shared/context/NotificationContext.jsx';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon } from '@hugeicons/core-free-icons';
 
@@ -19,7 +20,11 @@ export default function AdminNotices({ isHubView = false }) {
 
  // --- BROADCAST STATE ---
  const [notices, setNotices] = useState([]);
+ const [publicNotices, setPublicNotices] = useState([]);
  const [isPublishing, setIsPublishing] = useState(false);
+ const [selectedNotice, setSelectedNotice] = useState(null);
+ const [viewMode, setViewMode] = useState('list'); // 'list' or 'detail'
+ const { addFlag } = useNotification();
  
  // Broadcast Form
  const [title, setTitle] = useState("");
@@ -58,13 +63,21 @@ export default function AdminNotices({ isHubView = false }) {
  .neq('category', 'System Alert') // Exclude personal system alerts
  .limit(300)
  .order('created_at', { ascending: false });
+
+ const { data: publicData } = await supabase
+ .from('admin_notices')
+ .select('*')
+ .eq('category', 'Notice');
+ 
+ if (publicData) {
+     setPublicNotices(publicData);
+ }
  
  if (!error && data) {
-     // Additional client-side filtering to ensure no 'person' targeted broadcasts show up in the global broadcast manager
      const globalBroadcasts = data.filter(n => n.target_audience !== 'person');
      setNotices(globalBroadcasts);
  }
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (err) { console.error(err); addFlag({title: "Action Failed", description: "An error occurred. Please try again.", type: "error"}); }
  };
 
  const fetchEvents = async () => {
@@ -75,10 +88,39 @@ export default function AdminNotices({ isHubView = false }) {
  .limit(300)
  .order('start_date', { ascending: true });
  if (!error && data) setEvents(data);
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (err) { console.error(err); addFlag({title: "Action Failed", description: "An error occurred. Please try again.", type: "error"}); }
  };
 
  // --- HANDLERS ---
+ const handleTogglePublic = async (notice) => {
+   const isCurrentlyPublic = publicNotices.some(pn => pn.title === notice.title && pn.is_public);
+   try {
+     if (isCurrentlyPublic) {
+       const pn = publicNotices.find(pn => pn.title === notice.title);
+       if (pn) await supabase.from('admin_notices').update({ is_public: false }).eq('id', pn.id);
+     } else {
+       const pn = publicNotices.find(pn => pn.title === notice.title);
+       if (pn) {
+          await supabase.from('admin_notices').update({ is_public: true }).eq('id', pn.id);
+       } else {
+          await supabase.from('admin_notices').insert([{
+            title: notice.title,
+            content: notice.content,
+            category: 'Notice',
+            is_public: true,
+            external_link: notice.external_link || null,
+            author_name: notice.author_name || 'Admin',
+            author_id: notice.author_id || userSession?.db_id
+          }]);
+       }
+     }
+     fetchNotices();
+     addFlag({ title: "Visibility Updated", description: "Website visibility updated successfully.", type: "success" });
+   } catch(e) {
+      console.error(e);
+      addFlag({title: "Update Failed", description: "Failed to update visibility.", type: "error"});
+   }
+ };
  const handlePublishNotice = async (e) => {
  e.preventDefault();
  setIsPublishing(true);
@@ -99,19 +141,21 @@ export default function AdminNotices({ isHubView = false }) {
 
  if (error) throw error;
  
- if (isPublicWebsite) {
- try {
- await supabase.from('admin_notices').insert([{
- 
- title,
- content,
- category: 'Notice',
- is_public: true,
- external_link: externalLink || null
- 
- }]);
- } catch(e) { console.error("Could not insert to admin_notices", e); }
- }
+  if (isPublicWebsite) {
+    try {
+      const { error: insertErr } = await supabase.from('admin_notices').insert([{
+        title,
+        content,
+        category: 'Notice',
+        is_public: true,
+        external_link: externalLink || null,
+        author_name: userSession?.full_name || userSession?.name || 'Admin',
+        author_id: userSession?.db_id
+      }]);
+      if (insertErr) console.error("Error inserting to admin_notices:", insertErr);
+    } catch(e) { console.error("Could not insert to admin_notices", e); }
+  }
+
 
  
 // NOTIFICATIONS INJECTION
@@ -179,26 +223,6 @@ try {
  action_link: 'notices'
  }));
  await supabase.from('notifications').insert(notifs);
- // ---- WHATSAPP INTEGRATION ----
- try {
-   if (eventType === 'holiday' || eventType === 'campus_leave') {
-     // Fetch global broadcast groups
-     const { data: globalSet } = await supabase.from('system_settings').select('value').eq('key', 'global_whatsapp_groups').single();
-     if (globalSet && globalSet.value && Array.isArray(globalSet.value)) {
-       const groupNotifs = globalSet.value.map(groupId => ({
-         phone: groupId.replace('@g.us', ''),
-         message: `*Official Notice: ${eventType === 'holiday' ? 'Holiday' : 'Campus Leave'}*\n\n${eventTitle}\nDate: ${new Date(eventStartDate).toLocaleDateString()}\n\n${eventDesc}`,
-         status: 'PENDING'
-       }));
-       if (groupNotifs.length > 0) {
-         await supabase.from('whatsapp_queue').insert(groupNotifs);
-       }
-     }
-   }
- } catch (e) {
-   console.error("Failed to queue WhatsApp broadcasts", e);
- }
- // -----------------------------
 
  }
  }
@@ -223,8 +247,8 @@ try {
  setExternalLink("");
  setIsPublicWebsite(false);
  fetchNotices();
- if (window.erpToast) window.erpToast.show("Broadcast published successfully!", "success");
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
+ addFlag({title: "Broadcast Published", description: "Broadcast published successfully!", type: "success"});
+ } catch (err) { console.error(err); addFlag({title: "Publish Failed", description: "An error occurred. Please try again.", type: "error"}); } finally {
  setIsPublishing(false);
  }
  };
@@ -270,16 +294,37 @@ try {
      
      // Note: In production we would batch send an email to all users here using EmailService.
      // For this prototype, we'll log it or send to a test group.
-   }
- }
+      // For this prototype, we'll log it or send to a test group.
+    }
+    // ---- WHATSAPP INTEGRATION ----
+    try {
+      const { data: globalSet } = await supabase.from('system_settings').select('value').eq('key', 'global_whatsapp_groups').single();
+      if (globalSet && globalSet.value && Array.isArray(globalSet.value)) {
+        const groupNotifs = globalSet.value.map(groupId => ({
+          phone: groupId,
+          message: `*Official Notice: ${eventType === 'holiday' ? 'Holiday' : 'Campus Leave'}*\n\n${eventTitle}\nDate: ${new Date(eventStartDate).toLocaleDateString()}\n\n${eventDesc}`,
+          status: 'PENDING',
+          recipient_name: 'Global Broadcast',
+          template_id: 'NOTICE_BROADCAST'
+        }));
+        if (groupNotifs.length > 0) {
+          await supabase.from('whatsapp_queue').insert(groupNotifs);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to queue WhatsApp broadcasts", e);
+    }
+    // -----------------------------
+  }
+
  
  setEventTitle("");
  setEventStartDate("");
  setEventEndDate("");
  setEventDesc("");
  fetchEvents();
- if (window.erpToast) window.erpToast.show("Event scheduled successfully!", "success"); 
- } catch (err) { console.error(err); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
+ if (isPublic) { addFlag({title: "Event Scheduled", description: "Event scheduled successfully!", type: "success"}); } else { addFlag({title: "Event Scheduled", description: "Event scheduled successfully!", type: "success"}); }
+ } catch (err) { console.error(err); addFlag({title: "Scheduling Failed", description: "An error occurred. Please try again.", type: "error"}); } finally {
  setIsScheduling(false);
  }
  };
@@ -289,9 +334,9 @@ try {
  try {
  await supabase.from('notices').delete().eq('id', id);
  fetchNotices();
- if(window.erpToast) window.erpToast.show("Notice deleted successfully.", "success");
+ addFlag({title: "Notice Deleted", description: "Notice deleted successfully.", type: "success"});
  } catch (e) {
- if(window.erpToast) window.erpToast.show("Failed to delete notice.", "error");
+ addFlag({title: "Delete Failed", description: "Failed to delete notice.", type: "error"});
  }
  };
 
@@ -300,15 +345,79 @@ try {
  try {
  await supabase.from('academic_calendar').delete().eq('id', id);
  fetchEvents();
- if(window.erpToast) window.erpToast.show("Event deleted successfully.", "success");
+ addFlag({title: "Event Deleted", description: "Event deleted successfully.", type: "success"});
  } catch (e) {
- if(window.erpToast) window.erpToast.show("Failed to delete event.", "error");
+ addFlag({title: "Delete Failed", description: "Failed to delete event.", type: "error"});
  }
  };
 
  // --- RENDERERS ---
- const renderBroadcastTab = () => (
- <div className="flex flex-col gap-12 w-full">
+ const renderBroadcastTab = () => {
+   if (viewMode === 'detail' && selectedNotice) {
+     return (
+       <div className="flex flex-col gap-8 w-full animate-fade-in">
+         <button onClick={() => setViewMode('list')} className="w-max flex items-center gap-2 text-sm font-bold text-themeTextSec hover:text-themeText transition-colors border border-themeBorder bg-themeElevated px-4 py-2 rounded-xl">
+           <i className="fa-solid fa-arrow-left"></i> Back to Broadcasts
+         </button>
+         
+         <div className="bg-themePanel p-8 lg:p-12 rounded-3xl border border-themeBorder flex flex-col gap-8 shadow-sm">
+           <div className="flex flex-col gap-4 border-b border-themeBorder pb-8">
+             <div className="flex gap-2">
+               <span className={`text-[12px] font-medium px-3 py-1.5 rounded-md border tracking-widest uppercase ${
+                 selectedNotice.priority === 'urgent' ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-themeElevated text-themeTextSec border-themeBorder'
+               }`}>{selectedNotice.priority}</span>
+               <span className="text-[12px] font-medium px-3 py-1.5 rounded-md bg-themeElevated text-themeTextSec border border-themeBorder tracking-widest uppercase">{selectedNotice.category}</span>
+             </div>
+             <h2 className="text-3xl lg:text-4xl font-black text-themeText tracking-tight leading-tight">{selectedNotice.title}</h2>
+             
+             <div className="flex flex-wrap items-center gap-6 mt-2">
+               <span className="text-xs font-bold text-themeTextSec flex items-center gap-2"><i className="fa-regular fa-clock text-themeAccent"></i> {new Date(selectedNotice.created_at).toLocaleString()}</span>
+               <span className="text-xs font-bold text-themeTextSec flex items-center gap-2"><i className="fa-solid fa-users text-themeAccent"></i> {Array.isArray(selectedNotice.target_audience) && selectedNotice.target_audience.join ? selectedNotice.target_audience.join(', ') : typeof selectedNotice.target_audience === 'string' ? selectedNotice.target_audience : 'Unknown'}</span>
+               <span className="text-xs font-bold text-themeTextSec flex items-center gap-2"><i className="fa-solid fa-user-pen text-themeAccent"></i> {selectedNotice.author_name || 'Admin'}</span>
+             </div>
+           </div>
+
+           <div className="text-base font-medium text-themeText whitespace-pre-wrap leading-relaxed bg-themeElevated/30 p-6 md:p-8 rounded-2xl border border-themeBorder/50">
+             {selectedNotice.content}
+           </div>
+
+           {selectedNotice.external_link && (
+             <div>
+               <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-2">Attached External Link</label>
+               <a href={selectedNotice.external_link} target="_blank" rel="noreferrer" className="text-sm font-bold text-themeAccent hover:underline break-all inline-flex items-center gap-2 bg-themeAccent/10 px-4 py-3 rounded-xl">
+                 <i className="fa-solid fa-arrow-up-right-from-square"></i> {selectedNotice.external_link}
+               </a>
+             </div>
+           )}
+
+           <div className="pt-8 border-t border-themeBorder max-w-xl">
+             <h4 className="text-[13px] font-bold text-themeTextSec uppercase tracking-widest mb-4">Website Integration</h4>
+             <label className="flex items-center justify-between p-5 bg-themeElevated border border-themeBorder rounded-2xl cursor-pointer hover:border-themeAccent transition-colors">
+               <div>
+                 <span className="text-base font-black text-themeText block flex items-center gap-3">
+                   Live on Public Website
+                   {publicNotices.some(pn => pn.title === selectedNotice.title && pn.is_public) && (
+                     <span className="flex h-2.5 w-2.5">
+                       <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-75"></span>
+                       <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                     </span>
+                   )}
+                 </span>
+                 <span className="text-[11px] font-bold text-themeTextSec mt-1 block">Toggle this switch to immediately show or hide this notice on the public website.</span>
+               </div>
+               <div className={`w-14 h-8 rounded-full p-1 transition-colors relative shadow-inner shrink-0 ${publicNotices.some(pn => pn.title === selectedNotice.title && pn.is_public) ? 'bg-emerald-500' : 'bg-themeBorder'}`}>
+                 <div className={`w-6 h-6 bg-white rounded-full transition-transform shadow-md ${publicNotices.some(pn => pn.title === selectedNotice.title && pn.is_public) ? 'translate-x-6' : 'translate-x-0'}`}></div>
+               </div>
+               <input type="checkbox" checked={publicNotices.some(pn => pn.title === selectedNotice.title && pn.is_public)} onChange={() => handleTogglePublic(selectedNotice)} className="hidden" />
+             </label>
+           </div>
+         </div>
+       </div>
+     );
+   }
+
+   return (
+ <div className="flex flex-col gap-12 w-full animate-fade-in">
  {/* Form */}
  <div className="w-full">
  <h2 className="text-xl font-semibold tracking-tight text-themeText mb-6 flex items-center gap-2">
@@ -375,8 +484,10 @@ try {
  <div className="w-full flex flex-col gap-4">
  <h3 className="text-[13px] font-medium text-themeTextSec mb-2">Active Broadcasts</h3>
  <div className="flex overflow-x-auto snap-x no-scrollbar gap-6 pb-6">
- {notices.map(n => (
- <div key={n.id} className="min-w-[320px] max-w-[320px] snap-start bg-themePanel p-6 rounded-2xl border border-themeBorder flex flex-col gap-3 relative overflow-hidden group transition-opacity hover:opacity-80 shrink-0">
+ {notices.map(n => {
+   const isLive = publicNotices.some(pn => pn.title === n.title && pn.is_public);
+   return (
+ <div key={n.id} onClick={() => { setSelectedNotice(n); setViewMode('detail'); }} className="min-w-[320px] max-w-[320px] snap-start bg-themePanel p-6 rounded-2xl border border-themeBorder flex flex-col gap-3 relative overflow-hidden group transition-all hover:border-themeAccent hover:-translate-y-1 cursor-pointer shrink-0 shadow-sm hover:shadow-md">
  {n.priority === 'urgent' && <div className="absolute top-0 left-0 w-1 h-full bg-rose-500"></div>}
  <div className="flex justify-between items-start">
  <div className="flex gap-2">
@@ -385,21 +496,28 @@ try {
  }`}>{n.priority}</span>
  <span className="text-[12px] font-medium px-2 py-1 rounded-md bg-themeElevated text-themeTextSec border border-themeBorder">{n.category}</span>
  </div>
- <button onClick={() => handleDeleteNotice(n.id)} className="text-themeTextSec hover:text-rose-500 transition p-2" title="Delete Broadcast"><HugeiconsIcon icon={Delete02Icon} size={16} /></button>
+ <div className="flex items-center gap-3">
+   {isLive && (
+     <div className="flex items-center gap-1 bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full text-[10px] font-bold border border-emerald-500/20" title="Live on Public Website">
+       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live
+     </div>
+   )}
+   <button onClick={(e) => { e.stopPropagation(); handleDeleteNotice(n.id); }} className="text-themeTextSec hover:text-rose-500 transition p-1" title="Delete Broadcast"><HugeiconsIcon icon={Delete02Icon} size={16} /></button>
+ </div>
  </div>
  <h4 className="text-lg font-semibold tracking-tight text-themeText">{n.title}</h4>
- <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap">{n.content}</p>
+ <p className="text-sm font-bold text-themeTextSec whitespace-pre-wrap line-clamp-3">{n.content}</p>
  <div className="flex gap-4 mt-2 pt-3 border-t border-themeBorder ">
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-regular fa-clock mr-1"></i> {new Date(n.created_at).toLocaleString()}</span>
  <span className="text-[10px] font-bold text-themeTextSec"><i className="fa-solid fa-users mr-1"></i> {Array.isArray(n.target_audience) && n.target_audience.join ? n.target_audience.join(', ') : typeof n.target_audience === 'string' ? n.target_audience : 'Unknown'}</span>
- 
  </div>
  </div>
- ))}
+ )})}
  </div>
  </div>
  </div>
- );
+   );
+ };
 
  const renderEventsTab = () => (
  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -526,6 +644,7 @@ try {
  {activeTab === 'broadcast' ? renderBroadcastTab() : activeTab === 'events' ? <EventsBoard /> : <AcademicCalendarGrid />}
  </div>
  </div>
+ 
  
  
  </div>

@@ -31,6 +31,9 @@ export default function SessionTimeoutGuard({ children }) {
  }, []);
 
  const resetInactivityTimer = () => {
+ // Disabled per admin directive: Session lasts life long till manual logout
+ return;
+ 
  if (Capacitor.isNativePlatform()) return; 
 
  if (showWarning) return; 

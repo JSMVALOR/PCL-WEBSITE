@@ -307,22 +307,37 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
  }
  };
 
- const handleDelete = async (id) => {
- if (!await new Promise(res => window.erpDialog ? window.erpDialog.confirm("Are you sure you want to remove this image from the gallery?", res) : res(window.confirm("Remove image?")))) return;
+ const handleDelete = async (img) => {
+ if (!await new Promise(res => window.erpDialog ? window.erpDialog.confirm("Are you sure you want to completely remove this image from the gallery?", res) : res(window.confirm("Remove image?")))) return;
 
  try {
- const { error } = await supabase.from('gallery_images').delete().eq('id', id);
+ try {
+ if (img.image_url) {
+ const pathSegments = img.image_url.split('/gallery/');
+ if (pathSegments.length > 1) {
+ const path = decodeURIComponent(pathSegments[1]);
+ await supabase.storage.from('gallery').remove([path]);
+ }
+ }
+ } catch (storageErr) {
+ console.warn("Storage delete err", storageErr);
+ }
+
+ const { data, error } = await supabase.from('gallery_images').delete().eq('id', img.id).select();
  if (error) throw error;
+ if (!data || data.length === 0) throw new Error("No rows deleted. Likely an RLS Policy issue.");
+ if (window.erpToast) window.erpToast.show("Image deleted successfully!", "success");
  fetchImages();
- } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show(error.message || "Failed to delete image.", "error"); }
  };
 
- const toggleStatus = async (id, currentStatus) => {
+ const toggleStatus = async (img) => {
  try {
- const { error } = await supabase.from('gallery_images').update({ is_active: !currentStatus }).eq('id', id);
+ const { error } = await supabase.from('gallery_images').update({ is_active: !img.is_active }).eq('id', img.id);
  if (error) throw error;
+ if (window.erpToast) window.erpToast.show(`Image ${img.is_active ? 'hidden' : 'visible'} successfully!`, "success");
  fetchImages();
- } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("Failed to change status.", "error"); }
  };
 
  return (
@@ -445,10 +460,10 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
  <button onClick={() => handleOpenEdit(img)} className="w-8 h-8 rounded-full bg-blue-500/80 hover:bg-blue-500 text-themeApp flex items-center justify-center backdrop-blur-md shadow-sm transition-transform hover:scale-110" title="Edit/Crop">
  <i className="fa-solid fa-crop-simple text-xs"></i>
  </button>
- <button onClick={() => toggleStatus(img.id, img.is_active)} className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border ${img.is_active ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-themeElevated0 text-themeApp border-white/20'}`} title={img.is_active ? 'Visible' : 'Hidden'}>
+ <button onClick={() => toggleStatus(img)} className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border ${img.is_active ? 'bg-emerald-500/20 text-emerald-500 border-emerald-500/30' : 'bg-themeElevated0 text-themeApp border-white/20'}`} title={img.is_active ? 'Visible' : 'Hidden'}>
  <i className={`fa-solid ${img.is_active ? 'fa-eye' : 'fa-eye-slash'} text-xs`}></i>
  </button>
- <button onClick={() => handleDelete(img.id)} className="w-8 h-8 rounded-full bg-rose-500/80 text-themeApp border border-rose-500 flex items-center justify-center backdrop-blur-md hover:bg-rose-600 transition-colors" title="Delete">
+ <button onClick={() => handleDelete(img)} className="w-8 h-8 rounded-full bg-rose-500/80 text-themeApp border border-rose-500 flex items-center justify-center backdrop-blur-md hover:bg-rose-600 transition-colors" title="Delete">
  <i className="fa-solid fa-trash text-xs"></i>
  </button>
  </div>

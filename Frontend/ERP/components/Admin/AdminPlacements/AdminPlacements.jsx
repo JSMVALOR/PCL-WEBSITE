@@ -84,8 +84,25 @@ export default function AdminPlacements({ isEmbedded = false, isHubView = false 
 
  const handleUpdateApplicationStatus = async (appId, newStatus) => {
  try {
- const { error } = await supabase.from('placement_applications').update({ status: newStatus }).eq('id', appId);
+ const { data: updatedApp, error } = await supabase
+ .from('placement_applications')
+ .update({ status: newStatus })
+ .eq('id', appId)
+ .select('student_id, placement_drives(company_name)')
+ .single();
  if (error) throw error;
+
+ if (updatedApp?.student_id) {
+   await supabase.from('notifications').insert([{
+     recipient_id: updatedApp.student_id,
+     title: 'Placement Update',
+     message: `Your application status for ${updatedApp.placement_drives?.company_name || 'a company'} is now: ${newStatus}`,
+     type: 'notice',
+     action_link: 'placements'
+   }]);
+ }
+
+ if (window.erpToast) window.erpToast.show(`Application marked as ${newStatus}`, "success");
  fetchApplications();
  } catch (err) {
  console.error("Error updating application status", err);

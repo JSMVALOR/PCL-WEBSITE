@@ -4,16 +4,7 @@ import PageHeader from '../../shared/PageHeader/PageHeader';
 
 const ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
 
-// WhatsApp message templates (mirroring the engine templates)
-const WA_TEMPLATES = {
-  PARENT_ABSENT_ALERT: { label: 'Attendance Alert (Parent)', fields: ['student_name', 'date', 'period_count'] },
-  NOTICE_BROADCAST: { label: 'Notice / Broadcast', fields: ['category', 'title', 'content', 'link'] },
-  HOLIDAY_REMINDER: { label: 'Holiday Reminder', fields: ['event_type', 'title', 'date', 'description'] },
-  TIMETABLE_PUBLISHED: { label: 'Timetable Published', fields: ['batch_name'] },
-  LEAVE_STATUS: { label: 'Leave Status Update', fields: ['student_name', 'status', 'leave_type', 'dates'] },
-  FEE_REMINDER: { label: 'Fee Reminder', fields: ['student_name', 'amount', 'due_date'] },
-  GENERIC: { label: 'Custom Message', fields: ['message'] },
-};
+// Templates are now fetched from whatsapp_templates table
 
 export default function AdminWhatsAppQueue() {
  const [status, setStatus] = useState('LOADING'); // LOADING, UNLINKED, CONNECTED
@@ -24,7 +15,7 @@ export default function AdminWhatsAppQueue() {
  const [groups, setGroups] = useState([]);
  const [activeTab, setActiveTab] = useState('queue'); // 'queue', 'broadcast', 'mapping', 'templates', 'contacts'
  const [broadcastMsg, setBroadcastMsg] = useState("");
- const [selectedGroup, setSelectedGroup] = useState("");
+ const [selectedGroups, setSelectedGroups] = useState([]);
  const [isSending, setIsSending] = useState(false);
  
  // For Mappings
@@ -33,7 +24,8 @@ export default function AdminWhatsAppQueue() {
  const [isSavingMapping, setIsSavingMapping] = useState(false);
 
  // For Templates
- const [selectedTemplate, setSelectedTemplate] = useState('GENERIC');
+ const [templatesList, setTemplatesList] = useState([]);
+ const [selectedTemplate, setSelectedTemplate] = useState('');
  const [templateVars, setTemplateVars] = useState({});
  const [templatePreview, setTemplatePreview] = useState('');
 
@@ -43,6 +35,13 @@ export default function AdminWhatsAppQueue() {
  const [contactBatchFilter, setContactBatchFilter] = useState('');
  const [isLoadingContacts, setIsLoadingContacts] = useState(false);
  const [selectedContacts, setSelectedContacts] = useState([]);
+ 
+ // For Email
+ const [sendViaEmail, setSendViaEmail] = useState(false);
+
+ // Derived selectable groups based on assignments
+ const assignedGroupIds = [...new Set([...globalGroups, ...batches.map(b => b.whatsapp_group_id).filter(Boolean)])];
+ const selectableGroups = groups.filter(g => assignedGroupIds.includes(g.id));
 
  // Refs for preventing stale closure issues and unnecessary re-renders
  const statusRef = useRef(status);
@@ -58,10 +57,26 @@ export default function AdminWhatsAppQueue() {
      const res = await fetch(`${ENGINE_URL}/api/whatsapp/groups`);
      if (res.ok) {
        const data = await res.json();
-       if (data.groups) setGroups(data.groups);
+       if (data.groups) {
+         setGroups(data.groups);
+         // Select all by default
+         setSelectedGroups(data.groups.map(g => g.id));
+       }
      }
    } catch (e) {
      console.error("Failed to fetch WhatsApp groups");
+   }
+ }, []);
+
+ const fetchTemplates = useCallback(async () => {
+   const { data } = await supabase.from('whatsapp_templates').select('*').order('created_at');
+   if (data && data.length > 0) {
+     const parsed = data.map(t => {
+       const fields = [...t.message_body.matchAll(/\{\{([^}]+)\}\}/g)].map(m => m[1]);
+       return { ...t, fields };
+     });
+     setTemplatesList(parsed);
+     setSelectedTemplate(parsed[0].template_code);
    }
  }, []);
 
@@ -118,23 +133,27 @@ export default function AdminWhatsAppQueue() {
    if (status === 'CONNECTED') {
      fetchGroups();
      fetchMappings();
+     fetchTemplates();
    }
- }, [status, fetchGroups, fetchMappings]);
+ }, [status, fetchGroups, fetchMappings, fetchTemplates]);
 
  const handleBroadcast = async (e) => {
    e.preventDefault();
    if (!broadcastMsg.trim()) return;
    setIsSending(true);
    try {
-     // If sending to a group
-     if (selectedGroup) {
-       const { error } = await supabase.from('whatsapp_queue').insert({
-         phone: selectedGroup, // Keep the full group ID including @g.us
+     // If sending to groups
+     if (selectedGroups.length > 0) {
+       const items = selectedGroups.map(gid => ({
+         phone: gid,
          message: broadcastMsg.trim(),
          status: 'PENDING',
-         recipient_name: groups.find(g => g.id === selectedGroup)?.name || 'Group',
-       });
-       if (error) throw error;
+         recipient_name: groups.find(g => g.id === gid)?.name || 'Group',
+       }));
+       if (items.length > 0) {
+         const { error } = await supabase.from('whatsapp_queue').insert(items);
+         if (error) { console.error(error); throw error; }
+       }
      }
      // If sending to selected contacts
      if (selectedContacts.length > 0) {
@@ -255,61 +274,82 @@ export default function AdminWhatsAppQueue() {
 
  // Template preview
  useEffect(() => {
-   if (selectedTemplate === 'GENERIC') {
-     setTemplatePreview(templateVars.message || '');
+   const tpl = templatesList.find(t => t.template_code === selectedTemplate);
+   if (tpl) {
+     let preview = tpl.message_body;
+     tpl.fields.forEach(f => {
+       preview = preview.replace(new RegExp(`\\{\\{${f}\\}\\}`, 'g'), templateVars[f] || `<${f}>`);
+     });
+     setTemplatePreview(preview);
    } else {
-     const tpl = WA_TEMPLATES[selectedTemplate];
-     if (tpl) {
-       // Build a preview string
-       const parts = tpl.fields.map(f => `${f}: ${templateVars[f] || `<${f}>`}`).join('\n');
-       setTemplatePreview(`[${tpl.label}]\n${parts}`);
-     }
+     setTemplatePreview('');
    }
- }, [selectedTemplate, templateVars]);
+ }, [selectedTemplate, templateVars, templatesList]);
 
  const handleSendTemplate = async (e) => {
    e.preventDefault();
-   if (selectedContacts.length === 0 && !selectedGroup) {
+   if (selectedContacts.length === 0 && selectedGroups.length === 0) {
      if (window.erpDialog) window.erpDialog.alert("Select at least one recipient or group.", "error");
      return;
    }
    setIsSending(true);
    try {
+     const tpl = templatesList.find(t => t.template_code === selectedTemplate);
+     if (!tpl) throw new Error("Template not found");
+     
+     let finalMsg = tpl.message_body;
+     tpl.fields.forEach(f => {
+       finalMsg = finalMsg.replace(new RegExp(`\\{\\{${f}\\}\\}`, 'g'), templateVars[f] || '');
+     });
+
      const items = [];
+     let emailsSent = 0;
      // To selected contacts
      for (const c of selectedContacts) {
        if (c.phone) {
          items.push({
            phone: c.phone,
-           message: selectedTemplate === 'GENERIC' 
-             ? (templateVars.message || '') 
-             : `[${WA_TEMPLATES[selectedTemplate]?.label}] ${Object.entries(templateVars).map(([k,v]) => `${k}: ${v}`).join(', ')}`,
+           message: finalMsg,
            status: 'PENDING',
            recipient_name: c.name,
            template_id: selectedTemplate,
          });
        }
+       if (sendViaEmail && c.email) {
+         try {
+           await fetch('/api/send-email', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+               to_email: c.email,
+               subject: `Important Update: ${tpl.label}`,
+               message_body: `<p>Dear ${c.name},</p><p>${finalMsg.replace(/\n/g, '<br/>')}</p><p>Regards,<br/>Prudentia College of Law</p>`
+             })
+           });
+           emailsSent++;
+         } catch(err) { console.error("Email err", err); }
+       }
      }
-     // To selected group
-     if (selectedGroup) {
+     // To selected groups
+     for (const gid of selectedGroups) {
        items.push({
-         phone: selectedGroup,
-         message: selectedTemplate === 'GENERIC' 
-           ? (templateVars.message || '') 
-           : `[${WA_TEMPLATES[selectedTemplate]?.label}] ${Object.entries(templateVars).map(([k,v]) => `${k}: ${v}`).join(', ')}`,
+         phone: gid,
+         message: finalMsg,
          status: 'PENDING',
-         recipient_name: groups.find(g => g.id === selectedGroup)?.name || 'Group',
+         recipient_name: groups.find(g => g.id === gid)?.name || 'Group',
          template_id: selectedTemplate,
        });
      }
      if (items.length > 0) {
        const { error } = await supabase.from('whatsapp_queue').insert(items);
-       if (error) throw error;
+       if (error) { console.error(error); throw error; }
      }
      setTemplateVars({});
      setSelectedContacts([]);
-     setSelectedGroup('');
-     if (window.erpToast) window.erpToast.show(`${items.length} message(s) queued!`, "success");
+     // Keep groups selected
+     let toastMsg = `${items.length} message(s) queued!`;
+     if (emailsSent > 0) toastMsg = `${items.length} WhatsApp msg(s) queued & ${emailsSent} Email(s) sent!`;
+     if (window.erpToast) window.erpToast.show(toastMsg, "success");
      setActiveTab('queue');
      fetchQueue();
    } catch (e) {
@@ -640,13 +680,25 @@ export default function AdminWhatsAppQueue() {
 
                    <div className="flex flex-col gap-6 p-6 lg:p-8 flex-1">
                      <div className="flex flex-col gap-2">
-                       <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">Select Target Group</label>
-                       <select value={selectedGroup} onChange={e => setSelectedGroup(e.target.value)} disabled={status !== 'CONNECTED'} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-amber-500 transition-colors">
-                         <option value="">{status === 'CONNECTED' ? (groups.length > 0 ? 'Select a group...' : 'No groups found (Go to assignments tab)') : 'WhatsApp not connected'}</option>
-                         {groups.map(g => (
-                           <option key={g.id} value={g.id}>{g.name} ({g.participants} members)</option>
-                         ))}
-                       </select>
+                       <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider flex items-center justify-between">
+                         <span>Select Target Groups</span>
+                         {selectableGroups.length > 0 && (
+                           <button type="button" onClick={() => setSelectedGroups(selectedGroups.length === selectableGroups.length ? [] : selectableGroups.map(g => g.id))} className="text-amber-500 hover:text-amber-600 text-[10px]">
+                             {selectedGroups.length === selectableGroups.length ? 'Deselect All' : 'Select All'}
+                           </button>
+                         )}
+                       </label>
+                       <div className="flex flex-wrap gap-3">
+                         {selectableGroups.length > 0 ? selectableGroups.map(g => (
+                           <label key={g.id} className={`flex items-center gap-3 border p-3 rounded-xl cursor-pointer transition-all ${selectedGroups.includes(g.id) ? 'bg-amber-500/10 border-amber-500/50' : 'bg-themeElevated border-themeBorder hover:border-themeTextSec'}`}>
+                             <input type="checkbox" checked={selectedGroups.includes(g.id)} onChange={(e) => {
+                               if (e.target.checked) setSelectedGroups(prev => [...prev, g.id]);
+                               else setSelectedGroups(prev => prev.filter(id => id !== g.id));
+                             }} className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 border-themeBorder bg-themeApp" />
+                             <span className="text-sm font-bold text-themeText">{g.name} <span className="text-xs text-themeTextSec font-normal ml-1">({g.participants} members)</span></span>
+                           </label>
+                         )) : <span className="text-xs text-themeTextSec p-3 bg-themeElevated rounded-xl border border-themeBorder w-full">{status === 'CONNECTED' ? 'No groups are mapped in Assignments tab' : 'WhatsApp not connected'}</span>}
+                       </div>
                      </div>
 
                      <div className="flex flex-col gap-2">
@@ -654,7 +706,7 @@ export default function AdminWhatsAppQueue() {
                        <textarea value={broadcastMsg} onChange={e => setBroadcastMsg(e.target.value)} required rows={6} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-amber-500 transition-colors resize-none font-mono text-sm" placeholder="Type your broadcast message..."></textarea>
                      </div>
 
-                     <button type="submit" disabled={isSending || status !== 'CONNECTED' || (!selectedGroup && selectedContacts.length === 0)} className="mt-auto bg-amber-500 text-themeApp py-4 rounded-xl font-bold shadow-sm hover:bg-amber-600 transition-colors disabled:opacity-50">
+                     <button type="submit" disabled={isSending || status !== 'CONNECTED' || (selectedGroups.length === 0 && selectedContacts.length === 0)} className="mt-auto bg-amber-500 text-themeApp py-4 rounded-xl font-bold shadow-sm hover:bg-amber-600 transition-colors disabled:opacity-50">
                        {isSending ? "Queueing Broadcast..." : "Send Broadcast"}
                      </button>
                    </div>
@@ -676,51 +728,74 @@ export default function AdminWhatsAppQueue() {
                    <div className="flex flex-col gap-6 p-6 lg:p-8 flex-1 overflow-y-auto custom-scrollbar">
                      <div className="flex flex-col gap-2">
                        <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">Select Template</label>
-                       <select value={selectedTemplate} onChange={e => { setSelectedTemplate(e.target.value); setTemplateVars({}); }} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors">
-                         {Object.entries(WA_TEMPLATES).map(([key, val]) => (
-                           <option key={key} value={key}>{val.label}</option>
+                       <select value={selectedTemplate} onChange={e => { setSelectedTemplate(e.target.value); setTemplateVars({}); }} disabled={status !== 'CONNECTED' || templatesList.length === 0} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors font-bold">
+                         {templatesList.length === 0 && <option value="">No templates found</option>}
+                         {templatesList.map(t => (
+                           <option key={t.template_code} value={t.template_code}>{t.label}</option>
                          ))}
                        </select>
                      </div>
 
                      {/* Template Fields */}
-                     {WA_TEMPLATES[selectedTemplate]?.fields.map(field => (
-                       <div key={field} className="flex flex-col gap-2">
-                         <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">{field.replace(/_/g, ' ')}</label>
-                         {field === 'message' || field === 'content' || field === 'description' ? (
-                           <textarea
-                             value={templateVars[field] || ''}
-                             onChange={e => setTemplateVars(prev => ({ ...prev, [field]: e.target.value }))}
-                             rows={4}
-                             className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors resize-none font-mono text-sm"
-                             placeholder={`Enter ${field.replace(/_/g, ' ')}...`}
-                           />
-                         ) : (
-                           <input
-                             type="text"
-                             value={templateVars[field] || ''}
-                             onChange={e => setTemplateVars(prev => ({ ...prev, [field]: e.target.value }))}
-                             className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors text-sm"
-                             placeholder={`Enter ${field.replace(/_/g, ' ')}...`}
-                           />
-                         )}
-                       </div>
-                     ))}
+                     {(() => {
+                       const tpl = templatesList.find(t => t.template_code === selectedTemplate);
+                       if (!tpl) return null;
+                       return tpl.fields.map(field => (
+                         <div key={field} className="flex flex-col gap-2">
+                           <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">{field.replace(/_/g, ' ')}</label>
+                           {field === 'message' || field === 'content' || field === 'description' ? (
+                             <textarea
+                               value={templateVars[field] || ''}
+                               onChange={e => setTemplateVars(prev => ({ ...prev, [field]: e.target.value }))}
+                               rows={4}
+                               className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors resize-none font-mono text-sm"
+                               placeholder={`Enter ${field.replace(/_/g, ' ')}...`}
+                             />
+                           ) : (
+                             <input
+                               type="text"
+                               value={templateVars[field] || ''}
+                               onChange={e => setTemplateVars(prev => ({ ...prev, [field]: e.target.value }))}
+                               className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors text-sm"
+                               placeholder={`Enter ${field.replace(/_/g, ' ')}...`}
+                             />
+                           )}
+                         </div>
+                       ));
+                     })()}
 
                      {/* Target: Group or Contact */}
-                     <div className="flex flex-col gap-2">
-                       <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">Send To Group</label>
-                       <select value={selectedGroup} onChange={e => setSelectedGroup(e.target.value)} disabled={status !== 'CONNECTED'} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors">
-                         <option value="">-- None --</option>
-                         {groups.map(g => (
-                           <option key={g.id} value={g.id}>{g.name} ({g.participants} members)</option>
-                         ))}
-                       </select>
+                     <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-themeBorder/50">
+                       <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider flex items-center justify-between">
+                         <span>Send to Group(s)</span>
+                         {selectableGroups.length > 0 && (
+                           <button type="button" onClick={() => setSelectedGroups(selectedGroups.length === selectableGroups.length ? [] : selectableGroups.map(g => g.id))} className="text-purple-500 hover:text-purple-600 text-[10px]">
+                             {selectedGroups.length === selectableGroups.length ? 'Deselect All' : 'Select All'}
+                           </button>
+                         )}
+                       </label>
+                       <div className="flex flex-wrap gap-3">
+                         {selectableGroups.length > 0 ? selectableGroups.map(g => (
+                           <label key={g.id} className={`flex items-center gap-3 border p-3 rounded-xl cursor-pointer transition-all ${selectedGroups.includes(g.id) ? 'bg-purple-500/10 border-purple-500/50' : 'bg-themeElevated border-themeBorder hover:border-themeTextSec'}`}>
+                             <input type="checkbox" checked={selectedGroups.includes(g.id)} onChange={(e) => {
+                               if (e.target.checked) setSelectedGroups(prev => [...prev, g.id]);
+                               else setSelectedGroups(prev => prev.filter(id => id !== g.id));
+                             }} className="w-4 h-4 rounded text-purple-500 focus:ring-purple-500 border-themeBorder bg-themeApp" />
+                             <span className="text-sm font-bold text-themeText">{g.name} <span className="text-xs text-themeTextSec font-normal ml-1">({g.participants} members)</span></span>
+                           </label>
+                         )) : <span className="text-xs text-themeTextSec p-3 bg-themeElevated rounded-xl border border-themeBorder w-full">{status === 'CONNECTED' ? 'No groups are mapped in Assignments tab' : 'WhatsApp not connected'}</span>}
+                       </div>
                      </div>
 
                      {selectedContacts.length > 0 && (
                        <div className="bg-themeElevated/30 border border-themeBorder rounded-xl p-4">
-                         <p className="text-xs font-bold text-themeTextSec mb-2">{selectedContacts.length} contact(s) selected from Contacts tab</p>
+                         <div className="flex justify-between items-center mb-2">
+                           <p className="text-xs font-bold text-themeTextSec">{selectedContacts.length} contact(s) selected from Contacts tab</p>
+                           <label className="flex items-center gap-2 cursor-pointer">
+                             <input type="checkbox" checked={sendViaEmail} onChange={(e) => setSendViaEmail(e.target.checked)} className="w-4 h-4 rounded text-purple-500 focus:ring-purple-500 border-themeBorder bg-themeApp" />
+                             <span className="text-[10px] font-bold uppercase tracking-widest text-themeText">Also send via Email</span>
+                           </label>
+                         </div>
                          <div className="flex flex-wrap gap-2">
                            {selectedContacts.slice(0, 5).map(c => (
                              <span key={c.id} className="bg-purple-500/10 text-purple-500 border border-purple-500/20 px-3 py-1 rounded-lg text-[10px] font-bold">{c.name}</span>
@@ -730,7 +805,7 @@ export default function AdminWhatsAppQueue() {
                        </div>
                      )}
 
-                     <button type="submit" disabled={isSending || status !== 'CONNECTED' || (!selectedGroup && selectedContacts.length === 0)} className="mt-auto bg-purple-500 text-white py-4 rounded-xl font-bold shadow-sm hover:bg-purple-600 transition-colors disabled:opacity-50">
+                     <button type="submit" disabled={isSending || status !== 'CONNECTED' || (selectedGroups.length === 0 && selectedContacts.length === 0) || templatesList.length === 0} className="mt-auto bg-purple-500 text-white py-4 rounded-xl font-bold shadow-sm hover:bg-purple-600 transition-colors disabled:opacity-50">
                        {isSending ? "Queueing..." : "Send Template Message"}
                      </button>
                    </div>

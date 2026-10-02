@@ -12,6 +12,7 @@ export default function AnnouncementBanner() {
   const [eventMsg, setEventMsg] = useState(null);
   const siteContext = useSite();
   const isAdmissionsOpen = siteContext?.isAdmissionsOpen;
+  const isSpotAdmissionsOpen = siteContext?.isSpotAdmissionsOpen;
   
   useEffect(() => {
     const dismissed = sessionStorage.getItem('pcl_banner_dismissed');
@@ -49,11 +50,13 @@ export default function AnnouncementBanner() {
 
   const message = eventMsg 
     ? eventMsg
-    : isAdmissionsOpen 
-      ? "Admissions for Academic Year 2026-27 are now OPEN. Apply today to secure your seat."
-      : "Stay tuned for the latest events and updates from Prudentia College of Law.";
+    : isSpotAdmissionsOpen
+      ? "🚨 SPOT ADMISSIONS ARE NOW OPEN! Limited seats available for immediate admission."
+      : isAdmissionsOpen 
+        ? "Admissions for Academic Year 2026-27 are now OPEN. Apply today to secure your seat."
+        : "Stay tuned for the latest events and updates from Prudentia College of Law.";
 
-  const link = eventMsg ? "/events" : isAdmissionsOpen ? "/apply" : "/events";
+  const link = eventMsg ? "/events" : (isSpotAdmissionsOpen || isAdmissionsOpen) ? "/apply" : "/events";
 
   return (
     <AnimatePresence>

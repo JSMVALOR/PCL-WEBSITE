@@ -16,6 +16,7 @@ const FALLBACK_IMG = fallbackLogo;
 
 export default function EventsPage() {
     const [events, setEvents] = useState([]);
+    const [notices, setNotices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [pastVisibleCount, setPastVisibleCount] = useState(PAST_EVENTS_PAGE_SIZE);
     const containerRef = useRef(null);
@@ -24,12 +25,42 @@ export default function EventsPage() {
         const fetchEvents = async () => {
             setLoading(true);
             try {
-                const { data } = await supabase
+                // Fetch events
+                const { data: eventsData } = await supabase
                     .from('admin_events')
                     .select('*')
+                    .eq('is_public', true);
+
+                // Fetch notices
+                const { data: noticesData } = await supabase
+                    .from('admin_notices')
+                    .select('*')
                     .eq('is_public', true)
-                    .order('event_date', { ascending: true });
-                setEvents(data || []);
+                    .order('created_at', { ascending: false });
+
+                let mappedEvents = (eventsData || []).map(e => ({
+                    ...e,
+                    is_notice: false
+                }));
+                mappedEvents.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+                setEvents(mappedEvents);
+
+                let mappedNotices = [];
+                if (noticesData && noticesData.length > 0) {
+                    mappedNotices = noticesData.map(n => ({
+                        id: `notice-${n.id}`,
+                        title: n.title,
+                        description: n.content,
+                        event_date: n.created_at,
+                        is_public: n.is_public,
+                        slug: `notice-${n.id}`,
+                        image_url: null,
+                        location: "Notice Board",
+                        event_type: "Notice",
+                        is_notice: true
+                    }));
+                }
+                setNotices(mappedNotices);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -110,7 +141,7 @@ export default function EventsPage() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.05] transition-opacity duration-500" style={{ background: 'radial-gradient(circle at top right, var(--primary-color), transparent 70%)' }} />
                 
                 {/* Image Section */}
-                <div className="relative w-full aspect-[4/3] md:aspect-[3/2] overflow-hidden bg-[var(--card-bg)] flex items-center justify-center">
+                <div className="relative w-full h-40 md:h-48 overflow-hidden bg-[var(--card-bg)] flex items-center justify-center">
                     {evt.image_url ? (
                         <img decoding="async" loading="lazy" 
                             src={evt.image_url} 
@@ -119,7 +150,7 @@ export default function EventsPage() {
                         />
                     ) : (
                         <div 
-                            className="w-1/2 h-1/2 opacity-20 group-hover:scale-110 transition-transform duration-700 ease-out"
+                            className="w-1/3 h-1/3 opacity-20 group-hover:scale-110 transition-transform duration-700 ease-out"
                             style={{
                                 backgroundColor: 'var(--primary-color)',
                                 WebkitMaskImage: `url(${FALLBACK_IMG})`,
@@ -135,15 +166,22 @@ export default function EventsPage() {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-bg)] via-transparent to-transparent opacity-80" />
                     
+                    {/* Category Tag */}
+                    <div className="absolute top-4 right-4 z-20">
+                        <span className={`text-[9px] md:text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md border ${evt.is_notice ? 'bg-blue-600 text-white border-blue-400' : 'bg-stone-800 text-white border-stone-600'}`}>
+                            {evt.is_notice ? 'Notice' : 'Event'}
+                        </span>
+                    </div>
+
                     {/* Date Badge */}
-                    <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-[var(--primary-color)] text-black px-3 py-2 rounded-xl text-center font-bold z-20 shadow-lg border border-[var(--primary-color)]/20">
-                        <span className="block text-xl md:text-2xl leading-none">{evtDate.toLocaleDateString('en-US', { day: '2-digit' })}</span>
-                        <span className="block text-[9px] md:text-[10px] uppercase tracking-widest">{evtDate.toLocaleDateString('en-US', { month: 'short' })}</span>
+                    <div className="absolute top-4 left-4 bg-[var(--primary-color)] text-black px-2 py-1.5 rounded-lg text-center font-bold z-20 shadow-md border border-[var(--primary-color)]/20 min-w-[3rem]">
+                        <span className="block text-lg md:text-xl leading-none">{evtDate.toLocaleDateString('en-US', { day: '2-digit' })}</span>
+                        <span className="block text-[8px] md:text-[9px] uppercase tracking-widest">{evtDate.toLocaleDateString('en-US', { month: 'short' })}</span>
                     </div>
                 </div>
 
                 {/* Content Section */}
-                <div className="p-5 md:p-8 flex flex-col relative z-10 bg-[var(--card-bg)]">
+                <div className="p-4 md:p-6 flex flex-col relative z-10 bg-[var(--card-bg)] h-[180px]">
                     <h3 className="text-xl md:text-2xl font-bold text-[var(--text-color)] mb-3 leading-tight group-hover:text-[var(--primary-color)] transition-colors">
                         {evt.title}
                     </h3>
@@ -210,6 +248,23 @@ export default function EventsPage() {
                     </div>
                 ) : (
                     <div className="relative z-10">
+                        {/* 0. OFFICIAL NOTICES */}
+                        {notices.length > 0 && (
+                            <div className="mb-32">
+                                <div className="flex flex-col items-center md:items-start mb-12">
+                                    <span className="text-[var(--primary-color)] font-bold tracking-[0.2em] uppercase text-sm mb-2 flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"></div>Latest Announcements
+                                    </span>
+                                    <h2 className="text-3xl md:text-5xl font-bold text-[var(--text-color)] uppercase tracking-widest">
+                                        Official <span className="text-[var(--primary-color)] italic">Notices</span>
+                                    </h2>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+                                    {notices.map((notice) => renderEventCard(notice))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* 1. PRESENT EVENTS */}
                         {presentEvents.length > 0 && (
                             <div className="mb-32">

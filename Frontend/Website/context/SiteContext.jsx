@@ -7,6 +7,7 @@ export const useSite = () => useContext(SiteContext);
 
 export const SiteProvider = ({ children }) => {
     const [isAdmissionsOpen, setIsAdmissionsOpen] = useState(true);
+    const [isSpotAdmissionsOpen, setIsSpotAdmissionsOpen] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
@@ -22,6 +23,7 @@ export const SiteProvider = ({ children }) => {
             .then(({ data, error }) => {
                 if (data && !error && isMounted) {
                     setIsAdmissionsOpen(data.value.is_open !== false);
+                    setIsSpotAdmissionsOpen(data.value.is_spot === true);
                 }
             });
 
@@ -30,6 +32,7 @@ export const SiteProvider = ({ children }) => {
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'system_settings', filter: 'key=eq.admissions_status' }, (payload) => {
                 if (isMounted && payload.new && payload.new.value) {
                     setIsAdmissionsOpen(payload.new.value.is_open !== false);
+                    setIsSpotAdmissionsOpen(payload.new.value.is_spot === true);
                 }
             })
             .subscribe();
@@ -41,7 +44,7 @@ export const SiteProvider = ({ children }) => {
     }, []);
 
     return (
-        <SiteContext.Provider value={{ isAdmissionsOpen }}>
+        <SiteContext.Provider value={{ isAdmissionsOpen, isSpotAdmissionsOpen }}>
             {children}
         </SiteContext.Provider>
     );

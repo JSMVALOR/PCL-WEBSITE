@@ -1,9 +1,10 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useState, useEffect, useRef } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { createClient } from '@supabase/supabase-js';
 import PageHeader from "../../shared/PageHeader/PageHeader";
-import { sendSystemEmail } from '../../../lib/EmailService';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ;
@@ -44,6 +45,8 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  .order("created_at", { ascending: false }).limit(500);
 
  if (appError) {
+ console.error("🚨 DATABASE FETCH ERROR:", appError);
+ if(window.erpToast) window.erpToast.show("Error fetching applications: " + appError.message, "error");
  console.warn("Table admissions_applications might not exist or no rows:", appError);
  } else {
  setApplications(appData || []);
@@ -58,6 +61,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  
  if (!settingsError && settingsData?.value) {
  setIsAdmissionsOpen(settingsData.value.is_open !== false);
+ setIsSpotOpen(settingsData.value.is_spot === true);
  }
  } catch (error) {
  console.error("Error fetching applications:", error);
@@ -74,7 +78,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  .from("system_settings")
  .upsert({ 
  key: "admissions_status", 
- value: { is_open: newState } 
+ value: { is_open: newState, is_spot: isSpotOpen } 
  }, { onConflict: 'key' });
  
  if (error) throw error;
@@ -82,6 +86,27 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  if(window.erpToast) window.erpToast.show(`Admissions are now ${newState ? 'OPEN' : 'CLOSED'}`, "info");
  } catch (error) {
  if(window.erpToast) window.erpToast.show("Failed to toggle admissions status", "info");
+ } finally {
+ setIsTogglingStatus(false);
+ }
+ };
+
+ const handleToggleSpotAdmissions = async () => {
+ setIsTogglingStatus(true);
+ try {
+ const newSpotState = !isSpotOpen;
+ const { error } = await supabase
+ .from("system_settings")
+ .upsert({ 
+ key: "admissions_status", 
+ value: { is_open: isAdmissionsOpen, is_spot: newSpotState } 
+ }, { onConflict: 'key' });
+ 
+ if (error) throw error;
+ setIsSpotOpen(newSpotState);
+ if(window.erpToast) window.erpToast.show(`Spot Admissions are now ${newSpotState ? 'OPEN' : 'CLOSED'}`, "info");
+ } catch (error) {
+ if(window.erpToast) window.erpToast.show("Failed to toggle spot admissions status", "info");
  } finally {
  setIsTogglingStatus(false);
  }
@@ -152,9 +177,10 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  addLog(`[SYSTEM] Calculating sequential ERP ID for prefix ${prefix}...`);
  
  const { data: highestIdData } = await supabase
- .from('profiles')
+ .from('admissions_applications')
  .select('erp_id')
  .ilike('erp_id', `${prefix}%`)
+ .not('erp_id', 'is', null)
  .order('erp_id', { ascending: false })
  .limit(1);
  
@@ -204,39 +230,19 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  role: 'student',
  academic_batch: app.program || 'BA LLB',
  department: 'Law',
- status: 'Active'
+ status: 'Active',
+ joining_date: new Date().toISOString(),
+ application_date: app.created_at,
+ application_number: app.id,
+ admission_type: app.admission_type || 'Management Quota'
  });
 
  if (profileError) throw profileError;
 
- // 4.5 Generate Fee Invoice
- addLog(`[FINANCE] Generating initial ₹50,000 admission fee invoice...`);
- const invoiceDate = new Date();
- invoiceDate.setDate(invoiceDate.getDate() + 14); // Due in 14 days
- const { error: invoiceError } = await supabase.from('fee_invoices').insert({ student_id: authData.user.id,
- title: 'Semester 1 Tuition Fee',
- amount: 50000,
- due_date: invoiceDate.toISOString().split('T')[0],
- type: 'Tuition',
- status: 'pending'
- });
- if (invoiceError) {
- addLog(`[WARNING] Failed to generate invoice: ${invoiceError.message}. Please generate manually.`);
- } else {
- addLog(`[SUCCESS] Initial fee invoice generated successfully.`);
- }
-
-
  // 5. Send Welcome Email
  addLog(`[EMAIL] Dispatching secure setup link via Supabase...`);
  try {
- const { error: resetError } = await provisionClient.auth.resetPasswordForEmail(app.email, {
- redirectTo: window.location.origin
- });
- if (resetError) throw resetError;
- addLog(`[SUCCESS] Setup link successfully dispatched to ${app.email}!`);
- 
- // ADDED: Send the actual credentials email
+  // ADDED: Send the actual credentials email
  await sendSystemEmail('FIRST_CREDENTIALS', {
  to_email: app.email,
  student_name: app.name,
@@ -273,6 +279,14 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
 <>
 <div className="flex gap-3 w-full lg:w-auto">
  <button type="button"
+ onClick={handleToggleSpotAdmissions}
+ disabled={isTogglingStatus}
+ className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 border border-themeBorder backdrop-blur-md ${isSpotOpen ? 'bg-amber-500/20 hover:bg-amber-500 text-themeText' : 'bg-transparent hover:bg-themePanel text-themeTextSec'}`}
+ >
+ <i className={`fa-solid ${isSpotOpen ? 'fa-bolt' : 'fa-bolt-slash'}`}></i>
+ {isTogglingStatus ? '...' : (isSpotOpen ? 'Close Spot Admissions' : 'Open Spot Admissions')}
+ </button>
+ <button type="button"
  onClick={handleToggleAdmissions}
  disabled={isTogglingStatus}
  className={`flex-1 lg:flex-none px-6 py-3 rounded-xl text-[14px] font-medium tracking-normal transition flex items-center justify-center gap-2 border border-themeBorder backdrop-blur-md ${isAdmissionsOpen ? 'bg-rose-500/20 hover:bg-rose-500 text-themeText ' : 'bg-emerald-500/20 hover:bg-emerald-500 text-themeText '}`}
@@ -303,6 +317,15 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  </div>
 
  {isHubView && (
+ <>
+ <button type="button"
+ onClick={handleToggleSpotAdmissions}
+ disabled={isTogglingStatus}
+ className={`px-5 py-3 rounded-xl text-[13px] font-medium transition flex items-center gap-2 border ${isSpotOpen ? 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border-amber-500/20' : 'bg-transparent text-themeTextSec border-themeBorder'}`}
+ >
+ <i className={`fa-solid ${isSpotOpen ? 'fa-bolt' : 'fa-bolt-slash'}`}></i>
+ {isSpotOpen ? 'Close Spot' : 'Open Spot'}
+ </button>
  <button type="button"
  onClick={handleToggleAdmissions}
  disabled={isTogglingStatus}
@@ -311,132 +334,118 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  <i className={`fa-solid ${isAdmissionsOpen ? 'fa-lock' : 'fa-lock-open'}`}></i>
  {isTogglingStatus ? 'Processing...' : (isAdmissionsOpen ? 'Close Admissions' : 'Open Admissions')}
  </button>
+ </>
  )}
  </div>
 
- {isLoading ? (
- <div className="flex justify-center p-12">
- <div className="animate-spin w-8 h-8 border-4 border-themeBorder Accent border-t-transparent rounded-full"></div>
+  {isLoading ? (
+ <div className="flex justify-center p-20">
+ <div className="animate-spin w-10 h-10 border-4 border-themeAccent/20 border-t-themeAccent rounded-full"></div>
  </div>
  ) : (
- <div className="bg-themePanel shadow-sm rounded-2xl border border-themeBorder overflow-hidden">
+ <div className="w-full">
+ {filteredApps.length === 0 ? (
+ <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-20 px-4 bg-themePanel/50 backdrop-blur-3xl border border-themeBorder rounded-3xl shadow-xl">
+ <div className="w-20 h-20 rounded-full bg-themeAccent/5 flex items-center justify-center mb-4">
+ <i className="fa-solid fa-inbox text-3xl text-themeAccent/40"></i>
+ </div>
+ <h3 className="text-xl font-black text-themeText tracking-tight mb-2">No Applications Found</h3>
+ <p className="text-sm font-medium text-themeTextSec">Waiting for new candidates to apply.</p>
+ </motion.div>
+ ) : (
+ <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+ <AnimatePresence mode="popLayout">
+ {filteredApps.map((app, idx) => (
+ <motion.div 
+ layout
+ initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+ animate={{ opacity: 1, scale: 1, y: 0 }} 
+ exit={{ opacity: 0, scale: 0.9, y: -20 }}
+ transition={{ duration: 0.4, delay: idx * 0.05, type: "spring", bounce: 0.3 }}
+ key={app.id} 
+ className="group relative bg-themePanel/80 hover:bg-themeApp backdrop-blur-2xl border border-themeBorder/60 hover:border-themeAccent/30 rounded-3xl p-6 shadow-lg hover:shadow-2xl hover:shadow-themeAccent/10 transition-all duration-500 flex flex-col"
+ >
+ {/* Status Badge absolute top right */}
+ <div className="absolute top-6 right-6">
+ <span className={`px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border ${
+ app.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.15)]' :
+ app.status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
+ 'bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.15)]'
+ }`}>
+ {app.status}
+ </span>
+ </div>
  
-<div className="hidden lg:block overflow-x-auto">
-  <table className="w-full text-left">
-    <thead className="bg-themeApp dark:bg-themeApp backdrop-blur-2xl border-b-theme border-themeBorder text-xs tracking-normal text-themeTextSec font-black">
-      <tr>
-        <th className="p-4 border-r-theme border-themeBorder">Applicant</th>
-        <th className="p-4 border-r-theme border-themeBorder">Program</th>
-        <th className="p-4 border-r-theme border-themeBorder">Marks / Exams</th>
-        <th className="p-4 border-r-theme border-themeBorder">Date</th>
-        <th className="p-4 border-r-theme border-themeBorder">Status</th>
-        <th className="p-4 text-right">Actions</th>
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-themeBorder">
-      {filteredApps.length === 0 ? (
-        <tr><td colSpan="6" className="p-8 text-center text-themeTextSec font-black tracking-normal">No applications found.</td></tr>
-      ) : (
-        filteredApps.map(app => (
-          <tr key={app.id} className="hover:bg-themeApp dark:bg-themeApp backdrop-blur-2xl transition-colors group">
-            <td className="p-4 border-r-theme border-themeBorder">
-              <p className="font-black text-themeText">{app.name}</p>
-              <p className="text-xs text-themeTextSec font-medium mt-1">{app.email}</p>
-              <p className="text-xs text-themeTextSec font-medium mt-0.5">{app.phone}</p>
-            </td>
-            <td className="p-4 text-[15px] font-semibold text-themeText border-r-theme border-themeBorder">{app.program}</td>
-            <td className="p-4 border-r-theme border-themeBorder">
-              <p className="text-xs text-themeText font-black tracking-normal mb-1">
-                10th: <span className="text-indigo-400">{app.marks_10th}</span> | 12th: <span className="text-emerald-400">{app.marks_inter}</span>
-              </p>
-              {app.exam_tglawcet && <p className="text-xs text-themeText font-black tracking-normal">TGLAWCET: <span className="text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">{app.exam_tglawcet}</span></p>}
-              {app.exam_clat && <p className="text-xs text-themeText font-black tracking-normal mt-1">CLAT: <span className="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">{app.exam_clat}</span></p>}
-            </td>
-            <td className="p-4 text-xs text-themeTextSec font-medium border-r-theme border-themeBorder">
-              {new Date(app.created_at).toLocaleDateString()}
-            </td>
-            <td className="p-4 border-r-theme border-themeBorder">
-              <span className={`px-2.5 py-1 rounded-md text-[13px] font-medium border border-themeBorder inline-block mb-2 ${
-                app.status === 'approved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
-                app.status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' :
-                'bg-amber-500/10 text-amber-400 border-amber-500/30'
-              }`}>
-                {app.status}
-              </span>
-              {app.erp_id && <p className="text-[13px] font-medium text-themeTextSec">ID: <span className="text-themeText select-all">{app.erp_id}</span></p>}
-            </td>
-            <td className="p-4 text-right space-x-2">
-              {app.status === 'pending' && (
-                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button type="button" onClick={() => handleApprovePipeline(app)} className="w-8 h-8 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeText rounded-lg transition" title="Approve">
-                    <i className="fa-solid fa-check"></i>
-                  </button>
-                  <button type="button" onClick={() => handleReject(app)} className="w-8 h-8 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeText rounded-lg transition" title="Reject">
-                    <i className="fa-solid fa-xmark"></i>
-                  </button>
-                </div>
-              )}
-            </td>
-          </tr>
-        ))
-      )}
-    </tbody>
-  </table>
-</div>
-
-<div className="lg:hidden flex flex-col divide-y divide-themeBorder">
-  {filteredApps.length === 0 ? (
-    <div className="p-8 text-center text-themeTextSec font-black tracking-normal">No applications found.</div>
-  ) : (
-    filteredApps.map(app => (
-      <div key={app.id} className="p-4 flex flex-col gap-3 hover:bg-themeApp dark:bg-themeApp transition-colors group relative">
-        <div className="flex justify-between items-start">
-          <div>
-            <h4 className="font-black text-themeText text-lg">{app.name}</h4>
-            <p className="text-sm font-semibold text-themeAccent mt-0.5">{app.program}</p>
-          </div>
-          <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border border-themeBorder ${
-            app.status === 'approved' ? 'bg-emerald-500/10 text-emerald-500' :
-            app.status === 'rejected' ? 'bg-rose-500/10 text-rose-500' :
-            'bg-amber-500/10 text-amber-500'
-          }`}>
-            {app.status}
-          </span>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <p className="text-themeTextSec font-bold mb-1"><i className="fa-solid fa-envelope mr-1.5"></i>{app.email}</p>
-            <p className="text-themeTextSec font-bold"><i className="fa-solid fa-phone mr-1.5"></i>{app.phone}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-themeTextSec font-bold mb-1">{new Date(app.created_at).toLocaleDateString()}</p>
-            {app.erp_id && <p className="text-themeText font-black tracking-normal">ID: {app.erp_id}</p>}
-          </div>
-        </div>
-        
-        <div className="bg-themeElevated rounded-xl p-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-black tracking-normal">
-          <p>10th: <span className="text-indigo-500">{app.marks_10th}</span></p>
-          <p>12th: <span className="text-emerald-500">{app.marks_inter}</span></p>
-          {app.exam_tglawcet && <p>TGLAWCET: <span className="text-amber-500">{app.exam_tglawcet}</span></p>}
-          {app.exam_clat && <p>CLAT: <span className="text-emerald-500">{app.exam_clat}</span></p>}
-        </div>
-        
-        {app.status === 'pending' && (
-          <div className="flex justify-end gap-2 mt-1">
-            <button type="button" onClick={() => handleApprovePipeline(app)} className="flex-1 py-2 bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeApp font-black tracking-wide rounded-xl transition">
-              <i className="fa-solid fa-check mr-2"></i> Approve
-            </button>
-            <button type="button" onClick={() => handleReject(app)} className="flex-1 py-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeApp font-black tracking-wide rounded-xl transition">
-              <i className="fa-solid fa-xmark mr-2"></i> Reject
-            </button>
-          </div>
-        )}
-      </div>
-    ))
-  )}
-</div>
-
+ <div className="flex flex-col mb-6 pr-24">
+ <h4 className="font-black text-themeText text-xl tracking-tight mb-1 group-hover:text-themeAccent transition-colors">{app.name}</h4>
+ <p className="text-sm font-bold text-themeAccent/80">{app.program}</p>
+ </div>
+ 
+ <div className="flex flex-col gap-2 mb-6">
+ <div className="flex items-center gap-3 text-[13px] font-medium text-themeTextSec">
+ <div className="w-8 h-8 rounded-full bg-themeApp border border-themeBorder flex items-center justify-center shrink-0 group-hover:border-themeAccent/30 transition-colors">
+ <i className="fa-solid fa-envelope text-themeText/60 group-hover:text-themeAccent transition-colors"></i>
+ </div>
+ <span className="truncate">{app.email}</span>
+ </div>
+ <div className="flex items-center gap-3 text-[13px] font-medium text-themeTextSec">
+ <div className="w-8 h-8 rounded-full bg-themeApp border border-themeBorder flex items-center justify-center shrink-0 group-hover:border-themeAccent/30 transition-colors">
+ <i className="fa-solid fa-phone text-themeText/60 group-hover:text-themeAccent transition-colors"></i>
+ </div>
+ <span>{app.phone}</span>
+ </div>
+ </div>
+ 
+ <div className="bg-themeApp/50 rounded-2xl p-4 border border-themeBorder/40 flex flex-wrap gap-x-6 gap-y-3 mb-6 flex-1">
+ <div className="flex flex-col">
+ <span className="text-[10px] uppercase tracking-widest font-bold text-themeTextSec/70 mb-1">10th Marks</span>
+ <span className="font-black text-themeText text-sm">{app.marks_10th}</span>
+ </div>
+ <div className="flex flex-col">
+ <span className="text-[10px] uppercase tracking-widest font-bold text-themeTextSec/70 mb-1">12th Marks</span>
+ <span className="font-black text-themeText text-sm">{app.marks_inter}</span>
+ </div>
+ {app.exam_tglawcet && (
+ <div className="flex flex-col">
+ <span className="text-[10px] uppercase tracking-widest font-bold text-amber-500/70 mb-1">TGLAWCET</span>
+ <span className="font-black text-amber-400 text-sm">{app.exam_tglawcet}</span>
+ </div>
+ )}
+ {app.exam_clat && (
+ <div className="flex flex-col">
+ <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-500/70 mb-1">CLAT</span>
+ <span className="font-black text-emerald-400 text-sm">{app.exam_clat}</span>
+ </div>
+ )}
+ </div>
+ 
+ <div className="flex items-center justify-between mt-auto pt-2">
+ <div className="flex flex-col">
+ <span className="text-[10px] uppercase tracking-widest font-bold text-themeTextSec mb-0.5">Applied On</span>
+ <span className="font-semibold text-xs text-themeText">{new Date(app.created_at).toLocaleDateString()}</span>
+ </div>
+ 
+ {app.erp_id ? (
+ <div className="flex flex-col items-end">
+ <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-500 mb-0.5">ERP ID Assigned</span>
+ <span className="font-black text-xs text-themeText bg-themeApp px-2 py-1 rounded-md border border-themeBorder select-all">{app.erp_id}</span>
+ </div>
+ ) : app.status === 'pending' ? (
+ <div className="flex gap-2">
+ <button type="button" onClick={() => handleApprovePipeline(app)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-themeApp hover:shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all duration-300" title="Approve">
+ <i className="fa-solid fa-check text-lg"></i>
+ </button>
+ <button type="button" onClick={() => handleReject(app)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-themeApp hover:shadow-[0_0_15px_rgba(244,63,94,0.4)] transition-all duration-300" title="Reject">
+ <i className="fa-solid fa-xmark text-lg"></i>
+ </button>
+ </div>
+ ) : null}
+ </div>
+ </motion.div>
+ ))}
+ </AnimatePresence>
+ </div>
+ )}
  </div>
  )}
 

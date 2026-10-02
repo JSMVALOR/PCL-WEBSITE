@@ -1,0 +1,2 @@
+import { a as Nt, c as bt, d as mt, f as pt, g as yt, h as xt, i as M, l as dt, m as vt, n as E, o as O, p as q, r as Lt, s as _t, t as At, u as gt } from "./jspdf.es.min-CPoX4Tl_.js";
+export { _t as AcroForm, At as AcroFormAppearance, vt as AcroFormButton, Nt as AcroFormCheckBox, dt as AcroFormChoiceField, gt as AcroFormComboBox, mt as AcroFormEditBox, pt as AcroFormListBox, xt as AcroFormPasswordField, bt as AcroFormPushButton, yt as AcroFormRadioButton, Lt as AcroFormTextField, O as GState, M as ShadingPattern, q as TilingPattern, E as default, E as jsPDF };

@@ -21,23 +21,50 @@ const EventsPreview = React.forwardRef((props, ref) => {
     const fetchEvents = async () => {
       setLoading(true);
       const today = new Date().toISOString().split('T')[0];
-      const { data, error: fetchError } = await supabase
-        .from('admin_events')
-        .select('*')
-        .eq('is_public', true)
-        .gte('event_date', today)
-        .order('event_date', { ascending: true })
-        .limit(6);
+      
+      try {
+        // Fetch Events
+        const { data: eventsData, error: eventsError } = await supabase
+          .from('admin_events')
+          .select('*')
+          .eq('is_public', true)
+          .gte('event_date', today);
 
-      if (!isMounted) return;
+        if (eventsError && !eventsData) throw eventsError;
 
-      if (fetchError) {
+        // Fetch Notices
+        const { data: noticesData } = await supabase
+          .from('admin_notices')
+          .select('*')
+          .eq('is_public', true)
+          .gte('created_at', today);
+
+        let combined = (eventsData || []).map(e => ({ ...e, is_notice: false }));
+
+        if (noticesData && noticesData.length > 0) {
+          const mappedNotices = noticesData.map(n => ({
+            id: `notice-${n.id}`,
+            title: n.title,
+            description: n.content,
+            event_date: n.created_at,
+            is_public: n.is_public,
+            slug: `notice-${n.id}`,
+            is_notice: true
+          }));
+          combined = [...combined, ...mappedNotices];
+        }
+
+        // Sort by date and limit to 6
+        combined.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+        setEvents(combined.slice(0, 6));
+
+      } catch (fetchError) {
+        if (!isMounted) return;
         setError(fetchError.message || 'Error loading events.');
         setEvents([]);
-      } else {
-        setEvents(data || []);
       }
-      setLoading(false);
+      
+      if (isMounted) setLoading(false);
     };
 
     fetchEvents();

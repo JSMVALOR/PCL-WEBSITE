@@ -361,46 +361,91 @@ export default function Programs() {
               )}
 
               {activeTab === 'calendar' && (
-                <div className="py-20 w-full max-w-5xl mx-auto">
-                  <div className="relative w-full mx-auto mb-16">
+                <>
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl text-[var(--text-color)] mb-4 font-bold font-['Playfair_Display']">
+                      Academic <span className="italic font-medium text-[var(--primary-color)] pr-2">Calendar</span>
+                    </h2>
+                    <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
+                      Key dates, schedules, and academic milestones for the current session.
+                    </p>
+                  </div>
+
+                  <div className="w-full max-w-6xl mx-auto mb-16 relative z-10">
                     {calendarLoading ? (
-                      <div className="flex justify-center py-12">
-                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
+                      <div className="flex justify-center py-20">
+                         <div className="w-12 h-12 border-4 border-[var(--card-border)] border-t-[var(--primary-color)] rounded-full animate-spin"></div>
                       </div>
                     ) : calendarEvents && calendarEvents.rows && calendarEvents.rows.length > 0 ? (
-                      <div className="overflow-x-auto rounded-3xl border border-[var(--card-border)] shadow-2xl bg-[var(--bg-color)]/60 backdrop-blur-3xl">
-                        <table className="w-full text-left border-collapse min-w-[600px]">
-                          <thead>
-                            <tr className="border-b border-[var(--card-border)] bg-[var(--card-bg)]">
-                              <th className="p-5 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest w-12 text-center">S.No</th>
-                              {calendarEvents.columns.map(col => (
-                                <th key={col} className="p-5 text-xs font-bold text-[var(--text-color)] uppercase tracking-widest min-w-[150px]">
-                                  {col}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-[var(--card-border)]">
-                            {calendarEvents.rows.map((row, idx) => (
-                              <tr key={row.id} className="hover:bg-[var(--card-bg)] transition-colors">
-                                <td className="p-5 text-center text-[10px] font-black text-[var(--text-muted)]">{idx + 1}</td>
+                      <div className="rounded-[32px] overflow-hidden border border-[var(--primary-color)]/20 shadow-[0_20px_60px_rgba(0,0,0,0.3)] bg-[var(--card-bg)] backdrop-blur-xl relative">
+                        {/* Decorative glowing gradient */}
+                        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[var(--primary-color)] rounded-full blur-[120px] opacity-[0.15] pointer-events-none"></div>
+                        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full blur-[120px] opacity-[0.05] pointer-events-none"></div>
+                         
+                        <div className="overflow-hidden relative z-10">
+                          <table className="w-full text-left border-collapse block md:table">
+                            <thead className="hidden md:table-header-group">
+                              <tr className="border-b border-[var(--card-border)] bg-black/20 md:table-row">
+                                <th className="py-6 px-8 text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.2em] w-20 text-center bg-black/10">S.NO</th>
                                 {calendarEvents.columns.map(col => (
-                                  <td key={col} className="p-5 text-sm font-medium text-[var(--text-color)]">
-                                    {row.data[col] || '-'}
-                                  </td>
+                                  <th key={col} className="py-6 px-8 text-xs font-bold text-[var(--text-color)] uppercase tracking-widest">
+                                    {col}
+                                  </th>
                                 ))}
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody className="divide-y divide-[var(--card-border)]/40 block md:table-row-group">
+                              {calendarEvents.rows.map((row, idx) => (
+                                <tr key={row.id} className="block md:table-row hover:bg-white/5 transition-all duration-300 group p-4 md:p-0 border-b border-[var(--card-border)] md:border-none relative">
+                                  {/* Desktop S.NO */}
+                                  <td className="hidden md:table-cell py-6 px-8 text-center text-xs font-black text-[var(--text-muted)] group-hover:text-[var(--primary-color)] transition-colors bg-black/10">
+                                    {String(idx + 1).padStart(2, '0')}
+                                  </td>
+                                  
+                                  {/* Mobile S.NO and Compact Grid */}
+                                  <td className="block md:hidden py-1">
+                                    <div className="flex items-center mb-3 border-b border-[var(--card-border)]/50 pb-2">
+                                      <span className="bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-2 py-0.5 rounded text-[10px] tracking-widest font-bold border border-[var(--primary-color)]/20 shadow-sm mr-2">
+                                        EVENT {String(idx + 1).padStart(2, '0')}
+                                      </span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                                      {calendarEvents.columns.map((col, colIdx) => (
+                                        <div key={col} className={colIdx === 0 ? "col-span-2" : "col-span-1"}>
+                                          <span className="text-[8px] font-bold text-[var(--primary-color)] opacity-80 uppercase tracking-widest block mb-0.5">
+                                            {col}
+                                          </span>
+                                          <span className="text-sm font-medium text-[var(--text-color)] opacity-90 leading-tight block">
+                                            {row.data[col] || '-'}
+                                          </span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </td>
+
+                                  {/* Desktop Data Cells */}
+                                  {calendarEvents.columns.map(col => (
+                                    <td key={col} className="hidden md:table-cell py-6 px-8 text-sm md:text-base font-medium text-[var(--text-muted)] group-hover:text-[var(--text-color)] transition-colors">
+                                      {row.data[col] || '-'}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     ) : (
-                      <div className="text-center py-12 glassCard p-12 max-w-md mx-auto">
-                          <p className="text-[var(--text-muted)] italic text-lg">No academic calendar grid published yet.</p>
+                      <div className={`${styles.glassCard} p-12 max-w-2xl mx-auto text-center border border-[var(--card-border)]`}>
+                          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[var(--primary-color)]/10 flex items-center justify-center text-[var(--primary-color)] shadow-[0_0_20px_var(--primary-glow)]">
+                             <span className="text-2xl font-serif italic">!</span>
+                          </div>
+                          <h3 className="text-2xl font-bold text-[var(--text-color)] mb-3 font-['Playfair_Display']">No Calendar Published</h3>
+                          <p className="text-[var(--text-muted)]">The academic calendar grid for the upcoming session has not been officially released yet. Please check back later.</p>
                       </div>
                     )}
                   </div>
-                </div>
+                </>
               )}
 
               {activeTab === 'collaborations' && (

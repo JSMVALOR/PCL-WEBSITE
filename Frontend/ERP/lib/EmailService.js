@@ -2,6 +2,9 @@
 import { HTML_EMAIL_TEMPLATES } from './emailtemplate';
 
 export const EMAIL_TEMPLATES = {
+    BLOG_UPDATE: (params) => ({
+        subject: `Update on Your Blog Submission: ${params.title}`,
+        message_body: HTML_EMAIL_TEMPLATES.BLOG_UPDATE(params) }),
     GRIEVANCE_UPDATE: (params) => ({
         subject: `Update: Grievance marked as ${params.new_status}`,
         message_body: HTML_EMAIL_TEMPLATES.GRIEVANCE_UPDATE(params) }),

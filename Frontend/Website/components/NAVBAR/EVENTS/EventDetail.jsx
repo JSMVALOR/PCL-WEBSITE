@@ -16,22 +16,36 @@ export default function EventDetail() {
     const fetchEvent = async () => {
       setLoading(true);
       
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const isNotice = id.startsWith('notice-');
+      const realId = isNotice ? id.replace('notice-', '') : id;
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(realId);
       
-      let query = supabase.from('admin_events').select('*').eq('is_public', true);
+      let query = supabase.from(isNotice ? 'admin_notices' : 'admin_events').select('*').eq('is_public', true);
       
-      if (isUUID) {
-        query = query.eq('id', id);
+      if (isUUID || isNotice) {
+        query = query.eq('id', realId);
       } else {
-        query = query.eq('slug', id);
+        query = query.eq('slug', realId);
       }
 
       const { data, error } = await query.single();
       
       if (data) {
-        setEvent(data);
-      } else {
-        const { data: fallbackData } = await supabase.from('admin_events').select('*').eq('id', id).eq('is_public', true).single();
+        if (isNotice) {
+          setEvent({
+            id: `notice-${data.id}`,
+            title: data.title,
+            description: data.content,
+            event_date: data.created_at,
+            is_public: data.is_public,
+            category: "Official Notice",
+            location: "Prudentia Notice Board",
+          });
+        } else {
+          setEvent(data);
+        }
+      } else if (!isNotice) {
+        const { data: fallbackData } = await supabase.from('admin_events').select('*').eq('id', realId).eq('is_public', true).single();
         if (fallbackData) setEvent(fallbackData);
       }
       setLoading(false);

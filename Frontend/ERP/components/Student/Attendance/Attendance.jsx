@@ -67,14 +67,24 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
  try {
  // Resolve the student's batch — if viewing as mentor, fetch from profiles
  let studentBatch = userSession?.academic_batch || '';
+ let studentJoinDate = null;
  if (menteeId) {
  const { data: menteeProfile } = await supabase
  .from('profiles')
- .select('academic_batch')
+ .select('academic_batch, joining_date')
  .eq('id', menteeId)
  .single();
  if (menteeProfile?.academic_batch) studentBatch = menteeProfile.academic_batch;
+ if (menteeProfile?.joining_date) studentJoinDate = new Date(menteeProfile.joining_date);
+ } else {
+ const { data: myProfile } = await supabase
+ .from('profiles')
+ .select('joining_date')
+ .eq('id', studentId)
+ .single();
+ if (myProfile?.joining_date) studentJoinDate = new Date(myProfile.joining_date);
  }
+ if (studentJoinDate) studentJoinDate.setHours(0,0,0,0);
 
  // 1. Fetch RAW verifiable attendance
  const { data: attData, error } = await supabase
@@ -166,6 +176,7 @@ export default function Attendance({ menteeId, isEmbedded = false }) {
 
  // Iterate over past dates to simulate what classes *should* have happened
  pastDates.forEach(dateObj => {
+ if (studentJoinDate && dateObj < studentJoinDate) return; // Wave Architecture: Skip classes before joining
  const dateStr = dateObj.toISOString().split('T')[0];
  const dayName = dayNames[dateObj.getDay()];
  const dayNumStr = String(dateObj.getDay());

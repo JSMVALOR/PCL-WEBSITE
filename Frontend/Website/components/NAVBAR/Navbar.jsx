@@ -111,7 +111,7 @@ const MOBILE_MENU_ITEMS = MENU_ITEMS.map(({ menu, ...item }) => ({
   columns: menu.columns || [] }));
 
 export default function Navbar() {
-  const { isAdmissionsOpen } = useSite();
+  const { isAdmissionsOpen, isSpotAdmissionsOpen } = useSite();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -176,7 +176,7 @@ export default function Navbar() {
 
       <header
         style={{
-          position: 'fixed',
+          position: 'sticky',
           top: 0,
           left: 0,
           right: 0,
@@ -322,7 +322,7 @@ export default function Navbar() {
                 </a>
 
                 <div className="hidden sm:block">
-                  {isAdmissionsOpen ? (
+                  {(isAdmissionsOpen || isSpotAdmissionsOpen) ? (
                     <Link to="/apply" className="tlh-btn">
                       <span className="text-xs font-bold uppercase tracking-widest">Apply Now</span>
                       <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg">

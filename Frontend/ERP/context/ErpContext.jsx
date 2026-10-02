@@ -453,9 +453,12 @@ export const ErpProvider = ({ children }) => {
  })
  .subscribe();
 
- return () => {
- supabase.removeChannel(noticeChannel);
- };
+  return () => {
+    supabase.removeChannel(noticeChannel);
+    supabase.removeChannel(targetedNotifsChannel);
+    supabase.removeChannel(chatChannel);
+  };
+
  }
  }, [userSession]);
 

@@ -3,13 +3,17 @@ import React, { useState, useEffect } from "react";
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
+import { useNotification } from '../../../../Shared/context/NotificationContext';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 export default function AdminHelpdesk({ isEmbedded = false, isHubView = false }) {
  const [tickets, setTickets] = useState([]);
  const [isLoading, setIsLoading] = useState(true);
  const [activeTab, setActiveTab] = useState("all");
+ const [selectedTicketId, setSelectedTicketId] = useState(null);
  const [replyText, setReplyText] = useState({});
  const [submittingReply, setSubmittingReply] = useState(null);
+ const { addFlag } = useNotification();
 
  useEffect(() => {
  fetchTickets();
@@ -27,7 +31,7 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
 
  if (error) throw error;
  setTickets(data || []);
- } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
+ } catch (error) { console.error(error); addFlag({title: "Error", description: "An error occurred. Please try again.", type: "error"}); } finally {
  setIsLoading(false);
  }
  };
@@ -38,8 +42,15 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
 
  setSubmittingReply(ticketId);
  try {
+ const currentTicket = tickets.find(t => t.id === ticketId);
+ let thread = [];
+ try { thread = JSON.parse(currentTicket.admin_reply); if (!Array.isArray(thread)) throw new Error('Not array'); } catch {
+   if (currentTicket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: currentTicket.admin_reply, date: currentTicket.updated_at || new Date().toISOString() }];
+ }
+ if (text || isClosing) thread.push({ text: text || 'Closed by Admin', date: new Date().toISOString() });
+
  const updatePayload = {
- admin_reply: text || 'Closed by Admin' };
+ admin_reply: JSON.stringify(thread) };
  if (isClosing) updatePayload.status = 'resolved';
 
  const { error } = await supabase
@@ -68,23 +79,45 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  author_id: null
  }]);
  // Bell notification for ticket update
- if (ticket.profile_id) {
+ if (ticketData.user_id) {
    await supabase.from('notifications').insert([{
-     recipient_id: ticket.profile_id,
-     title: 'Support Ticket Update',
-     message: 'Your support ticket has been updated by admin.',
-     type: 'attendance',
+     recipient_id: ticketData.user_id,
+     title: isClosing ? 'Support Ticket Resolved' : 'Support Ticket Replied',
+     message: `Your ticket (${ticketData.ticket_id}) has been updated.`,
+     type: 'notice',
      action_link: 'helpdesk'
    }]);
+
+   // Also fetch profile to send Email & WA
+   const { data: profile } = await supabase.from('profiles').select('contact_email, contact_phone').eq('id', ticketData.user_id).single();
+   if (profile) {
+     if (profile.contact_email) {
+       try {
+         await sendSystemEmail('TICKET_REPLY', {
+           to_email: profile.contact_email,
+           ticket_id: ticketData.ticket_id,
+           admin_reply: text || (isClosing ? 'Resolved & Closed' : 'Updated')
+         });
+         addFlag({title: "Email Sent", description: "Requester was notified via email.", type: "success"});
+       } catch (e) { console.warn("Failed to send email", e); }
+     }
+     if (profile.contact_phone) {
+       try {
+         const waNumber = profile.contact_phone.length === 10 ? `91${profile.contact_phone}` : profile.contact_phone;
+         await sendSystemWhatsApp(waNumber, `Hello!\n\nThere is an update to your internal support ticket (${ticketData.ticket_id}).\n\nAdmin Reply: ${text || (isClosing ? 'Resolved & Closed' : 'Updated')}`);
+         addFlag({title: "WhatsApp Sent", description: "Requester was notified via WhatsApp.", type: "success"});
+       } catch (e) { console.warn("Failed to send WA", e); }
+     }
+   }
  }
  }
- 
  
  }
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
+ addFlag({title: "Success", description: "Reply sent successfully.", type: "success"});
  fetchTickets();
- } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
+ } catch (error) { console.error(error); addFlag({title: "Error", description: "Failed to send reply.", type: "error"}); } finally {
  setSubmittingReply(null);
  }
  };
@@ -115,9 +148,9 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  ))}
  </div>
 
- <div className="flex flex-col gap-4 lg:gap-5 animate-fade-in">
+ <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 animate-fade-in">
  {isLoading ? (
- <div className="flex justify-center p-12">
+ <div className="flex justify-center p-12 w-full">
  <div className="animate-spin w-8 h-8 border-4 border-themeAccent border-t-transparent rounded-full"></div>
  </div>
  ) : filteredTickets.length === 0 ? (
@@ -127,78 +160,149 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  <p className={`text-[9px] lg:text-[13px] font-medium text-themeTextSec mt-1 lg:mt-2`}>No tickets found for this category.</p>
  </div>
  ) : (
- filteredTickets.map(ticket => (
- <div key={ticket.id} className={`${theme.layout.panel} p-5 lg:p-6 rounded-themePanel border border-themeBorder dark:border-white/[0.08] hover:border-themeBorder transition flex flex-col gap-4`}>
- <div className="flex justify-between items-start gap-4">
- <div>
- <div className="flex items-center gap-3 mb-2">
- {ticket.ticket_id && (
- <span className="text-[9px] lg:text-[10px] font-bold text-themeTextSec tracking-normal bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md px-2.5 py-1 rounded-md border border-themeBorder dark:border-white/[0.08]">
- {ticket.ticket_id}
- </span>
- )}
- <span className="text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md text-themeAccent border-themeBorder ">
- {ticket.category === 'public_inquiry' ? 'Public Inquiry' : ticket.category}
- </span>
- <span className={`text-[9px] lg:text-[13px] font-medium px-2.5 py-1 rounded-md border ${ticket.status === 'resolved' ? 'bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md text-emerald-400 border-themeBorder ' : 'bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md text-amber-500 border-themeBorder '}`}>
- {ticket.status}
- </span>
- </div>
- <h3 className="text-base lg:text-lg font-semibold tracking-tight text-themeText mb-2">{ticket.subject}</h3>
- {ticket.profiles && (
- <div className="flex items-center gap-2 mb-3">
- <div className="w-6 h-6 rounded-full bg-themeElevated flex items-center justify-center border border-themeBorder dark:border-white/[0.08]">
- <i className="fa-solid fa-user text-[10px] text-themeTextSec"></i>
- </div>
- <span className="text-xs font-bold text-themeText">{ticket.profiles.full_name}</span>
- <span className="text-[10px] uppercase font-bold tracking-widest text-themeAccent border border-themeAccent/20 bg-themeAccent/10 px-2 py-0.5 rounded-full">{ticket.profiles.role}</span>
- <span className="text-[10px] uppercase font-bold tracking-widest text-themeTextSec">{ticket.profiles.erp_id}</span>
- </div>
- )}
- <div className="text-xs lg:text-sm text-themeTextSec bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-themeBorder dark:border-white/[0.08] whitespace-pre-wrap font-medium">
- {ticket.description}
- </div>
- <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec mt-3">
- Received: {new Date(ticket.created_at).toLocaleString()}
- </p>
- </div>
- </div>
- 
- <div className="border-t border-themeBorder dark:border-white/[0.08] pt-4 mt-2">
- {ticket.status === 'resolved' ? (
- <div className="bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md p-4 rounded-lg border border-themeBorder dark:border-white/[0.08]">
- <span className="text-[13px] font-medium text-emerald-400 block mb-1">Admin Reply</span>
- <p className="text-sm font-bold text-themeText">{ticket.admin_reply}</p>
- </div>
- ) : (
- <div className="flex flex-col lg:flex-row gap-3">
- <textarea
- value={replyText[ticket.id] || ''}
- onChange={(e) => setReplyText(prev => ({ ...prev, [ticket.id]: e.target.value }))}
- placeholder="Write your reply here..."
- className="flex-1 bg-themeElevated dark:bg-themeElevated/90 backdrop-blur-md border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeAccent resize-none min-h-[80px]"
- />
- <div className="flex lg:flex-col gap-2 shrink-0">
- <button type="button" 
- onClick={() => handleReply(ticket.id, false)}
- disabled={submittingReply === ticket.id}
- className="flex-1 lg:flex-none px-4 py-2 bg-themeAccent hover:bg-themeAccent/80 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-themeBorder dark:border-white/[0.08]"
- >
- Send Reply
- </button>
- <button type="button" 
- onClick={() => handleReply(ticket.id, true)}
- disabled={submittingReply === ticket.id}
- className="flex-1 lg:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-themeText font-black tracking-normal text-[10px] rounded-lg transition-colors border border-themeBorder dark:border-white/[0.08]"
- >
- Resolve & Close
- </button>
- </div>
- </div>
- )}
- </div>
- </div>
- ))
+   <>
+     {/* LEFT PANE: List of tickets */}
+     <div className={`w-full ${selectedTicketId ? 'lg:w-[350px] xl:w-[400px] shrink-0 hidden lg:flex flex-col gap-3' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'}`}>
+       {filteredTickets.map(ticket => (
+          <div 
+            key={ticket.id} 
+            onClick={() => setSelectedTicketId(ticket.id)}
+            className={`p-4 lg:p-5 rounded-themePanel border transition cursor-pointer flex flex-col gap-3 ${selectedTicketId === ticket.id ? 'bg-themeElevated border-themeAccent shadow-md' : 'bg-themePanel/60 border-themeBorder dark:border-white/[0.08] hover:border-themeAccent/50'}`}
+          >
+            <div className="flex items-start justify-between gap-2">
+               <span className="text-[10px] font-bold text-themeTextSec tracking-normal bg-themeElevated dark:bg-themeElevated/90 px-2 py-1 rounded border border-themeBorder dark:border-white/[0.08]">
+               {ticket.ticket_id}
+               </span>
+               <span className={`text-[10px] font-bold px-2 py-1 rounded border uppercase tracking-widest ${ticket.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
+               {ticket.status}
+               </span>
+            </div>
+            <h3 className="text-sm lg:text-base font-bold tracking-tight text-themeText line-clamp-2">{ticket.subject}</h3>
+            
+            {ticket.profiles && (
+            <div className="flex items-center gap-2 mt-auto pt-2 border-t border-themeBorder/50">
+            <div className="w-5 h-5 rounded-full bg-themeElevated flex items-center justify-center border border-themeBorder dark:border-white/[0.08]">
+            <i className="fa-solid fa-user text-[8px] text-themeTextSec"></i>
+            </div>
+            <span className="text-[11px] font-bold text-themeTextSec truncate">{ticket.profiles.full_name}</span>
+            </div>
+            )}
+          </div>
+       ))}
+     </div>
+
+     {/* RIGHT PANE: Details */}
+     {selectedTicketId && (
+       <div className="flex-1 bg-themePanel/60 dark:bg-themePanel/60 backdrop-blur-3xl rounded-themePanel border border-themeBorder dark:border-white/[0.08] p-5 lg:p-8 flex flex-col animate-fade-in shadow-premium sticky top-24 h-max">
+          {(() => {
+            const ticket = tickets.find(t => t.id === selectedTicketId);
+            if (!ticket) return null;
+            
+            let thread = [];
+            try { thread = JSON.parse(ticket.admin_reply); if (!Array.isArray(thread)) throw new Error('Not array'); } catch {
+              if (ticket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: ticket.admin_reply, date: ticket.updated_at }];
+            }
+
+            return (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                   <div className="flex items-center gap-3">
+                       <button type="button" onClick={() => setSelectedTicketId(null)} className="lg:hidden w-10 h-10 rounded-xl bg-themeElevated border border-themeBorder flex items-center justify-center text-themeTextSec">
+                          <i className="fa-solid fa-arrow-left"></i>
+                       </button>
+                       <div>
+                          <h2 className="text-xl lg:text-2xl font-black text-themeText tracking-tight mb-1">{ticket.subject}</h2>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-themeAccent bg-themeAccent/10 px-2 py-1 rounded-md border border-themeAccent/20">{ticket.category}</span>
+                            <span className="text-[11px] font-bold text-themeTextSec">Requested on {new Date(ticket.created_at).toLocaleString()}</span>
+                          </div>
+                       </div>
+                   </div>
+                   {ticket.status === 'resolved' && (
+                      <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20 flex items-center gap-2">
+                        <i className="fa-solid fa-check-double"></i> Resolved
+                      </span>
+                   )}
+                </div>
+
+                <div className="bg-themeElevated p-5 rounded-2xl border border-themeBorder mb-6">
+                  <div className="flex items-center gap-3 mb-4 border-b border-themeBorder pb-3">
+                    <div className="w-8 h-8 rounded-full bg-themePanel flex items-center justify-center border border-themeBorder">
+                    <i className="fa-solid fa-user text-themeTextSec text-xs"></i>
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-themeText">{ticket.profiles?.full_name || 'Unknown User'}</div>
+                      <div className="text-[10px] uppercase tracking-widest text-themeTextSec">{ticket.profiles?.role} • {ticket.profiles?.erp_id}</div>
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-themeText leading-relaxed whitespace-pre-wrap">{ticket.description}</p>
+                </div>
+
+                {thread.length > 0 && (
+                <div className="flex flex-col gap-4 mb-6">
+                {thread.map((reply, idx) => (
+                <div key={idx} className="bg-[var(--theme-accent)]/5 p-4 rounded-2xl border border-[var(--theme-accent)]/10 ml-4 lg:ml-8 relative">
+                   <div className="absolute -left-3 top-4 w-6 h-6 rounded-full bg-themeAccent flex items-center justify-center border-4 border-themeApp shadow-sm">
+                      <i className="fa-solid fa-reply text-white text-[8px]"></i>
+                   </div>
+                   <span className="text-[10px] uppercase tracking-widest font-bold text-themeAccent block mb-2">Admin Reply • {reply.date ? new Date(reply.date).toLocaleString() : 'Unknown Date'}</span>
+                   <p className="text-sm font-bold text-themeText">{reply.text}</p>
+                </div>
+                ))}
+                </div>
+                )}
+
+                <div className="mt-auto border-t border-themeBorder pt-6">
+                {ticket.status === 'resolved' ? (
+                <div className="flex flex-col gap-4 text-center p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+                   <span className="text-[13px] font-bold text-emerald-500 uppercase tracking-widest block"><i className="fa-solid fa-lock mr-2"></i> Ticket Resolved & Closed</span>
+                   <button type="button" 
+                     onClick={async () => {
+                       const { error } = await supabase.from('helpdesk_tickets').update({ status: 'open' }).eq('id', ticket.id);
+                       if (!error) {
+                         addFlag({title: "Success", description: "Ticket reopened successfully", type: "success"});
+                         fetchTickets();
+                       }
+                     }}
+                     className="mx-auto w-fit px-6 py-2.5 bg-themeElevated hover:bg-themePanel text-themeText font-bold text-xs tracking-normal rounded-xl transition-colors border border-themeBorder shadow-sm flex items-center justify-center gap-2"
+                   >
+                     <i className="fa-solid fa-unlock"></i> Reopen Ticket
+                   </button>
+                </div>
+                ) : (
+                <div className="flex flex-col gap-3">
+                <label className="text-[10px] uppercase tracking-widest font-bold text-themeTextSec ml-1">Send a Reply</label>
+                <textarea
+                value={replyText[ticket.id] || ''}
+                onChange={(e) => setReplyText(prev => ({ ...prev, [ticket.id]: e.target.value }))}
+                placeholder="Type your response to the user..."
+                className="w-full bg-themeElevated backdrop-blur-md border border-themeBorder rounded-xl px-4 py-3 text-sm font-medium text-themeText outline-none focus:border-themeAccent resize-none min-h-[100px]"
+                />
+                <div className="flex gap-3 justify-end">
+                <button type="button" 
+                onClick={() => handleReply(ticket.id, false)}
+                disabled={submittingReply === ticket.id}
+                className="px-6 py-2.5 bg-themePanel hover:bg-themeElevated text-themeText font-bold text-xs tracking-normal rounded-xl transition-colors border border-themeBorder"
+                >
+                {submittingReply === ticket.id ? <i className="fa-solid fa-circle-notch fa-spin"></i> : 'Send Reply'}
+                </button>
+                <button type="button" 
+                onClick={() => handleReply(ticket.id, true)}
+                disabled={submittingReply === ticket.id}
+                className="px-6 py-2.5 bg-themeAccent hover:bg-themeAccent/80 text-themeApp font-bold text-xs tracking-normal rounded-xl transition-colors shadow-sm"
+                >
+                <i className="fa-solid fa-check-double mr-2"></i> Resolve & Close
+                </button>
+                </div>
+                </div>
+                )}
+                </div>
+              </>
+            )
+          })()}
+       </div>
+     )}
+   </>
  )}
  </div>
  </div>

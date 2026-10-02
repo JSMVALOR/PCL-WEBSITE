@@ -13,12 +13,12 @@ import styles from '../PROGRAMS/Programs.module.css';
 
 export default function ApplyNow() {
   const navigate = useNavigate();
-  const { isAdmissionsOpen } = useSite();
+  const { isAdmissionsOpen, isSpotAdmissionsOpen } = useSite();
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', program: 'B.A., LL.B. (Hons.)',
     familyInLegal: 'No', familyInLegalName: '', familyInLegalRelation: '', familyInLegalProfession: '', marks10th: '', marksInter: '',
     examTGLAWCET: '', examCLAT: '', examOther: ''
-  });
+  , admissionType: 'Management Quota'});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dpdpaConsent, setDpdpaConsent] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -50,24 +50,30 @@ export default function ApplyNow() {
         ? `${formData.familyInLegalName} - ${formData.familyInLegalRelation} - ${formData.familyInLegalProfession}` 
         : '';
         
-      const { error } = await supabase.from('admissions_applications').insert([{
+      const { error, data } = await supabase.from('admissions_applications').insert([{
         name: formData.name, email: formData.email, phone: formData.phone,
         program: formData.program, family_in_legal: formData.familyInLegal,
         family_in_legal_who: combinedFamilyInLegalWho, marks_10th: formData.marks10th,
         marks_inter: formData.marksInter, exam_tglawcet: formData.examTGLAWCET,
         exam_clat: formData.examCLAT, exam_other: formData.examOther,
-        status: 'pending', source: 'website'
+        status: 'pending', source: 'website', admission_type: isSpotAdmissionsOpen ? 'Spot Admission' : formData.admissionType
       }]);
+      
+      if (error) {
+        console.error("Admissions Insert Error:", error);
+        throw new Error("Failed to insert into admissions_applications: " + error.message);
+      }
 
-      await supabase.from('helpdesk_tickets').insert([{
-        ticket_id: ticketId, category: 'Admissions', subject: `Admission App: ${formData.name}`,
-        description: `Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-Program: ${formData.program}
-10th: ${formData.marks10th}, 12th: ${formData.marksInter}`,
-        status: 'open', admin_reply: 'Application Received', user_id: null
-      }]);
+      try {
+        const { error: ticketError } = await supabase.from('helpdesk_tickets').insert([{
+          ticket_id: ticketId, category: 'Admissions', subject: `Admission App: ${formData.name}`,
+          description: `Name: ${formData.name}\nEmail: ${formData.email}\nPhone: ${formData.phone}\nProgram: ${formData.program}\n10th: ${formData.marks10th}, 12th: ${formData.marksInter}`,
+          status: 'open', admin_reply: 'Application Received', user_id: null
+        }]);
+        if (ticketError) console.warn("Helpdesk Ticket Insert Error:", ticketError);
+      } catch (err) {
+        console.warn("Helpdesk Ticket try-catch Error:", err);
+      }
 
       try {
         await sendSystemEmail('APPLICATION_RECEIVED', {
@@ -75,11 +81,11 @@ Program: ${formData.program}
         });
       } catch (e) { console.warn(e); }
 
-      if (error) throw error;
       setGeneratedTicket(ticketId);
       setIsSuccess(true);
     } catch (err) {
-      setErrorMsg("Failed to submit application. Please try again.");
+      console.error("Application Submit Caught Error:", err);
+      setErrorMsg(err.message || "Failed to submit application. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -99,6 +105,7 @@ Program: ${formData.program}
           <span className="font-mono text-xs md:text-sm tracking-[0.3em] uppercase mb-6 text-[var(--primary-color)] font-bold block">
             Admissions
           </span>
+          {isSpotAdmissionsOpen && <span className="inline-block mt-2 px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold uppercase tracking-widest rounded-full animate-pulse shadow-[0_0_15px_rgba(245,158,11,0.2)]">🚨 Spot Admissions Active</span>}
           <h1 className="text-4xl md:text-5xl lg:text-7xl tracking-tight text-[var(--text-color)] mb-8 leading-tight font-serif font-bold">
             Application <span className="font-['Playfair_Display'] italic text-[var(--primary-color)] pr-2">Form</span>
           </h1>
@@ -113,7 +120,7 @@ Program: ${formData.program}
             initial={{ opacity: 0, x: -30 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full lg:w-[45%] lg:sticky lg:top-32 h-[400px] lg:h-[75vh] relative rounded-[2rem] overflow-hidden border border-[var(--card-border)] shadow-2xl group"
+            className="w-full lg:w-[45%] lg:sticky lg:top-32 h-[220px] sm:h-[350px] lg:h-[75vh] relative rounded-[2rem] overflow-hidden border border-[var(--card-border)] shadow-2xl group"
           >
             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#000]/80 via-[#000]/20 to-transparent z-10" />
@@ -125,8 +132,8 @@ Program: ${formData.program}
             />
             
             <div className="absolute bottom-10 left-10 right-10 z-20">
-               <h3 className="text-3xl font-bold text-white font-['Playfair_Display'] italic mb-3 shadow-black drop-shadow-lg">Begin Your Journey</h3>
-               <p className="text-white/80 text-sm leading-relaxed max-w-sm drop-shadow-md">
+               <h3 className="text-2xl md:text-3xl font-bold text-white font-['Playfair_Display'] italic mb-2 md:mb-3 shadow-black drop-shadow-lg">Begin Your Journey</h3>
+               <p className="text-white/80 text-xs md:text-sm leading-relaxed max-w-sm drop-shadow-md hidden sm:block">
                  Join a community of legal visionaries. Our admissions process is designed to identify passionate students ready to make an impact.
                </p>
             </div>
@@ -139,7 +146,7 @@ Program: ${formData.program}
             transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full lg:w-[55%] relative z-10"
           >
-          {!isAdmissionsOpen ? (
+          {(!isAdmissionsOpen && !isSpotAdmissionsOpen) ? (
             <div className={`${styles.glassCard} h-[500px] flex flex-col justify-center items-center p-10 border border-[var(--primary-color)]/30 bg-[var(--primary-color)]/5 text-center`}>
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--primary-color)_0%,transparent_60%)] opacity-10 blur-xl rounded-3xl" />
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-[var(--primary-color)] mb-8 relative z-10">
@@ -156,29 +163,55 @@ Program: ${formData.program}
                 </button>
             </div>
           ) : isSuccess ? (
-            <div className={`${styles.glassCard} h-[500px] flex flex-col justify-center items-center p-10 border border-[var(--primary-color)]/30 bg-[var(--primary-color)]/5 text-center`}>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--primary-color)_0%,transparent_60%)] opacity-10 blur-xl rounded-3xl" />
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-[var(--primary-color)] mb-8 relative z-10">
-                    <CheckCircle2 size={80} />
+            <div className={`${styles.glassCard} min-h-[500px] flex flex-col justify-center items-center p-8 sm:p-12 border border-[var(--primary-color)]/40 bg-gradient-to-b from-[var(--primary-color)]/10 to-transparent text-center relative overflow-hidden shadow-2xl shadow-[var(--primary-color)]/5`}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[var(--primary-color)]/20 blur-[100px] rounded-full pointer-events-none" />
+                
+                <motion.div 
+                    initial={{ scale: 0, rotate: -45 }} 
+                    animate={{ scale: 1, rotate: 0 }} 
+                    transition={{ type: "spring", duration: 0.8 }}
+                    className="w-24 h-24 rounded-full bg-[var(--primary-color)]/20 border-2 border-[var(--primary-color)]/50 flex items-center justify-center text-[var(--primary-color)] mb-8 relative z-10 shadow-[0_0_30px_var(--primary-color)]/30"
+                >
+                    <CheckCircle2 size={50} strokeWidth={2.5} />
                 </motion.div>
-                                <h2 className="text-3xl font-bold mb-4 text-[var(--text-color)] font-['Playfair_Display'] italic relative z-10">
-                    Application Received
+                
+                <h2 className="text-4xl md:text-5xl font-bold mb-4 text-[var(--text-color)] font-['Playfair_Display'] italic relative z-10 tracking-tight">
+                    Application <span className="text-[var(--primary-color)]">Received</span>
                 </h2>
-                <div className="bg-[var(--card-bg)] border border-[var(--primary-color)]/30 rounded-xl px-6 py-4 mb-6 mt-4 flex flex-col items-center relative z-10">
-                    <Ticket size={24} className="text-[var(--primary-color)] mb-2" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">Ticket ID</span>
-                    <span className="text-lg font-bold text-[var(--primary-color)] tracking-widest">{generatedTicket}</span>
-                    <span className="text-[10px] font-medium text-[var(--text-muted)] mt-2">A confirmation email has been sent to {formData.email}</span>
+                
+                <div className="w-full max-w-sm bg-[var(--card-bg)] border border-[var(--primary-color)]/30 rounded-2xl p-6 mb-8 mt-4 flex flex-col items-center relative z-10 shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--primary-color)] to-transparent opacity-50" />
+                    
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-[var(--primary-color)]/10 rounded-lg">
+                            <Ticket size={24} className="text-[var(--primary-color)]" />
+                        </div>
+                        <div className="text-left">
+                            <span className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)]">Reference Ticket</span>
+                            <span className="block text-xl font-bold text-[var(--text-color)] tracking-wider font-mono">{generatedTicket}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="w-full border-t border-dashed border-[var(--primary-color)]/30 my-3 relative">
+                        <div className="absolute -left-8 -top-3 w-6 h-6 rounded-full bg-[var(--bg-color)] border border-[var(--primary-color)]/30" />
+                        <div className="absolute -right-8 -top-3 w-6 h-6 rounded-full bg-[var(--bg-color)] border border-[var(--primary-color)]/30" />
+                    </div>
+                    
+                    <span className="text-xs font-medium text-[var(--text-muted)] text-center leading-relaxed">
+                        A confirmation email has been sent to<br/><strong className="text-[var(--text-color)]">{formData.email}</strong>
+                    </span>
                 </div>
-                <p className="text-[var(--text-muted)] text-lg mb-10 max-w-md relative z-10">
+                
+                <p className="text-[var(--text-muted)] text-base md:text-lg mb-10 max-w-md relative z-10 leading-relaxed">
                     Thank you for applying to Prudentia College of Law. Our admissions team will review your credentials and contact you shortly.
                 </p>
-                <button onClick={() => navigate('/')} className="tlh-btn justify-center relative z-10">
+                
+                <button onClick={() => navigate('/')} className="tlh-btn justify-center relative z-10 min-w-[200px] !py-4 shadow-lg shadow-[var(--primary-color)]/20 hover:shadow-[var(--primary-color)]/40 transition-shadow">
                     <span className="text-xs font-bold uppercase tracking-widest">Return Home</span>
                 </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className={`${styles.glassCard} p-8 md:p-12 border border-[var(--card-border)] relative overflow-hidden`}>
+            <form onSubmit={handleSubmit} className={`${styles.glassCard} p-5 sm:p-8 md:p-12 border border-[var(--card-border)] relative overflow-hidden`}>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--primary-color)]/10 rounded-full blur-[80px] pointer-events-none"></div>
 
                 <AnimatePresence>
@@ -208,6 +241,24 @@ Program: ${formData.program}
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Phone Number *</label>
                                 <input type="tel" name="phone" required value={formData.phone} onChange={handleChange}
                                     className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 focus:ring-1 focus:ring-[var(--primary-color)]/50 outline-none transition-all placeholder:text-[var(--text-muted)]/50" placeholder="+91..." />
+                            </div>
+                            <div>
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Admission Route *</label>
+                                {isSpotAdmissionsOpen ? (
+                                    <div className="w-full bg-amber-500/10 border border-amber-500/30 rounded-2xl px-5 py-4 text-amber-500 font-black tracking-widest uppercase text-sm">
+                                        🚨 Spot Admission Drive
+                                    </div>
+                                ) : (
+                                    <select name="admissionType" value={formData.admissionType} onChange={handleChange} required
+                                        className="w-full bg-[var(--card-bg)]/50 border border-[var(--card-border)] rounded-2xl px-5 py-4 text-base text-[var(--text-color)] focus:border-[var(--primary-color)]/50 focus:ring-1 focus:ring-[var(--primary-color)]/50 outline-none transition-all appearance-none cursor-pointer">
+                                        <option value="Management Quota">Management Quota</option>
+                                        <option value="Spot Admission">Spot Admission</option>
+                                        <option value="Counseling - Phase 1">Counseling - Phase 1</option>
+                                        <option value="Counseling - Phase 2">Counseling - Phase 2</option>
+                                        <option value="Counseling - Phase 3">Counseling - Phase 3</option>
+                                        <option value="Transfer / Migration">Transfer / Migration</option>
+                                    </select>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--text-muted)] mb-3 ml-1">Select Program *</label>

@@ -7,6 +7,7 @@ import './index.css'
 import RootApp from './RootApp.jsx'
 import GlobalErrorBoundary from './Shared/components/GlobalErrorBoundary'
 import { NotificationProvider } from './Shared/context/NotificationContext'
+import GlobalToastAdapter from './Shared/components/GlobalToastAdapter'
 
 import { HelmetProvider } from 'react-helmet-async'
 import * as Sentry from "@sentry/react";
@@ -45,6 +46,7 @@ createRoot(document.getElementById('root')).render(
     <HelmetProvider>
         <BrowserRouter>
       <NotificationProvider>
+        <GlobalToastAdapter />
         <GlobalErrorBoundary>
           <RootApp />
         </GlobalErrorBoundary>

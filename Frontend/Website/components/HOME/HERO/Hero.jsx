@@ -80,7 +80,7 @@ const AnimatedHeadline = ({ text, className, style }) => {
 };
 
 const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
-  const { isAdmissionsOpen } = useSite();
+  const { isAdmissionsOpen, isSpotAdmissionsOpen } = useSite();
   const { content } = useSiteContent('/', 'hero');
   const isMobile = windowWidth <= 768;
 
@@ -133,11 +133,11 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
         {/* Badge */}
         <motion.div 
           variants={badgeVariants}
-          className={`mb-3 md:mb-[32px] inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-sm border text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] backdrop-blur-md shadow-lg ${isAdmissionsOpen ? 'border-[var(--primary-color)]/50 text-[var(--primary-color)]' : 'border-rose-500/50 text-rose-500'}`}
+          className={`mb-3 md:mb-[32px] inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-2.5 rounded-sm border text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] backdrop-blur-md shadow-lg ${isSpotAdmissionsOpen ? 'border-amber-500/50 text-amber-500' : isAdmissionsOpen ? 'border-[var(--primary-color)]/50 text-[var(--primary-color)]' : 'border-rose-500/50 text-rose-500'}`}
           style={{ backgroundColor: 'var(--hero-badge-bg)' }}
         >
-          <span className={`w-1.5 h-1.5 rounded-full ${isAdmissionsOpen ? 'bg-[var(--primary-color)] animate-pulse shadow-[0_0_10px_var(--primary-color)]' : 'bg-rose-500'}`}></span>
-          {isAdmissionsOpen ? "Admissions Open 2026 - 2027" : "Admissions Closed 2026 - 2027"}
+          <span className={`w-1.5 h-1.5 rounded-full ${isSpotAdmissionsOpen ? 'bg-amber-500 animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.8)]' : isAdmissionsOpen ? 'bg-[var(--primary-color)] animate-pulse shadow-[0_0_10px_var(--primary-color)]' : 'bg-rose-500'}`}></span>
+          {isSpotAdmissionsOpen ? "Spot Admissions Drive 2026" : isAdmissionsOpen ? "Admissions Open 2026 - 2027" : "Admissions Closed 2026 - 2027"}
         </motion.div>
 
         {/* Headline */}
@@ -169,7 +169,7 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
           className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 w-full px-6 relative bottom-4 md:bottom-8"
         >
           <motion.div variants={buttonVariants} className="w-full sm:w-auto flex justify-center">
-            {isAdmissionsOpen ? (
+            {(isAdmissionsOpen || isSpotAdmissionsOpen) ? (
               <Link 
                 to={btn1Link} 
                 className="tlh-btn w-full sm:w-auto flex justify-center items-center !py-4 px-10 min-w-[220px]"
