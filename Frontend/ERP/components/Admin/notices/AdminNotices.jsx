@@ -131,7 +131,8 @@ try {
  }
  
  // Deduplicate
- recipientIds = [...new Set(recipientIds)];\n
+ recipientIds = [...new Set(recipientIds)];
+
  // ---- WHATSAPP INTEGRATION FOR BROADCASTS ----
  try {
    let targetPhones = new Set();

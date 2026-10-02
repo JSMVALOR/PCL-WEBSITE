@@ -414,8 +414,6 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  />
 </div>
  )}
-<div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
-<div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
 
  <div className={`flex flex-col p-4 sm:p-6 lg:p-8 gap-6 lg:gap-8 ${isEmbedded ? "p-0" : ""}`}>
 {students.length > 0 && selectedAssessmentType && (
@@ -482,7 +480,6 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  </div>
  </div>
  </div>
- </div>, document.body
  )}
 
  {selectedSubject && !selectedAssessmentType && (
@@ -715,7 +712,5 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  </div>
 </div>
 </div>
-</div>
- </div>
  );
 }
