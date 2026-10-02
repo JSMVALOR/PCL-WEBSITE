@@ -5,7 +5,6 @@ import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import FacultyBroadcastForm from "./FacultyBroadcastForm";
 import EventsBoard from "../../notices/EventsBoard";
-import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function Notices({ setActiveTab }) {
  const { userSession } = useERP();

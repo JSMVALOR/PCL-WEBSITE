@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { registerDialogContainer } from "../../utils/DialogManager";
 import { motion, AnimatePresence } from "framer-motion";
-import SlideCommit from "../../../Shared/components/ReactBits/SlideCommit/SlideCommit";
 
 export default function DialogContainer() {
  const [dialogState, setDialogState] = useState({

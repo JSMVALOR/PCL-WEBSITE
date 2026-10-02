@@ -1,4 +1,3 @@
-import { sendSystemEmail } from '../../../lib/EmailService';
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect, useRef } from "react";
 
@@ -8,7 +7,7 @@ import { Delete02Icon } from '@hugeicons/core-free-icons';
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 export default function MentorshipAllocations({}) {
  const [maxCapacity, setMaxCapacity] = useState(5);
@@ -70,7 +69,7 @@ export default function MentorshipAllocations({}) {
  semester: s.semester || 'Unknown',
  section: s.section || 'Unknown',
  batch: s.batch || 'Unknown',
- profile_picture_url: s.profile_picture_url || getLocalAvatar(s.full_name)
+ profile_picture_url: getAvatarUrl(s)
  }));
 
  const facultyState = (facultyData || []).map(f => {
@@ -86,14 +85,14 @@ export default function MentorshipAllocations({}) {
  semester: s.semester || 'Unknown',
  section: s.section || 'Unknown',
  batch: s.batch || 'Unknown',
- profile_picture_url: s.profile_picture_url || getLocalAvatar(s.full_name)
+ profile_picture_url: getAvatarUrl(s)
  }));
 
  return {
  id: f.id,
  name: f.full_name || 'Unknown Faculty',
  department: f.department || 'Law',
- profile_picture_url: f.profile_picture_url || getLocalAvatar(f.full_name),
+ profile_picture_url: getAvatarUrl(f),
  mentees: mentees
  };
  });

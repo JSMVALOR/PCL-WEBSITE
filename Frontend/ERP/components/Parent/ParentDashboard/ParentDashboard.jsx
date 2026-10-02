@@ -4,7 +4,7 @@ import { useERP } from '../../../../ERP/context/ErpContext';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import OrganizationDirectory from '../../shared/OrganizationDirectory/OrganizationDirectory';
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 export default function ParentDashboard({ onLogout }) {
  const { userSession } = useERP();
@@ -205,10 +205,7 @@ export default function ParentDashboard({ onLogout }) {
  <div className="col-span-1 md:col-span-6 lg:col-span-8 bg-themePanel/70 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[24px] p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
  <div className="w-28 h-28 rounded-[24px] bg-themeElevated flex items-center justify-center shrink-0 overflow-hidden">
  <img 
- src={
- studentData.profile_picture_url || getLocalAvatar(studentData.full_name) 
- ? (studentData.profile_picture_url || getLocalAvatar(studentData.full_name))
- : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentData.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
  } 
  alt={studentData.full_name}
  className="w-full h-full object-cover" 

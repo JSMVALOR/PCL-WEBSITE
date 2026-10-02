@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { sendSystemEmail } from '../../../lib/EmailService';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function AdminHelpdesk({ isEmbedded = false, isHubView = false }) {

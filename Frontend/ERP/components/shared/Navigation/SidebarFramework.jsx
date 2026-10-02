@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useState, useEffect, useMemo } from 'react';
 import { useERP } from '../../../context/ErpContext';
 import pclLogo from '../../../../Shared/Assets/LOGOS/pcl_logo_gold.svg';
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 // --- Constants & Config ---
 const SIDEBAR_MIN_WIDTH = 80; // Compact width
@@ -265,10 +265,7 @@ export default function SidebarFramework({
  >
  <div className="w-8 h-8 rounded-lg bg-themeElevated/90 backdrop-blur-2xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-themeBorder flex items-center justify-center font-black text-xs text-themeText relative shrink-0 overflow-hidden">
  <img 
- src={
- userSession?.profile_picture_url || getLocalAvatar(userSession?.name) 
- ? (userSession?.profile_picture_url || getLocalAvatar(userSession?.name))
- : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(userSession)}&background=random&color=fff&rounded=true&bold=true`
  } 
  alt="Profile" 
  className="w-full h-full object-cover" 
@@ -390,10 +387,7 @@ export default function SidebarFramework({
  <div className="p-6 pt-10 flex items-center gap-4 border-b border-themeBorder dark:border-themeBorder bg-themePanel/50 /20 sticky top-0 backdrop-blur-2xl z-10 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
  <div className="w-14 h-14 rounded-2xl bg-themeElevated backdrop-blur-xl border border-themeBorder dark:border-themeBorder flex items-center justify-center font-black text-xl text-themeText relative shadow-lg overflow-hidden">
  <img 
- src={
- userSession?.profile_picture_url || getLocalAvatar(userSession?.name) 
- ? (userSession?.profile_picture_url || getLocalAvatar(userSession?.name))
- : `https://ui-avatars.com/api/?name=${encodeURIComponent(userSession?.name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(userSession)}&background=random&color=fff&rounded=true&bold=true`
  } 
  alt="Profile" 
  className="w-full h-full object-cover relative z-0" 

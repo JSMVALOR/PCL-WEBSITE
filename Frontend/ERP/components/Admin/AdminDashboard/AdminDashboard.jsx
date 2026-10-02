@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { DashboardGreetingBanner } from "../../shared/DashboardWidgets";
-import { AdminSystemVitals } from "../../shared/DashboardWidgets";
 import AdminKPIGrid from "./AdminKPIGrid";
 
 import AdminRightSidebar from "./AdminRightSidebar";

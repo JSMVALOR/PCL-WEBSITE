@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { getLocalAvatar } from '../../../utils/avatarUtils';
 import AvatarCropperModal from './AvatarCropperModal';
 
 export default function AdminUserProfileModal({ user, isOpen, onClose }) {

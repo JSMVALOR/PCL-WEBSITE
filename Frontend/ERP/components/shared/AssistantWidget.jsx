@@ -5,7 +5,7 @@ import { useERP } from '../../context/ErpContext';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon, ArtificialIntelligence01Icon, Chatting01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import HoldButton from '../../../Shared/components/ReactBits/HoldButton/HoldButton';
-import { getLocalAvatar } from '../../utils/avatarUtils';
+import { getAvatarUrl } from '../../utils/avatarUtils';
 
 // Subcomponent: Chat Inbox Item
 function ChatInboxItem({ conversation, onSelect }) {

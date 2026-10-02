@@ -10,7 +10,7 @@ import MenteeReport from "./MenteeReport";
 import MenteeAcademicRecord from "./MenteeAcademicRecord";
 import FacultyStudentProfile360 from "./FacultyStudentProfile360";
 import MenteeInternships from "./MenteeInternships";
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getLocalAvatar, getAvatarUrl } from '../../../utils/avatarUtils';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 
 export default function FacultyMentorship() {
@@ -295,11 +295,11 @@ export default function FacultyMentorship() {
 
  return (
  <div className="w-full h-full text-themeText animate-fade-in">
- <div className="w-full max-w-[1800px] mx-auto flex flex-col pb-10 lg:pb-10 xl:pb-8">
+ <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col pb-10 lg:pb-10 xl:pb-8">
  
  {/* Header */}
  {!selectedMentee && (
- <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
+ <div className="mt-4 sm:mt-6 lg:mt-8 w-full">
  <PageHeader 
  icon="fa-solid fa-users" 
  title="Mentorship Hub" 
@@ -317,8 +317,8 @@ export default function FacultyMentorship() {
  <i className="fa-solid fa-arrow-left text-themeTextSec /60"></i>
  </button>
  <div className="flex items-center gap-4">
- <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-black">
- {selectedMentee.full_name.charAt(0)}
+ <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-black overflow-hidden shrink-0">
+ <img src={getAvatarUrl(selectedMentee)} alt={selectedMentee.full_name} className="w-full h-full object-cover" />
  </div>
  <div>
  <h2 className="text-xl font-bold tracking-tight text-themeText ">{selectedMentee.full_name}</h2>
@@ -402,15 +402,7 @@ export default function FacultyMentorship() {
  className="bg-themePanel/60 backdrop-blur-xl border border-themeBorder rounded-2xl p-4 flex items-center gap-4 group hover:border-amber-500/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]"
  >
  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-black text-sm overflow-hidden shrink-0">
- <img 
- src={
- m.profile_picture_url || getLocalAvatar(m.full_name) 
- ? (m.profile_picture_url || getLocalAvatar(m.full_name))
- : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
- } 
- alt={m.full_name} 
- className="w-full h-full object-cover" 
- />
+ <img src={getAvatarUrl(m)} alt={m.full_name} className="w-full h-full object-cover" />
  </div>
  <div className="flex-1 min-w-0">
  <div className="flex items-center gap-3">
@@ -448,8 +440,7 @@ export default function FacultyMentorship() {
  ))}
  </div>
  )}
- </div>
-
+ 
 
  {grievances.length > 0 && (
  <div className="flex flex-col gap-3 mt-4">
@@ -483,6 +474,7 @@ export default function FacultyMentorship() {
  ))}
  </div>
  )}
+ </div>
 
  {/* Meeting Requests */}
  <div className="w-full lg:w-2/3 flex flex-col gap-4">

@@ -1,8 +1,7 @@
-import { supabase } from "../../../../Shared/lib/supabase/supabaseClient";
 
 
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 

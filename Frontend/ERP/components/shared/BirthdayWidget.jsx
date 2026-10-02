@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../context/ErpContext";
 import { motion } from 'framer-motion';
-import { getLocalAvatar } from '../../utils/avatarUtils';
+import { getAvatarUrl } from '../../utils/avatarUtils';
 
 export default function BirthdayWidget() {
  const { userSession } = useERP();
@@ -134,10 +134,7 @@ export default function BirthdayWidget() {
  >
  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF2D55]/10 to-[#FF9500]/10 border border-white/20 flex items-center justify-center overflow-hidden shrink-0 relative">
  <img 
- src={
- person.profile_picture_url || getLocalAvatar(person.full_name) 
- ? (person.profile_picture_url || getLocalAvatar(person.full_name))
- : `https://ui-avatars.com/api/?name=${encodeURIComponent(person.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
  } 
  alt={person.full_name} 
  className="w-full h-full object-cover" 

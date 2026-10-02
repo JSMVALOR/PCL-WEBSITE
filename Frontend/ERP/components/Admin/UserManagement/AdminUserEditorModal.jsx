@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { theme } from '../../../../Shared/theme';
 
 function centerAspectCrop(mediaWidth, mediaHeight, aspect) {
  return centerCrop(

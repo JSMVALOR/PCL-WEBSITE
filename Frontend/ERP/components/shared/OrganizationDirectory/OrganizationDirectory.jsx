@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getLocalAvatar } from '../../../utils/avatarUtils';
+import { getAvatarUrl } from '../../../utils/avatarUtils';
 import { useERP } from '../../../context/ErpContext';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Chatting01Icon } from '@hugeicons/core-free-icons';
@@ -127,10 +127,7 @@ export default function OrganizationDirectory() {
  <div className="flex items-center gap-4">
  <div className="w-16 h-16 rounded-xl bg-themeElevated border border-themeBorder shadow-inner overflow-hidden flex items-center justify-center shrink-0">
  <img 
- src={
- member.profile_picture_url || getLocalAvatar(member.full_name) 
- ? (member.profile_picture_url || getLocalAvatar(member.full_name))
- : `https://ui-avatars.com/api/?name=${encodeURIComponent(member.full_name || 'US')}&background=random&color=fff&rounded=true&bold=true`
+ src={getAvatarUrl(full_)}&background=random&color=fff&rounded=true&bold=true`
  } 
  alt={member.full_name} 
  className="w-full h-full object-cover" 

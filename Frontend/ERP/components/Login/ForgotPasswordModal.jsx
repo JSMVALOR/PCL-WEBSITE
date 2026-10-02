@@ -1,5 +1,5 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { supabase } from '../../../Shared/lib/supabase/supabaseClient';
 import { sendSystemEmail } from '../../lib/EmailService';
 
