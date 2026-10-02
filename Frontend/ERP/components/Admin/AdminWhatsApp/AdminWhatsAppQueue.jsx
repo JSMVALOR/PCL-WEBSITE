@@ -1,6 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
+
+const ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
+
+// WhatsApp message templates (mirroring the engine templates)
+const WA_TEMPLATES = {
+  PARENT_ABSENT_ALERT: { label: 'Attendance Alert (Parent)', fields: ['student_name', 'date', 'period_count'] },
+  NOTICE_BROADCAST: { label: 'Notice / Broadcast', fields: ['category', 'title', 'content', 'link'] },
+  HOLIDAY_REMINDER: { label: 'Holiday Reminder', fields: ['event_type', 'title', 'date', 'description'] },
+  TIMETABLE_PUBLISHED: { label: 'Timetable Published', fields: ['batch_name'] },
+  LEAVE_STATUS: { label: 'Leave Status Update', fields: ['student_name', 'status', 'leave_type', 'dates'] },
+  FEE_REMINDER: { label: 'Fee Reminder', fields: ['student_name', 'amount', 'due_date'] },
+  GENERIC: { label: 'Custom Message', fields: ['message'] },
+};
 
 export default function AdminWhatsAppQueue() {
  const [status, setStatus] = useState('LOADING'); // LOADING, UNLINKED, CONNECTED
@@ -8,10 +21,8 @@ export default function AdminWhatsAppQueue() {
  const [queue, setQueue] = useState([]);
  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
- const ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
-
  const [groups, setGroups] = useState([]);
- const [activeTab, setActiveTab] = useState('queue'); // 'queue', 'broadcast', 'mapping'
+ const [activeTab, setActiveTab] = useState('queue'); // 'queue', 'broadcast', 'mapping', 'templates', 'contacts'
  const [broadcastMsg, setBroadcastMsg] = useState("");
  const [selectedGroup, setSelectedGroup] = useState("");
  const [isSending, setIsSending] = useState(false);
@@ -21,8 +32,28 @@ export default function AdminWhatsAppQueue() {
  const [globalGroups, setGlobalGroups] = useState([]);
  const [isSavingMapping, setIsSavingMapping] = useState(false);
 
- const fetchGroups = async () => {
-   if (status !== 'CONNECTED') return;
+ // For Templates
+ const [selectedTemplate, setSelectedTemplate] = useState('GENERIC');
+ const [templateVars, setTemplateVars] = useState({});
+ const [templatePreview, setTemplatePreview] = useState('');
+
+ // For Contacts
+ const [contacts, setContacts] = useState([]);
+ const [contactFilter, setContactFilter] = useState('student');
+ const [contactBatchFilter, setContactBatchFilter] = useState('');
+ const [isLoadingContacts, setIsLoadingContacts] = useState(false);
+ const [selectedContacts, setSelectedContacts] = useState([]);
+
+ // Refs for preventing stale closure issues and unnecessary re-renders
+ const statusRef = useRef(status);
+ const queueRef = useRef(queue);
+ const pollTimerRef = useRef(null);
+ 
+ statusRef.current = status;
+ queueRef.current = queue;
+
+ const fetchGroups = useCallback(async () => {
+   if (statusRef.current !== 'CONNECTED') return;
    try {
      const res = await fetch(`${ENGINE_URL}/api/whatsapp/groups`);
      if (res.ok) {
@@ -32,10 +63,10 @@ export default function AdminWhatsAppQueue() {
    } catch (e) {
      console.error("Failed to fetch WhatsApp groups");
    }
- };
+ }, []);
 
  // Load batches and global mapping
- const fetchMappings = async () => {
+ const fetchMappings = useCallback(async () => {
    const { data: bData } = await supabase.from('academic_batches').select('*').order('start_year', { ascending: false });
    if (bData) setBatches(bData);
    
@@ -43,27 +74,81 @@ export default function AdminWhatsAppQueue() {
    if (sData && sData.value && Array.isArray(sData.value)) {
      setGlobalGroups(sData.value);
    }
- };
+ }, []);
+
+ // Fetch contacts from engine
+ const fetchContacts = useCallback(async () => {
+   setIsLoadingContacts(true);
+   try {
+     const params = new URLSearchParams();
+     if (contactFilter) params.append('role', contactFilter);
+     if (contactBatchFilter) params.append('batch', contactBatchFilter);
+     
+     const res = await fetch(`${ENGINE_URL}/api/whatsapp/contacts?${params.toString()}`);
+     if (res.ok) {
+       const data = await res.json();
+       setContacts(data.contacts || []);
+     }
+   } catch (e) {
+     // Fallback: fetch directly from supabase
+     try {
+       let query = supabase.from('profiles').select('id, full_name, phone, parent_phone, email, role, academic_batch, erp_id');
+       if (contactFilter) query = query.eq('role', contactFilter);
+       if (contactBatchFilter) query = query.eq('academic_batch', contactBatchFilter);
+       const { data } = await query.order('full_name');
+       setContacts((data || []).map(p => ({
+         id: p.id,
+         name: p.full_name,
+         phone: p.phone,
+         parent_phone: p.parent_phone,
+         email: p.email,
+         role: p.role,
+         batch: p.academic_batch,
+         erp_id: p.erp_id,
+       })));
+     } catch (e2) {
+       console.error("Failed to fetch contacts", e2);
+     }
+   } finally {
+     setIsLoadingContacts(false);
+   }
+ }, [contactFilter, contactBatchFilter]);
 
  useEffect(() => {
    if (status === 'CONNECTED') {
      fetchGroups();
      fetchMappings();
    }
- }, [status]);
+ }, [status, fetchGroups, fetchMappings]);
 
  const handleBroadcast = async (e) => {
    e.preventDefault();
-   if (!selectedGroup || !broadcastMsg.trim()) return;
+   if (!broadcastMsg.trim()) return;
    setIsSending(true);
    try {
-     const { error } = await supabase.from('whatsapp_queue').insert({
-       phone: selectedGroup.replace('@g.us', ''),
-       message: broadcastMsg.trim(),
-       status: 'PENDING'
-     });
-     if (error) throw error;
+     // If sending to a group
+     if (selectedGroup) {
+       const { error } = await supabase.from('whatsapp_queue').insert({
+         phone: selectedGroup, // Keep the full group ID including @g.us
+         message: broadcastMsg.trim(),
+         status: 'PENDING'
+       });
+       if (error) throw error;
+     }
+     // If sending to selected contacts
+     if (selectedContacts.length > 0) {
+       const items = selectedContacts.map(c => ({
+         phone: c.phone,
+         message: broadcastMsg.trim(),
+         status: 'PENDING'
+       })).filter(item => item.phone);
+       if (items.length > 0) {
+         const { error } = await supabase.from('whatsapp_queue').insert(items);
+         if (error) throw error;
+       }
+     }
      setBroadcastMsg("");
+     setSelectedContacts([]);
      if (window.erpDialog) window.erpDialog.alert("Broadcast message added to queue!", "success");
      setActiveTab('queue');
      fetchQueue();
@@ -96,59 +181,62 @@ export default function AdminWhatsAppQueue() {
    }
  };
 
- const fetchStatus = async () => {
+ const fetchStatus = useCallback(async () => {
    try {
      const res = await fetch(`${ENGINE_URL}/api/whatsapp/status`);
      if (res.ok) {
        const data = await res.json();
-       setStatus(prev => {
-         if (data.status === 'CONNECTED' && prev !== 'CONNECTED') return 'CONNECTED';
-         if (data.status === 'QR_READY' && prev !== 'UNLINKED') return 'UNLINKED';
-         if (data.status !== 'CONNECTED' && data.status !== 'QR_READY' && prev !== 'LOADING') return 'LOADING';
-         return prev;
-       });
-       if (data.status === 'QR_READY') {
+       const newStatus = data.status === 'CONNECTED' ? 'CONNECTED' 
+                       : data.status === 'QR_READY' ? 'UNLINKED' 
+                       : 'LOADING';
+       
+       // Only update state if actually changed
+       if (newStatus !== statusRef.current) {
+         setStatus(newStatus);
+       }
+       
+       if (data.status === 'QR_READY' && data.qr) {
          setQrCode(prev => prev === data.qr ? prev : data.qr);
+       } else if (data.status === 'CONNECTED') {
+         setQrCode(null);
        }
      }
    } catch (e) {
-     console.warn("WhatsApp Engine unreachable at", ENGINE_URL);
+     // Only set LOADING if we were previously connected (engine became unreachable)
+     if (statusRef.current === 'CONNECTED') {
+       setStatus('LOADING');
+     }
    }
- };
+ }, []);
 
- const fetchQueue = async (currentQueue) => {
+ const fetchQueue = useCallback(async () => {
    const { data, error } = await supabase
      .from('whatsapp_queue')
      .select('*')
      .order('created_at', { ascending: false })
      .limit(50);
    if (data) {
-     // Prevent unnecessary re-renders to stop UI flashing/reloading perception
-     setQueue(prev => {
-       if (JSON.stringify(prev) === JSON.stringify(data)) return prev;
-       return data;
-     });
+     // Compare using a lightweight check instead of full JSON.stringify on every poll
+     const newIds = data.map(d => d.id + d.status).join(',');
+     const oldIds = queueRef.current.map(d => d.id + d.status).join(',');
+     if (newIds !== oldIds) {
+       setQueue(data);
+     }
    }
- };
+ }, []);
 
+ // Stable polling that doesn't cause re-mounts
  useEffect(() => {
    fetchStatus();
    fetchQueue();
    
-   let interval;
-   // Only poll queue aggressively if we are on the queue tab, prevents UI flickering
-   if (activeTab === 'queue') {
-       interval = setInterval(() => {
-         fetchStatus();
-         fetchQueue();
-       }, 5000);
-   } else {
-       // Slow poll just for status
-       interval = setInterval(() => fetchStatus(), 15000);
-   }
+   const interval = activeTab === 'queue' 
+     ? setInterval(() => { fetchStatus(); fetchQueue(); }, 8000) // Slower poll to reduce flicker
+     : setInterval(() => fetchStatus(), 20000); // Very slow poll when not on queue tab
    
+   pollTimerRef.current = interval;
    return () => clearInterval(interval);
- }, [activeTab]);
+ }, [activeTab, fetchStatus, fetchQueue]);
 
  const handleDisconnect = async () => {
    setIsDisconnecting(true);
@@ -163,6 +251,68 @@ export default function AdminWhatsAppQueue() {
    }
  };
 
+ // Template preview
+ useEffect(() => {
+   if (selectedTemplate === 'GENERIC') {
+     setTemplatePreview(templateVars.message || '');
+   } else {
+     const tpl = WA_TEMPLATES[selectedTemplate];
+     if (tpl) {
+       // Build a preview string
+       const parts = tpl.fields.map(f => `${f}: ${templateVars[f] || `<${f}>`}`).join('\n');
+       setTemplatePreview(`[${tpl.label}]\n${parts}`);
+     }
+   }
+ }, [selectedTemplate, templateVars]);
+
+ const handleSendTemplate = async (e) => {
+   e.preventDefault();
+   if (selectedContacts.length === 0 && !selectedGroup) {
+     if (window.erpDialog) window.erpDialog.alert("Select at least one recipient or group.", "error");
+     return;
+   }
+   setIsSending(true);
+   try {
+     const items = [];
+     // To selected contacts
+     for (const c of selectedContacts) {
+       if (c.phone) {
+         items.push({
+           phone: c.phone,
+           message: selectedTemplate === 'GENERIC' 
+             ? (templateVars.message || '') 
+             : `[${WA_TEMPLATES[selectedTemplate]?.label}] ${Object.entries(templateVars).map(([k,v]) => `${k}: ${v}`).join(', ')}`,
+           status: 'PENDING'
+         });
+       }
+     }
+     // To selected group
+     if (selectedGroup) {
+       items.push({
+         phone: selectedGroup,
+         message: selectedTemplate === 'GENERIC' 
+           ? (templateVars.message || '') 
+           : `[${WA_TEMPLATES[selectedTemplate]?.label}] ${Object.entries(templateVars).map(([k,v]) => `${k}: ${v}`).join(', ')}`,
+         status: 'PENDING'
+       });
+     }
+     if (items.length > 0) {
+       const { error } = await supabase.from('whatsapp_queue').insert(items);
+       if (error) throw error;
+     }
+     setTemplateVars({});
+     setSelectedContacts([]);
+     setSelectedGroup('');
+     if (window.erpToast) window.erpToast.show(`${items.length} message(s) queued!`, "success");
+     setActiveTab('queue');
+     fetchQueue();
+   } catch (e) {
+     if (window.erpToast) window.erpToast.show("Failed to queue template messages.", "error");
+   } finally {
+     setIsSending(false);
+   }
+ };
+
  return (
    <div className="w-full animate-fade-in pb-12 font-sans bg-themeApp min-h-screen text-themeText">
      <div className="w-full mx-auto pb-10">
@@ -170,7 +320,7 @@ export default function AdminWhatsAppQueue() {
          <PageHeader 
            icon="fa-brands fa-whatsapp" 
            title="WhatsApp Engine" 
-           subtitle="Manage WhatsApp Web link and outbound message queue" 
+           subtitle="Manage WhatsApp Web link, message templates, and outbound queue" 
          />
        </div>
 
@@ -190,6 +340,7 @@ export default function AdminWhatsAppQueue() {
                  <div className="flex flex-col items-center py-8">
                    <i className="fa-solid fa-circle-notch fa-spin text-3xl text-themeAccent mb-4"></i>
                    <p className="text-sm text-themeTextSec font-medium mt-4">Initializing Engine...</p>
+                   <p className="text-[10px] text-themeTextSec/60 mt-2 font-mono">{ENGINE_URL}</p>
                  </div>
                )}
 
@@ -230,19 +381,43 @@ export default function AdminWhatsAppQueue() {
                  </div>
                )}
              </div>
+
+             {/* Quick Stats Card */}
+             {status === 'CONNECTED' && (
+               <div className="bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[2rem] p-6 shadow-sm">
+                 <h4 className="text-sm font-bold text-themeTextSec uppercase tracking-widest mb-4">Queue Stats</h4>
+                 <div className="grid grid-cols-3 gap-3">
+                   <div className="text-center">
+                     <div className="text-2xl font-black text-amber-500">{queue.filter(q => q.status === 'PENDING').length}</div>
+                     <div className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Pending</div>
+                   </div>
+                   <div className="text-center">
+                     <div className="text-2xl font-black text-emerald-500">{queue.filter(q => q.status === 'SENT').length}</div>
+                     <div className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Sent</div>
+                   </div>
+                   <div className="text-center">
+                     <div className="text-2xl font-black text-rose-500">{queue.filter(q => q.status === 'FAILED').length}</div>
+                     <div className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mt-1">Failed</div>
+                   </div>
+                 </div>
+               </div>
+             )}
            </div>
 
            {/* RIGHT SIDEBAR: Action Area */}
            <div className="xl:col-span-8 flex flex-col gap-6">
              {/* Tab Switcher */}
-             <div className="flex bg-themeElevated p-1 rounded-xl w-fit">
-                 <button onClick={() => setActiveTab('queue')} className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'queue' ? 'bg-themePanel text-emerald-500 shadow-sm' : 'text-themeTextSec'}`}>Live Queue</button>
-                 <button onClick={() => setActiveTab('mapping')} className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'mapping' ? 'bg-themePanel text-blue-500 shadow-sm' : 'text-themeTextSec'}`}>Group Assignments</button>
-                 <button onClick={() => setActiveTab('broadcast')} className={`px-6 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'broadcast' ? 'bg-themePanel text-amber-500 shadow-sm' : 'text-themeTextSec'}`}>Quick Broadcast</button>
+             <div className="flex bg-themeElevated p-1 rounded-xl w-fit flex-wrap gap-1">
+                 <button onClick={() => setActiveTab('queue')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'queue' ? 'bg-themePanel text-emerald-500 shadow-sm' : 'text-themeTextSec'}`}>Live Queue</button>
+                 <button onClick={() => setActiveTab('mapping')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'mapping' ? 'bg-themePanel text-blue-500 shadow-sm' : 'text-themeTextSec'}`}>Group Assignments</button>
+                 <button onClick={() => setActiveTab('broadcast')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'broadcast' ? 'bg-themePanel text-amber-500 shadow-sm' : 'text-themeTextSec'}`}>Quick Broadcast</button>
+                 <button onClick={() => setActiveTab('templates')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'templates' ? 'bg-themePanel text-purple-500 shadow-sm' : 'text-themeTextSec'}`}>Templates</button>
+                 <button onClick={() => { setActiveTab('contacts'); fetchContacts(); }} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'contacts' ? 'bg-themePanel text-cyan-500 shadow-sm' : 'text-themeTextSec'}`}>Contacts</button>
              </div>
 
              <div className="bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[2rem] shadow-sm overflow-hidden flex flex-col min-h-[500px]">
                
+               {/* ===== QUEUE TAB ===== */}
                {activeTab === 'queue' && (
                  <>
                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
@@ -250,7 +425,7 @@ export default function AdminWhatsAppQueue() {
                       <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                         <i className="fa-solid fa-list-check text-themeAccent"></i> Outbound Queue
                       </h3>
-                      <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Live Telemetry</p>
+                      <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Live Telemetry • Refreshes every 8s</p>
                     </div>
                     <span className="text-xs font-bold bg-themeAccent/10 text-themeAccent px-4 py-2 rounded-full border border-themeAccent/20">
                       {queue.filter(q => q.status === 'PENDING').length} Pending
@@ -283,9 +458,14 @@ export default function AdminWhatsAppQueue() {
                               </span>
                             </td>
                             <td className="block md:table-cell px-2 py-1 md:px-6 md:py-4">
-                              <span className="text-sm font-bold text-themeText whitespace-nowrap">
-                                {item.phone?.includes('@g.us') ? <><i className="fa-solid fa-users mr-1 text-amber-500"></i>Group</> : item.phone}
-                              </span>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-themeText whitespace-nowrap">
+                                  {item.recipient_name || (item.phone?.includes('@g.us') || item.phone?.includes('-') ? <><i className="fa-solid fa-users mr-1 text-amber-500"></i>Group</> : item.phone)}
+                                </span>
+                                {item.template_id && (
+                                  <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider">{item.template_id.replace(/_/g, ' ')}</span>
+                                )}
+                              </div>
                             </td>
                             <td className="block md:table-cell px-2 py-1 md:px-6 md:py-4">
                               <p className="text-sm text-themeText max-w-xs truncate" title={item.message}>
@@ -310,6 +490,7 @@ export default function AdminWhatsAppQueue() {
                  </>
                )}
 
+               {/* ===== MAPPING TAB ===== */}
                {activeTab === 'mapping' && (
                  <div className="flex flex-col h-full animate-fade-in">
                    <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
@@ -317,7 +498,7 @@ export default function AdminWhatsAppQueue() {
                        <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                          <i className="fa-solid fa-network-wired text-blue-500"></i> Group Assignments
                        </h3>
-                       <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Map WhatsApp groups to academic batches & global broadcasts</p>
+                       <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Map WhatsApp groups to academic batches &amp; global broadcasts</p>
                      </div>
                      <button onClick={saveMappings} disabled={isSavingMapping || status !== 'CONNECTED'} className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold shadow-sm transition-colors disabled:opacity-50">
                         {isSavingMapping ? "Saving..." : "Save Mappings"}
@@ -439,6 +620,7 @@ export default function AdminWhatsAppQueue() {
                  </div>
                )}
 
+               {/* ===== BROADCAST TAB ===== */}
                {activeTab === 'broadcast' && (
                  <form onSubmit={handleBroadcast} className="flex flex-col h-full animate-fade-in">
                    <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
@@ -453,7 +635,7 @@ export default function AdminWhatsAppQueue() {
                    <div className="flex flex-col gap-6 p-6 lg:p-8 flex-1">
                      <div className="flex flex-col gap-2">
                        <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">Select Target Group</label>
-                       <select value={selectedGroup} onChange={e => setSelectedGroup(e.target.value)} required disabled={status !== 'CONNECTED'} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-amber-500 transition-colors">
+                       <select value={selectedGroup} onChange={e => setSelectedGroup(e.target.value)} disabled={status !== 'CONNECTED'} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-amber-500 transition-colors">
                          <option value="">{status === 'CONNECTED' ? (groups.length > 0 ? 'Select a group...' : 'No groups found (Go to assignments tab)') : 'WhatsApp not connected'}</option>
                          {groups.map(g => (
                            <option key={g.id} value={g.id}>{g.name} ({g.participants} members)</option>
@@ -466,11 +648,197 @@ export default function AdminWhatsAppQueue() {
                        <textarea value={broadcastMsg} onChange={e => setBroadcastMsg(e.target.value)} required rows={6} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-amber-500 transition-colors resize-none font-mono text-sm" placeholder="Type your broadcast message..."></textarea>
                      </div>
 
-                     <button type="submit" disabled={isSending || status !== 'CONNECTED'} className="mt-auto bg-amber-500 text-themeApp py-4 rounded-xl font-bold shadow-sm hover:bg-amber-600 transition-colors disabled:opacity-50">
+                     <button type="submit" disabled={isSending || status !== 'CONNECTED' || (!selectedGroup && selectedContacts.length === 0)} className="mt-auto bg-amber-500 text-themeApp py-4 rounded-xl font-bold shadow-sm hover:bg-amber-600 transition-colors disabled:opacity-50">
                        {isSending ? "Queueing Broadcast..." : "Send Broadcast"}
                      </button>
                    </div>
                  </form>
+               )}
+
+               {/* ===== TEMPLATES TAB ===== */}
+               {activeTab === 'templates' && (
+                 <form onSubmit={handleSendTemplate} className="flex flex-col h-full animate-fade-in">
+                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                     <div>
+                       <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
+                         <i className="fa-solid fa-file-lines text-purple-500"></i> Message Templates
+                       </h3>
+                       <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Send pre-built template messages</p>
+                     </div>
+                   </div>
+
+                   <div className="flex flex-col gap-6 p-6 lg:p-8 flex-1 overflow-y-auto custom-scrollbar">
+                     <div className="flex flex-col gap-2">
+                       <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">Select Template</label>
+                       <select value={selectedTemplate} onChange={e => { setSelectedTemplate(e.target.value); setTemplateVars({}); }} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors">
+                         {Object.entries(WA_TEMPLATES).map(([key, val]) => (
+                           <option key={key} value={key}>{val.label}</option>
+                         ))}
+                       </select>
+                     </div>
+
+                     {/* Template Fields */}
+                     {WA_TEMPLATES[selectedTemplate]?.fields.map(field => (
+                       <div key={field} className="flex flex-col gap-2">
+                         <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">{field.replace(/_/g, ' ')}</label>
+                         {field === 'message' || field === 'content' || field === 'description' ? (
+                           <textarea
+                             value={templateVars[field] || ''}
+                             onChange={e => setTemplateVars(prev => ({ ...prev, [field]: e.target.value }))}
+                             rows={4}
+                             className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors resize-none font-mono text-sm"
+                             placeholder={`Enter ${field.replace(/_/g, ' ')}...`}
+                           />
+                         ) : (
+                           <input
+                             type="text"
+                             value={templateVars[field] || ''}
+                             onChange={e => setTemplateVars(prev => ({ ...prev, [field]: e.target.value }))}
+                             className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors text-sm"
+                             placeholder={`Enter ${field.replace(/_/g, ' ')}...`}
+                           />
+                         )}
+                       </div>
+                     ))}
+
+                     {/* Target: Group or Contact */}
+                     <div className="flex flex-col gap-2">
+                       <label className="text-[13px] font-bold text-themeTextSec uppercase tracking-wider">Send To Group</label>
+                       <select value={selectedGroup} onChange={e => setSelectedGroup(e.target.value)} disabled={status !== 'CONNECTED'} className="bg-themeElevated border border-themeBorder rounded-xl p-4 text-themeText outline-none focus:border-purple-500 transition-colors">
+                         <option value="">-- None --</option>
+                         {groups.map(g => (
+                           <option key={g.id} value={g.id}>{g.name} ({g.participants} members)</option>
+                         ))}
+                       </select>
+                     </div>
+
+                     {selectedContacts.length > 0 && (
+                       <div className="bg-themeElevated/30 border border-themeBorder rounded-xl p-4">
+                         <p className="text-xs font-bold text-themeTextSec mb-2">{selectedContacts.length} contact(s) selected from Contacts tab</p>
+                         <div className="flex flex-wrap gap-2">
+                           {selectedContacts.slice(0, 5).map(c => (
+                             <span key={c.id} className="bg-purple-500/10 text-purple-500 border border-purple-500/20 px-3 py-1 rounded-lg text-[10px] font-bold">{c.name}</span>
+                           ))}
+                           {selectedContacts.length > 5 && <span className="text-xs text-themeTextSec font-bold">+{selectedContacts.length - 5} more</span>}
+                         </div>
+                       </div>
+                     )}
+
+                     <button type="submit" disabled={isSending || status !== 'CONNECTED' || (!selectedGroup && selectedContacts.length === 0)} className="mt-auto bg-purple-500 text-white py-4 rounded-xl font-bold shadow-sm hover:bg-purple-600 transition-colors disabled:opacity-50">
+                       {isSending ? "Queueing..." : "Send Template Message"}
+                     </button>
+                   </div>
+                 </form>
+               )}
+
+               {/* ===== CONTACTS TAB ===== */}
+               {activeTab === 'contacts' && (
+                 <div className="flex flex-col h-full animate-fade-in">
+                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                     <div>
+                       <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
+                         <i className="fa-solid fa-address-book text-cyan-500"></i> Student & Parent Contacts
+                       </h3>
+                       <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Browse and select recipients for direct messaging</p>
+                     </div>
+                     <div className="flex gap-2 items-center">
+                       <select value={contactFilter} onChange={e => setContactFilter(e.target.value)} className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-2 text-sm font-bold text-themeText outline-none">
+                         <option value="student">Students</option>
+                         <option value="faculty">Faculty</option>
+                         <option value="">All</option>
+                       </select>
+                       {batches.length > 0 && (
+                         <select value={contactBatchFilter} onChange={e => setContactBatchFilter(e.target.value)} className="bg-themeElevated border border-themeBorder rounded-xl px-4 py-2 text-sm font-bold text-themeText outline-none">
+                           <option value="">All Batches</option>
+                           {batches.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
+                         </select>
+                       )}
+                       <button onClick={fetchContacts} className="bg-cyan-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-cyan-600 transition-colors">
+                         <i className="fa-solid fa-sync mr-1"></i> Fetch
+                       </button>
+                     </div>
+                   </div>
+
+                   <div className="overflow-y-auto flex-1 p-4 lg:p-6 custom-scrollbar">
+                     {isLoadingContacts ? (
+                       <div className="text-center py-12">
+                         <i className="fa-solid fa-circle-notch fa-spin text-3xl text-themeAccent mb-4"></i>
+                         <p className="text-sm text-themeTextSec font-bold mt-4">Loading contacts...</p>
+                       </div>
+                     ) : contacts.length === 0 ? (
+                       <div className="text-center py-12 text-themeTextSec">
+                         <i className="fa-solid fa-users-slash text-4xl mb-4 opacity-50"></i>
+                         <p className="font-bold">No contacts found. Click "Fetch" to load.</p>
+                       </div>
+                     ) : (
+                       <>
+                         {selectedContacts.length > 0 && (
+                           <div className="mb-4 bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4 flex items-center justify-between">
+                             <span className="text-sm font-bold text-cyan-500">{selectedContacts.length} contact(s) selected</span>
+                             <div className="flex gap-2">
+                               <button onClick={() => setSelectedContacts([])} className="text-xs font-bold text-themeTextSec hover:text-rose-500">Clear All</button>
+                               <button onClick={() => setActiveTab('templates')} className="bg-purple-500 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-purple-600 transition-colors">Send Template →</button>
+                               <button onClick={() => setActiveTab('broadcast')} className="bg-amber-500 text-themeApp px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-amber-600 transition-colors">Broadcast →</button>
+                             </div>
+                           </div>
+                         )}
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           {contacts.map(c => {
+                             const isSelected = selectedContacts.some(sc => sc.id === c.id);
+                             return (
+                               <div 
+                                 key={c.id} 
+                                 onClick={() => {
+                                   if (isSelected) {
+                                     setSelectedContacts(prev => prev.filter(sc => sc.id !== c.id));
+                                   } else {
+                                     setSelectedContacts(prev => [...prev, c]);
+                                   }
+                                 }}
+                                 className={`cursor-pointer rounded-xl p-4 border transition-all ${isSelected ? 'border-cyan-500 bg-cyan-500/10' : 'border-themeBorder bg-themeElevated/20 hover:border-cyan-500/50'}`}
+                               >
+                                 <div className="flex items-start gap-3">
+                                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-black shrink-0 ${isSelected ? 'bg-cyan-500 text-white' : 'bg-themeElevated text-themeTextSec'}`}>
+                                     {isSelected ? <i className="fa-solid fa-check"></i> : (c.name?.charAt(0) || '?')}
+                                   </div>
+                                   <div className="flex-1 min-w-0">
+                                     <h5 className="font-bold text-themeText text-sm truncate">{c.name || 'Unknown'}</h5>
+                                     <div className="flex flex-col gap-0.5 mt-1">
+                                       {c.phone && (
+                                         <span className="text-[10px] font-bold text-emerald-500 flex items-center gap-1">
+                                           <i className="fa-solid fa-phone"></i> {c.phone}
+                                         </span>
+                                       )}
+                                       {c.parent_phone && (
+                                         <span className="text-[10px] font-bold text-amber-500 flex items-center gap-1">
+                                           <i className="fa-solid fa-user-shield"></i> Parent: {c.parent_phone}
+                                         </span>
+                                       )}
+                                       {c.parent?.phone && (
+                                         <span className="text-[10px] font-bold text-amber-500 flex items-center gap-1">
+                                           <i className="fa-solid fa-user-shield"></i> Parent (linked): {c.parent.phone}
+                                         </span>
+                                       )}
+                                       {!c.phone && !c.parent_phone && (
+                                         <span className="text-[10px] font-bold text-rose-500 flex items-center gap-1">
+                                           <i className="fa-solid fa-triangle-exclamation"></i> No phone number
+                                         </span>
+                                       )}
+                                     </div>
+                                     <div className="flex gap-2 mt-1">
+                                       {c.batch && <span className="text-[9px] font-bold bg-themeElevated text-themeTextSec px-2 py-0.5 rounded">{c.batch}</span>}
+                                       {c.erp_id && <span className="text-[9px] font-bold text-themeTextSec">{c.erp_id}</span>}
+                                     </div>
+                                   </div>
+                                 </div>
+                               </div>
+                             );
+                           })}
+                         </div>
+                       </>
+                     )}
+                   </div>
+                 </div>
                )}
              </div>
            </div>

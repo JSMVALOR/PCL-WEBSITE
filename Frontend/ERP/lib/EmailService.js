@@ -149,25 +149,71 @@ export const sendSystemEmail = async (templateKey, params) => {
 };
 
 
-export const sendSystemWhatsApp = async (to_phone, message) => {
+const WA_ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
+
+export const sendSystemWhatsApp = async (to_phone, message, options = {}) => {
+    const { template_id, variables, recipient_name } = options;
     try {
-        const endpoint = '/api/whatsapp/send';
+        const endpoint = `${WA_ENGINE_URL}/api/whatsapp/send`;
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ to_phone, message }) });
+            body: JSON.stringify({ to_phone, message, template_id, variables, recipient_name }) });
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || 'WhatsApp dispatch failed.');
         return true;
     } catch (error) {
         console.error("WhatsApp Engine Error:", error);
-        throw error;
+        // Fallback: queue directly to supabase if engine is unreachable
+        try {
+            const { supabase } = await import('../../Shared/lib/supabase/supabaseClient');
+            await supabase.from('whatsapp_queue').insert({
+                phone: to_phone,
+                message: message,
+                status: 'PENDING'
+            });
+            console.log("WhatsApp message queued via Supabase fallback.");
+            return true;
+        } catch (fallbackErr) {
+            console.error("WhatsApp Supabase fallback also failed:", fallbackErr);
+            throw error; // Throw original error
+        }
+    }
+};
+
+export const sendSystemWhatsAppBatch = async (messages) => {
+    try {
+        const endpoint = `${WA_ENGINE_URL}/api/whatsapp/send-batch`;
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages }) });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'WhatsApp batch dispatch failed.');
+        return result;
+    } catch (error) {
+        console.error("WhatsApp Engine Batch Error:", error);
+        // Fallback: queue directly
+        try {
+            const { supabase } = await import('../../Shared/lib/supabase/supabaseClient');
+            const items = messages.map(m => ({
+                phone: m.to_phone,
+                message: m.message || '',
+                status: 'PENDING'
+            })).filter(m => m.phone && m.message);
+            if (items.length > 0) {
+                await supabase.from('whatsapp_queue').insert(items);
+            }
+            return { success: true, queued: items.length };
+        } catch (fallbackErr) {
+            throw error;
+        }
     }
 };
 
 export const createWhatsAppGroup = async (group_name, participants) => {
     try {
-        const endpoint = '/api/whatsapp/group';
+        const endpoint = `${WA_ENGINE_URL}/api/whatsapp/group`;
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
