@@ -70,6 +70,7 @@ export default defineConfig({
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
   },
   build: {
+    chunkSizeWarningLimit: 4000,
     sourcemap: false,
     minify: 'terser',
     terserOptions: {
