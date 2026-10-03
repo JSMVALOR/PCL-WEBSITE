@@ -346,6 +346,62 @@ export default function AdminFees({ isEmbedded = false, }) {
  } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally { setLoading(false); }
  };
 
+ const handleClearAllInvoices = async (historyItem) => {
+   if (!historyItem || !students.length) return;
+   const pendingStudents = students.filter(s => s.fee_invoices?.some(i => i.title === historyItem.title && i.status === 'pending'));
+   if (pendingStudents.length === 0) {
+     if (window.erpToast) window.erpToast.show("All invoices for this fee are already cleared.", "info");
+     return;
+   }
+   const confirmed = window.confirm(`Clear all ${pendingStudents.length} pending "${historyItem.title}" invoices for batch ${selectedBatch}?\n\nThis will mark them as paid and send receipt notifications to each student.`);
+   if (!confirmed) return;
+
+   setLoading(true);
+   let successCount = 0;
+   let failCount = 0;
+   try {
+     for (const s of pendingStudents) {
+       const inv = s.fee_invoices.find(i => i.title === historyItem.title && i.status === 'pending');
+       if (!inv) continue;
+       try {
+         const { error } = await supabase.from('fee_invoices').update({ status: 'paid' }).eq('id', inv.id);
+         if (error) throw error;
+
+         // Queue WhatsApp notification
+         await supabase.from('whatsapp_queue').insert({
+           phone: s.phone,
+           message: `✅ *Fee Payment Cleared*\n\nDear ${s.full_name},\nYour payment of *₹${Number(inv.amount).toLocaleString('en-IN')}* for *${inv.title}* has been cleared by the Finance Department.\n\nYou can download your official receipt from the ERP Finance Hub.\n\n— Accounts Dept, Prudentia College of Law`,
+           status: 'PENDING',
+           recipient_name: s.full_name,
+         });
+
+         // Queue Email notification
+         if (s.email) {
+           try {
+             await sendSystemEmail('FEE_PAYMENT_RECEIPT', {
+               to_email: s.email,
+               student_name: s.full_name,
+               amount: Number(inv.amount).toLocaleString('en-IN'),
+               fee_type: inv.title,
+             });
+           } catch (emailErr) { console.error(`Email failed for ${s.full_name}:`, emailErr); }
+         }
+         successCount++;
+       } catch (studentErr) {
+         console.error(`Failed to clear invoice for ${s.full_name}:`, studentErr);
+         failCount++;
+       }
+     }
+     fetchBatchStudents(selectedBatch);
+     if (window.erpToast) {
+       window.erpToast.show(`${successCount} invoices cleared successfully.${failCount > 0 ? ` ${failCount} failed.` : ''}`, successCount > 0 ? 'success' : 'error');
+     }
+   } catch (err) {
+     console.error(err);
+     if (window.erpToast) window.erpToast.show("An error occurred during bulk clearing.", "error");
+   } finally { setLoading(false); }
+ };
+
  const handleAssignFee = async (e) => {
   e.preventDefault();
   if (!selectedBatch) return;
@@ -676,6 +732,14 @@ const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currenc
  <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">Assigned to {selectedHistoryItem.count} Students</p>
  </div>
  </div>
+ <button
+   onClick={() => handleClearAllInvoices(selectedHistoryItem)}
+   disabled={loading}
+   className="flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/30 hover:border-emerald-500 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+ >
+   <i className="fa-solid fa-check-double"></i>
+   {loading ? 'Clearing...' : 'Clear All Receipts'}
+ </button>
  </div>
 
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -741,7 +805,7 @@ const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currenc
      <div className="flex flex-wrap gap-2">
        {batchHistory.map(h => (
          <div key={`${h.title}-${h.amount}`} className="bg-themeElevated px-3 py-2 rounded-xl flex items-center gap-3 border border-themeBorder">
-           <div>
+           <div className="cursor-pointer" onClick={() => setSelectedHistoryItem(h)}>
              <p className="text-xs font-black text-themeText">{h.title}</p>
              <p className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest">{h.count} students</p>
            </div>
@@ -749,6 +813,7 @@ const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currenc
              <p className="text-xs font-black text-amber-500 font-mono">₹{Number(h.amount).toLocaleString('en-IN')}</p>
              <p className="text-[9px] font-bold text-themeTextSec">{h.due_date}</p>
            </div>
+           <button onClick={() => handleClearAllInvoices(h)} disabled={loading} className="ml-1 w-8 h-8 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 flex items-center justify-center transition-all duration-300 disabled:opacity-50 shrink-0" title="Clear All Receipts"><i className="fa-solid fa-check-double text-[10px]"></i></button>
          </div>
        ))}
      </div>
