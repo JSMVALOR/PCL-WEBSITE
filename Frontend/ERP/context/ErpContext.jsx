@@ -73,7 +73,7 @@ export const ErpProvider = ({ children }) => {
  
  // Auto-detect system preference
  if (false) {
- return 'midnight-justice';
+ return 'prudentia-dark';
  }
  return 'prudentia-classic';
  });

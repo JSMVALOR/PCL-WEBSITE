@@ -136,7 +136,8 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
  const [isSyncing, setIsSyncing] = useState(false);
 
  const handleAutoSync = async () => {
- if (!await new Promise(res => window.erpDialog ? window.erpDialog.confirm("This will automatically upload all 11 original images to Supabase. Proceed?", res) : res(window.confirm("Proceed?")))) return;
+ const confirmed = window.erpDialog ? await window.erpDialog.confirm("This will automatically upload all 11 original images to Supabase. Proceed?") : window.confirm("Proceed?");
+ if (!confirmed) return;
  setIsSyncing(true);
  try {
  for (const img of LEGACY_IMAGES) {
@@ -308,7 +309,8 @@ export default function AdminGalleryManager({ isEmbedded = false }) {
  };
 
  const handleDelete = async (img) => {
- if (!await new Promise(res => window.erpDialog ? window.erpDialog.confirm("Are you sure you want to completely remove this image from the gallery?", res) : res(window.confirm("Remove image?")))) return;
+ const confirmed = window.erpDialog ? await window.erpDialog.confirm("Are you sure you want to completely remove this image from the gallery?") : window.confirm("Remove image?");
+ if (!confirmed) return;
 
  try {
  try {
