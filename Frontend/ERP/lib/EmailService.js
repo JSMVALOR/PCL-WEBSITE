@@ -127,6 +127,14 @@ Temporary Password: ${params.password}` }),
     ERP_NEW_ACCOUNT: (params) => ({
         subject: `Welcome to PCL ERP - Your Official Credentials`,
         message_body: HTML_EMAIL_TEMPLATES.ERP_NEW_ACCOUNT(params) }),
+
+    HOLIDAY_REMINDER: (params) => ({
+        subject: `Reminder: ${params.holiday_name} — College Closed Tomorrow`,
+        message_body: HTML_EMAIL_TEMPLATES.HOLIDAY_REMINDER(params) }),
+
+    HOLIDAY_WISHES: (params) => ({
+        subject: `Happy ${params.holiday_name}! 🎉 — Prudentia College of Law`,
+        message_body: HTML_EMAIL_TEMPLATES.HOLIDAY_WISHES(params) }),
 };
 
 export const sendSystemEmail = async (templateKey, params, _retryCount = 0) => {

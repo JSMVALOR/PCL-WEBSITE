@@ -1142,4 +1142,28 @@ export const HTML_EMAIL_TEMPLATES = {
         <a href="https://prudentiacollege.edu/login" class="btn">Login to ERP</a>`,
         `Your ERP account credentials are ready.`
     ),
+
+    HOLIDAY_REMINDER: (params) => buildEmailHtml(
+        `Reminder: ${params.holiday_name} — College Closed Tomorrow`,
+        `<p>Dear ${params.name || 'Member'},</p>
+        <p>This is a reminder that <strong>tomorrow, ${params.holiday_date}</strong>, is <strong>${params.holiday_name}</strong>.</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">Holiday</span><span class="data-value">${params.holiday_name}</span></div>
+            <div class="data-row"><span class="data-label">Date</span><span class="data-value">${params.holiday_date}</span></div>
+            <div class="data-row"><span class="data-label">Description</span><span class="data-value">${params.description || 'College will remain closed.'}</span></div>
+        </div>
+        <p>No classes or examinations will be held on this day. Regular academic activities will resume on the next working day.</p>
+        <p style="color: #6b7280; font-size: 12px; margin-top: 16px;">Please plan your submissions and assignments accordingly.</p>`,
+        `Reminder: ${params.holiday_name} is tomorrow. College will be closed.`
+    ),
+
+    HOLIDAY_WISHES: (params) => buildEmailHtml(
+        `Happy ${params.holiday_name}! 🎉`,
+        `<p>Dear ${params.name || 'Member'},</p>
+        <p>The Administration and Faculty of <strong>Prudentia College of Law</strong> wishes you a very Happy <strong>${params.holiday_name}</strong>!</p>
+        ${params.description ? `<p style="color: #6b7280; font-style: italic; margin: 16px 0;">"${params.description}"</p>` : ''}
+        <p>We hope you have a wonderful day with your family and loved ones. Stay safe and enjoy the festivities.</p>
+        <p style="margin-top: 20px;">Warm Regards,<br/><strong>Prudentia College of Law</strong></p>`,
+        `Wishing you a Happy ${params.holiday_name} from PCL!`
+    ),
 };
