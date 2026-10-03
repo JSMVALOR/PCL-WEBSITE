@@ -88,7 +88,7 @@ export default function FacultyDashboard({ setActiveTab }) {
  <DashboardGreetingBanner role="faculty" />
  
  <div className="flex flex-col xl:flex-row-reverse gap-6 lg:gap-8 shrink-0">
- <div className="flex-[1] min-w-0 xl:max-w-[400px] flex flex-col gap-6 lg:gap-8">
+ <div className="flex-[1] min-w-0 xl:max-w-[400px] flex flex-col gap-4">
  <FacultyWebClock />
  <FacultyQuickLinks setActiveTab={setActiveTab} />
  </div>

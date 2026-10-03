@@ -10,7 +10,7 @@ export default function FacultyQuickLinks({ setActiveTab }) {
   ];
 
   return (
-    <div className="w-full bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel p-3 relative flex items-center justify-between gap-2 h-auto mt-auto">
+    <div className="w-full bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel p-3 relative flex items-center justify-between gap-2 h-auto">
       {links.map(link => (
         <button
           key={link.id}
