@@ -39,3 +39,6 @@ mobile_app_resources/android/gradle-8.14.3-all.zip
 .wwebjs_auth
 MobileApp/mobile_app_resources/android/gradle-8.14.3-all.zip
 MobileApp/mobile_app_resources/android/gradle-8.14.3-all.zip
+
+# WhatsApp Engine Auth (sensitive)
+.baileys_auth/
