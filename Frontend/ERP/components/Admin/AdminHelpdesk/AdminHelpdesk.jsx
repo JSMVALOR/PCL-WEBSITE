@@ -98,9 +98,10 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
    }]);
 
    // Also fetch profile to send Email & WA
+   const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(ticketData.user_id);
    const { data: profile } = await supabase.from('profiles')
       .select('contact_email, contact_phone, email, phone')
-      .or(`id.eq.${ticketData.user_id},erp_id.eq.${ticketData.user_id}`)
+      .eq(isUUID ? 'id' : 'erp_id', ticketData.user_id)
       .maybeSingle();
    if (profile) {
       const emailToUse = profile.contact_email || profile.email;
@@ -139,7 +140,6 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
   }));
 
   addFlag({title: "Success", description: "Reply sent successfully.", type: "success"});
-  fetchTickets(true);
  } catch (error) { console.error(error); addFlag({title: "Error", description: "Failed to send reply.", type: "error"}); } finally {
  setSubmittingReply(null);
  }
@@ -299,7 +299,6 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
                        if (!error) {
                          addFlag({title: "Success", description: "Ticket reopened successfully", type: "success"});
                          setTickets(prev => prev.map(t => t.id === ticket.id ? { ...t, status: 'open' } : t));
-                         fetchTickets(true);
                        }
                      }}
                      className="mx-auto w-fit px-6 py-2.5 bg-themeElevated hover:bg-themePanel text-themeText font-bold text-xs tracking-normal rounded-xl transition-colors border border-themeBorder shadow-sm flex items-center justify-center gap-2"

@@ -179,9 +179,12 @@ export default function Helpdesk({ isEmbedded = false }) {
       } catch (notifyErr) { console.warn("Failed to notify admin", notifyErr); }
       
       setReplyText("");
+      
+      const updatedTicket = { ...selectedTicket, admin_reply: JSON.stringify(thread), status: 'open' };
+      setSelectedTicket(updatedTicket);
+      setTickets(prev => prev.map(t => t.id === selectedTicket.id ? updatedTicket : t));
+      
       addFlag({ title: 'Reply Sent', description: 'Your reply has been added to the ticket.', type: 'success' });
-      fetchTickets();
-      setSelectedTicket(prev => ({ ...prev, admin_reply: JSON.stringify(thread), status: 'open' }));
     } catch (error) {
       console.error(error);
       addFlag({ title: 'Reply Failed', description: 'Could not send reply.', type: 'error' });
