@@ -1993,11 +1993,11 @@ html:not(.dark) input[type="date"] {
     --glass-shadow: rgba(0, 0, 0, 0.5);
     
     /* Hero Variables mapping to ERP */
-    --hero-overlay-1: color-mix(in srgb, var(--bg-app) 50%, transparent);
-    --hero-overlay-2-start: color-mix(in srgb, var(--bg-app) 80%, transparent);
-    --hero-overlay-2-mid: color-mix(in srgb, var(--bg-app) 40%, transparent);
-    --hero-overlay-2-end: color-mix(in srgb, var(--bg-app) 90%, transparent);
-    --hero-overlay-3: color-mix(in srgb, var(--bg-app) 60%, transparent);
+    --hero-overlay-1: color-mix(in srgb, var(--bg-app) 30%, transparent);
+    --hero-overlay-2-start: color-mix(in srgb, var(--bg-app) 50%, transparent);
+    --hero-overlay-2-mid: color-mix(in srgb, var(--bg-app) 20%, transparent);
+    --hero-overlay-2-end: color-mix(in srgb, var(--bg-app) 70%, transparent);
+    --hero-overlay-3: color-mix(in srgb, var(--bg-app) 40%, transparent);
     --hero-badge-bg: color-mix(in srgb, var(--bg-panel) 30%, transparent);
     --hero-pill-bg: color-mix(in srgb, var(--bg-panel) 60%, transparent);
     --hero-metrics-bg: color-mix(in srgb, var(--bg-panel) 80%, transparent);

@@ -84,7 +84,7 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
   const { content } = useSiteContent('/', 'hero');
   const isMobile = windowWidth <= 768;
 
-  const title1 = content?.title1 || "Your Path to";
+  const title1 = content?.title1 || "YOUR PATH TO";
   const title2 = content?.title2 || "Leadership.";
   const desc = content?.description || "Where rigorous scholarship meets uncompromising integrity. Shaping the vanguards of modern jurisprudence at Prudentia College of Law.";
   const btn1Text = content?.btn1_text || "Apply Now";
