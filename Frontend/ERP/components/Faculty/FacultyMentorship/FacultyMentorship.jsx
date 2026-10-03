@@ -397,7 +397,7 @@ export default function FacultyMentorship() {
     </h3>
     {mentees.length === 0 ? (
         <div className="w-full py-12 flex flex-col items-center justify-center bg-themeElevated/50 border-2 border-dashed border-themeBorder rounded-3xl text-center px-4">
-            <i className="fa-solid fa-users-slash text-3xl text-themeTextSec/30 mb-3"></i>
+            <i className="fa-solid fa-users-slash text-4xl text-themeTextSec/30 mb-4"></i>
             <p className="text-xs font-bold uppercase tracking-widest text-themeTextSec">No mentees assigned yet.</p>
         </div>
     ) : (
@@ -406,10 +406,10 @@ export default function FacultyMentorship() {
                 <div 
                     key={m.id} 
                     onClick={() => setSelectedMentee(m)}
-                    className="bg-themePanel/80 backdrop-blur-xl border border-themeBorder rounded-2xl p-4 flex flex-row items-center gap-4 group hover:border-themeAccent/40 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
+                    className="bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.25rem] p-4 flex flex-row items-center gap-4 group hover:border-themeAccent/30 hover:bg-themePanel/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 cursor-pointer relative overflow-hidden"
                 >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-themeAccent/5 rounded-bl-full -z-10 transition-transform group-hover:scale-110"></div>
-                    <div className="w-12 h-12 rounded-xl bg-themeElevated shadow-sm border border-themeBorder flex items-center justify-center font-black text-lg overflow-hidden shrink-0">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-themeAccent/5 rounded-bl-full -z-10 transition-transform duration-500 group-hover:scale-125"></div>
+                    <div className="w-12 h-12 rounded-xl bg-themeElevated shadow-sm border border-themeBorder flex items-center justify-center font-black text-lg overflow-hidden shrink-0 group-hover:shadow-md transition-shadow">
                         <img src={getAvatarUrl(m)} alt={m.full_name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex flex-col flex-1 min-w-0">
@@ -431,26 +431,30 @@ export default function FacultyMentorship() {
  <div className="xl:col-span-8 flex flex-col gap-6">
  
  {/* Quick Stats Bar */}
- <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <div className="bg-themePanel/60 backdrop-blur-xl border border-themeBorder rounded-2xl p-5 flex flex-col gap-1 shadow-sm">
-        <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center mb-2"><i className="fa-solid fa-users"></i></div>
-        <h4 className="text-2xl font-black text-themeText">{mentees.length}</h4>
+ <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.25rem] p-5 flex flex-col gap-1 shadow-sm relative overflow-hidden group">
+        <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors duration-500"></div>
+        <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-1"><i className="fa-solid fa-users text-lg"></i></div>
+        <h4 className="text-3xl font-black text-themeText">{mentees.length}</h4>
         <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Assigned Mentees</p>
     </div>
-    <div className="bg-themePanel/60 backdrop-blur-xl border border-themeBorder rounded-2xl p-5 flex flex-col gap-1 shadow-sm">
-        <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center mb-2"><i className="fa-solid fa-mug-hot"></i></div>
-        <h4 className="text-2xl font-black text-themeText">{meetings.filter(m => m.status === 'pending').length}</h4>
+    <div className="bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.25rem] p-5 flex flex-col gap-1 shadow-sm relative overflow-hidden group">
+        <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-colors duration-500"></div>
+        <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-1"><i className="fa-solid fa-mug-hot text-lg"></i></div>
+        <h4 className="text-3xl font-black text-themeText">{meetings.filter(m => m.status === 'pending').length}</h4>
         <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Pending Sessions</p>
     </div>
-    <div className="bg-themePanel/60 backdrop-blur-xl border border-themeBorder rounded-2xl p-5 flex flex-col gap-1 shadow-sm">
-        <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center mb-2"><i className="fa-solid fa-gavel"></i></div>
-        <h4 className="text-2xl font-black text-themeText">{appeals.length}</h4>
+    <div className="bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.25rem] p-5 flex flex-col gap-1 shadow-sm relative overflow-hidden group">
+        <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/5 rounded-full blur-2xl group-hover:bg-rose-500/10 transition-colors duration-500"></div>
+        <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-500 flex items-center justify-center mb-1"><i className="fa-solid fa-gavel text-lg"></i></div>
+        <h4 className="text-3xl font-black text-themeText">{appeals.length}</h4>
         <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Active Appeals</p>
     </div>
-    <div className="bg-themePanel/60 backdrop-blur-xl border border-themeBorder rounded-2xl p-5 flex flex-col gap-1 shadow-sm">
-        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-2"><i className="fa-solid fa-trophy"></i></div>
-        <h4 className="text-2xl font-black text-themeText">{achievements.length}</h4>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Unverified Achievements</p>
+    <div className="bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.25rem] p-5 flex flex-col gap-1 shadow-sm relative overflow-hidden group">
+        <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors duration-500"></div>
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-1"><i className="fa-solid fa-trophy text-lg"></i></div>
+        <h4 className="text-3xl font-black text-themeText">{achievements.length}</h4>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Unverified Achv.</p>
     </div>
  </div>
 
@@ -465,9 +469,12 @@ export default function FacultyMentorship() {
                 <i className="fa-solid fa-inbox text-blue-500"></i> Session Requests
             </h3>
             {meetings.length === 0 ? (
-                <div className="w-full py-10 flex flex-col items-center justify-center bg-themeElevated/30 border border-dashed border-themeBorder rounded-2xl text-center px-4">
-                    <i className="fa-solid fa-mug-hot text-2xl text-themeTextSec/30 mb-2"></i>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Inbox Empty</p>
+                <div className="w-full py-12 flex flex-col items-center justify-center bg-themeElevated/30 border-2 border-dashed border-themeBorder rounded-[1.5rem] text-center px-4">
+                    <div className="w-16 h-16 bg-themePanel/50 rounded-2xl flex items-center justify-center mb-4 border border-themeBorder shadow-sm">
+                        <i className="fa-solid fa-mug-hot text-2xl text-themeTextSec/50"></i>
+                    </div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-themeTextSec">Inbox Empty</p>
+                    <p className="text-xs text-themeTextSec/60 mt-2 max-w-[200px]">No pending session requests from your mentees.</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-3">
