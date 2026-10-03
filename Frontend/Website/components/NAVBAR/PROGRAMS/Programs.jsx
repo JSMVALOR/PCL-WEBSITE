@@ -45,6 +45,138 @@ export default function Programs() {
   // Fetch Supabase Data for Calendar
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [calendarLoading, setCalendarLoading] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const loadLogoAsBase64 = async () => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = "/favicon.svg"; 
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = 500;
+            canvas.height = 500;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, 500, 500);
+            resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = () => resolve(null);
+    });
+  };
+
+  const generateLuxuryPDF = async () => {
+    if (!calendarEvents || !calendarEvents.columns || !calendarEvents.rows) return;
+    setIsGenerating(true);
+
+    try {
+        const doc = new window.jspdf.jsPDF('p', 'pt', 'a4');
+        
+        // --- BRAND COLORS (Brown & Gold Theme) ---
+        const brandBrown = [93, 64, 55]; // #5D4037
+        const brandGold = [212, 175, 55]; // #d4af37
+        const dark = [26, 26, 46]; // #1a1a2e
+        
+        // Center variables
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const centerX = pageWidth / 2;
+
+        // --- HEADER SECTION ---
+        const logoData = await loadLogoAsBase64();
+        if (logoData) {
+            doc.addImage(logoData, "PNG", centerX - 40, 30, 80, 80);
+        }
+
+        doc.setFont("times", "bold");
+        doc.setTextColor(...brandBrown);
+        doc.setFontSize(24);
+        doc.text("PRUDENTIA COLLEGE OF LAW", centerX, 140, { align: 'center' });
+        
+        // Decorative Line under title
+        doc.setDrawColor(...brandBrown);
+        doc.setLineWidth(1);
+        doc.line(centerX - 150, 150, centerX + 150, 150);
+        doc.setDrawColor(...brandGold);
+        doc.setLineWidth(0.5);
+        doc.line(centerX - 150, 153, centerX + 150, 153);
+
+        doc.setFontSize(14);
+        doc.setTextColor(...dark);
+        doc.text("ANNUAL ACADEMIC CALENDAR 2026 – 2027", centerX, 180, { align: 'center' });
+        
+        doc.setFont("times", "italic");
+        doc.setFontSize(11);
+        doc.text("Academic Schedule as per the Osmania University Communication", centerX, 200, { align: 'center' });
+        
+        doc.setFont("times", "bold");
+        doc.setFontSize(11);
+        doc.text("LL. B. (3-YDC); B.A. LL. B. and B.B.A. LL. B (5-YDC)", centerX, 220, { align: 'center' });
+        
+        doc.text("CIRCULAR – 01/PCL/26", centerX, 240, { align: 'center' });
+
+        // Table Body
+        const headers = [calendarEvents.columns];
+        const data = calendarEvents.rows.map(row => 
+            calendarEvents.columns.map(col => row.data[col] || '')
+        );
+
+        doc.autoTable({
+            startY: 270,
+            head: headers,
+            body: data,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [250, 250, 250], // Whiteish
+                textColor: [0, 0, 0],
+                fontStyle: 'bold',
+                fontSize: 11,
+                cellPadding: 12,
+                halign: 'center',
+                lineColor: [0, 0, 0],
+                lineWidth: 1
+            },
+            bodyStyles: {
+                textColor: [0, 0, 0],
+                fontSize: 11,
+                cellPadding: 12,
+                lineColor: [0, 0, 0],
+                lineWidth: 1
+            },
+            columnStyles: {
+                0: { halign: 'center', cellWidth: 40 },
+                2: { halign: 'center', cellWidth: 120 },
+                3: { halign: 'center', cellWidth: 140 }
+            },
+            styles: {
+                font: 'times',
+                lineWidth: 1,
+                lineColor: [0, 0, 0]
+            },
+            margin: { top: 270, left: 50, right: 50 }
+        });
+        
+        const finalY = doc.lastAutoTable.finalY + 40;
+        
+        doc.setFont("times", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(...dark);
+        doc.text("Important Note: ", 50, finalY);
+        
+        doc.setFont("times", "normal");
+        doc.text("This calendar has been prepared based on the academic schedule as per the Osmania University", 130, finalY);
+        doc.text("communication. Any subsequent changes, additions or revised dates notified by the University shall prevail and will be", 50, finalY + 15);
+        doc.text("incorporated by the College accordingly.", 50, finalY + 30);
+        
+        doc.setFontSize(11);
+        doc.text("SIGNATURE AND SEAL OF THE INSTITUTION", pageWidth - 50, finalY + 90, { align: 'right' });
+
+        doc.save('Prudentia_Academic_Calendar.pdf');
+    } catch (error) {
+        console.error("Failed to generate PDF:", error);
+        if(window.erpToast) window.erpToast.show("Failed to generate PDF. Please try again.", "error");
+    } finally {
+        setIsGenerating(false);
+    }
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -366,9 +498,17 @@ export default function Programs() {
                     <h2 className="text-3xl text-[var(--text-color)] mb-4 font-bold font-['Playfair_Display']">
                       Academic <span className="italic font-medium text-[var(--primary-color)] pr-2">Calendar</span>
                     </h2>
-                    <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
+                    <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto mb-6">
                       Key dates, schedules, and academic milestones for the current session.
                     </p>
+                    <button 
+                        onClick={generateLuxuryPDF} 
+                        disabled={isGenerating || !calendarEvents}
+                        className="mx-auto h-12 px-8 rounded-full bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] text-white font-bold transition flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(var(--primary-color-rgb),0.3)] disabled:opacity-50"
+                    >
+                        {isGenerating ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-download"></i>}
+                        <span>Download Official PDF</span>
+                    </button>
                   </div>
 
                   <div className="w-full max-w-6xl mx-auto mb-16 relative z-10">
