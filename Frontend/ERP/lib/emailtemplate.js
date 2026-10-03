@@ -868,6 +868,17 @@ export const HTML_EMAIL_TEMPLATES = {
         `Your login passcode is ${params.otp}. Use this to access your account.`
     ),
 
+    ADMIN_LOGIN_OTP: (params) => buildEmailHtml(
+        'Admin Portal Verification',
+        `<p>Dear Administrator,</p>
+        <p>You have requested elevated access to the Prudentia ERP Admin Panel. Please use the verification code below to authorize this session.</p>
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #18181b; border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.3);">
+            <span style="font-family: monospace; font-size: 32px; letter-spacing: 8px; color: #c4b5fd; font-weight: bold;">${params.otp}</span>
+        </div>
+        <p style="font-size: 13px; color: #71717a;">This elevated code will expire in 10 minutes. Security anomaly detected if you did not request this.</p>`,
+        `Your Admin login passcode is ${params.otp}.`
+    ),
+
     RECOVERY_OTP: (params) => buildEmailHtml(
         'Account Recovery OTP',
         `<p>Dear User,</p>

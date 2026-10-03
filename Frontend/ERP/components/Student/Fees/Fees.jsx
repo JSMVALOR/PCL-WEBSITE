@@ -75,7 +75,7 @@ export default function Fees({ isEmbedded = false }) {
  if (invoiceRef.current) {
  try {
  await generateComponentPDF(invoiceRef.current, `Invoice_${txn.id}.pdf`, { format: 'a4', orientation: 'portrait' });
- } catch (e) { console.error(e); if (window.toast) window.toast.error("An error occurred. Please try again."); }
+ } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  }
  setDownloadingInvoiceId(null);
  setSelectedInvoice(null);
@@ -135,12 +135,29 @@ export default function Fees({ isEmbedded = false }) {
  const invoices = invoicesRes.data || [];
  const transactions = transactionsRes.data || [];
 
+ const groupMap = new Map();
+ transactions.forEach(txn => {
+ const dateKey = new Date(txn.created_at).toLocaleDateString('en-GB');
+ const key = `${txn.student_id}_${txn.amount}_${dateKey}_${txn.status}`;
+ if (!groupMap.has(key)) {
+ groupMap.set(key, { ...txn, is_merged: false, merged_txns: [txn], all_utrs: [txn.reference_number].filter(Boolean) });
+ } else {
+ const existing = groupMap.get(key);
+ existing.is_merged = true;
+ existing.merged_txns.push(txn);
+ if (txn.reference_number && !existing.all_utrs.includes(txn.reference_number)) {
+ existing.all_utrs.push(txn.reference_number);
+ }
+ }
+ });
+ const dedupedTransactions = Array.from(groupMap.values());
+
  setFeeBreakdown(invoices);
- setTransactionHistory(transactions);
+ setTransactionHistory(dedupedTransactions);
 
  // Update session storage cache
  sessionStorage.setItem(`fees_invoices_${studentId}`, JSON.stringify(invoices));
- sessionStorage.setItem(`fees_transactions_${studentId}`, JSON.stringify(transactions));
+ sessionStorage.setItem(`fees_transactions_${studentId}`, JSON.stringify(dedupedTransactions));
 
  // Auto-select pending fees for checkout if nothing was selected yet
  const pendingIds = invoices.filter(f => f.status === 'pending').map(f => f.id);
@@ -629,7 +646,13 @@ export default function Fees({ isEmbedded = false }) {
  <span className="w-1 h-1 bg-neutral-700 rounded-full hidden sm:block"></span>
  <span className={`text-[8px] lg:text-[9px] font-bold ${theme.text.muted} tracking-normal hidden sm:block`}>{txn.method}</span>
  <span className="w-1 h-1 bg-neutral-700 rounded-full"></span>
- <span className={`text-[8px] lg:text-[9px] font-bold ${theme.text.secondary} tracking-normal`}>{txn.id}</span>
+ <span className={`text-[8px] lg:text-[9px] font-bold ${theme.text.secondary} tracking-normal`}>{txn.is_merged ? 'Grouped Entry' : txn.id}</span>
+ {txn.is_merged && (
+ <>
+ <span className="w-1 h-1 bg-neutral-700 rounded-full"></span>
+ <span className="text-[8px] lg:text-[9px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md uppercase tracking-widest"><i className="fa-solid fa-code-merge mr-1"></i>Merged ({txn.merged_txns.length})</span>
+ </>
+ )}
  </div>
  </div>
  </div>
@@ -657,7 +680,7 @@ export default function Fees({ isEmbedded = false }) {
  </div></div>
  
  {/* Hidden Document Templates for PDF Generation */}
- <div className="hidden">
+ <div className="absolute top-[-9999px] left-[-9999px] opacity-0 pointer-events-none -z-50">
  <FeeReceiptTemplate ref={invoiceRef} invoiceData={selectedInvoice} studentData={userSession} />
  </div>
  </div>

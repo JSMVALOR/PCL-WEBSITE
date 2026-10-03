@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useNotification } from '../../../../Shared/context/NotificationContext.jsx';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete02Icon } from '@hugeicons/core-free-icons';
@@ -15,6 +16,7 @@ import AcademicCalendarGrid from "./AcademicCalendarGrid";
 import EventsBoard from "../../notices/EventsBoard";
 
 export default function AdminNotices({ isHubView = false }) {
+  const navigate = useNavigate();
  const { userSession } = useERP();
  const [activeTab, setActiveTab] = useState("broadcast"); // broadcast, events
 
@@ -623,6 +625,10 @@ try {
  icon="fa-solid fa-bullhorn" 
  title="System Broadcast" 
  subtitle="Publish notices & manage calendar" 
+ breadcrumbs={[
+ { label: 'Communications Hub', onClick: () => { navigate('/admin/communications'); } },
+ { label: 'System Notices' }
+ ]}
  />
  </div>
 )}

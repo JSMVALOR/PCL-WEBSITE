@@ -107,6 +107,7 @@ const AdminLegalAid = React.lazy(() => import('./components/Admin/AdminLegalAid/
 const AdminAdmissions = React.lazy(() => import('./components/Admin/AdminAdmissions/AdminAdmissions'));
 const AdminWhatsAppQueue = React.lazy(() => import('./components/Admin/AdminWhatsApp/AdminWhatsAppQueue'));
 const AdminEmailQueue = React.lazy(() => import('./components/Admin/AdminEmail/AdminEmailQueue'));
+const AdminCommunicationsHub = React.lazy(() => import('./components/Admin/AdminCommunicationsHub/AdminCommunicationsHub'));
 const AdminAttendanceIssues = React.lazy(() => import('./components/Admin/AdminAttendanceIssues/AdminAttendanceIssues'));
 const AdminPayroll = React.lazy(() => import('./components/Admin/AdminPayroll/AdminPayroll'));
 const SQLStudio = React.lazy(() => import('./components/Admin/AdminDashboard/SQLStudio'));
@@ -360,6 +361,7 @@ export default function App() {
 
  case 'sql': return <SQLStudio />;
  case 'helpdesk': return <AdminHelpdesk />;
+ case 'communications': return <AdminCommunicationsHub />;
  case 'whatsapp': return <AdminWhatsAppQueue />;
  case 'email_manager': return <AdminEmailQueue />;
  case 'siteeditor': return <AdminSiteEditor />;

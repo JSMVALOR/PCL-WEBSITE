@@ -139,8 +139,8 @@ export const sendSystemEmail = async (templateKey, params, _retryCount = 0) => {
 
         const { subject, message_body } = templateBuilder(params);
 
-        // Vercel Serverless Function Endpoint
-        const emailEndpoint = '/api/send-email';
+        // Vercel Serverless Function Endpoint or Local Node.js Email Service
+        const emailEndpoint = import.meta.env.DEV ? 'http://localhost:3001/api/send-email' : '/api/send-email';
 
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout

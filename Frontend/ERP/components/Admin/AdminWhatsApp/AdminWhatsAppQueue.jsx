@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 
@@ -7,6 +8,7 @@ const ENGINE_URL = import.meta.env.DEV ? 'http://localhost:3005' : (import.meta.
 // Templates are now fetched from whatsapp_templates table
 
 export default function AdminWhatsAppQueue() {
+  const navigate = useNavigate();
  const [status, setStatus] = useState('LOADING'); // LOADING, UNLINKED, CONNECTED
  const [qrCode, setQrCode] = useState(null);
  const [queue, setQueue] = useState([]);
@@ -405,17 +407,21 @@ export default function AdminWhatsAppQueue() {
      <div className="w-full mx-auto pb-10">
        <div className="px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6 lg:mt-8 w-full">
          <PageHeader 
-           icon="fa-brands fa-whatsapp" 
-           title="WhatsApp Engine" 
-           subtitle="Manage WhatsApp Web link, message templates, and outbound queue" 
-         />
+            icon="fa-brands fa-whatsapp" 
+            title="WhatsApp Engine" 
+            subtitle="Manage WhatsApp Web link, message templates, and outbound queue" 
+            breadcrumbs={[
+              { label: 'Communications Hub', onClick: () => { navigate('/admin/communications'); } },
+              { label: 'WhatsApp Engine' }
+            ]}
+          />
        </div>
 
        <div className="px-4 lg:px-8 mt-8">
          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
            
            {/* LEFT SIDEBAR: Device Status */}
-           <div className="xl:col-span-4 flex flex-col gap-6">
+           <div className="xl:col-span-4 flex flex-col gap-6 min-w-0">
              <div className="bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[2rem] p-6 lg:p-8 shadow-sm flex flex-col items-center text-center">
                <div className="w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center text-4xl mb-6 shadow-sm border border-emerald-500/20">
                  <i className="fa-brands fa-whatsapp"></i>
@@ -492,9 +498,9 @@ export default function AdminWhatsAppQueue() {
            </div>
 
            {/* RIGHT SIDEBAR: Action Area */}
-           <div className="xl:col-span-8 flex flex-col gap-6">
+           <div className="xl:col-span-8 flex flex-col gap-6 min-w-0">
              {/* Tab Switcher */}
-             <div className="flex bg-themeElevated p-1 rounded-xl w-fit flex-wrap gap-1">
+             <div className="flex bg-themeElevated p-1 rounded-xl w-full sm:w-fit flex-wrap gap-1">
                  <button onClick={() => setActiveTab('queue')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'queue' ? 'bg-themePanel text-emerald-500 shadow-sm' : 'text-themeTextSec'}`}>Live Queue</button>
                  <button onClick={() => setActiveTab('mapping')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'mapping' ? 'bg-themePanel text-blue-500 shadow-sm' : 'text-themeTextSec'}`}>Group Assignments</button>
                  <button onClick={() => setActiveTab('broadcast')} className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${activeTab === 'broadcast' ? 'bg-themePanel text-amber-500 shadow-sm' : 'text-themeTextSec'}`}>Quick Broadcast</button>
@@ -507,7 +513,7 @@ export default function AdminWhatsAppQueue() {
                {/* ===== QUEUE TAB ===== */}
                {activeTab === 'queue' && (
                  <>
-                  <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                  <div className="p-6 lg:p-8 border-b border-themeBorder flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-themeElevated/30">
                     <div>
                       <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                         <i className="fa-solid fa-list-check text-themeAccent"></i> Outbound Queue
@@ -602,7 +608,7 @@ export default function AdminWhatsAppQueue() {
                {/* ===== MAPPING TAB ===== */}
                {activeTab === 'mapping' && (
                  <div className="flex flex-col h-full animate-fade-in">
-                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                   <div className="p-6 lg:p-8 border-b border-themeBorder flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-themeElevated/30">
                      <div>
                        <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                          <i className="fa-solid fa-network-wired text-blue-500"></i> Group Assignments
@@ -732,7 +738,7 @@ export default function AdminWhatsAppQueue() {
                {/* ===== BROADCAST TAB ===== */}
                {activeTab === 'broadcast' && (
                  <form onSubmit={handleBroadcast} className="flex flex-col h-full animate-fade-in">
-                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                   <div className="p-6 lg:p-8 border-b border-themeBorder flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-themeElevated/30">
                      <div>
                        <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                          <i className="fa-solid fa-bolt text-amber-500"></i> Quick Manual Broadcast
@@ -779,7 +785,7 @@ export default function AdminWhatsAppQueue() {
                {/* ===== TEMPLATES TAB ===== */}
                {activeTab === 'templates' && (
                  <form onSubmit={handleSendTemplate} className="flex flex-col h-full animate-fade-in">
-                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                   <div className="p-6 lg:p-8 border-b border-themeBorder flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-themeElevated/30">
                      <div>
                        <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                          <i className="fa-solid fa-file-lines text-purple-500"></i> Message Templates
@@ -862,7 +868,7 @@ export default function AdminWhatsAppQueue() {
 
                      {selectedContacts.length > 0 && (
                        <div className="bg-themeElevated/30 border border-themeBorder rounded-xl p-4">
-                         <div className="flex justify-between items-center mb-2">
+                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
                            <p className="text-xs font-bold text-themeTextSec">{selectedContacts.length} contact(s) selected from Contacts tab</p>
                            <label className="flex items-center gap-2 cursor-pointer">
                              <input type="checkbox" checked={sendViaEmail} onChange={(e) => setSendViaEmail(e.target.checked)} className="w-4 h-4 rounded text-purple-500 focus:ring-purple-500 border-themeBorder bg-themeApp" />
@@ -888,7 +894,7 @@ export default function AdminWhatsAppQueue() {
                {/* ===== CONTACTS TAB ===== */}
                {activeTab === 'contacts' && (
                  <div className="flex flex-col h-full animate-fade-in">
-                   <div className="p-6 lg:p-8 border-b border-themeBorder flex justify-between items-center bg-themeElevated/30">
+                   <div className="p-6 lg:p-8 border-b border-themeBorder flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-themeElevated/30">
                      <div>
                        <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                          <i className="fa-solid fa-address-book text-cyan-500"></i> Student & Parent Contacts

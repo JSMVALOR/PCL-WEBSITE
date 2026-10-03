@@ -9,14 +9,7 @@ export const ADMIN_NAV_GROUPS = [
  links: [
  { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
  { id: "adminapprovals", label: "Central Approvals", icon: "fa-solid fa-shield-halved" },
- {
- id: "communications", label: "Communications", icon: "fa-solid fa-satellite-dish",
- children: [
- { id: "whatsapp", label: "WhatsApp Engine", icon: "fa-brands fa-whatsapp" },
- { id: "email_manager", label: "Email Engine", icon: "fa-solid fa-envelope" },
- { id: "notices", label: "System Broadcasts", icon: "fa-solid fa-bullhorn" }
- ]
- },
+ { id: "communications", label: "Communications", icon: "fa-solid fa-satellite-dish" },
  { id: "finance", label: "Finance & Payroll", icon: "fa-solid fa-indian-rupee-sign" }
  ]
  },
@@ -96,19 +89,7 @@ export const ADMIN_NAV_MEGA = [
  links: [
  { id: "dashboard", label: "Dashboard", icon: "fa-solid fa-server" },
  { id: "adminapprovals", label: "Approvals", icon: "fa-solid fa-shield-halved" },
- {
- id: "communications", label: "Communications", icon: "fa-solid fa-satellite-dish",
- sections: [
- {
- title: "Broadcast Systems",
- children: [
- { id: "whatsapp", label: "WhatsApp Engine", icon: "fa-brands fa-whatsapp" },
- { id: "email_manager", label: "Email Engine", icon: "fa-solid fa-envelope" },
- { id: "notices", label: "System Notices", icon: "fa-solid fa-bullhorn" }
- ]
- }
- ]
- },
+ { id: "communications", label: "Communications", icon: "fa-solid fa-satellite-dish" },
  {
  id: "academic_group", label: "Academics", icon: "fa-solid fa-graduation-cap",
  sections: [
