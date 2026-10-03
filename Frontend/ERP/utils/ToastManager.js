@@ -6,9 +6,9 @@ export const registerToastContainer = (add) => {
 };
 
 export const Toast = {
-    show: (message, type = 'success') => {
+    show: (message, type = 'success', options = {}) => {
         if (_addToast) {
-            _addToast({ message, type, id: Date.now() + Math.random() });
+            _addToast({ message, type, onClick: options.onClick, actionLabel: options.actionLabel, id: Date.now() + Math.random() });
         } else {
         }
     },

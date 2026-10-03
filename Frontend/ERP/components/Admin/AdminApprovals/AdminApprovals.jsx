@@ -168,9 +168,10 @@ export default function AdminApprovals({ isEmbedded = false }) {
                  new_status: newStatus.toUpperCase(),
                  notes: notes || "No specific remarks provided."
              }).catch(e => console.error("Email failed:", e));
-             if (grievanceData.reporter?.phone) {
-                 sendSystemWhatsApp(grievanceData.reporter.phone, null, { template_id: 'GRIEVANCE_UPDATE', variables: { student_name: grievanceData.reporter.full_name, category: grievanceData.category, new_status: newStatus.toUpperCase(), notes: notes || '' }, recipient_name: grievanceData.reporter.full_name }).catch(e => console.error('WA failed:', e));
-             }
+         }
+         if (grievanceData.reporter?.phone) {
+             const msg = `🚨 *Grievance Update*\n\nYour grievance regarding ${grievanceData.category} has been marked as *${newStatus.toUpperCase()}*.\n\nNotes: ${notes || "None"}\n\n— Prudentia Admin`;
+             supabase.from('whatsapp_queue').insert({ phone: grievanceData.reporter.phone, message: msg }).then(() => {}).catch(e => console.error(e));
          }
      }
      
@@ -199,7 +200,8 @@ export default function AdminApprovals({ isEmbedded = false }) {
              }).catch(e => console.error("Email failed:", e));
          }
          if (grievanceData.accused?.phone) {
-             sendSystemWhatsApp(grievanceData.accused.phone, null, { template_id: 'GRIEVANCE_UPDATE', variables: { student_name: grievanceData.accused.full_name, category: grievanceData.category, new_status: newStatus.toUpperCase(), notes: notes || "You have been cleared/notified." }, recipient_name: grievanceData.accused.full_name }).catch(e => console.error('WA failed:', e));
+             const msg = `🚨 *Grievance Resolution*\n\nA grievance filed against you regarding ${grievanceData.category} has been resolved.\n\nResolution Notes: ${notes || "You have been cleared/notified."}\n\n— Prudentia Admin`;
+             supabase.from('whatsapp_queue').insert({ phone: grievanceData.accused.phone, message: msg }).then(() => {}).catch(e => console.error(e));
          }
      }
      

@@ -55,7 +55,13 @@ function ToastItem({ toast, onRemove }) {
      initial={{ opacity: 0, y: -20, scale: 0.95 }}
      animate={{ opacity: 1, y: 0, scale: 1 }}
      exit={{ opacity: 0, scale: 0.95 }}
-     className="bg-themePanel border border-themeBorder p-3 rounded-2xl shadow-xl flex flex-col gap-2 min-w-[300px] max-w-[400px] pointer-events-auto overflow-hidden relative"
+     onClick={(e) => {
+       if (toast.onClick) {
+         toast.onClick();
+         onRemove();
+       }
+     }}
+     className={`bg-themePanel border border-themeBorder p-3 rounded-2xl shadow-xl flex flex-col gap-2 min-w-[300px] max-w-[400px] pointer-events-auto overflow-hidden relative ${toast.onClick ? 'cursor-pointer hover:border-themeAccent/50 transition-colors' : ''}`}
    >
      <div className="flex items-center justify-between gap-4 relative z-10">
        <div className="flex items-center gap-3 w-full">

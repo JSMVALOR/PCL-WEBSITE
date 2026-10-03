@@ -344,7 +344,13 @@ export default function AssistantWidget() {
            try {
                const { data } = await supabase.from('profiles').select('full_name').eq('id', payload.new.sender_id).single();
                const senderName = data?.full_name || 'Someone';
-               window.erpToast.show(`New message from ${senderName}`, "info");
+               window.erpToast.show(`New message from ${senderName}`, "info", {
+                   onClick: () => {
+                       window.dispatchEvent(new CustomEvent('openGlobalChat', { 
+                           detail: { userId: payload.new.sender_id, name: senderName } 
+                       }));
+                   }
+               });
            } catch (e) {
                window.erpToast.show(`New message received`, "info");
            }
