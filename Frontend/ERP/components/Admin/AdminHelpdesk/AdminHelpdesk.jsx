@@ -17,6 +17,14 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
 
  useEffect(() => {
  fetchTickets();
+ const channel = supabase.channel('admin_helpdesk_changes')
+   .on('postgres_changes', { event: '*', schema: 'public', table: 'helpdesk_tickets' }, (payload) => {
+      fetchTickets(true);
+   })
+   .subscribe();
+ return () => {
+   supabase.removeChannel(channel);
+ };
  }, []);
 
  const fetchTickets = async (silent = false) => {

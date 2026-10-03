@@ -62,6 +62,16 @@ export default function Helpdesk({ isEmbedded = false }) {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchTickets();
+    
+    const channel = supabase.channel('user_helpdesk_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'helpdesk_tickets' }, (payload) => {
+         fetchTickets();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userSession]);
 
   // --- TICKET SUBMISSION ENGINE ---
