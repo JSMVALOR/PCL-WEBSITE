@@ -1664,7 +1664,24 @@ html.home-snap {
     }
   }
 
-  
+  /* NEW THEME: Prudentia Dark (Navy & Gold) */
+  [data-theme="prudentia-dark"] {
+    --bg-app: #06101E; /* Deep Navy Background */
+    --bg-panel: #0D1C30; /* Elevated Navy */
+    --bg-elevated: #162740; /* Lighter Navy */
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --accent: #C5A059; /* Rich Gold */
+    --accent-muted: #D8B775;
+    --border-color: rgba(197, 160, 89, 0.15); /* Gold tinted border */
+    --border-strong: rgba(197, 160, 89, 0.3);
+    --shadow-elevated: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+    --text-on-accent: #000000;
+    --panel-blur: 40px;
+    --panel-opacity: 0.90;
+  }
+
+
 
   /* 1. Pristine Alabaster (Light) */
   [data-theme="apple-hig-light"] {

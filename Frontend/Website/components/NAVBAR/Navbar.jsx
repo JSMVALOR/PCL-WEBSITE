@@ -117,6 +117,17 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const timeoutRef = useRef(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.getAttribute('data-theme') === 'prudentia-dark');
+
+  const toggleTheme = () => {
+    const newTheme = isDarkMode ? '' : 'prudentia-dark';
+    if (newTheme) {
+      document.documentElement.setAttribute('data-theme', newTheme);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    setIsDarkMode(!isDarkMode);
+  };
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -314,6 +325,13 @@ export default function Navbar() {
 
               {/* Right Actions */}
               <div className="flex items-center gap-6 z-50">
+                <button 
+                  onClick={toggleTheme}
+                  className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors"
+                  aria-label="Toggle Theme"
+                >
+                  {isDarkMode ? <i className="fa-solid fa-sun text-sm"></i> : <i className="fa-solid fa-moon text-sm"></i>}
+                </button>
                 <a
                   href="/erp"
                   className="hidden md:flex text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-color)] transition-colors"
