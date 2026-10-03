@@ -151,12 +151,32 @@ export default function Helpdesk({ isEmbedded = false }) {
       const newReply = { text: replyText, date: new Date().toISOString(), author: userSession?.name || 'User' };
       thread.push(newReply);
       
-      const { error } = await supabase
+            const { error } = await supabase
         .from('helpdesk_tickets')
         .update({ admin_reply: JSON.stringify(thread), status: 'open' })
         .eq('id', selectedTicket.id);
 
       if (error) throw error;
+      
+      // Notify Admin
+      try {
+        await supabase.from('notices').insert([{
+          notice_id: `TKT-REPLY-${Date.now()}`,
+          title: 'New Ticket Reply',
+          category: 'System Alert',
+          target_audience: ['admin'],
+          content: `User ${userSession?.name || 'Student'} replied to ticket ${selectedTicket.ticket_id}.`,
+          author_name: 'System',
+          author_id: null
+        }]);
+        await supabase.from('notifications').insert([{
+          recipient_id: 'admin',
+          title: 'Ticket Reply',
+          message: `User ${userSession?.name || 'Student'} replied to ticket ${selectedTicket.ticket_id}.`,
+          type: 'notice',
+          action_link: 'adminadmissions'
+        }]);
+      } catch (notifyErr) { console.warn("Failed to notify admin", notifyErr); }
       
       setReplyText("");
       addFlag({ title: 'Reply Sent', description: 'Your reply has been added to the ticket.', type: 'success' });

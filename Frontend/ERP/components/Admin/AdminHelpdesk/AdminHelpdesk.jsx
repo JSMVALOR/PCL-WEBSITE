@@ -98,21 +98,26 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
    }]);
 
    // Also fetch profile to send Email & WA
-   const { data: profile } = await supabase.from('profiles').select('contact_email, contact_phone').eq('id', ticketData.user_id).single();
+   const { data: profile } = await supabase.from('profiles')
+      .select('contact_email, contact_phone, email, phone')
+      .or(`id.eq.${ticketData.user_id},erp_id.eq.${ticketData.user_id}`)
+      .maybeSingle();
    if (profile) {
-     if (profile.contact_email) {
+      const emailToUse = profile.contact_email || profile.email;
+      if (emailToUse) {
        try {
          await sendSystemEmail('TICKET_REPLY', {
-           to_email: profile.contact_email,
+           to_email: emailToUse,
            ticket_id: ticketData.ticket_id,
            admin_reply: text || (isClosing ? 'Resolved & Closed' : 'Updated')
          });
          addFlag({title: "Email Sent", description: "Requester was notified via email.", type: "success"});
        } catch (e) { console.warn("Failed to send email", e); }
      }
-     if (profile.contact_phone) {
-       try {
-         const waNumber = profile.contact_phone.length === 10 ? `91${profile.contact_phone}` : profile.contact_phone;
+      const phoneToUse = profile.contact_phone || profile.phone;
+      if (phoneToUse) {
+        try {
+          const waNumber = phoneToUse.length === 10 ? `91${phoneToUse}` : phoneToUse;
          await sendSystemWhatsApp(waNumber, `Hello!\n\nThere is an update to your internal support ticket (${ticketData.ticket_id}).\n\nAdmin Reply: ${text || (isClosing ? 'Resolved & Closed' : 'Updated')}`);
          addFlag({title: "WhatsApp Sent", description: "Requester was notified via WhatsApp.", type: "success"});
        } catch (e) { console.warn("Failed to send WA", e); }
@@ -124,8 +129,17 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  }
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
- addFlag({title: "Success", description: "Reply sent successfully.", type: "success"});
- fetchTickets(true);
+  
+  // Optimistically update the UI so it doesn't need a fetch to show the message
+  setTickets(prev => prev.map(t => {
+    if (t.id === ticketId) {
+      return { ...t, admin_reply: JSON.stringify(thread), status: isClosing ? 'resolved' : t.status };
+    }
+    return t;
+  }));
+
+  addFlag({title: "Success", description: "Reply sent successfully.", type: "success"});
+  fetchTickets(true);
  } catch (error) { console.error(error); addFlag({title: "Error", description: "Failed to send reply.", type: "error"}); } finally {
  setSubmittingReply(null);
  }
@@ -284,6 +298,7 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
                        const { error } = await supabase.from('helpdesk_tickets').update({ status: 'open' }).eq('id', ticket.id);
                        if (!error) {
                          addFlag({title: "Success", description: "Ticket reopened successfully", type: "success"});
+                         setTickets(prev => prev.map(t => t.id === ticket.id ? { ...t, status: 'open' } : t));
                          fetchTickets(true);
                        }
                      }}
