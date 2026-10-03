@@ -39,6 +39,7 @@
 html, body {
   /* overflow-x: hidden; */
   width: 100%;
+  overscroll-behavior-y: none;
 }
 
 .mobile-only {
