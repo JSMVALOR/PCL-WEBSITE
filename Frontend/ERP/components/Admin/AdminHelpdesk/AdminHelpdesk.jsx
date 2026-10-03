@@ -19,8 +19,8 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  fetchTickets();
  }, []);
 
- const fetchTickets = async () => {
- setIsLoading(true);
+ const fetchTickets = async (silent = false) => {
+ if (!silent) setIsLoading(true);
  try {
  const { data, error } = await supabase
  .from('helpdesk_tickets')
@@ -32,7 +32,7 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  if (error) throw error;
  setTickets(data || []);
  } catch (error) { console.error(error); addFlag({title: "Error", description: "An error occurred. Please try again.", type: "error"}); } finally {
- setIsLoading(false);
+ if (!silent) setIsLoading(false);
  }
  };
 
@@ -125,7 +125,7 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
  addFlag({title: "Success", description: "Reply sent successfully.", type: "success"});
- fetchTickets();
+ fetchTickets(true);
  } catch (error) { console.error(error); addFlag({title: "Error", description: "Failed to send reply.", type: "error"}); } finally {
  setSubmittingReply(null);
  }
@@ -178,10 +178,15 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
             onClick={() => setSelectedTicketId(ticket.id)}
             className={`p-4 lg:p-5 rounded-themePanel border transition cursor-pointer flex flex-col gap-3 ${selectedTicketId === ticket.id ? 'bg-themeElevated border-themeAccent shadow-md' : 'bg-themePanel/60 border-themeBorder dark:border-white/[0.08] hover:border-themeAccent/50'}`}
           >
-            <div className="flex items-start justify-between gap-2">
-               <span className="text-[10px] font-bold text-themeTextSec tracking-normal bg-themeElevated dark:bg-themeElevated/90 px-2 py-1 rounded border border-themeBorder dark:border-white/[0.08]">
-               {ticket.ticket_id}
-               </span>
+            <div className="flex items-start justify-between gap-2 flex-wrap mb-2">
+               <div className="flex gap-2">
+                 <span className="text-[10px] font-bold text-themeTextSec tracking-normal bg-themeElevated dark:bg-themeElevated/90 px-2 py-1 rounded border border-themeBorder dark:border-white/[0.08]">
+                 {ticket.ticket_id}
+                 </span>
+                 <span className="text-[10px] font-bold text-themeAccent bg-themeAccent/10 px-2 py-1 rounded border border-themeAccent/20 uppercase tracking-widest">
+                 {ticket.category || 'General'}
+                 </span>
+               </div>
                <span className={`text-[10px] font-bold px-2 py-1 rounded border uppercase tracking-widest ${ticket.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>
                {ticket.status}
                </span>
@@ -279,7 +284,7 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
                        const { error } = await supabase.from('helpdesk_tickets').update({ status: 'open' }).eq('id', ticket.id);
                        if (!error) {
                          addFlag({title: "Success", description: "Ticket reopened successfully", type: "success"});
-                         fetchTickets();
+                         fetchTickets(true);
                        }
                      }}
                      className="mx-auto w-fit px-6 py-2.5 bg-themeElevated hover:bg-themePanel text-themeText font-bold text-xs tracking-normal rounded-xl transition-colors border border-themeBorder shadow-sm flex items-center justify-center gap-2"
