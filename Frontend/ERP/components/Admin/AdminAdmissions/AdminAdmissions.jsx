@@ -49,7 +49,30 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  if(window.erpToast) window.erpToast.show("Error fetching applications: " + appError.message, "error");
  console.warn("Table admissions_applications might not exist or no rows:", appError);
  } else {
- setApplications(appData || []);
+ 
+  const mergeApplications = (apps) => {
+    const merged = {};
+    apps.forEach(app => {
+      const key = (app.name || "").trim().toLowerCase();
+      if (!merged[key]) {
+        merged[key] = {
+          ...app,
+          allEmails: app.email ? [app.email] : [],
+          allPhones: app.phone ? [app.phone] : [],
+          duplicateCount: 1,
+          duplicateIds: [app.id]
+        };
+      } else {
+        merged[key].duplicateCount++;
+        merged[key].duplicateIds.push(app.id);
+        if (app.email && !merged[key].allEmails.includes(app.email)) merged[key].allEmails.push(app.email);
+        if (app.phone && !merged[key].allPhones.includes(app.phone)) merged[key].allPhones.push(app.phone);
+      }
+    });
+    return Object.values(merged);
+  };
+
+        setApplications(mergeApplications(appData || []));
  }
 
  // Fetch admissions status
@@ -126,7 +149,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  if (reason === null) return; // User cancelled
  
  try {
- const { error } = await supabase.from("admissions_applications").update({ status: 'rejected' }).eq("id", app.id);
+ const { error } = await supabase.from("admissions_applications").update({ status: 'rejected' }).in("id", app.duplicateIds);
  if (error) throw error;
 
  // Send rejection email
@@ -147,7 +170,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  // Show undoable toast
  if (window.erpToast?.undoable) {
  window.erpToast.undoable(`${app.name}'s application has been rejected.`, async () => {
- await supabase.from("admissions_applications").update({ status: 'pending' }).eq("id", app.id);
+ await supabase.from("admissions_applications").update({ status: 'pending' }).in("id", app.duplicateIds);
  fetchApplications();
  }, 10000);
  } else {
@@ -202,7 +225,7 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  addLog("[DATABASE] Updating application status to Approved and assigning ERP ID...");
  const { error: updateError } = await supabase.from("admissions_applications").update({ status: 'approved', 
  erp_id: generatedId 
- }).eq("id", app.id);
+ }).in("id", app.duplicateIds);
  if (updateError) throw updateError;
 
  // 3. Generate Password & Auth
@@ -379,8 +402,12 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  app.status === 'rejected' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20 shadow-[0_0_10px_rgba(244,63,94,0.15)]' :
  'bg-amber-500/10 text-amber-400 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.15)]'
  }`}>
- {app.status}
- </span>
+  {app.status}</span>
+  {app.duplicateCount > 1 && (
+    <span className="text-[10px] uppercase tracking-widest font-bold px-2 py-1 rounded border bg-purple-500/10 text-purple-500 border-purple-500/20 mt-2 block text-center">
+      {app.duplicateCount} Submissions
+    </span>
+  )}
  </div>
  
  <div className="flex flex-col mb-6 pr-24">
@@ -389,17 +416,29 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  </div>
  
  <div className="flex flex-col gap-2 mb-6">
- <div className="flex items-center gap-3 text-[13px] font-medium text-themeTextSec">
- <div className="w-8 h-8 rounded-full bg-themeApp border border-themeBorder flex items-center justify-center shrink-0 group-hover:border-themeAccent/30 transition-colors">
+ <div className="flex items-start gap-3 text-[13px] font-medium text-themeTextSec">
+ <div className="w-8 h-8 rounded-full bg-themeApp border border-themeBorder flex items-center justify-center shrink-0 mt-0.5 group-hover:border-themeAccent/30 transition-colors">
  <i className="fa-solid fa-envelope text-themeText/60 group-hover:text-themeAccent transition-colors"></i>
  </div>
- <span className="truncate">{app.email}</span>
+ <div className="flex flex-col gap-1 min-w-0">
+ {app.allEmails.map((em, idx) => (
+ <span key={idx} className={`truncate ${idx > 0 ? 'text-themeAccent' : ''}`}>
+ {em} {idx > 0 && <span className="text-[9px] font-bold uppercase tracking-widest ml-2 border border-themeAccent/30 px-1 rounded-sm">Diff</span>}
+ </span>
+ ))}
  </div>
- <div className="flex items-center gap-3 text-[13px] font-medium text-themeTextSec">
- <div className="w-8 h-8 rounded-full bg-themeApp border border-themeBorder flex items-center justify-center shrink-0 group-hover:border-themeAccent/30 transition-colors">
+ </div>
+ <div className="flex items-start gap-3 text-[13px] font-medium text-themeTextSec">
+ <div className="w-8 h-8 rounded-full bg-themeApp border border-themeBorder flex items-center justify-center shrink-0 mt-0.5 group-hover:border-themeAccent/30 transition-colors">
  <i className="fa-solid fa-phone text-themeText/60 group-hover:text-themeAccent transition-colors"></i>
  </div>
- <span>{app.phone}</span>
+ <div className="flex flex-col gap-1">
+ {app.allPhones.map((ph, idx) => (
+ <span key={idx} className={idx > 0 ? 'text-amber-500' : ''}>
+ {ph} {idx > 0 && <span className="text-[9px] font-bold uppercase tracking-widest ml-2 border border-amber-500/30 px-1 rounded-sm">Diff</span>}
+ </span>
+ ))}
+ </div>
  </div>
  </div>
  
