@@ -238,7 +238,8 @@ export default function Leave({ isEmbedded = false }) {
  to_date: toDate,
  days: diffDays,
  reason: reason,
- status: 'pending'
+ status: 'pending',
+ document_path: filePath
  });
  if (dbError) throw dbError;
 
@@ -442,8 +443,8 @@ export default function Leave({ isEmbedded = false }) {
  )}
  </div>
  {leave.document_path && (
- <button type="button" onClick={() => downloadProof(leave.document_path)} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1.5 transition-colors bg-themeElevated backdrop-blur-[80px] border border-themeBorder hover:bg-themeElevated backdrop-blur-[80px] border border-themeBorder px-3 py-2 lg:py-1.5 rounded-lg border border-themeBorder w-full lg:w-auto">
- <i className="fa-solid fa-paperclip"></i> View Proof
+ <button type="button" onClick={() => window.open(leave.document_path, '_blank')} className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-400 flex items-center justify-center gap-1.5 transition-colors bg-blue-500/10 hover:bg-blue-500/20 px-3 py-2 lg:py-1.5 rounded-lg border border-blue-500/20 w-full lg:w-auto">
+ <i className="fa-brands fa-google-drive text-sm"></i> View Proof
  </button>
  )}
  {leave.status === 'pending' && (
@@ -459,20 +460,20 @@ export default function Leave({ isEmbedded = false }) {
 
  {/* 4. NEW LEAVE MODAL */}
  {showRequestModal && (
- <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
- <div className="bg-themePanel w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-white/[0.08] shadow-2xl flex flex-col max-h-[90vh]">
+ <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xl animate-fade-in">
+ <div className="bg-themePanel/80 dark:bg-themePanel/60 backdrop-blur-3xl w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] overflow-hidden border border-white/[0.12] shadow-[0_10px_40px_rgb(0,0,0,0.2)] flex flex-col max-h-[90vh]">
  
- <div className="p-6 border-b border-white/[0.08] shrink-0 flex justify-between items-start bg-[var(--theme-panel)]">
+ <div className="p-6 border-b border-themeBorder shrink-0 flex justify-between items-start bg-themePanel/50">
  <div>
  <h3 className="text-xl font-black tracking-tight mb-1 text-themeText ">Apply for Leave</h3>
  <p className="text-[10px] text-themeTextSec font-bold uppercase tracking-widest">Routed to your mentor or HOD.</p>
  </div>
- <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-themePanel/5 border border-themeBorder text-themeTextSec hover:text-themeText hover:bg-themePanel/10 transition-colors shrink-0">
+ <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-themeElevated/50 border border-themeBorder text-themeTextSec hover:text-themeAccent hover:bg-themeElevated transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
 
- <div className="overflow-y-auto no-scrollbar flex-1 bg-themePanel">
+ <div className="overflow-y-auto no-scrollbar flex-1 bg-transparent">
  <form onSubmit={handleRequestSubmit} className="p-6 flex flex-col gap-6">
 
  {statusMessage.text && (
@@ -523,28 +524,14 @@ export default function Leave({ isEmbedded = false }) {
  </div>
 
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Supporting Document (Optional)</label>
- <input type="file" ref={fileInputRef} onChange={e => {
- const file = e.target.files[0];
- if (file && file.size > 5 * 1024 * 1024) {
- window.erpDialog.alert("File size exceeds 5MB limit. Please upload a smaller file.");
- e.target.value = null;
- return;
- }
- setDocumentFile(file);
- }} className="hidden" accept=".pdf,.jpg,.png" />
- <div onClick={() => fileInputRef.current.click()} className="bg-themeElevated  border border-themeBorder hover:border-themeAccent/50 transition-colors rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer group">
- <div className="w-12 h-12 rounded-full bg-themePanel/5 text-themeTextSec group-hover:text-themeAccent flex items-center justify-center mb-3 transition-colors">
- <i className="fa-solid fa-cloud-arrow-up text-lg"></i>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Supporting Document Link (Optional)</label>
+ <div className="relative">
+ <i className="fa-brands fa-google-drive absolute left-4 top-1/2 -translate-y-1/2 text-themeTextSec/50 text-base"></i>
+ <input type="url" value={documentUrl} onChange={(e) => setDocumentUrl(e.target.value)} placeholder="https://drive.google.com/..." className="w-full bg-themeElevated border border-themeBorder rounded-xl pl-11 pr-4 py-3.5 text-sm font-medium text-themeText focus:border-blue-500 outline-none transition placeholder:text-themeTextSec/30" />
  </div>
- <p className="text-xs font-bold text-themeText mb-1">Upload Medical Cert. or Proof</p>
- <p className="text-[10px] font-medium text-themeTextSec/30 uppercase tracking-widest">PDF, JPG or PNG (Max 5MB)</p>
- {documentFile && (
- <div className="mt-4 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-lg text-xs font-bold flex items-center gap-2">
- <i className="fa-solid fa-file-check"></i> {documentFile.name}
- </div>
- )}
- </div>
+ <p className="text-[9px] font-bold text-themeTextSec/40 uppercase tracking-widest mt-2 px-1 flex items-center gap-1.5">
+ <i className="fa-solid fa-circle-info"></i> Ensure link access is set to 'Anyone with link'.
+ </p>
  </div>
 
  <button type="submit" disabled={isSubmitting} className="w-full mt-2 py-4 rounded-xl bg-themeAccent text-themeText font-black text-sm hover:bg-themeAccent/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
