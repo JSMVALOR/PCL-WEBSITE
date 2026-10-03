@@ -110,7 +110,8 @@ export default function FacultyWebClock() {
         } else {
           const { data: inserted, error: insertError } = await supabase.from('faculty_daily_presence').insert([payload]).select().single();
           if (insertError) {
-             finalData = payload;
+             console.error("Insert failed:", insertError);
+             throw new Error("Could not save attendance to database. Contact administrator.");
           } else {
              finalData = inserted;
           }
@@ -151,9 +152,8 @@ export default function FacultyWebClock() {
  const { data, error } = await query.select().single();
  
  if (error) {
- console.warn('Clock out DB error, applying locally:', error.message);
- setAttendanceRecord({ ...attendanceRecord, ...payload });
- if (window.erpToast) window.erpToast.show("Clocked out (offline mode)", "warning");
+ console.error('Clock out DB error:', error);
+ throw new Error("Could not save clock out to database. Contact administrator.");
  } else {
  setAttendanceRecord(data);
  if (window.erpToast) window.erpToast.show("Clocked out successfully!", "success");
@@ -171,60 +171,61 @@ export default function FacultyWebClock() {
  {/* Background elements */}
  <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
  
- <div className="flex justify-between items-start relative z-10">
- <div>
- <h3 className="text-sm font-bold text-themeTextSec uppercase tracking-widest mb-1">Campus Web Clock</h3>
- <div className="text-3xl font-black font-mono tracking-tighter">
- {format(currentTime, 'hh:mm:ss a')}
+ <div className="flex justify-between items-center relative z-10">
+ <div className="flex items-center gap-3">
+ <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg shrink-0 border border-themeAccent/20">
+ <i className="fa-solid fa-clock"></i>
  </div>
- <p className="text-xs text-themeTextSec mt-1">{format(currentTime, 'EEEE, MMMM do, yyyy')}</p>
+ <div>
+ <h3 className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mb-0.5">Campus Web Clock</h3>
+ <div className="flex items-baseline gap-2">
+ <span className="text-lg md:text-xl font-black font-mono tracking-tighter text-themeText">{format(currentTime, 'hh:mm:ss a')}</span>
+ <span className="text-[10px] text-themeTextSec font-medium hidden sm:inline-block">{format(currentTime, 'EEE, MMM do')}</span>
+ </div>
+ </div>
  </div>
 
  <div className="text-right">
  {isWorkingDay && rules ? (
  <div className="inline-flex flex-col items-end">
- <span className="bg-themePanel/10 px-2 py-1 rounded text-[10px] font-bold tracking-widest uppercase mb-1">
- Shift: {rules.start} - {rules.end}
- </span>
- <span className="text-[9px] text-themeTextSec uppercase tracking-widest">
- Grace: {FACULTY_ATTENDANCE_RULES.GRACE_PERIOD_MINUTES} Mins
- </span>
+ <span className="text-[10px] font-bold text-themeText uppercase tracking-widest bg-themePanel px-2 py-0.5 rounded border border-themeBorder">{rules.start} - {rules.end}</span>
+ <span className="text-[8px] text-themeTextSec uppercase tracking-widest mt-1">Grace: {FACULTY_ATTENDANCE_RULES.GRACE_PERIOD_MINUTES}m</span>
  </div>
  ) : (
- <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase whitespace-nowrap">
+ <span className="bg-rose-500/10 border border-rose-500/20 text-rose-500 px-2 py-1 rounded text-[9px] font-bold tracking-widest uppercase whitespace-nowrap">
  Non-Working Day
  </span>
  )}
  </div>
  </div>
 
- <div className="mt-5 pt-4 border-t border-themeBorder grid grid-cols-2 gap-4 relative z-10">
+ <div className="mt-5 pt-4 border-t border-themeBorder grid grid-cols-2 gap-3 relative z-10">
  <button
  onClick={handleClockIn}
  disabled={!isWorkingDay || loading || attendanceRecord?.clock_in}
- className={`py-3 px-4 rounded-xl flex flex-row items-center justify-center gap-2 transition-all ${
+ className={`py-2 px-3 rounded-xl flex flex-row items-center justify-center gap-2 transition-all ${
  attendanceRecord?.clock_in 
- ? 'bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 opacity-80' 
- : isWorkingDay ? 'bg-emerald-500 hover:bg-emerald-400 text-themeText active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-themePanel/5 text-themeTextSec cursor-not-allowed'
+ ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 opacity-80' 
+ : isWorkingDay ? 'bg-emerald-500 hover:bg-emerald-400 text-themeText active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.2)]' : 'bg-themePanel/5 text-themeTextSec cursor-not-allowed'
  }`}
  >
- <i className="fa-solid fa-right-to-bracket text-xl"></i>
- <span className="font-bold uppercase tracking-widest text-xs">
+ <i className="fa-solid fa-right-to-bracket text-sm md:text-base"></i>
+ <span className="font-bold uppercase tracking-widest text-[10px] md:text-xs">
  {attendanceRecord?.clock_in ? `In: ${attendanceRecord.clock_in}` : 'Clock In'}
  </span>
  </button>
-
+ 
  <button
  onClick={handleClockOut}
  disabled={!isWorkingDay || loading || !attendanceRecord?.clock_in || attendanceRecord?.clock_out}
- className={`py-3 px-4 rounded-xl flex flex-row items-center justify-center gap-2 transition-all ${
+ className={`py-2 px-3 rounded-xl flex flex-row items-center justify-center gap-2 transition-all ${
  attendanceRecord?.clock_out 
- ? 'bg-amber-500/20 border border-amber-500/30 text-amber-400 opacity-80' 
- : (attendanceRecord?.clock_in && isWorkingDay) ? 'bg-amber-500 hover:bg-amber-400 text-themeText active:scale-95 shadow-[0_0_20px_rgba(245,158,11,0.3)]' : 'bg-themePanel/5 text-themeTextSec cursor-not-allowed'
+ ? 'bg-amber-500/10 border border-amber-500/20 text-amber-500 opacity-80' 
+ : (attendanceRecord?.clock_in && isWorkingDay) ? 'bg-amber-500 hover:bg-amber-400 text-themeText active:scale-95 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-themePanel/5 text-themeTextSec cursor-not-allowed'
  }`}
  >
- <i className="fa-solid fa-right-from-bracket text-xl"></i>
- <span className="font-bold uppercase tracking-widest text-xs">
+ <i className="fa-solid fa-right-from-bracket text-sm md:text-base"></i>
+ <span className="font-bold uppercase tracking-widest text-[10px] md:text-xs">
  {attendanceRecord?.clock_out ? `Out: ${attendanceRecord.clock_out}` : 'Clock Out'}
  </span>
  </button>
