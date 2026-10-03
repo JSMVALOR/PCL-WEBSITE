@@ -31,10 +31,10 @@ export default function SessionTimeoutGuard({ children }) {
  }, []);
 
  const resetInactivityTimer = () => {
- // Disabled per admin directive: Session lasts life long till manual logout
- return;
+ const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
  
- if (Capacitor.isNativePlatform()) return; 
+ // If it's a native Capacitor app OR a PWA (web apk), session lasts life long
+ if (Capacitor.isNativePlatform() || isStandalone) return; 
 
  if (showWarning) return; 
  

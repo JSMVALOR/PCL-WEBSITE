@@ -17,6 +17,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+let emailStats = { sent: 0, failed: 0, pending: 0, lastFailureReason: null };
+let emailLogs = [];
+
 // Emulate the Vercel API endpoint for local development
 app.post('/api/send-email', async (req, res) => {
     try {
@@ -38,11 +41,27 @@ app.post('/api/send-email', async (req, res) => {
         }
 
         await transporter.sendMail(mailOptions);
+        emailStats.sent++;
+        emailLogs.unshift({ id: Date.now(), to: to_email, subject, status: 'SENT', time: new Date() });
+        if (emailLogs.length > 50) emailLogs.pop();
         
         res.status(200).json({ success: true, message: 'Email sent successfully' });
     } catch (error) {
+        emailStats.failed++;
+        emailStats.lastFailureReason = error.message;
+        emailLogs.unshift({ id: Date.now(), to: req.body?.to_email || 'Unknown', subject: req.body?.subject || 'Unknown', status: 'FAILED', error: error.message, time: new Date() });
+        if (emailLogs.length > 50) emailLogs.pop();
         console.error('Email send failed:', error);
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/email/stats', async (req, res) => {
+    try {
+        await transporter.verify();
+        res.json({ health: 'ONLINE', stats: emailStats, logs: emailLogs });
+    } catch (e) {
+        res.json({ health: 'OFFLINE', stats: emailStats, logs: emailLogs, error: e.message });
     }
 });
 

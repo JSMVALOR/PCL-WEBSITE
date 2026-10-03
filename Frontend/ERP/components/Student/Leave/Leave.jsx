@@ -254,6 +254,67 @@ export default function Leave({ isEmbedded = false }) {
  author_name: userSession?.name || 'System',
  author_id: studentId
  }]);
+
+ // Notify Parents & Supervisor via Email & WhatsApp
+ try {
+   const { data: profile } = await supabase.from('profiles').select('full_name, email, phone, parent_email, parent_phone').eq('id', studentId).single();
+   if (profile) {
+     const waQueue = [];
+     const emailQueue = [];
+     
+     if (profile.parent_phone) {
+       waQueue.push({
+         phone: profile.parent_phone,
+         message: `Dear Parent,\nYour ward, ${profile.full_name}, has applied for ${leaveType} leave for ${diffDays} day(s) from ${new Date(fromDate).toLocaleDateString()} to ${new Date(toDate).toLocaleDateString()}.\n\n- Prudentia Administration`,
+         status: 'PENDING',
+         recipient_name: 'Parent of ' + profile.full_name
+       });
+     }
+     if (profile.parent_email) {
+       emailQueue.push(
+         import('../../../lib/EmailService').then(({ sendSystemEmail }) => 
+           sendSystemEmail('GENERAL_BROADCAST', {
+             to_email: profile.parent_email,
+             title: 'Leave Application Submitted',
+             content: `Your ward, ${profile.full_name}, has applied for ${leaveType} leave for ${diffDays} day(s) from ${new Date(fromDate).toLocaleDateString()} to ${new Date(toDate).toLocaleDateString()}. You will be notified once it is reviewed.`,
+             priority: 'normal'
+           })
+         )
+       );
+     }
+     
+     if (activeMentorId) {
+        const { data: mentor } = await supabase.from('profiles').select('full_name, phone, email').eq('id', activeMentorId).single();
+        if (mentor && mentor.phone) {
+          waQueue.push({
+            phone: mentor.phone,
+            message: `Leave Request Alert:\nYour mentee, ${profile.full_name}, has applied for ${diffDays} day(s) of ${leaveType} leave. Please review it on the ERP.\n\n- System`,
+            status: 'PENDING',
+            recipient_name: mentor.full_name
+          });
+        }
+        if (mentor && mentor.email) {
+           emailQueue.push(
+             import('../../../lib/EmailService').then(({ sendSystemEmail }) => 
+               sendSystemEmail('GENERAL_BROADCAST', {
+                 to_email: mentor.email,
+                 title: 'Leave Request Pending Review',
+                 content: `Your mentee, ${profile.full_name}, has applied for ${diffDays} day(s) of ${leaveType} leave. Please log in to the ERP to review.`,
+                 priority: 'normal'
+               })
+             )
+           );
+        }
+     }
+
+     if (waQueue.length > 0) {
+       await supabase.from('whatsapp_queue').insert(waQueue);
+     }
+     if (emailQueue.length > 0) {
+       await Promise.allSettled(emailQueue);
+     }
+   }
+ } catch(e) { console.error("Notification Error:", e); }
  // Bell notification for all admins about new leave request
  const { data: adminProfiles } = await supabase.from('profiles').select('id').eq('role', 'admin');
  if (adminProfiles && adminProfiles.length > 0) {

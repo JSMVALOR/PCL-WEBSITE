@@ -785,8 +785,8 @@ const buildEmailHtml = (title, content, preheader = "") => `
     ${preheader ? `<div style="display:none;font-size:1px;color:#333333;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${preheader}</div>` : ""}
     <div class="container">
         <div class="header">
-            <div class="logo-container">
-                <img src="https://raw.githubusercontent.com/JSMVALOR/PCL-WEBSITE/main/Frontend/Shared/Assets/LOGOS/pcl_logo_white.svg" alt="PCL Logo" width="60" height="60" style="width: 60px; height: 60px; display: block; margin: 0 auto;" />
+            <div class="logo-container" style="width: 60px; height: 60px; margin: 0 auto 15px auto; background-color: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: 2px; line-height: 1;">PCL</span>
             </div>
             <h1>PRUDENTIA</h1>
             <p>College of Law</p>
@@ -934,7 +934,7 @@ export const HTML_EMAIL_TEMPLATES = {
 
     HAPPY_BIRTHDAY: (params) => buildEmailHtml(
         'Happy Birthday!',
-        `<p>Dear ${params.student_name},</p>
+        `<p>Dear ${params.student_name || params.name || 'Student'},</p>
         <p>The entire faculty and administration at Prudentia College of Law wishes you a very Happy Birthday!</p>
         <p>May this year bring you great success, learning, and wonderful memories.</p>`
     ),
@@ -1051,5 +1051,84 @@ export const HTML_EMAIL_TEMPLATES = {
             <div class="data-row"><span class="data-label">Supervisor</span><span class="data-value">${params.supervisor_name}</span></div>
         </div>
         <p>Log in to the Clinics Hub to view your case files and schedules.</p>`
-    )
+    ),
+
+    FEE_INVOICE_RAISED: (params) => buildEmailHtml(
+        'New Fee Invoice Raised',
+        `<p style="font-size: 16px; color: #374151;">Dear <strong>${params.student_name}</strong>,</p>
+        <p style="font-size: 15px; color: #4B5563; line-height: 1.6;">This is an official notification from the Finance Department of Prudentia College of Law. A new fee invoice has been generated for your academic profile.</p>
+        
+        <div style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; margin: 24px 0;">
+            <h3 style="margin-top: 0; color: #111827; font-size: 18px; border-bottom: 2px solid #E5E7EB; padding-bottom: 12px; margin-bottom: 16px;">Invoice Details</h3>
+            
+            <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 15px;">
+                <tr>
+                    <td style="padding: 8px 0; color: #6B7280; width: 40%;">Fee Description:</td>
+                    <td style="padding: 8px 0; color: #111827; font-weight: 600;">${params.invoice_title || 'Academic Fee'}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; color: #6B7280;">Total Amount:</td>
+                    <td style="padding: 8px 0; color: #EF4444; font-weight: 700; font-size: 18px;">₹${Number(params.amount).toLocaleString('en-IN')}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; color: #6B7280;">Due Date:</td>
+                    <td style="padding: 8px 0; color: #111827; font-weight: 600;">${params.due_date}</td>
+                </tr>
+            </table>
+        </div>
+
+        <p style="font-size: 14px; color: #6B7280; background: #FEF2F2; border-left: 4px solid #EF4444; padding: 12px;"><strong>Important:</strong> Please ensure the payment is completed on or before the due date to avoid late payment penalties.</p>
+        
+        <div style="text-align: center; margin: 32px 0;">
+            ${params.portal_link ? `<a href="${params.portal_link}" style="background-color: #5D4037; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Pay Now via ERP Portal</a>` : ''}
+        </div>`,
+        `A new fee invoice of ₹${params.amount} has been raised. Please check your ERP portal.`
+    ),
+
+    GENERAL_BROADCAST: (params) => buildEmailHtml(
+        params.title || 'Official Notice',
+        `<p>Dear Student / Staff,</p>
+        <div class="data-box" style="border-left-color: ${params.priority === 'urgent' ? '#ef4444' : params.priority === 'high' ? '#f59e0b' : '#5D4037'};">
+            <div class="data-row"><span class="data-label">Priority</span><span class="data-value" style="text-transform: uppercase; font-weight: bold; color: ${params.priority === 'urgent' ? '#ef4444' : params.priority === 'high' ? '#f59e0b' : '#5D4037'};">${params.priority || 'Normal'}</span></div>
+        </div>
+        <p>${params.content || ''}</p>
+        <p style="font-size: 13px; color: #71717a; margin-top: 20px;">This is an official broadcast from the Administration. Please take note accordingly.</p>`,
+        `[${(params.priority || 'NOTICE').toUpperCase()}] ${params.title}`
+    ),
+
+    ACCOUNT_LOCKED: (params) => buildEmailHtml(
+        'Account Suspended',
+        `<p>Dear ${params.name || 'User'},</p>
+        <p>Your ERP account at Prudentia College of Law has been <strong>suspended</strong> by the administration.</p>
+        <div class="data-box" style="border-left-color: #ef4444;">
+            <div class="data-row"><span class="data-label">Status</span><span class="data-value" style="color: #ef4444; font-weight: bold;">SUSPENDED</span></div>
+        </div>
+        <p>You will no longer be able to access the ERP portal until your account is reactivated. If you believe this is an error, please contact the Administration or IT Helpdesk immediately.</p>`,
+        `Your ERP account has been suspended.`
+    ),
+
+    ACCOUNT_REACTIVATED: (params) => buildEmailHtml(
+        'Account Reactivated',
+        `<p>Dear ${params.name || 'User'},</p>
+        <p>Your ERP account at Prudentia College of Law has been <strong>reactivated</strong> by the administration.</p>
+        <div class="data-box" style="border-left-color: #059669;">
+            <div class="data-row"><span class="data-label">Status</span><span class="data-value" style="color: #059669; font-weight: bold;">ACTIVE</span></div>
+        </div>
+        <p>You can now log in to the ERP portal and access all your resources as usual.</p>
+        <a href="https://prudentiacollege.edu/login" class="btn">Login to ERP</a>`,
+        `Your ERP account has been reactivated.`
+    ),
+
+    ERP_NEW_ACCOUNT: (params) => buildEmailHtml(
+        'Your New ERP Account',
+        `<p>Dear ${params.name || 'User'},</p>
+        <p>An official ERP account has been created for you at Prudentia College of Law. Below are your login credentials:</p>
+        <div class="data-box">
+            <div class="data-row"><span class="data-label">ERP ID</span><span class="data-value" style="font-size: 18px; font-weight: 800;">${params.erp_id}</span></div>
+            <div class="data-row"><span class="data-label">Temporary Password</span><span class="data-value" style="font-size: 18px; font-weight: 800;">${params.password}</span></div>
+        </div>
+        <p>Please log in immediately and change your password for security purposes. Do not share these credentials with anyone.</p>
+        <a href="https://prudentiacollege.edu/login" class="btn">Login to ERP</a>`,
+        `Your ERP account credentials are ready.`
+    ),
 };

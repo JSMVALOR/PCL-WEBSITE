@@ -6,7 +6,7 @@ import { generateComponentPDF } from '../../../DocumentTemplates/pdfEngine';
 import { generateNativePayslip } from '../../../DocumentTemplates/NativePayslipEngine';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 
-import { sendSystemEmail } from '../../../lib/EmailService';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 import QRCode from 'react-qr-code';
 import { getAvatarUrl } from '../../../utils/avatarUtils';
 
@@ -336,6 +336,9 @@ export default function AdminPayroll() {
  attachment: base64Pdf,
  attachment_name: `Payslip_${selectedFac.full_name.replace(/ /g, '_')}_${payload.month}.pdf`
  });
+ if (selectedFac.phone) {
+ sendSystemWhatsApp(selectedFac.phone, null, { template_id: 'PAYROLL_DISBURSAL', variables: { faculty_name: selectedFac.full_name, month: payload.month, year: payload.year, net_pay: payload.final_net_pay }, recipient_name: selectedFac.full_name }).catch(e => console.error('WA failed:', e));
+ }
 
  setFaculty(prev => prev.map(f => f.id === selectedFac.id ? { ...f, isProcessed: true } : f));
  
@@ -378,6 +381,112 @@ export default function AdminPayroll() {
  newStructure[index] = { ...newStructure[index], [field]: field === 'percentage' ? Number(value) || 0 : value };
  return { ...f, salary_structure: newStructure };
  }));
+ };
+
+ const handleDisburseAll = async () => {
+   const unprocessed = faculty.filter(f => !f.isProcessed);
+   if (unprocessed.length === 0) {
+     if (window.erpDialog) window.erpDialog.alert("All faculty payrolls are already processed for this month.", "info");
+     return;
+   }
+   
+   const confirmed = await new Promise(res => window.erpDialog ? window.erpDialog.confirm(`You are about to automatically finalize and disburse payroll for ${unprocessed.length} faculty members. This will generate encrypted PDFs and send emails. Proceed?`, res) : res(window.confirm(`Disburse ${unprocessed.length} payrolls?`)));
+   if (!confirmed) return;
+
+   setIsProcessing(true);
+   let successCount = 0;
+   const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+   const currentYear = new Date().getFullYear().toString();
+   const payDate = new Date().toISOString().split('T')[0];
+
+   try {
+     for (const fac of unprocessed) {
+       // Standard automated deduction assumptions for bulk
+       const professionalTax = 200;
+       const tdsPercentage = 10;
+       const tdsAmount = Math.round(fac.netPay * (tdsPercentage / 100));
+       const finalNetPay = fac.netPay - professionalTax - tdsAmount;
+       const transactionId = `AUTO-TXN-${Date.now()}-${fac.id.slice(0, 4)}`;
+
+       const payload = {
+         faculty_id: fac.id,
+         base_pay: fac.basePay,
+         base_salary: fac.basePay,
+         deductions: fac.deduction,
+         net_pay: fac.netPay,
+         final_net_pay: finalNetPay,
+         professional_tax: professionalTax,
+         tds_amount: tdsAmount,
+         tds_percentage: tdsPercentage,
+         transaction_id: transactionId,
+         payment_mode: 'Bank Transfer (NEFT/RTGS)',
+         month: currentMonth,
+         year: currentYear,
+         payment_date: payDate,
+         lop_days: fac.lopDays,
+         lop_waived_days: fac.waivedDays || 0,
+         lop_waived_amount: fac.waivedAmount || 0,
+         lop_waiver_reason: fac.waiverReason || '',
+         salary_structure: fac.salary_structure,
+         gross_lop_amount: fac.grossLopAmount || 0
+       };
+
+       const { error } = await supabase.from('faculty_payroll').insert([payload]);
+       if (error) continue;
+
+       await supabase.from('notices').insert([{
+         notice_id: `PAY-${Date.now()}-${fac.id}`,
+         title: 'Payroll Disbursed',
+         category: 'Finance',
+         target_audience: ['faculty'],
+         target_user_id: fac.id,
+         priority: 'high',
+         content: `Your salary for ${currentMonth} ${currentYear} has been disbursed.`,
+         author_name: 'Finance Department',
+         author_id: null
+       }]);
+
+       await supabase.from('notifications').insert([{
+         recipient_id: fac.id,
+         title: 'Payroll Disbursed',
+         message: 'Your salary slip has been processed.',
+         type: 'notice',
+         action_link: 'payroll'
+       }]);
+
+       const base64Pdf = await generateNativePayslip(
+         payload, 
+         fac.full_name, 
+         fac.erp_id,
+         "Faculty of Law"
+       );
+
+       await sendSystemEmail('PAYROLL_DISBURSAL', {
+         to_email: fac.email,
+         faculty_name: fac.full_name,
+         month: payload.month,
+         year: payload.year,
+         payment_mode: payload.payment_mode,
+         final_net_pay: payload.final_net_pay,
+         erp_id: fac.erp_id,
+         attachment: base64Pdf,
+         attachment_name: `Payslip_${fac.full_name.replace(/ /g, '_')}_${payload.month}.pdf`
+       });
+
+       if (fac.phone) {
+         sendSystemWhatsApp(fac.phone, null, { template_id: 'PAYROLL_DISBURSAL', variables: { faculty_name: fac.full_name, month: payload.month, year: payload.year, net_pay: payload.final_net_pay }, recipient_name: fac.full_name }).catch(e => console.error('WA failed:', e));
+       }
+
+       successCount++;
+       setFaculty(prev => prev.map(f => f.id === fac.id ? { ...f, isProcessed: true } : f));
+     }
+     if (window.erpToast) window.erpToast.show(`✅ Successfully processed ${successCount} out of ${unprocessed.length} payrolls.`, "success");
+   } catch (err) {
+     console.error(err);
+     if (window.erpDialog) window.erpDialog.alert("An error occurred during bulk processing.", "Error");
+   } finally {
+     setIsProcessing(false);
+   }
  };
 
  return (
@@ -433,12 +542,21 @@ export default function AdminPayroll() {
  Current Month
  </span>
  </div>
+ <div className="flex items-center gap-3">
  <div className="flex bg-themeElevated rounded-xl p-1 border border-themeBorder ">
  <button onClick={() => setViewMode('grid')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${viewMode === 'grid' ? 'bg-themePanel dark:bg-themeElevated shadow-sm text-themeText' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeApp'}`}>
  <i className="fa-solid fa-border-all"></i> Grid
  </button>
  <button onClick={() => setViewMode('list')} className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${viewMode === 'list' ? 'bg-themePanel dark:bg-themeElevated shadow-sm text-themeText' : 'text-themeTextSec hover:text-themeText dark:hover:text-themeApp'}`}>
  <i className="fa-solid fa-list"></i> List
+ </button>
+ </div>
+ <button 
+   onClick={handleDisburseAll}
+   disabled={isProcessing || !faculty.some(f => !f.isProcessed)}
+   className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-themeText rounded-xl text-xs font-black transition-colors flex items-center gap-2"
+ >
+   {isProcessing ? <><i className="fa-solid fa-spinner animate-spin"></i> Processing...</> : <><i className="fa-solid fa-check-double"></i> Approve & Disburse All</>}
  </button>
  </div>
  </div>

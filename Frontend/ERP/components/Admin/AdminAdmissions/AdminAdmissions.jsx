@@ -137,6 +137,9 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  program: app.program || 'Law Program',
  reason: reason
  });
+ if (app.phone) {
+ sendSystemWhatsApp(app.phone, null, { template_id: 'APPLICATION_REJECTED', variables: { student_name: app.name, program: app.program || 'Law Program', reason: reason || '' }, recipient_name: app.name }).catch(e => console.error('WA failed:', e));
+ }
  } catch (emailErr) {
  console.warn("Rejection email failed:", emailErr);
  }
@@ -251,6 +254,10 @@ export default function AdminAdmissions({ isEmbedded = false, isHubView = false 
  portal_link: window.location.origin
  });
  addLog(`[SUCCESS] First credentials sent successfully to ${app.email}!`);
+  if (app.phone) { sendSystemWhatsApp(app.phone, null, { template_id: 'FIRST_CREDENTIALS', variables: { name: app.name, erp_id: generatedId, password: generatedPassword }, recipient_name: app.name }).catch(e => console.error('WA failed:', e)); }
+ if (app.phone) {
+ sendSystemWhatsApp(app.phone, null, { template_id: 'FIRST_CREDENTIALS', variables: { name: app.name, erp_id: generatedId, password: generatedPassword }, recipient_name: app.name }).catch(e => console.error('WA failed:', e));
+ }
  } catch (emailErr) {
 
  console.error("Supabase Email Error:", emailErr);

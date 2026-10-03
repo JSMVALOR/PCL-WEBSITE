@@ -2,7 +2,7 @@
 import SlideCommit from '../../../../Shared/components/ReactBits/SlideCommit/SlideCommit';
 import React, { useState } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
-import { sendSystemEmail } from '../../../lib/EmailService';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  const [isProcessing, setIsProcessing] = useState(false);
@@ -56,8 +56,11 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  end_date: request.end_date
  });
  }
+ if (request.faculty?.phone) {
+ sendSystemWhatsApp(request.faculty.phone, null, { template_id: 'LEAVE_STATUS', variables: { student_name: request.faculty.full_name || request.faculty_id, status: actionType === 'Reject' ? 'rejected' : 'approved', leave_type: request.leave_type, dates: `${request.start_date} to ${request.end_date}` }, recipient_name: request.faculty.full_name }).catch(e => console.error('WA failed:', e));
+ }
  } catch (emailErr) {
- console.warn("Email dispatch failed:", emailErr);
+ console.warn("Comms dispatch failed:", emailErr);
  }
 
  // Simple mock audit log

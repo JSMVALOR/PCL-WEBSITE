@@ -107,9 +107,30 @@ Temporary Password: ${params.password}` }),
     CLINIC_ASSIGNMENT: (params) => ({
         subject: `Clinical Program Assignment: ${params.clinic_name}`,
         message_body: HTML_EMAIL_TEMPLATES.CLINIC_ASSIGNMENT(params) }),
+
+    FEE_INVOICE_RAISED: (params) => ({
+        subject: `New Fee Invoice Raised - ${params.invoice_title || 'Academic Fee'}`,
+        message_body: HTML_EMAIL_TEMPLATES.FEE_INVOICE_RAISED(params) }),
+
+    GENERAL_BROADCAST: (params) => ({
+        subject: params.subject || `[${(params.priority || 'NOTICE').toUpperCase()}] ${params.title || 'Official Notice'}`,
+        message_body: HTML_EMAIL_TEMPLATES.GENERAL_BROADCAST(params) }),
+
+    ACCOUNT_LOCKED: (params) => ({
+        subject: `Your ERP Account Has Been Suspended`,
+        message_body: HTML_EMAIL_TEMPLATES.ACCOUNT_LOCKED(params) }),
+
+    ACCOUNT_REACTIVATED: (params) => ({
+        subject: `Your ERP Account Has Been Reactivated`,
+        message_body: HTML_EMAIL_TEMPLATES.ACCOUNT_REACTIVATED(params) }),
+
+    ERP_NEW_ACCOUNT: (params) => ({
+        subject: `Welcome to PCL ERP - Your Official Credentials`,
+        message_body: HTML_EMAIL_TEMPLATES.ERP_NEW_ACCOUNT(params) }),
 };
 
-export const sendSystemEmail = async (templateKey, params) => {
+export const sendSystemEmail = async (templateKey, params, _retryCount = 0) => {
+    const MAX_RETRIES = 2;
     try {
         const templateBuilder = EMAIL_TEMPLATES[templateKey];
         if (!templateBuilder) {
@@ -121,6 +142,9 @@ export const sendSystemEmail = async (templateKey, params) => {
         // Vercel Serverless Function Endpoint
         const emailEndpoint = '/api/send-email';
 
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout
+
         const response = await fetch(emailEndpoint, {
             method: 'POST',
             headers: {
@@ -130,14 +154,27 @@ export const sendSystemEmail = async (templateKey, params) => {
                 subject: subject,
                 message_body: message_body,
                 attachments: params.attachments ? params.attachments : (params.attachment ? [{ filename: params.attachment_name || "Document.pdf", content: params.attachment, encoding: "base64" }] : undefined)
-            }) });
+            }),
+            signal: controller.signal,
+        });
+
+        clearTimeout(timeout);
 
         const text = await response.text();
         let result;
         try {
             result = JSON.parse(text);
         } catch (e) {
-            throw new Error(response.status === 504 ? "Email gateway timeout. The server is taking too long." : "Email server returned an invalid response.");
+            // Non-JSON response — server returned HTML error page (502/504 gateway)
+            if (_retryCount < MAX_RETRIES) {
+                console.warn(`[Email] Non-JSON response (HTTP ${response.status}), retrying (${_retryCount + 1}/${MAX_RETRIES})...`);
+                await new Promise(r => setTimeout(r, 2000 * (_retryCount + 1)));
+                return sendSystemEmail(templateKey, params, _retryCount + 1);
+            }
+            const statusHint = response.status === 504 ? "Email gateway timeout — Vercel serverless function exceeded time limit."
+                             : response.status === 502 ? "Email gateway error — the mail server may be temporarily down."
+                             : `Email server returned HTTP ${response.status}. Check Vercel function logs.`;
+            throw new Error(statusHint);
         }
         
         if (!response.ok) {
@@ -146,13 +183,21 @@ export const sendSystemEmail = async (templateKey, params) => {
 
         return true;
     } catch (error) {
+        if (error.name === 'AbortError') {
+            if (_retryCount < MAX_RETRIES) {
+                console.warn(`[Email] Request timed out, retrying (${_retryCount + 1}/${MAX_RETRIES})...`);
+                await new Promise(r => setTimeout(r, 2000 * (_retryCount + 1)));
+                return sendSystemEmail(templateKey, params, _retryCount + 1);
+            }
+            throw new Error('Email request timed out after 25 seconds. The server is unresponsive.');
+        }
         console.error("Email Engine Error:", error);
         throw error;
     }
 };
 
 
-const WA_ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
+const WA_ENGINE_URL = import.meta.env.DEV ? 'http://localhost:3005' : (import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005');
 
 export const sendSystemWhatsApp = async (to_phone, message, options = {}) => {
     const { template_id, variables, recipient_name } = options;

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
-import { sendSystemEmail } from '../../../lib/EmailService';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 export default function AdminAttendanceIssues() {
  const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +51,7 @@ export default function AdminAttendanceIssues() {
  const fetchDebarmentData = async () => {
  setDebarLoading(true);
  try {
- let query = supabase.from('profiles').select('id, full_name, erp_id, is_debarred, debarment_reason, academic_batch').eq('role', 'student');
+ let query = supabase.from('profiles').select('id, full_name, erp_id, is_debarred, debarment_reason, academic_batch, phone, email, parent_phone, parent_email').eq('role', 'student');
  if (debarBatch) query = query.eq('academic_batch', debarBatch);
  
  const { data: stuData } = await query;
@@ -127,15 +127,70 @@ export default function AdminAttendanceIssues() {
  threshold: debarThreshold,
  portal_link: window.location.origin + '/login'
  });
- if(window.erpToast) window.erpToast.show('Warning email sent successfully.', "success");
+ if (student.parent_email) {
+   sendSystemEmail('SHORTAGE_WARNING', {
+     to_email: student.parent_email,
+     student_name: student.full_name,
+     attendance_percentage: student.attendance_percentage,
+     threshold: debarThreshold,
+     portal_link: window.location.origin + '/login'
+   }).catch(e => console.error(e));
+ }
+ const waQueue = [];
+ if (student.phone) {
+   waQueue.push({
+     phone: student.phone,
+     message: `ATTENDANCE WARNING: Dear ${student.full_name}, your attendance is currently at ${student.attendance_percentage}%. This is below the required ${debarThreshold}%. Please attend classes regularly to avoid debarment.`,
+     status: 'PENDING',
+     recipient_name: student.full_name
+   });
+ }
+ if (student.parent_phone) {
+   waQueue.push({
+     phone: student.parent_phone,
+     message: `ATTENDANCE ALERT: Dear Parent, your ward ${student.full_name}'s attendance is currently at ${student.attendance_percentage}%, which is below the mandatory ${debarThreshold}%. Kindly ensure they attend classes regularly.`,
+     status: 'PENDING',
+     recipient_name: 'Parent of ' + student.full_name
+   });
+ }
+ if (waQueue.length > 0) supabase.from('whatsapp_queue').insert(waQueue).then();
+ if(window.erpToast) window.erpToast.show('Warning dispatched successfully.', "success");
  } else if (action === 'Debar') {
  await supabase.from('profiles').update({ is_debarred: true, debarment_reason: `Debarred due to severe attendance shortage (${student.attendance_percentage}%). Minimum required is ${debarThreshold}%.` }).eq('id', student.id);
  await sendSystemEmail('DEBARMENT_NOTICE', {
+ to_email: student.email,
  student_name: student.full_name,
  attendance_percentage: student.attendance_percentage,
  threshold: debarThreshold,
  portal_link: window.location.origin + '/login'
  });
+ if (student.parent_email) {
+   sendSystemEmail('DEBARMENT_NOTICE', {
+     to_email: student.parent_email,
+     student_name: student.full_name,
+     attendance_percentage: student.attendance_percentage,
+     threshold: debarThreshold,
+     portal_link: window.location.origin + '/login'
+   }).catch(e => console.error(e));
+ }
+ const waQueue = [];
+ if (student.phone) {
+   waQueue.push({
+     phone: student.phone,
+     message: `URGENT NOTICE: Dear ${student.full_name}, you have been debarred from academic activities due to severe attendance shortage (${student.attendance_percentage}%). Minimum required is ${debarThreshold}%.`,
+     status: 'PENDING',
+     recipient_name: student.full_name
+   });
+ }
+ if (student.parent_phone) {
+   waQueue.push({
+     phone: student.parent_phone,
+     message: `URGENT NOTICE: Dear Parent, your ward ${student.full_name} has been debarred from academic activities due to severe attendance shortage (${student.attendance_percentage}%). Please contact the administration immediately.`,
+     status: 'PENDING',
+     recipient_name: 'Parent of ' + student.full_name
+   });
+ }
+ if (waQueue.length > 0) supabase.from('whatsapp_queue').insert(waQueue).then();
  window.erpDialog?.alert('Student has been debarred.', 'Success');
  fetchDebarmentData();
  } else if (action === 'Reinstate') {

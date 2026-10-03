@@ -184,16 +184,36 @@ export default function UserManagement({ isHubView = false, isEmbedded = false }
  throw error;
  }
  
- // Dispatch email
+ // Dispatch email and WhatsApp
  try {
- if (newStatus === 'Suspended') {
- await sendSystemEmail('ACCOUNT_LOCKED', { to_email: user.email, name: user.name });
- } else {
- await sendSystemEmail('ACCOUNT_REACTIVATED', { to_email: user.email, name: user.name });
- }
+   const waQueue = [];
+   if (newStatus === 'Suspended') {
+     await sendSystemEmail('ACCOUNT_LOCKED', { to_email: user.email, name: user.name });
+     if (user.phone) {
+       waQueue.push({
+         phone: user.phone,
+         message: `SECURITY ALERT: Your Prudentia ERP account has been temporarily suspended by the administration. Please contact the IT Helpdesk for assistance.`,
+         status: 'PENDING',
+         recipient_name: user.name
+       });
+     }
+   } else {
+     await sendSystemEmail('ACCOUNT_REACTIVATED', { to_email: user.email, name: user.name });
+     if (user.phone) {
+       waQueue.push({
+         phone: user.phone,
+         message: `SECURITY UPDATE: Your Prudentia ERP account has been reactivated. You may now log in to the portal securely.`,
+         status: 'PENDING',
+         recipient_name: user.name
+       });
+     }
+   }
+   if (waQueue.length > 0) {
+     await supabase.from('whatsapp_queue').insert(waQueue);
+   }
  } catch (err) { 
-  console.warn("Email dispatch skipped (template might not exist):", err); 
-}
+  console.warn("Comms dispatch skipped:", err); 
+ }
 if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() + " successfully.", "success");
 
  } catch (error) {
@@ -362,6 +382,16 @@ if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() +
  if (error) throw error;
  
  await sendSystemEmail('PASSCODE_RESET', { to_email: user.email, name: user.name, password: newPass, erp_id: user.id });
+ 
+ if (user.phone) {
+   await supabase.from('whatsapp_queue').insert({
+     phone: user.phone,
+     message: `SECURITY ALERT: A new temporary passcode has been generated for your Prudentia ERP account.\n\nERP ID: ${user.id}\nTemporary Passcode: ${newPass}\n\nPlease log in and change your password immediately.`,
+     status: 'PENDING',
+     recipient_name: user.name
+   }).catch(e => console.warn("WhatsApp queue failed:", e));
+ }
+
  window.erpDialog.alert("New temporary passcode sent to " + user.email);
  } catch (error) {
  if(window.erpToast) window.erpToast.show("Failed to reset passcode: " + error.message, "error");
@@ -495,6 +525,7 @@ if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() +
  password: generatedPassword
  });
  setProvisionLogs(prev => [...prev, `[EMAIL SUCCESS] Credentials securely dispatched to ${newUserEmail}`]);
+
  } catch (emailErr) {
  setProvisionLogs(prev => [...prev, `[WARNING] Email dispatch failed: ${emailErr.message}. Manual share required: ${generatedPassword}`]);
  }

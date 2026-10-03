@@ -10,6 +10,24 @@ import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { generateComponentPDF } from "../../../DocumentTemplates/pdfEngine";
 import { useRef } from "react";
 
+const getFeeTheme = (type) => {
+  const t = (type || '').toLowerCase();
+  if (t.includes('tuition')) return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
+  if (t.includes('exam')) return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+  if (t.includes('hostel')) return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+  if (t.includes('transport')) return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+  return 'bg-themeTextSec/10 text-themeTextSec border-themeBorder';
+};
+
+const getFeeIcon = (type) => {
+  const t = (type || '').toLowerCase();
+  if (t.includes('tuition')) return 'fa-book-open';
+  if (t.includes('exam')) return 'fa-file-lines';
+  if (t.includes('hostel')) return 'fa-bed';
+  if (t.includes('transport')) return 'fa-bus';
+  return 'fa-file-invoice-dollar';
+};
+
 export default function Fees({ isEmbedded = false }) {
  const { userSession } = useERP();
  const studentId = userSession?.db_id || userSession?.id;
@@ -19,6 +37,25 @@ export default function Fees({ isEmbedded = false }) {
  const [isProcessing, setIsProcessing] = useState(false);
  const [successModal, setSuccessModal] = useState(null);
  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+
+  const [paymentSettings, setPaymentSettings] = useState({
+    upi_id: 'prudentia@icici',
+    bank_name: 'ICICI Bank',
+    account_name: 'PRUDENTIA COLLEGE OF LAW',
+    account_number: '024305013005',
+    ifsc_code: 'ICIC0000243'
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await supabase.from('payment_gateway_settings').select('*').limit(1).single();
+      if (data) {
+        setPaymentSettings(data);
+      }
+    };
+    fetchSettings();
+  }, []);
+
  const [verificationData, setVerificationData] = useState({
  mode: 'NEFT',
  referenceNumber: '',
@@ -179,7 +216,7 @@ export default function Fees({ isEmbedded = false }) {
  setIsVerificationModalOpen(false);
  setSuccessModal({ amount: currentTotal, transactionId: transactionId, isPending: true });
 
- } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); } finally {
+ } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show(error.message || "An error occurred. Please try again.", "error"); } finally {
  setIsProcessing(false);
  }
  };
@@ -193,127 +230,177 @@ export default function Fees({ isEmbedded = false }) {
  }).format(amount);
  };
  
+  if (isVerificationModalOpen) {
+    return (
+      <div className="min-h-screen bg-themeApp text-themeText animate-fade-in flex flex-col relative z-[200]">
+        
+        {/* Processing State */}
+        {isProcessing && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-themeApp/80 animate-fade-in">
+            <div className="bg-themePanel border border-themeBorder p-8 rounded-[2rem] flex flex-col items-center max-w-sm w-full mx-4 shadow-2xl">
+              <i className="fa-solid fa-circle-notch fa-spin text-4xl text-amber-500 mb-6"></i>
+              <h3 className="text-xl font-black mb-2 text-center text-themeText">Processing Payment</h3>
+              <p className="text-themeTextSec text-xs text-center mb-6 font-bold leading-relaxed">Securing your transaction with 256-bit SSL encryption. Please do not close this window.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Top Navbar for full-screen view */}
+        <div className="w-full px-6 py-6 border-b border-themeBorder flex items-center justify-between sticky top-0 bg-themeApp/80 backdrop-blur-xl z-40">
+           <div className="flex items-center gap-3">
+             <button onClick={() => setIsVerificationModalOpen(false)} className="w-10 h-10 bg-themeElevated border border-themeBorder flex items-center justify-center rounded-full text-themeTextSec hover:text-themeText hover:bg-themePanel/20 transition-all">
+                <i className="fa-solid fa-arrow-left text-sm"></i>
+             </button>
+             <h2 className="text-xl font-black text-themeText tracking-tight">Checkout</h2>
+           </div>
+           <div className="flex items-center gap-2 px-4 py-2 bg-themeElevated border border-themeBorder rounded-full text-xs font-bold text-themeTextSec">
+             <i className="fa-solid fa-lock text-emerald-500"></i> Secure Payment
+           </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-8 lg:py-12">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            
+            {/* Left: Instructions */}
+            <div className="lg:col-span-7 flex flex-col gap-8">
+              <div>
+                <h1 className="text-3xl lg:text-5xl font-black text-themeText tracking-tight mb-2">Complete your <br/> Payment.</h1>
+                <p className="text-sm font-medium text-themeTextSec uppercase tracking-widest mt-2">Transfer <strong className="text-amber-500 font-black">{formatCurrency(currentTotal)}</strong> and submit details below.</p>
+              </div>
+
+              {verificationData.mode === 'NEFT' && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[2rem] p-8 lg:p-10 animate-fade-in h-full flex flex-col justify-center">
+                  <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-8 flex items-center gap-2"><i className="fa-solid fa-building-columns"></i> College Bank Details</p>
+                  <div className="flex flex-col gap-6">
+                    <div className="flex justify-between items-end border-b border-amber-500/10 pb-4"><span className="text-themeTextSec/60 font-bold uppercase tracking-widest text-[10px]">Bank Name</span><span className="font-black text-themeText text-lg">{paymentSettings.bank_name}</span></div>
+                    <div className="flex justify-between items-end border-b border-amber-500/10 pb-4"><span className="text-themeTextSec/60 font-bold uppercase tracking-widest text-[10px]">Account Name</span><span className="font-black text-themeText text-lg">{paymentSettings.account_name}</span></div>
+                    <div className="flex justify-between items-end border-b border-amber-500/10 pb-4"><span className="text-themeTextSec/60 font-bold uppercase tracking-widest text-[10px]">Account No.</span><div className="flex items-center gap-2"><span className="font-mono font-black text-themeText text-xl">{paymentSettings.account_number}</span></div></div>
+                    <div className="flex justify-between items-end"><span className="text-themeTextSec/60 font-bold uppercase tracking-widest text-[10px]">IFSC Code</span><div className="flex items-center gap-2"><span className="font-mono font-black text-themeText text-xl">{paymentSettings.ifsc_code}</span></div></div>
+                  </div>
+                </div>
+              )}
+              
+              {verificationData.mode === 'UPI' && (
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-[2rem] p-8 lg:p-10 animate-fade-in h-full flex flex-col items-center justify-center text-center">
+                  <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-4 flex items-center gap-2"><i className="fa-brands fa-google-pay text-lg"></i> Scan via UPI</p>
+                  
+                  {paymentSettings.upi_qr_url ? (
+                     <div className="w-48 h-48 lg:w-64 lg:h-64 bg-white p-4 rounded-3xl shadow-xl mx-auto mb-6">
+                       <img src={paymentSettings.upi_qr_url} alt="UPI QR" className="w-full h-full object-contain mix-blend-multiply" />
+                     </div>
+                  ) : (
+                     <div className="w-48 h-48 lg:w-64 lg:h-64 bg-themePanel rounded-3xl shadow-xl mx-auto mb-6 flex flex-col items-center justify-center border border-themeBorder text-themeTextSec">
+                       <i className="fa-solid fa-qrcode text-6xl mb-4 text-emerald-500/30"></i>
+                       <span className="text-[10px] font-bold uppercase tracking-widest">No QR Available</span>
+                     </div>
+                  )}
+                  
+                  <p className="text-sm font-medium text-themeTextSec mb-2">Or pay to UPI ID</p>
+                  <p className="text-2xl font-black text-themeText font-mono px-6 py-3 bg-themeElevated rounded-xl border border-themeBorder inline-block">{paymentSettings.upi_id}</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Right: Form */}
+            <div className="lg:col-span-5">
+              <div className="bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder rounded-[2rem] p-6 lg:p-8 relative shadow-2xl h-full flex flex-col">
+                <div className="mb-8 border-b border-themeBorder pb-6">
+                   <h3 className="text-xs font-bold text-themeTextSec uppercase tracking-widest mb-1">Total Amount</h3>
+                   <div className="text-4xl font-black text-themeText font-mono tracking-tight">{formatCurrency(currentTotal)}</div>
+                </div>
+                
+                <form onSubmit={handleVerificationSubmit} className="flex flex-col gap-6 flex-1">
+                  <div>
+                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-2">Mode of Payment</label>
+                    <select value={verificationData.mode} onChange={e => setVerificationData({...verificationData, mode: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-5 py-4 text-sm font-black text-themeText outline-none focus:border-amber-500 appearance-none">
+                      <option value="NEFT">NEFT / RTGS</option>
+                      <option value="UPI">UPI Transfer</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-2">Reference No. / UTR</label>
+                    <input type="text" required value={verificationData.referenceNumber} onChange={e => setVerificationData({...verificationData, referenceNumber: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-5 py-4 text-sm font-black text-themeText outline-none focus:border-amber-500" placeholder="Enter 12-digit UTR or Txn ID" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-2">Transfer Date</label>
+                    <input type="date" required value={verificationData.transferDate} onChange={e => setVerificationData({...verificationData, transferDate: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-5 py-4 text-sm font-black text-themeText outline-none focus:border-amber-500" />
+                  </div>
+                  <div className="flex-1 flex items-end mt-4">
+                    <button type="submit" disabled={isProcessing} className="w-full py-5 bg-amber-500 hover:bg-amber-400 text-themeApp font-black text-base rounded-xl transition-all hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:-translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
+                      {isProcessing ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Confirm Payment'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  }
  return (
  <div className={`w-full animate-fade-in selection:bg-themeElevated dark:bg-themeApp ${!isEmbedded ? "min-h-screen bg-themeApp text-themeText " : ""}`}>
  <div className={`w-full max-w-[1800px] mx-auto flex flex-col gap-6 lg:gap-8 ${!isEmbedded ? "p-4 sm:p-6 lg:p-8 pb-10 lg:pb-10 xl:pb-8" : "pb-10"}`}>
  <div className="w-full flex flex-col gap-6 lg:gap-8 animate-fade-in relative z-20">
 
- {/* PROCESSING OVERLAY */}
- {isProcessing && (
- <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/80 animate-fade-in">
- <div className="bg-themePanel border border-themeBorder p-8 rounded-2xl border border-themeBorder flex flex-col items-center max-w-sm w-full mx-4">
- <i className="fa-solid fa-circle-notch fa-spin text-4xl text-themeAccent mb-6"></i>
- <h3 className={`${theme.text.heading} text-xl mb-2 text-center text-themeText `}>Processing Payment</h3>
- <p className={`${theme.text.secondary} text-sm text-center mb-6`}>Securing your transaction with 256-bit SSL encryption. Please do not close this window.</p>
- <div className="w-full bg-themeElevated backdrop-blur-xl border border-themeBorder h-2 rounded-full overflow-hidden">
- <div className="h-full bg-amber-500 animate-pulse rounded-full" style={{ width: '60%' }}></div>
- </div>
- </div>
- </div>
- )}
-
- 
- {/* VERIFICATION MODAL */}
- {isVerificationModalOpen && (
- <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-md bg-black/80 animate-fade-in px-4">
- <div className="bg-themePanel border border-themeBorder shadow-none rounded-[2rem] p-6 lg:p-8 max-w-md w-full relative">
- <button onClick={() => setIsVerificationModalOpen(false)} className="absolute top-6 right-6 text-themeTextSec hover:text-themeText transition-colors">
- <i className="fa-solid fa-xmark text-xl"></i>
- </button>
- <h2 className="text-xl font-black text-themeText mb-2">Verify Payment</h2>
- <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest mb-6">Submit your transaction details for admin verification.</p>
- 
- {verificationData.mode === 'NEFT' && (
- <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-2 animate-fade-in">
- <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i className="fa-solid fa-building-columns"></i> College Bank Details</p>
- <div className="flex flex-col gap-2">
- <div className="flex justify-between text-xs"><span className="text-themeTextSec /60 font-medium">Bank Name</span><span className="font-black text-themeText tracking-tight">ICICI Bank</span></div>
- <div className="flex justify-between text-xs"><span className="text-themeTextSec /60 font-medium">Account Name</span><span className="font-black text-themeText tracking-tight">PRUDENTIA COLLEGE OF LAW</span></div>
- <div className="flex justify-between text-xs items-center"><span className="text-themeTextSec /60 font-medium">Account No.</span><div className="flex items-center gap-2"><span className="font-mono font-black text-themeText tracking-tight">024305013005</span><button type="button" onClick={() => navigator.clipboard.writeText('024305013005')} className="text-amber-500 hover:text-amber-600"><i className="fa-regular fa-copy"></i></button></div></div>
- <div className="flex justify-between text-xs items-center"><span className="text-themeTextSec /60 font-medium">IFSC Code</span><div className="flex items-center gap-2"><span className="font-mono font-black text-themeText tracking-tight">ICIC0000243</span><button type="button" onClick={() => navigator.clipboard.writeText('ICIC0000243')} className="text-amber-500 hover:text-amber-600"><i className="fa-regular fa-copy"></i></button></div></div>
- </div>
- </div>
- )}
- 
- {verificationData.mode === 'UPI' && (
- <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-2 animate-fade-in flex items-center justify-between">
- <div>
- <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1 flex items-center gap-2"><i className="fa-brands fa-google-pay"></i> College UPI ID</p>
- <div className="flex items-center gap-2 mt-2">
- <p className="text-sm font-black text-themeText font-mono tracking-tight">prudentia@icici</p>
- <button type="button" onClick={() => navigator.clipboard.writeText('prudentia@icici')} className="text-emerald-500 hover:text-emerald-600"><i className="fa-regular fa-copy"></i></button>
- </div>
- </div>
- <div className="w-12 h-12 bg-themePanel rounded-lg p-1 shadow-sm flex items-center justify-center">
- <i className="fa-solid fa-qrcode text-3xl text-themeText"></i>
- </div>
- </div>
- )}
-
- {verificationData.mode === 'Demand Draft' && (
- <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-2 animate-fade-in">
- <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-2 flex items-center gap-2"><i className="fa-solid fa-money-check"></i> DD Instructions</p>
- <p className="text-xs text-themeTextSec leading-relaxed font-medium">Draw the Demand Draft in favor of <strong className="text-themeText font-black">"PRUDENTIA COLLEGE OF LAW"</strong>, payable at <strong className="text-themeText font-black">Hyderabad</strong>. Submit the physical DD to the accounts office.</p>
- </div>
- )}
- 
- <form onSubmit={handleVerificationSubmit} className="flex flex-col gap-4">
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Mode of Payment</label>
- <select value={verificationData.mode} onChange={e => setVerificationData({...verificationData, mode: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder Accent appearance-none">
- <option value="NEFT">NEFT / RTGS</option>
- <option value="UPI">UPI Transfer</option>
- <option value="Demand Draft">Demand Draft</option>
- </select>
- </div>
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Reference No. / UTR</label>
- <input type="text" required value={verificationData.referenceNumber} onChange={e => setVerificationData({...verificationData, referenceNumber: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder Accent" placeholder="Enter Transaction ID" />
- </div>
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Transfer Date</label>
- <input type="date" required value={verificationData.transferDate} onChange={e => setVerificationData({...verificationData, transferDate: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-themeBorder Accent" />
- </div>
- <button type="submit" disabled={isProcessing} className="w-full py-3.5 bg-themeAccent text-themeApp font-black text-sm rounded-xl hover:bg-themeAccent/90 transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
- {isProcessing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Submit for Verification'}
- </button>
- </form>
- </div>
- </div>
- )}
- 
  {/* SUCCESS MODAL */}
- {successModal && (
- <div className="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-sm bg-black/80 animate-fade-in">
- <div className="bg-themePanel border border-themeBorder p-8 rounded-2xl border-themeBorder border-emerald-500/30 flex flex-col items-center max-w-sm w-full mx-4">
- <div className="w-16 h-16 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center text-3xl mb-4 border border-emerald-500/20">
- <i className="fa-solid fa-check"></i>
- </div>
- <h3 className={`${theme.text.heading} text-xl mb-2 text-center text-themeText `}>{successModal?.isPending ? 'Verification Pending' : 'Payment Successful'}!</h3>
- <p className={`${theme.text.secondary} text-sm text-center mb-6`}>
- {successModal?.isPending ? 'Your payment details of' : 'Your payment of'} <span className="font-bold text-themeText ">{formatCurrency(successModal.amount)}</span> has been securely processed.
- </p>
- <div className="w-full bg-themeElevated backdrop-blur-xl border border-themeBorder rounded-lg p-4 mb-6 flex flex-col gap-2">
- <div className="flex justify-between text-xs">
- <span className="text-themeTextSec ">Transaction ID</span>
- <span className="font-mono text-themeText ">{successModal.transactionId}</span>
- </div>
- <div className="flex justify-between text-xs">
- <span className="text-themeTextSec ">Date</span>
- <span className="font-mono text-themeText ">{new Date().toLocaleDateString('en-GB')}</span>
- </div>
- </div>
- <button type="button" 
- onClick={() => setSuccessModal(null)}
- className="w-full py-3 bg-themeElevated backdrop-blur-xl border border-themeBorder hover:bg-themeElevated text-themeText text-sm font-bold rounded-lg hover:border-amber-500/50 transition duration-300"
- >
- Back to Ledger
- </button>
- </div>
- </div>
- )}
+  {successModal && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Dynamic blurred backdrop */}
+      <div className="absolute inset-0 bg-themeApp/80 dark:bg-black/60 backdrop-blur-xl animate-fade-in" onClick={() => setSuccessModal(null)}></div>
+      
+      {/* Modal Card */}
+      <div className="relative w-full max-w-md bg-themePanel/90 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/[0.08] shadow-2xl rounded-[2rem] overflow-hidden transform transition-all animate-slide-up">
+        
+        {/* Top Accent Strip */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
 
- <PageHeader 
+        <div className="p-8 sm:p-10 flex flex-col items-center">
+          
+          {/* Animated Icon Ring */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 bg-emerald-500/20 rounded-full animate-ping"></div>
+            <div className="relative w-20 h-20 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center text-4xl border-4 border-white dark:border-themePanel shadow-lg shadow-emerald-500/20">
+              <i className="fa-solid fa-check"></i>
+            </div>
+          </div>
+
+          <h3 className="text-2xl font-black tracking-tight text-themeText text-center mb-2">
+            {successModal?.isPending ? 'Verification Pending' : 'Payment Successful'}
+          </h3>
+          
+          <p className="text-sm font-medium text-themeTextSec text-center mb-8 max-w-[260px] leading-relaxed">
+            {successModal?.isPending ? 'Your payment details of' : 'Your payment of'} <strong className="text-themeText font-black">{formatCurrency(successModal.amount)}</strong> has been securely processed.
+          </p>
+
+          {/* Receipt Details Box */}
+          <div className="w-full bg-themeElevated/50 dark:bg-black/20 border border-themeBorder dark:border-white/[0.04] rounded-2xl p-5 mb-8 flex flex-col gap-3">
+            <div className="flex justify-between items-center border-b border-themeBorder dark:border-white/[0.04] pb-3">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Transaction ID</span>
+              <span className="font-mono text-sm font-black text-themeText">{successModal.transactionId}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec">Date</span>
+              <span className="font-mono text-sm font-black text-themeText">{new Date().toLocaleDateString('en-GB')}</span>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            onClick={() => setSuccessModal(null)}
+            className="w-full py-4 bg-themeText text-themeApp hover:bg-emerald-500 hover:text-white rounded-xl text-sm font-black transition-all flex justify-center items-center gap-2 shadow-xl hover:shadow-emerald-500/25 hover:-translate-y-1"
+          >
+            <i className="fa-solid fa-arrow-left"></i> Back to Ledger
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+
+  <PageHeader 
  icon="fa-solid fa-file-invoice-dollar"
  title="Financial Ledger"
  subtitle="View outstanding dues, pay securely, and download receipts."
@@ -455,12 +542,13 @@ export default function Fees({ isEmbedded = false }) {
  <div className="bg-themePanel border border-themeBorder rounded-[2.5rem] overflow-hidden p-4 lg:p-6">
  {feeBreakdown.map((item) => {
  const isSelected = selectedFees.includes(item.id);
+ const isInactive = item.status === "paid" || item.status === "under_verification";
 
  return (
  <div
  key={item.id}
  onClick={() => item.status === 'pending' && !isProcessing && toggleFeeSelection(item.id)}
- className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-5 rounded-2xl lg:rounded-2xl transition duration-300 mb-2 last:mb-0 border-themeBorder ${item.status === 'paid'
+ className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-5 rounded-2xl lg:rounded-2xl transition duration-300 mb-2 last:mb-0 border-themeBorder ${isInactive
  ? 'opacity-50 grayscale bg-themePanel/5 backdrop-blur-sm border-themeBorder '
  : `bg-themeElevated backdrop-blur-xl border border-themeBorder hover:bg-themePanel/20 hover:border-white/30 cursor-pointer hover:border-amber-500/40 hover:-translate-y-0.5 ${isSelected ? 'border-amber-500/30 bg-amber-500/10' : 'border-transparent'}`
  }`}
@@ -470,7 +558,7 @@ export default function Fees({ isEmbedded = false }) {
  <i className={`fa-solid ${getFeeIcon(item.type)} text-base lg:text-lg`}></i>
  </div>
  <div>
- <h3 className={`text-sm lg:text-base font-black tracking-tight ${item.status === 'paid' ? 'line-through text-themeTextSec ' : 'text-themeText '}`}>
+ <h3 className={`text-sm lg:text-base font-black tracking-tight ${isInactive ? 'line-through text-themeTextSec ' : 'text-themeText '}`}>
  {item.title}
  </h3>
  <p className={`text-[9px] lg:text-[10px] font-bold ${theme.text.muted} tracking-normal mt-0.5 flex flex-wrap items-center gap-2`}>
@@ -481,13 +569,17 @@ export default function Fees({ isEmbedded = false }) {
  </div>
 
  <div className="flex items-center justify-between sm:justify-end gap-4 lg:gap-6 w-full sm:w-auto shrink-0">
- <span className={`text-base lg:text-xl font-semibold tracking-tight ${item.status === 'paid' ? 'text-themeTextSec ' : 'text-themeText '}`}>
+ <span className={`text-base lg:text-xl font-semibold tracking-tight ${isInactive ? 'text-themeTextSec ' : 'text-themeText '}`}>
  {formatCurrency(item.amount)}
  </span>
 
  {item.status === 'paid' ? (
- <span className="text-emerald-400 text-[9px] lg:text-[13px] font-medium flex items-center gap-1.5 bg-themePanel border border-themeBorder border border-themeBorder px-2.5 lg:px-3 py-1.5 rounded-lg">
+ <span className="text-emerald-400 text-[9px] lg:text-[13px] font-medium flex items-center gap-1.5 bg-themePanel border border-themeBorder px-2.5 lg:px-3 py-1.5 rounded-lg">
  <i className="fa-solid fa-check"></i> Paid
+ </span>
+ ) : item.status === 'under_verification' ? (
+ <span className="text-amber-500 text-[9px] lg:text-[13px] font-medium flex items-center gap-1.5 bg-themePanel border border-themeBorder px-2.5 lg:px-3 py-1.5 rounded-lg">
+ <i className="fa-solid fa-clock fa-spin"></i> Verifying
  </span>
  ) : (
  <div className="relative flex items-center justify-center pointer-events-none shrink-0 ml-2">

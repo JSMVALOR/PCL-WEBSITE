@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from '../../shared/PageHeader/PageHeader';
 
-const ENGINE_URL = import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005';
+const ENGINE_URL = import.meta.env.DEV ? 'http://localhost:3005' : (import.meta.env.VITE_WHATSAPP_ENGINE_URL || 'http://localhost:3005');
 
 // Templates are now fetched from whatsapp_templates table
 
@@ -38,6 +38,7 @@ export default function AdminWhatsAppQueue() {
  
  // For Email
  const [sendViaEmail, setSendViaEmail] = useState(false);
+ const [sortOption, setSortOption] = useState('newest');
 
  // Derived selectable groups based on assignments
  const assignedGroupIds = [...new Set([...globalGroups, ...batches.map(b => b.whatsapp_group_id).filter(Boolean)])];
@@ -229,6 +230,46 @@ export default function AdminWhatsAppQueue() {
      }
    }
  }, []);
+
+  const forceSendAll = async () => {
+    try {
+      const res = await fetch(`${ENGINE_URL}/api/whatsapp/process-queue`, { method: 'POST' });
+      if (res.ok) {
+         if (window.erpToast) window.erpToast.show("Force send triggered!", "success");
+         fetchQueue();
+      }
+    } catch (e) {
+      if (window.erpToast) window.erpToast.show("Failed to force send. Check engine connection.", "error");
+    }
+  };
+
+  const clearUnsent = async () => {
+    try {
+      const res = await fetch(`${ENGINE_URL}/api/whatsapp/queue/clear`, { method: 'POST' });
+      if (res.ok) {
+        if (window.erpToast) window.erpToast.show("Unsent messages cleared.", "success");
+        fetchQueue();
+      } else {
+        throw new Error('Backend error');
+      }
+    } catch (e) {
+      if (window.erpToast) window.erpToast.show("Failed to clear unsent messages.", "error");
+    }
+  };
+  
+  const deleteMessage = async (id) => {
+    try {
+      const res = await fetch(`${ENGINE_URL}/api/whatsapp/queue/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        if (window.erpToast) window.erpToast.show("Message deleted.", "success");
+        fetchQueue();
+      } else {
+        throw new Error('Backend error');
+      }
+    } catch (e) {
+      if (window.erpToast) window.erpToast.show("Failed to delete message.", "error");
+    }
+  };
 
  const fetchQueue = useCallback(async () => {
    const { data, error } = await supabase
@@ -471,11 +512,20 @@ export default function AdminWhatsAppQueue() {
                       <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                         <i className="fa-solid fa-list-check text-themeAccent"></i> Outbound Queue
                       </h3>
-                      <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Live Telemetry • Refreshes every 8s</p>
+                      <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Live Telemetry • Refreshes every 5s</p>
                     </div>
-                    <span className="text-xs font-bold bg-themeAccent/10 text-themeAccent px-4 py-2 rounded-full border border-themeAccent/20">
-                      {queue.filter(q => q.status === 'PENDING').length} Pending
-                    </span>
+                    <div className="flex items-center gap-2">
+                       <select value={sortOption} onChange={(e) => setSortOption(e.target.value)} className="bg-themeElevated border border-themeBorder text-themeText px-3 py-1.5 rounded-lg text-xs font-bold focus:outline-none appearance-none cursor-pointer hover:bg-themeBorder/50 transition-colors hidden sm:block">
+                          <option value="newest">Sort: Newest</option>
+                          <option value="oldest">Sort: Oldest</option>
+                          <option value="status">Sort: Status</option>
+                       </select>
+                       <button onClick={forceSendAll} className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors border border-emerald-500/20"><i className="fa-solid fa-bolt mr-1"></i>Force Send All</button>
+                       <button onClick={clearUnsent} className="bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors border border-rose-500/20"><i className="fa-solid fa-trash-can mr-1"></i>Clear Unsent</button>
+                       <span className="text-xs font-bold bg-themeAccent/10 text-themeAccent px-4 py-1.5 rounded-full border border-themeAccent/20">
+                         {queue.filter(q => q.status === 'PENDING').length} Pending
+                       </span>
+                    </div>
                   </div>
                   
                   <div className="overflow-x-auto flex-1 p-2 lg:p-4 custom-scrollbar">
@@ -486,6 +536,7 @@ export default function AdminWhatsAppQueue() {
                           <th className="px-6 py-4 text-[10px] font-black tracking-widest uppercase text-themeTextSec">Recipient</th>
                           <th className="px-6 py-4 text-[10px] font-black tracking-widest uppercase text-themeTextSec">Message</th>
                           <th className="px-6 py-4 text-[10px] font-black tracking-widest uppercase text-themeTextSec">Status</th>
+                          <th className="px-6 py-4 text-[10px] font-black tracking-widest uppercase text-themeTextSec text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-themeBorder">
@@ -496,7 +547,14 @@ export default function AdminWhatsAppQueue() {
                               <span className="text-themeTextSec font-bold text-sm">No messages in queue</span>
                             </td>
                           </tr>
-                        ) : queue.map(item => (
+                        ) : [...queue].sort((a, b) => {
+                          if (sortOption === 'oldest') return new Date(a.created_at) - new Date(b.created_at);
+                          if (sortOption === 'status') {
+                            const order = { 'PENDING': 0, 'FAILED': 1, 'SENT': 2 };
+                            return order[a.status] - order[b.status];
+                          }
+                          return new Date(b.created_at) - new Date(a.created_at); // newest by default
+                        }).map(item => (
                           <tr key={item.id} className="block md:table-row border-b md:border-none border-themeBorder/50 hover:bg-themeElevated/20 transition-colors p-4 md:p-0">
                             <td className="block md:table-cell px-2 py-1 md:px-6 md:py-4">
                               <span className="text-xs font-bold text-themeTextSec whitespace-nowrap">
@@ -527,6 +585,11 @@ export default function AdminWhatsAppQueue() {
                                   <span className="text-[9px] text-rose-500 max-w-[150px] truncate" title={item.error_log}>{item.error_log}</span>
                                 </div>
                               )}
+                            </td>
+                            <td className="block md:table-cell px-2 py-2 md:px-6 md:py-4 text-right">
+                                <button onClick={() => deleteMessage(item.id)} className="w-8 h-8 rounded-full bg-themeElevated flex items-center justify-center hover:bg-rose-500/10 hover:text-rose-500 transition-colors text-themeTextSec border border-themeBorder">
+                                  <i className="fa-solid fa-trash-can text-[10px]"></i>
+                                </button>
                             </td>
                           </tr>
                         ))}
@@ -721,9 +784,19 @@ export default function AdminWhatsAppQueue() {
                        <h3 className="text-lg font-bold text-themeText flex items-center gap-3">
                          <i className="fa-solid fa-file-lines text-purple-500"></i> Message Templates
                        </h3>
-                       <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Send pre-built template messages</p>
+                        <p className="text-[10px] uppercase tracking-widest text-themeTextSec font-bold mt-1">Send pre-built template messages manually</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mx-6 lg:mx-8 mt-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-4 animate-fade-in">
+                      <i className="fa-solid fa-robot text-emerald-500 mt-0.5"></i>
+                      <div>
+                        <h4 className="text-sm font-bold text-emerald-500 mb-1">Templates are now fully automated!</h4>
+                        <p className="text-xs font-medium text-emerald-500/80 leading-relaxed">
+                          You no longer need to manually trigger templates here. When you create a fee invoice (batch or personal), the system will automatically pull the <strong>FEE_REMINDER</strong> template and send personalized WhatsApp messages to each student instantly. You can still use this tab for manual overrides if needed.
+                        </p>
+                      </div>
                      </div>
-                   </div>
 
                    <div className="flex flex-col gap-6 p-6 lg:p-8 flex-1 overflow-y-auto custom-scrollbar">
                      <div className="flex flex-col gap-2">

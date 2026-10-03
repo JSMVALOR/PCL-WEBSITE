@@ -385,6 +385,47 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
  throw lockErr;
  }
  
+ // Notify Parents of marks release
+ try {
+   const studentIds = upsertArray.map(r => r.student_id);
+   const { data: studentProfiles } = await supabase.from('profiles').select('id, full_name, email, phone, parent_phone, parent_email').in('id', studentIds);
+   if (studentProfiles && studentProfiles.length > 0) {
+     const waQueue = [];
+     const emailQueue = [];
+     
+     const { sendSystemEmail } = await import('../../../lib/EmailService');
+     
+     upsertArray.forEach(row => {
+       const student = studentProfiles.find(p => p.id === row.student_id);
+       if (!student) return;
+       
+       const marksStr = `${row.marks_obtained}/${row.total_marks}`;
+       
+       if (student.parent_phone) {
+         waQueue.push({
+           phone: student.parent_phone,
+           message: `ACADEMIC UPDATE: Dear Parent, marks for ${student.full_name} in ${currentAssessmentTitle} have been published. They scored ${marksStr}. You can view the full details on the ERP portal.`,
+           status: 'PENDING',
+           recipient_name: 'Parent of ' + student.full_name
+         });
+       }
+       if (student.parent_email) {
+         emailQueue.push(
+           sendSystemEmail('GENERAL_BROADCAST', {
+             to_email: student.parent_email,
+             title: 'Marks Released',
+             content: `Marks for ${student.full_name} in the assessment "${currentAssessmentTitle}" have been officially published. The score obtained is ${marksStr}. Log in to the parent portal for detailed academic performance.`,
+             priority: 'normal'
+           }).catch(e => console.error(e))
+         );
+       }
+     });
+     
+     if (waQueue.length > 0) await supabase.from('whatsapp_queue').insert(waQueue);
+     if (emailQueue.length > 0) await Promise.allSettled(emailQueue);
+   }
+ } catch(e) { console.error("Marks notification failed:", e); }
+ 
  setIsLocked(true);
  window.erpDialog?.alert("Grades submitted and roster locked successfully!");
  fetchStudentsAndMarks(); 

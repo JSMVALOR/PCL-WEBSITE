@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import PageHeader from "../../shared/PageHeader/PageHeader";
-import { sendSystemEmail } from '../../../lib/EmailService';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 export default function AdminApprovals({ isEmbedded = false }) {
  const [facultyLeaves, setFacultyLeaves] = useState([]);
@@ -109,9 +109,13 @@ export default function AdminApprovals({ isEmbedded = false }) {
  });
  }
 
+ if (g.reporter?.phone) {
+ sendSystemWhatsApp(g.reporter.phone, null, { template_id: 'MEETING_CALL', variables: { student_name: g.reporter.full_name, category: g.category, time: meetingTime }, recipient_name: g.reporter.full_name }).catch(e => console.error('WA failed:', e));
+ }
+
  await handleGrievanceAction(g.id, 'investigating', `Meeting scheduled for ${meetingTime}`);
  
- window.erpToast.show(`Meeting scheduled and email sent to ${g.reporter.full_name}.`, "success");
+ window.erpToast.show(`Meeting scheduled and notified to ${g.reporter.full_name}.`, "success");
  } catch (err) {
  console.error(err);
  window.erpToast.show("Failed to send meeting email.", "error");
@@ -164,6 +168,9 @@ export default function AdminApprovals({ isEmbedded = false }) {
                  new_status: newStatus.toUpperCase(),
                  notes: notes || "No specific remarks provided."
              }).catch(e => console.error("Email failed:", e));
+             if (grievanceData.reporter?.phone) {
+                 sendSystemWhatsApp(grievanceData.reporter.phone, null, { template_id: 'GRIEVANCE_UPDATE', variables: { student_name: grievanceData.reporter.full_name, category: grievanceData.category, new_status: newStatus.toUpperCase(), notes: notes || '' }, recipient_name: grievanceData.reporter.full_name }).catch(e => console.error('WA failed:', e));
+             }
          }
      }
      
@@ -190,6 +197,9 @@ export default function AdminApprovals({ isEmbedded = false }) {
                  new_status: newStatus.toUpperCase(),
                  notes: notes || "You have been cleared/notified."
              }).catch(e => console.error("Email failed:", e));
+         }
+         if (grievanceData.accused?.phone) {
+             sendSystemWhatsApp(grievanceData.accused.phone, null, { template_id: 'GRIEVANCE_UPDATE', variables: { student_name: grievanceData.accused.full_name, category: grievanceData.category, new_status: newStatus.toUpperCase(), notes: notes || "You have been cleared/notified." }, recipient_name: grievanceData.accused.full_name }).catch(e => console.error('WA failed:', e));
          }
      }
      

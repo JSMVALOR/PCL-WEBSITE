@@ -5,7 +5,7 @@ const cors = require('cors');
 const fs = require('fs');
 const qrcode = require('qrcode');
 const { createClient } = require('@supabase/supabase-js');
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, makeCacheableSignalKeyStore, Browsers } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 
 const app = express();
@@ -22,12 +22,18 @@ let clientStatus = 'DISCONNECTED';
 let isProcessingQueue = false;
 let sock = null;
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 10;
+const MAX_RECONNECT_ATTEMPTS = 15;
+let heartbeatInterval = null;
 
 const logger = pino({ level: 'silent' });
 
 // Use absolute path for auth to prevent CWD-related mismatches
 const AUTH_DIR = path.join(__dirname, '.baileys_auth');
+
+// Ensure auth directory exists on startup
+if (!fs.existsSync(AUTH_DIR)) {
+    fs.mkdirSync(AUTH_DIR, { recursive: true });
+}
 
 // ==========================================
 // MESSAGE TEMPLATES
@@ -57,9 +63,86 @@ const MESSAGE_TEMPLATES = {
     FEE_REMINDER: ({ student_name, amount, due_date }) =>
         `💰 *Fee Payment Reminder*\n\nDear Parent/Guardian of *${student_name}*,\n\nA fee payment of ₹${amount} is due on ${due_date}.\n\nPlease make the payment at the earliest.\n\n— Prudentia College of Law`,
 
+    // Account Status Change
+    ACCOUNT_STATUS: ({ name, status }) =>
+        `🔔 *Account Update*\n\nDear *${name || 'User'}*,\n\nYour ERP account has been *${(status || 'updated').toUpperCase()}* by the administration.\n\n${status === 'suspended' ? '⚠️ You will not be able to access the portal until reactivation. Contact the Admin office if needed.' : '✅ You can now log in and access all your resources.'}\n\n— Prudentia College of Law`,
+
     // Generic / Custom
     GENERIC: ({ message }) => message || '',
+
+    // Fee Payment Confirmed
+    FEE_PAYMENT_CONFIRMED: ({ student_name, amount, transaction_id, date }) =>
+        `✅ *PAYMENT CONFIRMED*\n\nDear *${student_name}*,\n\nWe have successfully received and verified your payment.\n\n💰 Amount: ₹${amount}\n🔖 Transaction ID: ${transaction_id || 'N/A'}\n📅 Date: ${date || new Date().toLocaleDateString('en-IN')}\n\nYour official receipt has been emailed and is also available in your Student Portal under Finance.\n\n— Prudentia College of Law`,
+
+    // Fee Invoice Raised
+    FEE_INVOICE_RAISED: ({ student_name, title, amount, due_date }) =>
+        `📋 *NEW FEE INVOICE*\n\nDear *${student_name || 'Student'}*,\n\nA new fee invoice has been raised against your account.\n\n📝 Fee: ${title || 'Academic Fee'}\n💰 Amount: ₹${amount || 'See Portal'}\n📅 Due Date: ${due_date}\n\nPlease check your Student ERP Portal under Finance to view and pay your dues securely.\n\n— Prudentia College of Law`,
+
+    // Grievance Update
+    GRIEVANCE_UPDATE: ({ student_name, category, new_status, notes }) =>
+        `⚖️ *Grievance Update*\n\nDear *${student_name}*,\n\nYour grievance regarding *${category}* has been updated.\n\n📌 New Status: *${new_status}*\n${notes ? '📝 Remarks: ' + notes : ''}\n\nPlease check your ERP portal for full details.\n\n— Prudentia College of Law`,
+
+    // Meeting Call
+    MEETING_CALL: ({ student_name, category, time }) =>
+        `🔴 *MANDATORY MEETING*\n\nDear *${student_name}*,\n\nYou are hereby called for a mandatory meeting.\n\n📂 Regarding: ${category}\n🕐 Time: ${time}\n\nPlease be present on time. Failure to attend may result in ex-parte proceedings.\n\n— Prudentia College of Law`,
+
+    // Attendance Shortage Warning
+    ATTENDANCE_WARNING: ({ student_name, percentage, threshold }) =>
+        `⚠️ *ATTENDANCE WARNING*\n\nDear *${student_name}*,\n\nYour current attendance is *${percentage}%*, which is below the minimum required *${threshold}%*.\n\nPlease improve your attendance immediately to avoid examination debarment.\n\n— Prudentia College of Law`,
+
+    // Debarment Notice
+    DEBARMENT_NOTICE: ({ student_name, percentage, threshold }) =>
+        `🚨 *DEBARMENT NOTICE*\n\nDear *${student_name}*,\n\nDue to severe attendance shortage (*${percentage}%* against the required *${threshold}%*), you have been *DEBARRED* from the upcoming examinations.\n\nPlease contact the Academic Office immediately.\n\n— Prudentia College of Law`,
+
+    // Assignment Published
+    ASSIGNMENT_PUBLISHED: ({ subject_name, title, deadline }) =>
+        `📝 *New Assignment Published*\n\n📚 Subject: ${subject_name}\n📋 Title: ${title}\n📅 Deadline: ${deadline}\n\nPlease log in to your Student Portal to view details and submit.\n\n— Prudentia College of Law`,
+
+    // Admission Rejection
+    APPLICATION_REJECTED: ({ student_name, program, reason }) =>
+        `📋 *Admission Update*\n\nDear *${student_name}*,\n\nThank you for your interest in *${program}* at Prudentia College of Law.\n\nAfter careful consideration, we regret to inform you that we are unable to offer admission at this time.${reason ? '\n\n📝 Reason: ' + reason : ''}\n\nWe wish you the best in your future endeavors.\n\n— Prudentia College of Law`,
+
+    // First Credentials / New Account
+    FIRST_CREDENTIALS: ({ name, erp_id, password }) =>
+        `🎓 *Welcome to PCL ERP*\n\nDear *${name || 'User'}*,\n\nYour official ERP credentials have been generated:\n\n🆔 ERP ID: *${erp_id}*\n🔑 Temporary Password: *${password}*\n\nPlease log in and change your password immediately.\n\n— Prudentia College of Law`,
+
+    // Payroll Disbursal
+    PAYROLL_DISBURSAL: ({ faculty_name, month, year, net_pay }) =>
+        `💼 *Salary Disbursal*\n\nDear Prof. *${faculty_name}*,\n\nYour salary for *${month} ${year}* has been processed.\n\n💰 Net Pay: ₹${net_pay}\n\nYour payslip has been emailed. Check your ERP Faculty Dashboard for the full breakdown.\n\n— Prudentia College of Law`,
+
+    // Passcode Reset
+    PASSCODE_RESET: ({ name, erp_id }) =>
+        `🔐 *Password Reset*\n\nDear *${name || 'User'}*,\n\nYour ERP password has been reset by the administration.\n\n🆔 ERP ID: *${erp_id}*\n\nYour new temporary password has been sent to your registered email. Please change it immediately after logging in.\n\n— Prudentia College of Law`,
+
+    // Happy Birthday
+    HAPPY_BIRTHDAY: ({ name }) =>
+        `🎉 *Happy Birthday ${name}!* 🎂\n\nThe entire faculty and administration at Prudentia College of Law wishes you a fantastic day ahead!\n\nMay this year bring you great success, learning, and wonderful memories.\n\n— Prudentia College of Law`,
 };
+
+// ==========================================
+// WHATSAPP SESSION - BULLETPROOF PERSISTENCE
+// ==========================================
+
+function startHeartbeat() {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+    // Send a lightweight presence update every 4 minutes to keep the connection alive
+    heartbeatInterval = setInterval(async () => {
+        if (sock && clientStatus === 'CONNECTED') {
+            try {
+                await sock.sendPresenceUpdate('available');
+            } catch (e) {
+                // Silently fail — if this errors, connection.update will handle reconnect
+            }
+        }
+    }, 4 * 60 * 1000);
+}
+
+function stopHeartbeat() {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
+}
 
 async function startWhatsApp() {
     try {
@@ -72,13 +155,30 @@ async function startWhatsApp() {
             },
             printQRInTerminal: false,
             logger,
-            browser: ['PCL ERP', 'Chrome', '10.0'],
-            connectTimeoutMs: 60000,
-            // Prevent connection from going stale
-            keepAliveIntervalMs: 30000,
+            // Use Chrome browser identity — supports multi-device natively
+            // and doesn't conflict with the phone's primary session
+            browser: Browsers.ubuntu('Chrome'),
+            connectTimeoutMs: 90000,
+            // Keep connection alive with frequent pings
+            keepAliveIntervalMs: 25000,
+            // Don't request full history sync — this prevents the heavy
+            // sync that causes Baileys to choke and disconnect
+            syncFullHistory: false,
+            // Reduce noise from message receipts
+            markOnlineOnConnect: false,
+            // Retry connection on failure
+            retryRequestDelayMs: 2000,
         });
 
-        sock.ev.on('creds.update', saveCreds);
+        // CRITICAL: Save credentials on every update — this is what keeps
+        // the session alive across restarts and device switches
+        sock.ev.on('creds.update', async () => {
+            try {
+                await saveCreds();
+            } catch (e) {
+                console.error('[WA] Failed to save credentials:', e.message);
+            }
+        });
 
         sock.ev.on('connection.update', async (update) => {
             const { connection, lastDisconnect, qr } = update;
@@ -90,25 +190,46 @@ async function startWhatsApp() {
             }
 
             if (connection === 'close') {
+                stopHeartbeat();
                 const statusCode = lastDisconnect?.error?.output?.statusCode;
-                const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-                console.log('[WA] Connection closed. Status:', statusCode, '| Reconnecting:', shouldReconnect);
+                const reason = lastDisconnect?.error?.output?.payload?.message || '';
+                
+                // Only consider truly logged out if status is 401 (loggedOut)
+                // Status 408 = timeout, 428 = connection lost, 440 = replaced by another session
+                // 500/503 = server errors — all of these should reconnect
+                const isLoggedOut = statusCode === DisconnectReason.loggedOut;
+                const shouldReconnect = !isLoggedOut;
+                
+                console.log(`[WA] Connection closed. Code: ${statusCode} | Reason: ${reason} | Reconnecting: ${shouldReconnect}`);
                 
                 clientStatus = 'DISCONNECTED';
                 qrDataURL = null;
 
-                if (shouldReconnect && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                if (isLoggedOut) {
+                    // User explicitly logged out from their phone
+                    console.log('[WA] Explicitly logged out. Clearing auth for re-link.');
+                    clientStatus = 'LOGGED_OUT';
+                    try { fs.rmSync(AUTH_DIR, { recursive: true, force: true }); } catch(e) {}
+                    fs.mkdirSync(AUTH_DIR, { recursive: true });
+                    // Auto-restart to show QR again
+                    setTimeout(() => startWhatsApp(), 3000);
+                } else if (shouldReconnect && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                     reconnectAttempts++;
-                    // Exponential backoff: 3s, 6s, 12s, 24s... capped at 60s
-                    const delay = Math.min(3000 * Math.pow(2, reconnectAttempts - 1), 60000);
+                    // Exponential backoff: 2s, 4s, 8s, 16s... capped at 60s
+                    const delay = Math.min(2000 * Math.pow(2, reconnectAttempts - 1), 60000);
                     console.log(`[WA] Reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
                     setTimeout(() => startWhatsApp(), delay);
                 } else if (!shouldReconnect) {
-                    console.log('[WA] Logged out by user. Clear auth to re-link.');
-                    clientStatus = 'LOGGED_OUT';
-                } else {
-                    console.log('[WA] Max reconnect attempts reached. Manual restart required.');
+                    console.log('[WA] Session ended. Manual restart required.');
                     clientStatus = 'DISCONNECTED';
+                } else {
+                    console.log('[WA] Max reconnect attempts reached. Will retry in 5 minutes...');
+                    clientStatus = 'DISCONNECTED';
+                    // Even after max attempts, try again after 5 minutes
+                    setTimeout(() => {
+                        reconnectAttempts = 0;
+                        startWhatsApp();
+                    }, 5 * 60 * 1000);
                 }
             }
 
@@ -116,16 +237,31 @@ async function startWhatsApp() {
                 clientStatus = 'CONNECTED';
                 qrDataURL = null;
                 reconnectAttempts = 0; // Reset on successful connection
+                startHeartbeat();
                 console.log('[WA] WhatsApp Client is Ready!');
             }
         });
+
+        // Handle messages-upsert to keep session actively synced
+        sock.ev.on('messages.upsert', () => {
+            // No-op — just having this listener prevents Baileys from
+            // thinking the connection is idle and dropping it
+        });
+
     } catch (err) {
         console.error('[WA] Failed to start WhatsApp:', err.message);
         // If auth is corrupted, reset and retry
-        if (err.message?.includes('Unexpected') || err.message?.includes('JSON')) {
+        if (err.message?.includes('Unexpected') || err.message?.includes('JSON') || err.message?.includes('proto')) {
             console.log('[WA] Auth may be corrupted. Clearing and retrying...');
             try { fs.rmSync(AUTH_DIR, { recursive: true, force: true }); } catch(e) {}
+            fs.mkdirSync(AUTH_DIR, { recursive: true });
             setTimeout(() => startWhatsApp(), 5000);
+        } else {
+            // Generic error — retry after backoff
+            reconnectAttempts++;
+            const delay = Math.min(3000 * Math.pow(2, reconnectAttempts - 1), 60000);
+            console.log(`[WA] Retrying in ${delay / 1000}s...`);
+            setTimeout(() => startWhatsApp(), delay);
         }
     }
 }
@@ -142,7 +278,8 @@ app.get('/api/whatsapp/health', (req, res) => {
         ok: true, 
         status: clientStatus, 
         uptime: process.uptime(),
-        reconnectAttempts 
+        reconnectAttempts,
+        authFilesExist: fs.existsSync(path.join(AUTH_DIR, 'creds.json')),
     });
 });
 
@@ -294,6 +431,7 @@ app.get('/api/whatsapp/contacts', async (req, res) => {
 
 app.post('/api/whatsapp/logout', async (req, res) => {
     try {
+        stopHeartbeat();
         if (sock) {
             try { await sock.logout(); } catch(err) { console.log('[WA] Sock logout err:', err.message); }
         }
@@ -304,6 +442,7 @@ app.post('/api/whatsapp/logout', async (req, res) => {
         if (fs.existsSync(AUTH_DIR)) {
             try { fs.rmSync(AUTH_DIR, { recursive: true, force: true }); } catch(e){}
         }
+        fs.mkdirSync(AUTH_DIR, { recursive: true });
         clientStatus = 'DISCONNECTED';
         qrDataURL = null;
         reconnectAttempts = 0;
@@ -410,8 +549,39 @@ async function processQueue() {
     isProcessingQueue = false;
 }
 
-// Run the queue every 15 seconds
-setInterval(processQueue, 15000);
+// Endpoint to force process queue manually
+app.post('/api/whatsapp/process-queue', (req, res) => {
+    processQueue();
+    res.json({ success: true, message: 'Queue processing triggered.' });
+});
+
+// Endpoint to clear unsent messages
+app.post('/api/whatsapp/queue/clear', async (req, res) => {
+    try {
+        const { error } = await supabase.from('whatsapp_queue').delete().eq('status', 'PENDING');
+        if (error) throw error;
+        res.json({ success: true, message: 'Unsent messages cleared.' });
+    } catch (e) {
+        console.error("Failed to clear queue:", e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+// Endpoint to delete a specific message
+app.delete('/api/whatsapp/queue/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { error } = await supabase.from('whatsapp_queue').delete().eq('id', id);
+        if (error) throw error;
+        res.json({ success: true, message: 'Message deleted.' });
+    } catch (e) {
+        console.error("Failed to delete message:", e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+// Run the queue every 5 seconds for faster responsiveness
+setInterval(processQueue, 5000);
 
 const PORT = process.env.PORT || process.env.WA_PORT || 3005;
 app.listen(PORT, () => {

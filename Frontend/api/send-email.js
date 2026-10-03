@@ -22,31 +22,42 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-  const mailOptions = {
-      from: `Prudentia College of Law <${process.env.EMAIL_USER}>`,
-      to: to_email,
-      subject: subject,
-      html: message_body,
-  };
-
-  if (attachments && Array.isArray(attachments)) {
-      mailOptions.attachments = attachments;
-  }
-
   try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      },
+      // Increase timeout for large attachments
+      connectionTimeout: 15000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
+    });
+
+    const mailOptions = {
+        from: `Prudentia College of Law <${process.env.EMAIL_USER}>`,
+        to: to_email,
+        subject: subject,
+        html: message_body,
+    };
+
+    if (attachments && Array.isArray(attachments)) {
+        mailOptions.attachments = attachments;
+    }
+
     await transporter.sendMail(mailOptions);
     
-    return res.status(200).json({ success: true, message: 'Email sent successfully with attachments.' });
+    return res.status(200).json({ success: true, message: 'Email sent successfully.' });
   } catch (error) {
-    console.error('Vercel Email Error:', error);
-    return res.status(500).json({ error: 'Internal Server Error: Failed to send email' });
+    console.error('Vercel Email Error:', error.message);
+    // Always return valid JSON even on error
+    return res.status(500).json({ 
+      error: error.code === 'ETIMEDOUT' 
+        ? 'Gmail server timed out. Try again in a moment.'
+        : error.code === 'EAUTH'
+        ? 'Email authentication failed. Check app password.'
+        : `Failed to send email: ${error.message}`
+    });
   }
 }

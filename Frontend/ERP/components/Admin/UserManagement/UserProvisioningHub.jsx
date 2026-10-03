@@ -159,7 +159,8 @@ export default function UserProvisioningHub({ onClose, provisionClient, onProvis
  erp_id: generatedId,
  password: generatedPassword
  });
- emailSent = true;
+ if (phone) { sendSystemWhatsApp(phone, null, { template_id: 'FIRST_CREDENTIALS', variables: { name: name, erp_id: generatedId, password: generatedPassword }, recipient_name: name }).catch(e => console.error('WA failed:', e)); }
+  emailSent = true;
  } catch (err) {
  console.error("Email send failed for", email, err);
  }
