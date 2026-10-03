@@ -127,13 +127,24 @@ export default function Navbar() {
     { id: 'midnight-justice', name: 'Dark Red', color: '#DC2626', bg: '#000000' },
     { id: 'marble-executive', name: 'Dark Slate', color: '#EF4444', bg: '#0B1120' },
     { id: 'emerald-chancery', name: 'Deep Red', color: '#991B1B', bg: '#FFFAFA' },
-    { id: 'forest-whisper', name: 'Green', color: '#16A34A', bg: '#F0FDF4' },
+    { id: 'academic-bronze', name: 'Bronze', color: '#D97706', bg: '#FFF8F1' },
     { id: 'royal-amethyst', name: 'Purple', color: '#9333EA', bg: '#FAF5FF' }
   ];
 
   const [currentTheme, setCurrentTheme] = useState(() => document.documentElement.getAttribute('data-theme') || '');
 
   const selectTheme = (themeId) => {
+    // Reset custom inline styles when picking a preset theme
+    const rootStyle = document.documentElement.style;
+    rootStyle.removeProperty('--accent');
+    rootStyle.removeProperty('--primary-color');
+    rootStyle.removeProperty('--bg-app');
+    rootStyle.removeProperty('--bg-panel');
+    rootStyle.removeProperty('--text-primary');
+    rootStyle.removeProperty('--text-secondary');
+    rootStyle.removeProperty('--border-color');
+    rootStyle.removeProperty('--border-strong');
+    
     if (themeId) {
       document.documentElement.setAttribute('data-theme', themeId);
     } else {
@@ -141,6 +152,28 @@ export default function Navbar() {
     }
     setCurrentTheme(themeId);
     setShowThemeDropdown(false);
+  };
+
+  const handleCustomColor = (type, e) => {
+    const hex = e.target.value;
+    document.documentElement.setAttribute('data-theme', 'custom');
+    
+    const rootStyle = document.documentElement.style;
+    if (type === 'accent') {
+      rootStyle.setProperty('--accent', hex);
+      rootStyle.setProperty('--primary-color', hex);
+    } else if (type === 'background') {
+      rootStyle.setProperty('--bg-app', hex);
+      rootStyle.setProperty('--bg-panel', hex);
+    } else if (type === 'text') {
+      rootStyle.setProperty('--text-primary', hex);
+      rootStyle.setProperty('--text-secondary', hex);
+    } else if (type === 'border') {
+      rootStyle.setProperty('--border-color', hex);
+      rootStyle.setProperty('--border-strong', hex);
+    }
+    
+    setCurrentTheme('custom');
   };
 
   useEffect(() => {
@@ -385,6 +418,30 @@ export default function Navbar() {
                               {theme.name}
                             </button>
                           ))}
+                          
+                          <div className="mt-2 pt-2 border-t border-[var(--border-color)]">
+                            <h4 className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] px-3 py-2">Custom Theme Builder</h4>
+                            
+                            <div className="flex items-center justify-between px-3 py-1.5 w-full rounded-lg text-sm transition-colors hover:bg-[var(--bg-elevated)]">
+                              <span className={`text-[12px] ${currentTheme === 'custom' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-primary)]'}`}>Accent Color</span>
+                              <input type="color" onChange={(e) => handleCustomColor('accent', e)} className="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent" title="Accent Color" />
+                            </div>
+                            
+                            <div className="flex items-center justify-between px-3 py-1.5 w-full rounded-lg text-sm transition-colors hover:bg-[var(--bg-elevated)]">
+                              <span className={`text-[12px] ${currentTheme === 'custom' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-primary)]'}`}>Background Color</span>
+                              <input type="color" onChange={(e) => handleCustomColor('background', e)} className="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent" title="Background Color" />
+                            </div>
+                            
+                            <div className="flex items-center justify-between px-3 py-1.5 w-full rounded-lg text-sm transition-colors hover:bg-[var(--bg-elevated)]">
+                              <span className={`text-[12px] ${currentTheme === 'custom' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-primary)]'}`}>Text Color</span>
+                              <input type="color" onChange={(e) => handleCustomColor('text', e)} className="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent" title="Text Color" />
+                            </div>
+                            
+                            <div className="flex items-center justify-between px-3 py-1.5 w-full rounded-lg text-sm transition-colors hover:bg-[var(--bg-elevated)]">
+                              <span className={`text-[12px] ${currentTheme === 'custom' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-primary)]'}`}>Border Color</span>
+                              <input type="color" onChange={(e) => handleCustomColor('border', e)} className="w-5 h-5 rounded cursor-pointer border-0 p-0 bg-transparent" title="Border Color" />
+                            </div>
+                          </div>
                         </div>
                       </motion.div>
                     )}

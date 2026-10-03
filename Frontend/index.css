@@ -1699,18 +1699,33 @@ html.home-snap {
     --panel-opacity: 0.90;
   }
 
-  /* NEW THEME: Prudentia Green (Forest & White) */
-  [data-theme="forest-whisper"] {
-    --bg-app: #F0FDF4;
+  /* NEW THEME: Prudentia Bronze (Bronze & White) */
+  [data-theme="academic-bronze"] {
+    --bg-app: #FFF8F1;
     --bg-panel: #FFFFFF;
-    --bg-elevated: #DCFCE7;
-    --text-primary: #064E3B;
-    --text-secondary: #047857;
-    --accent: #16A34A; /* Emerald Green */
-    --accent-muted: #15803D;
-    --border-color: rgba(22, 163, 74, 0.15);
-    --border-strong: rgba(22, 163, 74, 0.3);
-    --shadow-elevated: 0 10px 40px -10px rgba(22, 163, 74, 0.1);
+    --bg-elevated: #FFE4CC;
+    --text-primary: #4A2E15;
+    --text-secondary: #966133;
+    --accent: #D97706; /* Bronze */
+    --accent-muted: #B45309;
+    --border-color: rgba(217, 119, 6, 0.15);
+    --border-strong: rgba(217, 119, 6, 0.3);
+    --shadow-elevated: 0 10px 40px -10px rgba(217, 119, 6, 0.1);
+    --text-on-accent: #FFFFFF;
+    --panel-blur: 40px;
+    --panel-opacity: 0.90;
+  }
+
+  /* CUSTOM THEME BASE */
+  [data-theme="custom"] {
+    --bg-app: #F8FAFC;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #F1F5F9;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --border-strong: rgba(0, 0, 0, 0.2);
+    --shadow-elevated: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
     --text-on-accent: #FFFFFF;
     --panel-blur: 40px;
     --panel-opacity: 0.90;
