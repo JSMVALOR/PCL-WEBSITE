@@ -191,7 +191,7 @@ export default function FacultyWebClock() {
  </span>
  </div>
  ) : (
- <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">
+ <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase whitespace-nowrap">
  Non-Working Day
  </span>
  )}
