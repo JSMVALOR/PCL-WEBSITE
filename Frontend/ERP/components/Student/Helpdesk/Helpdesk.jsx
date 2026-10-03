@@ -153,7 +153,7 @@ export default function Helpdesk({ isEmbedded = false }) {
       
       const { error } = await supabase
         .from('helpdesk_tickets')
-        .update({ admin_reply: JSON.stringify(thread), status: 'open', updated_at: new Date().toISOString() })
+        .update({ admin_reply: JSON.stringify(thread), status: 'open' })
         .eq('id', selectedTicket.id);
 
       if (error) throw error;
