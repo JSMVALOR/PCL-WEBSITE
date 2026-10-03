@@ -1,6 +1,8 @@
-UPDATE site_faculty
+UPDATE faculty_profiles
 SET designation = 'Assistant Professor of Law'
-WHERE name ILIKE '%Supriya%';
+WHERE id IN (
+  SELECT id FROM profiles WHERE full_name ILIKE '%Supriya%'
+);
 
 CREATE TABLE IF NOT EXISTS erp_classrooms (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
