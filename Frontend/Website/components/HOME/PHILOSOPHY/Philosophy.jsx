@@ -30,7 +30,7 @@ const Philosophy = forwardRef((props, ref) => {
   const btnLink = content?.btn_link || "/about";
 
   return (
-    <section className="slide w-full h-[100dvh] relative flex flex-col items-center justify-center pt-[100px] md:pt-[140px] pb-6 md:pb-10 bg-[var(--bg-color)] overflow-hidden" ref={ref} {...props}>
+    <section className="slide w-full h-[100dvh] relative flex flex-col items-center justify-center pt-[140px] md:pt-[160px] pb-6 md:pb-10 bg-[var(--bg-color)] overflow-hidden" ref={ref} {...props}>
       <div className="container relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-4 md:gap-16">
         
         {/* Left Side: Clean Image Box */}

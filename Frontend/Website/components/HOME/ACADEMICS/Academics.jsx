@@ -70,7 +70,7 @@ const Academics = forwardRef(({ windowWidth, academicGridRef, ...props }, ref) =
   };
 
   return (
-    <section className="slide h-[100dvh] w-full relative flex flex-col items-center justify-center pt-[100px] md:pt-[120px] pb-[30px] md:pb-[40px] bg-[var(--bg-color)] overflow-hidden" ref={ref} {...props}>
+    <section className="slide h-[100dvh] w-full relative flex flex-col items-center justify-center pt-[140px] md:pt-[160px] pb-[30px] md:pb-[40px] bg-[var(--bg-color)] overflow-hidden" ref={ref} {...props}>
       {/* Cinematic Ambient Backgrounds */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.02] z-0" style={{ backgroundImage: 'radial-gradient(var(--text-color) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
       <div className="container relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-between h-full">

@@ -138,7 +138,7 @@ const Advantages = forwardRef(({ windowWidth, ...props }, ref) => {
   );
 
   return (
-    <section className="slide w-full relative flex flex-col items-center justify-center pt-[100px] md:pt-[120px] pb-4 md:pb-6" ref={ref} {...props}>
+    <section className="slide w-full relative flex flex-col items-center justify-center pt-[140px] md:pt-[160px] pb-4 md:pb-6" ref={ref} {...props}>
       <div className="container w-full max-w-[1300px] mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-12 px-4 md:px-12 lg:px-16">
 
         {/* Left Side: Visual */}
