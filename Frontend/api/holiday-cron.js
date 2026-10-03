@@ -158,7 +158,7 @@ export default async function handler(req, res) {
         const { data: holidays, error: hErr } = await supabase
             .from('academic_events')
             .select('title, start_date, description')
-            .eq('event_type', 'Holiday')
+            .eq('type', 'Holiday')
             .eq('is_active', true)
             .eq('start_date', targetDate);
 

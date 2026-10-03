@@ -91,7 +91,7 @@ export default function FacultyActionItems({ onActionClick }) {
  }, [userSession]);
 
  return (
- <div className="flex-1 bg-themePanel shadow-sm border border-themeBorder dark:border-white/[0.08] shadow-none rounded-2xl p-6 relative flex flex-col shrink-0 h-[320px]">
+ <div className="flex-1 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel p-6 relative flex flex-col shrink-0 h-[320px]">
  <div className="flex justify-between items-center mb-5 shrink-0">
  <h3 className="text-[10px] font-black uppercase tracking-widest text-themeTextSec flex items-center gap-2">
  <i className="fa-solid fa-inbox text-themeAccent"></i> Action Items

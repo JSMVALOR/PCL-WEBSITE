@@ -167,7 +167,7 @@ export default function FacultyWebClock() {
  const rules = FACULTY_ATTENDANCE_RULES.getWorkingHours(new Date());
 
  return (
- <div className="w-full bg-themeElevated/50 border border-themeBorder/50 p-6 rounded-3xl relative overflow-hidden flex flex-col h-full">
+ <div className="w-full bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel p-6 relative overflow-hidden flex flex-col h-full">
  {/* Background elements */}
  <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
  

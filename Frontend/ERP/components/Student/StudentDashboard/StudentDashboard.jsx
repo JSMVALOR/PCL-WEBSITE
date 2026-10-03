@@ -189,8 +189,8 @@ export default function StudentDashboard({ setActiveTab }) {
  
  <DashboardWorkSchedule role="student" />
 
- {/* Metrics Ribbon (Unboxed) */}
- <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0 py-2 border-b border-themeBorder dark:border-white/[0.04]">
+ {/* Metrics Ribbon (Boxed) */}
+ <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0 p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel">
  {[
  { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check', color: 'text-rose-500', tab: 'academic_center' },
  { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check', color: 'text-emerald-500', tab: 'academic_center' },
@@ -198,7 +198,7 @@ export default function StudentDashboard({ setActiveTab }) {
  { label: 'CGPA', val: Number(stats?.cgpa || 0).toFixed(2), icon: 'fa-graduation-cap', color: 'text-amber-500', tab: 'academic_center' }
  ].map((m, i) => (
  <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer hover:opacity-80 transition-opacity">
- <div className={`w-12 h-12 rounded-xl bg-themeElevated flex items-center justify-center text-xl ${m.color}`}>
+ <div className={`w-12 h-12 rounded-xl bg-themePanel flex items-center justify-center text-xl shadow-sm border border-themeBorder ${m.color}`}>
  <i className={`fa-solid ${m.icon}`}></i>
  </div>
  <div className="flex flex-col">
@@ -213,20 +213,20 @@ export default function StudentDashboard({ setActiveTab }) {
  <div className="flex flex-col xl:flex-row gap-6 w-full shrink-0">
  <StudentActivityRings stats={stats} />
  
- {/* Campus Notices (Unboxed) */}
- <div className="flex-1 relative flex flex-col shrink-0">
+ {/* Campus Notices (Boxed) */}
+ <div className="flex-1 relative flex flex-col shrink-0 p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel">
  <div className="flex justify-between items-center mb-5 shrink-0 border-b border-themeBorder dark:border-white/[0.04] pb-3">
  <h3 className="text-sm font-black tracking-tight text-themeText uppercase">Campus Notices</h3>
  <button onClick={() => setActiveTab('notices')} className="text-themeAccent text-xs hover:underline font-bold">View All</button>
  </div>
- <div className="flex flex-col gap-4">
+ <div className="flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2 max-h-[300px]">
  {notices.length > 0 ? notices.slice(0, 5).map((n, i) => (
- <div key={i} className="pb-3 border-b border-themeBorder dark:border-white/[0.02] cursor-pointer hover:opacity-80 transition-opacity">
+ <div key={i} className="pb-3 border-b border-themeBorder dark:border-white/[0.02] cursor-pointer hover:opacity-80 transition-opacity last:border-0 last:pb-0">
  <h4 className="text-sm font-bold text-themeText mb-1">{n.title}</h4>
  <p className="text-xs text-themeTextSec line-clamp-2">{n.content}</p>
  </div>
  )) : (
- <div className="p-8 text-center opacity-50 bg-themeElevated rounded-2xl">
+ <div className="p-8 text-center opacity-50 bg-themePanel border border-themeBorder rounded-2xl">
  <i className="fa-regular fa-bell-slash text-2xl mb-2"></i>
  <p className="text-xs font-bold uppercase tracking-widest">No New Notices</p>
  </div>

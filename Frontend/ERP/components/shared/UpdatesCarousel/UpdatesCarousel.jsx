@@ -59,7 +59,7 @@ export default function UpdatesCarousel({ userSession, notices = [], onNoticesCl
  }, [slides.length]);
 
  return (
- <div className="flex-1 w-full relative h-full group min-w-0 overflow-hidden rounded-2xl border border-themeBorder ">
+ <div className="flex-1 w-full relative h-full group min-w-0 overflow-hidden rounded-themePanel border border-themeBorder bg-themeElevated shadow-premium">
  <div 
  className="w-full h-full flex transition-transform duration-700 ease-in-out"
  style={{ transform: `translateX(-${activeIndex * 100}%)` }}

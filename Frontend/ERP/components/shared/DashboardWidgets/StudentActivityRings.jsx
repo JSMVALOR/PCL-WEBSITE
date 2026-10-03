@@ -119,7 +119,7 @@ export default function StudentActivityRings() {
  }, [userSession]);
 
  return (
- <div className="relative flex-[1] min-w-0 w-full flex flex-col justify-between py-6">
+ <div className="relative flex-[1] min-w-0 w-full flex flex-col justify-between p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel">
  <div className="mb-6 shrink-0 border-b border-themeBorder dark:border-white/[0.04] pb-3">
  <h3 className="text-sm font-black tracking-tight text-themeText uppercase flex items-center gap-2">
  <i className="fa-solid fa-bullseye text-[#FF2D55]"></i> Activity Rings

@@ -129,7 +129,7 @@ export default function DashboardWorkSchedule({ role = 'student' }) {
  };
 
  return (
- <div className="w-full flex flex-col relative shrink-0 py-4">
+ <div className="w-full flex flex-col relative shrink-0 p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel mb-6">
  <div className="flex items-center gap-3 mb-6 border-b border-themeBorder dark:border-white/[0.04] pb-4">
  <div className="w-10 h-10 rounded-xl bg-themeAccent/10 text-themeAccent flex items-center justify-center text-lg shrink-0">
  <i className="fa-solid fa-business-time"></i>

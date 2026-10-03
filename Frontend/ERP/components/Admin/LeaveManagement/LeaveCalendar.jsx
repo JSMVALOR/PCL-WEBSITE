@@ -47,8 +47,7 @@ export default function LeaveCalendar({}) {
   const { data: holidayData } = await supabase
    .from('academic_events')
    .select('id, title, start_date')
-   .eq('event_type', 'Holiday')
-   .eq('is_active', true)
+   .eq('type', 'Holiday')
    .gte('start_date', startDate)
    .lte('start_date', endDate);
 

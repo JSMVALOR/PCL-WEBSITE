@@ -17,8 +17,7 @@ export default function ZohoMainContent({ session, role }) {
    const { data } = await supabase
     .from('academic_events')
     .select('title, start_date, description')
-    .eq('event_type', 'Holiday')
-    .eq('is_active', true)
+    .eq('type', 'Holiday')
     .gte('start_date', today)
     .order('start_date', { ascending: true })
     .limit(4);

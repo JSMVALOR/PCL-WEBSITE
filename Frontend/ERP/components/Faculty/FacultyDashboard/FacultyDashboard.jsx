@@ -91,8 +91,8 @@ export default function FacultyDashboard({ setActiveTab }) {
  <div className="flex-[2] min-w-0"><DashboardWorkSchedule role="faculty" /></div>
  </div>
 
- {/* Quick Stats Ribbon (Unboxed) */}
- <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0 py-2 border-b border-themeBorder dark:border-white/[0.04]">
+ {/* Quick Stats Ribbon (Boxed) */}
+ <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0 p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel">
  {[
  { label: 'Pending Grading', value: dashboardData.stats.pendingGrading, icon: 'fa-pen-to-square', color: 'text-amber-500' },
  { label: 'Avg Attendance', value: `${dashboardData.stats.avgAttendance}%`, icon: 'fa-user-check', color: 'text-emerald-500' },
@@ -100,7 +100,7 @@ export default function FacultyDashboard({ setActiveTab }) {
  { label: 'Active Mentees', value: dashboardData.stats.mentees, icon: 'fa-users', color: 'text-blue-500' }
  ].map((stat, i) => (
  <div key={i} className="flex-1 min-w-[140px] flex items-center gap-4 relative group">
- <div className={`w-12 h-12 rounded-xl bg-themeElevated flex items-center justify-center text-xl ${stat.color}`}>
+ <div className={`w-12 h-12 rounded-xl bg-themePanel flex items-center justify-center text-xl shadow-sm border border-themeBorder ${stat.color}`}>
  <i className={`fa-solid ${stat.icon}`}></i>
  </div>
  <div className="flex flex-col">

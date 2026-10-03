@@ -16,7 +16,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  title: '',
  date: '',
  description: '',
- event_type: 'Academic', // Academic, Holiday, Exam, Event
+ type: 'Academic', // Academic, Holiday, Exam, Event
  is_active: true,
  image_url: ''
  });
@@ -83,7 +83,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  title: formData.title,
  date: formData.start_date,
  description: formData.description,
- event_type: formData.event_type,
+ type: formData.type,
  is_active: formData.is_active,
  image_url: finalImageUrl
  })
@@ -103,7 +103,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  title: formData.title,
  date: formData.start_date,
  description: formData.description,
- event_type: formData.event_type,
+ type: formData.type,
  is_active: formData.is_active,
  image_url: finalImageUrl
  }]);
@@ -116,7 +116,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  if(window.erpToast) window.erpToast.show("Event added successfully!", "success");
  }
  
- setFormData({ id: null, title: '', start_date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
+ setFormData({ id: null, title: '', start_date: '', description: '', type: 'Academic', is_active: true, image_url: '' });
  
  setIsEditing(false);
  fetchEvents();
@@ -131,7 +131,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  title: event.title,
  date: event.start_date,
  description: event.description,
- event_type: event.event_type,
+ type: event.type,
  is_active: event.is_active,
  image_url: event.image_url || ''
  });
@@ -244,8 +244,8 @@ export default function AdminAcademicCalendar({ isHubView }) {
  <div>
  <label className="block text-xs font-bold text-themeApp/70 uppercase tracking-wider mb-2">Event Type</label>
  <select 
- name="event_type"
- value={formData.event_type}
+ name="type"
+ value={formData.type}
  onChange={handleInputChange}
  className="w-full animate-fade-in bg-themeBg border border-themeBorder dark:border-white/[0.08] rounded-lg px-4 py-2.5 text-themeText focus:outline-none focus:border-themeBorder dark:border-white/[0.08]Accent transition-colors"
  >
@@ -317,7 +317,7 @@ export default function AdminAcademicCalendar({ isHubView }) {
  type="button" 
  onClick={() => {
  setIsEditing(false);
- setFormData({ id: null, title: '', start_date: '', description: '', event_type: 'Academic', is_active: true, image_url: '' });
+ setFormData({ id: null, title: '', start_date: '', description: '', type: 'Academic', is_active: true, image_url: '' });
  
  }}
  className="px-4 py-3 bg-themeBg border border-themeBorder dark:border-white/[0.08] text-themeText hover:bg-themeBorder/50 rounded-lg transition-colors"
@@ -349,8 +349,8 @@ export default function AdminAcademicCalendar({ isHubView }) {
  <div className="flex flex-col gap-1">
  <div className="flex items-center gap-3">
  <span className="text-themeText font-bold text-lg">{event.title}</span>
- <span className={`text-[10px] tracking-normal font-bold px-2 py-0.5 rounded-full border ${getEventTypeColor(event.event_type)}`}>
- {event.event_type}
+ <span className={`text-[10px] tracking-normal font-bold px-2 py-0.5 rounded-full border ${getEventTypeColor(event.type)}`}>
+ {event.type}
  </span>
  {!event.is_active && (
  <span className="text-[10px] tracking-normal font-bold px-2 py-0.5 rounded-full bg-themeBorder text-themeApp/70">Hidden</span>
