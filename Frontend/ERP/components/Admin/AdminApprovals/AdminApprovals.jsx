@@ -451,17 +451,13 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <div className="flex items-center gap-2 mt-2">
  <p className="text-xs font-bold text-themeText">Reporter: {g.reporter?.full_name} ({g.reporter?.role})</p>
  {g.reporter && (
- <a href={`https://wa.me/${g.reporter.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="w-5 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer" title="Chat with Reporter">
- <i className="fa-brands fa-whatsapp text-[10px]"></i>
- </a>
+ <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openGlobalChat", { detail: { userId: g.reporter.id, name: g.reporter.full_name, role: g.reporter.role, avatar: g.reporter.profile_picture_url } }))} className="w-5 h-5 flex items-center justify-center rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors cursor-pointer" title="Message Reporter"><i className="fa-solid fa-message text-[10px]"></i></button>
  )}
  </div>
  <div className="flex items-center gap-2 mt-0.5">
  <p className="text-xs font-bold text-rose-400">Against: {g.accused?.full_name} ({g.accused?.role})</p>
  {g.accused && (
- <a href={`https://wa.me/${g.accused.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="w-5 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer" title="Chat with Accused">
- <i className="fa-brands fa-whatsapp text-[10px]"></i>
- </a>
+ <button type="button" onClick={() => window.dispatchEvent(new CustomEvent("openGlobalChat", { detail: { userId: g.accused.id, name: g.accused.full_name, role: g.accused.role, avatar: g.accused.profile_picture_url } }))} className="w-5 h-5 flex items-center justify-center rounded bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-colors cursor-pointer" title="Message Accused"><i className="fa-solid fa-message text-[10px]"></i></button>
  )}
  </div>
  </div>
