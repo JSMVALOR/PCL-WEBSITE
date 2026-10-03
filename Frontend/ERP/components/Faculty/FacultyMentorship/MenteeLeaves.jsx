@@ -42,10 +42,10 @@ export default function MenteeLeaves({ menteeId }) {
  fetchLeaves();
  window.erpToast?.show?.(`Leave marked as ${status}`, 'success');
 
- // Dispatch Email
+ // Dispatch Email & WhatsApp
  try {
- // Fetch student profile for email
- const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', menteeId).single();
+ // Fetch student profile for email & phone
+ const { data: profile } = await supabase.from('profiles').select('full_name, email, phone').eq('id', menteeId).single();
  
  if (profile) {
  if (status === 'rejected') {
@@ -53,22 +53,36 @@ export default function MenteeLeaves({ menteeId }) {
  to_email: profile.email,
  student_name: profile.full_name,
  leave_type: leave.leave_type || 'Leave',
- start_date: leave.from_date,
- end_date: leave.to_date,
+ start_date: leave.from_date || leave.start_date,
+ end_date: leave.to_date || leave.end_date,
  reason: remarks
  });
+ if (profile.phone) {
+ await supabase.from('whatsapp_queue').insert({
+ phone: profile.phone,
+ message: `📋 *Leave Rejected ❌*\n\nStudent: ${profile.full_name}\nType: ${leave.leave_type || 'Leave'}\nDates: ${new Date(leave.from_date || leave.start_date).toLocaleDateString()} to ${new Date(leave.to_date || leave.end_date).toLocaleDateString()}\nStatus: *REJECTED*\n📝 Reason: ${remarks}\n\n— Prudentia College of Law`,
+ recipient_name: profile.full_name
+ });
+ }
  } else {
  await sendSystemEmail('LEAVE_APPROVED', {
  to_email: profile.email,
  student_name: profile.full_name,
  leave_type: leave.leave_type || 'Leave',
- start_date: leave.from_date,
- end_date: leave.to_date
+ start_date: leave.from_date || leave.start_date,
+ end_date: leave.to_date || leave.end_date
+ });
+ if (profile.phone) {
+ await supabase.from('whatsapp_queue').insert({
+ phone: profile.phone,
+ message: `📋 *Leave Approved ✅*\n\nStudent: ${profile.full_name}\nType: ${leave.leave_type || 'Leave'}\nDates: ${new Date(leave.from_date || leave.start_date).toLocaleDateString()} to ${new Date(leave.to_date || leave.end_date).toLocaleDateString()}\nStatus: *APPROVED*\n\n— Prudentia College of Law`,
+ recipient_name: profile.full_name
  });
  }
  }
- } catch (emailErr) {
- console.warn("Email dispatch failed:", emailErr);
+ }
+ } catch (notifyErr) {
+ console.warn("Notification dispatch failed:", notifyErr);
  }
  
  } catch (e) { console.error(e); window.erpToast?.show?.("An error occurred.", 'error'); }

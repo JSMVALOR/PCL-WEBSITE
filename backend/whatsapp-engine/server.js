@@ -187,7 +187,7 @@ async function startWhatsApp() {
             getMessage: async (key) => {
                 // We don't store messages, so return undefined.
                 // This is enough to satisfy the retry protocol.
-                return { conversation: '' };
+                return undefined;
             },
         });
 
