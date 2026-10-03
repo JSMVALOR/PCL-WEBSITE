@@ -183,13 +183,17 @@ export default function Helpdesk({ isEmbedded = false }) {
     try { 
       thread = JSON.parse(replyString); 
       if (!Array.isArray(thread)) throw new Error('Not array'); 
+      // Ensure all objects have an author
+      thread = thread.map(reply => ({ ...reply, author: reply.author || 'Admin' }));
     } catch {
       if (replyString && replyString !== 'Awaiting Support Team Review') {
         thread = [{ text: replyString, date: new Date().toISOString(), author: 'Admin' }];
       }
     }
-    if (thread.length === 0 && fallbackDesc) {
-      thread = [{ text: fallbackDesc, date: new Date().toISOString(), author: 'User' }];
+    
+    // If the thread is empty, or the first message isn't the initial user description, inject it!
+    if ((thread.length === 0 || thread[0].author !== 'User') && fallbackDesc) {
+      thread.unshift({ text: fallbackDesc, date: new Date().toISOString(), author: 'User' });
     }
     return thread;
   };

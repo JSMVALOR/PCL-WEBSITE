@@ -44,10 +44,19 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  try {
  const currentTicket = tickets.find(t => t.id === ticketId);
  let thread = [];
- try { thread = JSON.parse(currentTicket.admin_reply); if (!Array.isArray(thread)) throw new Error('Not array'); } catch {
-   if (currentTicket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: currentTicket.admin_reply, date: currentTicket.updated_at || new Date().toISOString() }];
+ try { 
+   thread = JSON.parse(currentTicket.admin_reply); 
+   if (!Array.isArray(thread)) throw new Error('Not array'); 
+   thread = thread.map(reply => ({ ...reply, author: reply.author || 'Admin' }));
+ } catch {
+   if (currentTicket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: currentTicket.admin_reply, date: currentTicket.updated_at || new Date().toISOString(), author: 'Admin' }];
  }
- if (text || isClosing) thread.push({ text: text || 'Closed by Admin', date: new Date().toISOString() });
+ 
+ if ((thread.length === 0 || thread[0].author !== 'User') && currentTicket.description) {
+   thread.unshift({ text: currentTicket.description, date: currentTicket.created_at, author: 'User' });
+ }
+
+ if (text || isClosing) thread.push({ text: text || 'Closed by Admin', date: new Date().toISOString(), author: 'Admin' });
 
  const updatePayload = {
  admin_reply: JSON.stringify(thread) };
@@ -199,8 +208,15 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
             if (!ticket) return null;
             
             let thread = [];
-            try { thread = JSON.parse(ticket.admin_reply); if (!Array.isArray(thread)) throw new Error('Not array'); } catch {
-              if (ticket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: ticket.admin_reply, date: ticket.updated_at }];
+            try { 
+              thread = JSON.parse(ticket.admin_reply); 
+              if (!Array.isArray(thread)) throw new Error('Not array'); 
+              thread = thread.map(reply => ({ ...reply, author: reply.author || 'Admin' }));
+            } catch {
+              if (ticket.admin_reply !== 'Awaiting Support Team Review') thread = [{ text: ticket.admin_reply, date: ticket.updated_at, author: 'Admin' }];
+            }
+            if ((thread.length === 0 || thread[0].author !== 'User') && ticket.description) {
+              thread.unshift({ text: ticket.description, date: ticket.created_at, author: 'User' });
             }
 
             return (
@@ -241,12 +257,14 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
                 {thread.length > 0 && (
                 <div className="flex flex-col gap-4 mb-6">
                 {thread.map((reply, idx) => (
-                <div key={idx} className="bg-[var(--theme-accent)]/5 p-4 rounded-2xl border border-[var(--theme-accent)]/10 ml-4 lg:ml-8 relative">
-                   <div className="absolute -left-3 top-4 w-6 h-6 rounded-full bg-themeAccent flex items-center justify-center border-4 border-themeApp shadow-sm">
-                      <i className="fa-solid fa-reply text-white text-[8px]"></i>
+                <div key={idx} className={`p-4 rounded-2xl border relative ml-4 lg:ml-8 ${reply.author === 'Admin' ? 'bg-themeAccent/5 border-themeAccent/10' : 'bg-themeElevated border-themeBorder'}`}>
+                   <div className={`absolute -left-3 top-4 w-6 h-6 rounded-full flex items-center justify-center border-4 border-themeApp shadow-sm ${reply.author === 'Admin' ? 'bg-themeAccent' : 'bg-blue-500'}`}>
+                      <i className={`fa-solid ${reply.author === 'Admin' ? 'fa-reply' : 'fa-user'} text-white text-[8px]`}></i>
                    </div>
-                   <span className="text-[10px] uppercase tracking-widest font-bold text-themeAccent block mb-2">Admin Reply • {reply.date ? new Date(reply.date).toLocaleString() : 'Unknown Date'}</span>
-                   <p className="text-sm font-bold text-themeText">{reply.text}</p>
+                   <span className={`text-[10px] uppercase tracking-widest font-bold block mb-2 ${reply.author === 'Admin' ? 'text-themeAccent' : 'text-themeTextSec'}`}>
+                     {reply.author} • {reply.date ? new Date(reply.date).toLocaleString() : 'Unknown Date'}
+                   </span>
+                   <p className="text-sm font-bold text-themeText whitespace-pre-wrap">{reply.text}</p>
                 </div>
                 ))}
                 </div>
