@@ -80,38 +80,35 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
  
  // Notify Requester
  const ticketData = error ? null : (await supabase.from('helpdesk_tickets').select('*').eq('id', ticketId).single()).data;
- if (ticketData) {
- // If it's a student (has user_id)
- if (ticketData.user_id) {
- const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
- await supabase.from('notices').insert([{
- notice_id: noticeId,
- title: isClosing ? 'Support Ticket Resolved' : 'Support Ticket Replied',
- category: 'System Alert',
- target_audience: ['student'],
- target_user_id: ticketData.user_id,
- priority: 'normal',
- content: `Your support ticket (${ticketData.ticket_id}) has been ${isClosing ? 'resolved' : 'replied to'} by the Admin.`,
- author_name: 'Admin',
- author_id: null
- }]);
- // Bell notification for ticket update
- if (ticketData.user_id) {
-   await supabase.from('notifications').insert([{
-     recipient_id: ticketData.user_id,
-     title: isClosing ? 'Support Ticket Resolved' : 'Support Ticket Replied',
-     message: `Your ticket (${ticketData.ticket_id}) has been updated.`,
-     type: 'notice',
-     action_link: 'helpdesk'
-   }]);
+ if (ticketData && ticketData.user_id) {
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(ticketData.user_id);
+    const { data: profile } = await supabase.from('profiles')
+       .select('id, role, contact_email, contact_phone, email, phone')
+       .eq(isUUID ? 'id' : 'erp_id', ticketData.user_id)
+       .maybeSingle();
 
-   // Also fetch profile to send Email & WA
-   const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(ticketData.user_id);
-   const { data: profile } = await supabase.from('profiles')
-      .select('contact_email, contact_phone, email, phone')
-      .eq(isUUID ? 'id' : 'erp_id', ticketData.user_id)
-      .maybeSingle();
-   if (profile) {
+    if (profile) {
+      const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+      await supabase.from('notices').insert([{
+        notice_id: noticeId,
+        title: isClosing ? 'Support Ticket Resolved' : 'Support Ticket Replied',
+        category: 'System Alert',
+        target_audience: [profile.role || 'student'],
+        target_user_id: profile.id, // Use UUID!
+        priority: 'normal',
+        content: `Your support ticket (${ticketData.ticket_id}) has been ${isClosing ? 'resolved' : 'replied to'} by the Admin.`,
+        author_name: 'Admin',
+        author_id: null
+      }]);
+      
+      await supabase.from('notifications').insert([{
+        recipient_id: profile.id, // Use UUID!
+        title: isClosing ? 'Support Ticket Resolved' : 'Support Ticket Replied',
+        message: `Your ticket (${ticketData.ticket_id}) has been updated.`,
+        type: 'notice',
+        action_link: 'helpdesk'
+      }]);
+      
       const emailToUse = profile.contact_email || profile.email;
       if (emailToUse) {
        try {

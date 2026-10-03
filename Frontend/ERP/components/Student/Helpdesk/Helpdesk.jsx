@@ -179,13 +179,16 @@ export default function Helpdesk({ isEmbedded = false }) {
           author_name: 'System',
           author_id: null
         }]);
-        await supabase.from('notifications').insert([{
-          recipient_id: 'admin',
-          title: 'Ticket Reply',
-          message: `User ${userSession?.name || 'Student'} replied to ticket ${selectedTicket.ticket_id}.`,
-          type: 'notice',
-          action_link: 'adminadmissions'
-        }]);
+        const { data: adminUsers } = await supabase.from('profiles').select('id').eq('role', 'admin');
+        if (adminUsers && adminUsers.length > 0) {
+          await supabase.from('notifications').insert(adminUsers.map(a => ({
+            recipient_id: a.id,
+            title: 'Ticket Reply',
+            message: `User ${userSession?.name || 'Student'} replied to ticket ${selectedTicket.ticket_id}.`,
+            type: 'notice',
+            action_link: 'helpdesk'
+          })));
+        }
       } catch (notifyErr) { console.warn("Failed to notify admin", notifyErr); }
       
       setReplyText("");
