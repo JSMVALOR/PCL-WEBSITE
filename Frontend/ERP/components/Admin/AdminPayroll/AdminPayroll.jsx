@@ -18,17 +18,7 @@ export default function AdminPayroll() {
  // State for personalized pay overrides
  const [customBasePays, setCustomBasePays] = useState({});
  
- // Dynamic Configuration States
- const [config, setConfig] = useState({ 
- defaultBasePay: 85000, 
- allowedPaidLeaves: 2,
- breakdown: [
- { name: 'Basic Pay', percentage: 50 },
- { name: 'HRA', percentage: 30 },
- { name: 'Special Allowance', percentage: 20 }
- ]
- });
- const [isSavingConfig, setIsSavingConfig] = useState(false);
+ // Configuration state removed
  const [expandedCards, setExpandedCards] = useState([]);
  const [viewMode, setViewMode] = useState('grid');
 
@@ -42,66 +32,13 @@ export default function AdminPayroll() {
  const [paymentForm, setPaymentForm] = useState({
  transactionDate: new Date().toISOString().split('T')[0],
  paymentMode: 'Bank Transfer (NEFT/RTGS)',
- transactionId: '',
- professionalTax: 200,
- tdsPercentage: 10,
- tdsAmount: 0
+ transactionId: ''
  });
  const [isProcessing, setIsProcessing] = useState(false);
 
- useEffect(() => {
- const loadConfig = async () => {
- // Load base payroll config
- const { data: sysData } = await supabase.from('system_settings').select('value').eq('key', 'payroll_config').maybeSingle();
- let newConfig = { ...config };
- if (sysData?.value) {
- newConfig = { ...newConfig, ...sysData.value, breakdown: sysData.value.breakdown || config.breakdown };
- }
+ // Config logic removed
  
- // Sync with global leave policies (Casual Leave)
- try {
- const { data: policyData } = await supabase.from('leave_policies').select('annual_limit').eq('name', 'Casual Leave (CL)').maybeSingle();
- if (policyData) {
- const monthlyLeaves = Math.max(0, Math.floor(policyData.annual_limit / 12));
- newConfig.allowedPaidLeaves = monthlyLeaves;
- }
- } catch (e) {}
-
- setConfig(newConfig);
- };
- loadConfig();
- }, []);
-
- const handleSaveConfig = async () => {
- setIsSavingConfig(true);
- try {
- await supabase.from('system_settings').upsert({ key: 'payroll_config', value: config });
- if(window.erpToast) window.erpToast.show("✅ Policy Engine updated successfully.", "success");
- } catch (e) { console.error(e); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
- setIsSavingConfig(false);
- }
- };
- 
- const updateConfig = async (newConfig) => {
- setConfig(newConfig);
- // We removed auto-save on blur so the user uses the Save button for complex array edits
- };
- 
- const handleAddBreakdown = () => {
- setConfig({ ...config, breakdown: [...(config.breakdown || []), { name: 'New Component', percentage: 0 }] });
- };
-
- const handleUpdateBreakdown = (idx, field, val) => {
- const newBd = [...(config.breakdown || [])];
- newBd[idx][field] = field === 'percentage' ? Number(val) : val;
- setConfig({ ...config, breakdown: newBd });
- };
-
- const handleRemoveBreakdown = (idx) => {
- const newBd = [...(config.breakdown || [])];
- newBd.splice(idx, 1);
- setConfig({ ...config, breakdown: newBd });
- };
+ // Breakdown logic removed
 
  const fetchFaculty = async () => {
  setLoading(true);
@@ -162,10 +99,10 @@ export default function AdminPayroll() {
  });
  totalLeaveDays += enforcedAbsences;
 
- const lopDays = Math.max(0, totalLeaveDays - config.allowedPaidLeaves);
+ const lopDays = enforcedAbsences; // Direct LOP based on late minutes and unapproved absence
  
  // Personalized Pay Logic: State Override -> DB Column -> Default Config
- const basePay = f.base_salary ? Number(f.base_salary) : config.defaultBasePay;
+ const basePay = f.base_salary ? Number(f.base_salary) : 0;
  const waivedDays = 0;
  
  const dailyRate = basePay / 30;
@@ -175,14 +112,7 @@ export default function AdminPayroll() {
  
  const netPay = basePay - deduction;
  
- let struct = f.salary_structure;
- if (!struct || !Array.isArray(struct)) {
- struct = [
- { name: "Basic Pay", percentage: 50 },
- { name: "HRA", percentage: 30 },
- { name: "Special Allowance", percentage: 20 }
- ];
- }
+ let struct = [];
 
  // Parse payment details
  let bankDetails = { bankName: 'Not Provided', accountNo: 'N/A', ifsc: 'N/A' };
@@ -224,20 +154,11 @@ export default function AdminPayroll() {
  }
  };
 
- useEffect(() => {
- fetchFaculty();
- }, [config.defaultBasePay, config.allowedPaidLeaves]);
+ useEffect(() => { fetchFaculty(); }, []);
 
  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
 
- // Dynamic TDS Calculation
- useEffect(() => {
- if (selectedFac) {
- const taxableAmount = selectedFac.netPay;
- const tdsAmt = Math.round(taxableAmount * (paymentForm.tdsPercentage / 100));
- setPaymentForm(prev => ({ ...prev, tdsAmount: tdsAmt }));
- }
- }, [paymentForm.tdsPercentage, selectedFac]);
+ 
 
  const handleOpenPayment = (fac) => {
  setSelectedFac(fac);
@@ -245,9 +166,7 @@ export default function AdminPayroll() {
  // Reset form
  setPaymentForm(prev => ({
  ...prev,
- transactionId: '',
- professionalTax: 200,
- tdsPercentage: 10 }));
+ transactionId: '' }));
  };
 
  
@@ -258,7 +177,7 @@ export default function AdminPayroll() {
  
  setIsProcessing(true);
  try {
- const finalNetPay = selectedFac.netPay - paymentForm.professionalTax - paymentForm.tdsAmount;
+ const finalNetPay = selectedFac.netPay;
  
  const payload = {
  faculty_id: selectedFac.id,
@@ -268,9 +187,9 @@ export default function AdminPayroll() {
  deductions: selectedFac.deduction,
  net_pay: selectedFac.netPay, // Pre-tax net
  final_net_pay: finalNetPay, // Post-tax net
- professional_tax: paymentForm.professionalTax,
- tds_amount: paymentForm.tdsAmount,
- tds_percentage: paymentForm.tdsPercentage,
+ professional_tax: 0,
+ tds_amount: 0,
+ tds_percentage: 0,
  transaction_id: paymentForm.transactionId,
  payment_mode: paymentForm.paymentMode,
  month: new Date().toLocaleString('default', { month: 'long' }),
@@ -294,14 +213,14 @@ export default function AdminPayroll() {
  target_audience: ['faculty'],
  target_user_id: selectedFac.id,
  priority: 'high',
- content: `Your salary for ${currentMonth} ${currentYear} has been disbursed.`,
+ content: `Your salary for ${payload.month} ${payload.year} has been disbursed.`,
  author_name: 'Finance Department',
  author_id: null
  }]);
  // Bell notification for payroll
- if (fac.id) {
+ if (selectedFac.id) {
    await supabase.from('notifications').insert([{
-     recipient_id: fac.id,
+     recipient_id: selectedFac.id,
      title: 'Payroll Disbursed',
      message: 'Your salary slip has been processed.',
      type: 'notice',
@@ -374,14 +293,22 @@ export default function AdminPayroll() {
  }));
  };
 
- const handleUpdateStructure = (facId, index, field, value) => {
- setFaculty(prev => prev.map(f => {
- if (f.id !== facId) return f;
- const newStructure = [...(f.salary_structure || [])];
- newStructure[index] = { ...newStructure[index], [field]: field === 'percentage' ? Number(value) || 0 : value };
- return { ...f, salary_structure: newStructure };
- }));
- };
+ const handleSaveProfileSalary = async (fac) => {
+    setIsProcessing(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ base_salary: fac.basePay, /* salary_structure removed */ })
+        .eq('id', fac.id);
+      if (error) throw error;
+      if (window.erpToast) window.erpToast.show('✅ Salary profile updated successfully.', 'success');
+    } catch (e) {
+      console.error(e);
+      if (window.erpToast) window.erpToast.show('Error saving profile.', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
  const handleDisburseAll = async () => {
    const unprocessed = faculty.filter(f => !f.isProcessed);
@@ -402,10 +329,7 @@ export default function AdminPayroll() {
    try {
      for (const fac of unprocessed) {
        // Standard automated deduction assumptions for bulk
-       const professionalTax = 200;
-       const tdsPercentage = 10;
-       const tdsAmount = Math.round(fac.netPay * (tdsPercentage / 100));
-       const finalNetPay = fac.netPay - professionalTax - tdsAmount;
+       const finalNetPay = fac.netPay;
        const transactionId = `AUTO-TXN-${Date.now()}-${fac.id.slice(0, 4)}`;
 
        const payload = {
@@ -415,9 +339,9 @@ export default function AdminPayroll() {
          deductions: fac.deduction,
          net_pay: fac.netPay,
          final_net_pay: finalNetPay,
-         professional_tax: professionalTax,
-         tds_amount: tdsAmount,
-         tds_percentage: tdsPercentage,
+         professional_tax: 0,
+         tds_amount: 0,
+         tds_percentage: 0,
          transaction_id: transactionId,
          payment_mode: 'Bank Transfer (NEFT/RTGS)',
          month: currentMonth,
@@ -492,49 +416,10 @@ export default function AdminPayroll() {
  return (
  <section className="w-full animate-fade-in pb-12">
 
- <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
+ <div className="w-full mt-6">
  
- {/* CONFIGURATION PANEL */}
- <div className="lg:col-span-1 bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] border border-themeBorder dark:border-white/[0.08] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] rounded-2xl p-6 flex flex-col h-fit">
- <h2 className="text-xl font-black text-themeText tracking-tight mb-2">Policy Engine</h2>
- <p className="text-xs font-bold text-themeTextSec uppercase tracking-widest mb-6">Automated LOP Criteria</p>
- 
- <div className="flex flex-col gap-5 flex-1">
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Standard Base Pay (₹)</label>
- <input 
- type="number" 
- value={config.defaultBasePay} 
- onChange={e => setConfig({...config, defaultBasePay: Number(e.target.value)})}
- className="w-full bg-themeApp /20 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500 transition-colors" 
- />
- </div>
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Allowed Paid Leaves / Month</label>
- <input 
- type="number" 
- value={config.allowedPaidLeaves} 
- onChange={e => setConfig({...config, allowedPaidLeaves: Number(e.target.value)})}
- className="w-full bg-themeApp /20 border border-themeBorder rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500 transition-colors" 
- />
- </div>
- 
- {/* Dynamic Breakdown */}
- 
-
- <button 
- onClick={handleSaveConfig}
- disabled={isSavingConfig}
- className="w-full py-3.5 mt-2 bg-themePanel/5 hover:bg-themePanel/10 rounded-xl text-themeText text-xs font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
- >
- {isSavingConfig ? 'Saving...' : 'Save Configuration'}
- </button>
-
- </div>
- </div>
-
  {/* FACULTY ROSTER CARDS */}
- <div className="lg:col-span-3">
+ <div className="w-full">
  <div className="flex justify-between items-center mb-6">
  <div>
  <h2 className="text-xl font-black text-themeText tracking-tight">Faculty Payroll</h2>
@@ -564,120 +449,100 @@ export default function AdminPayroll() {
  {loading ? (
  <div className="w-full py-12 flex justify-center"><div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div></div>
  ) : (
- 
  <>
  {viewMode === 'grid' ? (
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+ <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
  {faculty.map(f => (
- <div key={f.id} className="bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-2xl p-6 flex flex-col gap-6 relative overflow-hidden group">
+ <div key={f.id} className="bg-themePanel/60 dark:bg-themePanel/60 backdrop-blur-xl border border-themeBorder/50 dark:border-white/[0.05] rounded-3xl p-6 flex flex-col relative overflow-hidden group hover:border-amber-500/30 transition-all duration-300 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
  {f.isProcessed && (
- <div className="absolute top-4 right-4 text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
- Paid
+ <div className="absolute top-4 right-4 bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 backdrop-blur-sm">
+ <i className="fa-solid fa-check mr-1"></i> Paid
  </div>
  )}
  
- <div className="flex items-center gap-4">
- {f.profile_picture_url ? (
- <img src={f.profile_picture_url} alt={f.full_name} className="w-12 h-12 rounded-full object-cover border border-themeBorder shadow-sm" />
- ) : (
- <div className="w-12 h-12 rounded-full bg-themePanel/5 border border-themeBorder text-themeTextSec flex items-center justify-center font-black text-lg shadow-sm">
- {f.full_name.charAt(0)}
- </div>
- )}
+ <div className="flex items-center gap-4 mb-6">
+ <img src={getAvatarUrl({ name: f.full_name, avatar_url: f.profile_picture_url })} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(f.full_name)}&background=random&color=fff&rounded=true&bold=true`; }} alt={f.full_name} className="w-14 h-14 rounded-2xl object-cover border border-themeBorder shadow-sm" />
  <div>
- <h4 className="text-base font-black text-themeText ">{f.full_name}</h4>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">{f.erp_id}</p>
+ <h4 className="text-base font-black text-themeText tracking-tight">{f.full_name}</h4>
+ <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest mt-0.5">{f.erp_id}</p>
  </div>
  </div>
  
- <div className="bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] rounded-xl p-4 border border-themeBorder dark:border-white/[0.08]">
- <div className="flex flex-col mb-3">
- <div className="flex justify-between items-center mb-1">
- <div className="flex items-center gap-2">
- <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Gross Base Salary (Editable)</span>
- <button aria-label={expandedCards.includes(f.id) ? "Collapse breakdown" : "Expand breakdown"} onClick={() => toggleCardBreakdown(f.id)} className="w-5 h-5 flex items-center justify-center rounded bg-themePanel/5 hover:bg-themePanel/10 text-themeTextSec /40 hover:text-themeText transition-colors">
- <i className={`fa-solid fa-chevron-down text-[8px] transition-transform ${expandedCards.includes(f.id) ? 'rotate-180' : ''}`}></i>
- </button>
- </div>
- <div className="flex items-center gap-2 mt-1">
- <span className="text-xs text-themeTextSec font-bold">₹</span>
+ <div className="flex-1 bg-themeElevated/50 backdrop-blur-sm rounded-2xl p-5 border border-themeBorder/50 flex flex-col gap-4">
+ 
+ {/* Base Pay Section */}
+ <div className="flex justify-between items-start">
+ <div>
+ <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest flex items-center gap-1.5 mb-1">
+ Base Salary 
+ </span>
+ <div className="flex items-center gap-1">
+ <span className="text-sm font-bold text-themeTextSec">₹</span>
  <input 
  type="number"
  value={f.basePay}
  onChange={(e) => handleFacultyPropUpdate(f.id, 'basePay', e.target.value)}
- className="bg-transparent border-b border-themeBorder text-sm font-black text-themeText font-mono w-24 outline-none focus:border-amber-500 transition-colors py-0.5"
+ className="bg-transparent border-b border-transparent hover:border-themeBorder text-lg font-black text-themeText font-mono w-28 outline-none focus:border-amber-500 transition-colors py-0.5"
  />
  </div>
  </div>
+ <div className="text-right">
+ <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Leaves / LOP</span>
+ <span className="text-sm font-black text-rose-500">{f.totalLeaveDays} <span className="text-[10px] font-bold text-rose-500/50">/ {f.lopDays}</span></span>
+ </div>
+ </div>
+
  {/* Personalized Salary Breakdown (Editable) */}
  {expandedCards.includes(f.id) && (
- <div className="flex flex-col gap-2 pl-3 border-l border-themeBorder ml-1.5 mt-3 mb-2 animate-fade-in bg-themeApp p-3 rounded-lg">
- <div className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mb-2 flex justify-between items-center border-b border-themeBorder pb-1">
- <span>Personalized Pay Structure</span>
- <button onClick={() => {
- setFaculty(prev => prev.map(fac => fac.id === f.id ? { ...fac, salary_structure: [...(fac.salary_structure || []), { name: 'New Component', percentage: 0 }] } : fac));
- }} className="text-amber-500 hover:text-amber-600 flex items-center gap-1 bg-amber-500/10 px-1.5 py-0.5 rounded">
- <i className="fa-solid fa-plus"></i> Add
+ <div className="flex flex-col gap-2 p-4 bg-themePanel/50 rounded-xl border border-themeBorder/50 animate-fade-in">
+ <div className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest mb-1 flex justify-between items-center pb-2 border-b border-themeBorder/50">
+ <span>Pay Structure</span>
+ <button onClick={() => setFaculty(prev => prev.map(fac => fac.id === f.id ? { ...fac, salary_structure: [...(fac.salary_structure || []), { name: 'New Component', percentage: 0 }] } : fac))} className="text-amber-500 hover:text-amber-600 flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded">
+ <i className="fa-solid fa-plus text-[8px]"></i> Add
  </button>
  </div>
  {(f.salary_structure || []).map((b, i) => (
  <div key={i} className="flex gap-2 items-center group">
- <input type="text" value={b.name} onChange={e => handleUpdateStructure(f.id, i, 'name', e.target.value)} className="w-full flex-1 bg-transparent border-b border-transparent hover:border-themeBorder focus:border-amber-500 text-[10px] font-bold text-themeTextSec outline-none transition-colors" />
- <div className="flex items-center bg-themeElevated rounded px-1">
+ <input type="text" value={b.name} onChange={e => handleUpdateStructure(f.id, i, 'name', e.target.value)} className="w-full flex-1 bg-transparent border-b border-transparent hover:border-themeBorder focus:border-amber-500 text-[10px] font-bold text-themeText outline-none transition-colors" />
+ <div className="flex items-center bg-themeElevated rounded px-1.5 py-0.5">
  <input type="number" value={b.percentage} onChange={e => handleUpdateStructure(f.id, i, 'percentage', e.target.value)} className="w-8 bg-transparent text-xs font-black text-amber-500 outline-none text-right" />
  <span className="text-[10px] text-amber-500/50 ml-0.5">%</span>
  </div>
- <div className="flex items-center gap-1 group/amt border-b border-transparent hover:border-themeBorder focus-within:border-amber-500 transition-colors px-1">
+ <div className="flex items-center gap-1 px-1">
  <span className="text-[10px] text-themeTextSec font-bold">₹</span>
- <input 
- type="number" 
- value={Math.round(f.basePay * (b.percentage / 100))}
- onChange={e => handleUpdateStructure(f.id, i, 'percentage', (Number(e.target.value) / f.basePay) * 100)}
- className="w-14 bg-transparent text-[10px] font-medium text-themeTextSec font-mono text-right outline-none"
- />
+ <span className="w-12 text-[10px] font-medium text-themeTextSec font-mono text-right">{Math.round(f.basePay * (b.percentage / 100)).toLocaleString('en-IN')}</span>
  </div>
- <button onClick={() => {
- setFaculty(prev => prev.map(fac => fac.id === f.id ? { ...fac, salary_structure: fac.salary_structure.filter((_, idx) => idx !== i) } : fac));
- }} className="text-rose-500/0 group-hover:text-rose-500/50 hover:!text-rose-500 transition-colors w-4 text-center">
+ <button onClick={() => setFaculty(prev => prev.map(fac => fac.id === f.id ? { ...fac, salary_structure: fac.salary_structure.filter((_, idx) => idx !== i) } : fac))} className="text-rose-500/0 group-hover:text-rose-500/50 hover:!text-rose-500 transition-colors w-4 text-center">
  <i className="fa-solid fa-xmark text-[10px]"></i>
  </button>
  </div>
  ))}
- <div className="flex justify-between items-center mt-2 pt-2 border-t border-themeBorder ">
- <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest">Total Weight:</span>
- <span className={`text-[10px] font-black ${(f.salary_structure || []).reduce((acc, curr) => acc + Number(curr.percentage || 0), 0) === 100 ? 'text-emerald-500' : 'text-rose-500'}`}>
- {(f.salary_structure || []).reduce((acc, curr) => acc + Number(curr.percentage || 0), 0)}%
- </span>
  </div>
+ )}
+ 
+ <div className="w-full h-px bg-themeBorder/50"></div>
+ 
+ <div className="flex justify-between items-end">
+ <div>
+ <span className="text-[9px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Net Disbursal</span>
+ <span className="text-2xl font-black text-emerald-500 font-mono tracking-tight">₹{f.netPay.toLocaleString('en-IN')}</span>
+ </div>
+ {f.deduction > 0 && (
+ <div className="text-right">
+ <span className="text-[9px] font-bold text-rose-500/70 uppercase tracking-widest block mb-1">Deduction</span>
+ <span className="text-xs font-black text-rose-500 font-mono">-₹{f.deduction.toLocaleString('en-IN')}</span>
  </div>
  )}
  </div>
- <div className="flex justify-between items-center mb-2">
- <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Preferred Account</span>
- <span className="text-[11px] font-bold text-themeApp/80">{f.bankDetails.bankName} (..{f.bankDetails.accountNo?.slice(-4) || 'N/A'})</span>
- </div>
- <div className="flex justify-between items-center mb-2">
- <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">Leaves (Total/LOP)</span>
- <span className="text-xs font-black text-rose-500">{f.totalLeaveDays} / {f.lopDays} LOP</span>
- </div>
- <div className="w-full h-px bg-themePanel/5 my-3"></div>
- <div className="flex justify-between items-center">
- <span className="text-[11px] font-black text-amber-500 uppercase tracking-widest">Pre-Tax Net Pay</span>
- <span className="text-base font-black text-amber-500 font-mono">{formatCurrency(f.netPay)}</span>
- </div>
- <div className="w-full h-px bg-themePanel/5 my-3"></div>
- <div className="flex justify-between items-center">
- <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Annual CTC</span>
- <span className="text-sm font-black text-emerald-600 dark:text-emerald-500 font-mono">{formatCurrency(f.basePay * 12)}</span>
- </div>
+ 
  </div>
 
  {!f.isProcessed && (
  <button 
  onClick={() => handleOpenPayment(f)} 
- className="w-full py-3.5 bg-themePanel/5 hover:bg-themePanel/10 border border-themeBorder rounded-xl text-themeText text-xs font-black transition-colors"
+ className="w-full mt-4 py-3.5 bg-amber-500 hover:bg-amber-400 text-themeText rounded-2xl text-xs font-black transition-all duration-300 shadow-[0_4px_14px_rgba(245,158,11,0.2)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2"
  >
- Process Payment
+ <i className="fa-solid fa-bolt"></i> Disburse Pay
  </button>
  )}
  </div>
@@ -701,10 +566,10 @@ export default function AdminPayroll() {
  </div>
 
  <div className="flex flex-col items-start md:items-end flex-1">
- <span className="text-[9px] font-black text-themeTextSec /40 uppercase tracking-widest">Base / Net Pay</span>
+ <span className="text-[9px] font-black text-themeTextSec/40 uppercase tracking-widest">Base / Net Disbursal</span>
  <div className="flex items-center gap-2 mt-0.5">
- <span className="text-xs font-bold text-themeTextSec line-through">₹{formatCurrency(f.basePay)}</span>
- <span className="text-sm font-black text-amber-500 font-mono">₹{formatCurrency(f.netPay)}</span>
+ {f.deduction > 0 && <span className="text-xs font-bold text-rose-500/70 line-through">₹{f.basePay.toLocaleString('en-IN')}</span>}
+ <span className="text-sm font-black text-emerald-500 font-mono tracking-tight">₹{f.netPay.toLocaleString('en-IN')}</span>
  </div>
  </div>
 
@@ -712,33 +577,31 @@ export default function AdminPayroll() {
  <button 
  onClick={() => handleOpenPayment(f)}
  disabled={f.isProcessed}
- className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:bg-black/10 dark:disabled:bg-themePanel/10 text-themeText dark:disabled:text-themeApp/50 rounded-xl text-xs font-black transition-colors disabled:cursor-not-allowed whitespace-nowrap"
+ className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:bg-themePanel/5 text-themeText disabled:text-themeTextSec/50 rounded-xl text-xs font-black transition-all shadow-[0_4px_14px_rgba(245,158,11,0.2)] disabled:shadow-none hover:shadow-[0_6px_20px_rgba(245,158,11,0.3)] disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
  >
- {f.isProcessed ? 'Paid' : 'Pay'}
+ {f.isProcessed ? <><i className="fa-solid fa-check"></i> Paid</> : <><i className="fa-solid fa-bolt"></i> Disburse</>}
  </button>
- <button onClick={() => toggleCardBreakdown(f.id)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-themeElevated hover:bg-black/10 text-themeTextSec transition-colors">
- <i className={`fa-solid fa-chevron-down text-xs transition-transform ${expandedCards.includes(f.id) ? 'rotate-180' : ''}`}></i>
- </button>
+ 
  </div>
 
  {/* Expandable Breakdown in List View */}
  {expandedCards.includes(f.id) && (
- <div className="w-full basis-full mt-2 pt-4 border-t border-themeBorder flex flex-col md:flex-row gap-6 animate-fade-in">
- <div className="flex-1 bg-themeElevated rounded-xl p-4">
+ <div className="w-full basis-full mt-4 pt-4 border-t border-themeBorder flex flex-col md:flex-row gap-6 animate-fade-in">
+ <div className="flex-1 bg-themePanel/50 rounded-xl p-4 border border-themeBorder/50">
  <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-2">Salary Structure</span>
  {f.salary_structure?.map((item, i) => (
  <div key={i} className="flex justify-between text-[10px] font-bold py-1">
- <span className="text-themeText /80">{item.name} ({item.percentage}%)</span>
- <span className="text-themeText font-mono">₹{Math.round(f.basePay * (item.percentage / 100))}</span>
+ <span className="text-themeText/80">{item.name} ({item.percentage}%)</span>
+ <span className="text-themeText font-mono">₹{Math.round(f.basePay * (item.percentage / 100)).toLocaleString('en-IN')}</span>
  </div>
  ))}
  </div>
- <div className="flex-1 bg-themeElevated rounded-xl p-4">
+ <div className="flex-1 bg-themePanel/50 rounded-xl p-4 border border-themeBorder/50">
  <span className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-2">Account Details</span>
  <div className="flex flex-col gap-1 text-[10px] font-bold">
- <div className="flex justify-between"><span className="text-themeTextSec ">Bank:</span> <span className="text-themeText ">{f.bankDetails?.bankName || 'N/A'}</span></div>
- <div className="flex justify-between"><span className="text-themeTextSec ">Acct:</span> <span className="text-themeText ">{f.bankDetails?.accountNo || 'N/A'}</span></div>
- <div className="flex justify-between"><span className="text-themeTextSec ">IFSC:</span> <span className="text-themeText ">{f.bankDetails?.ifsc || 'N/A'}</span></div>
+ <div className="flex justify-between"><span className="text-themeTextSec">Bank:</span> <span className="text-themeText">{f.bankDetails?.bankName || 'N/A'}</span></div>
+ <div className="flex justify-between"><span className="text-themeTextSec">Acct:</span> <span className="text-themeText font-mono">{f.bankDetails?.accountNo || 'N/A'}</span></div>
+ <div className="flex justify-between"><span className="text-themeTextSec">IFSC:</span> <span className="text-themeText font-mono">{f.bankDetails?.ifsc || 'N/A'}</span></div>
  </div>
  </div>
  </div>
@@ -754,96 +617,81 @@ export default function AdminPayroll() {
  </div>
  </div>
 
- {/* PAYMENT & TAX QUESTIONNAIRE MODAL */}
- {showPaymentModal && selectedFac && createPortal(
- <div className="fixed inset-0 z-[99999] bg-themeApp flex flex-col animate-fade-in overflow-hidden">
- <div className="w-full h-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex flex-col">
- 
- <div className="px-6 py-6 lg:px-12 lg:py-8 border-b border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-between items-center shrink-0">
- <div>
- <h3 className="text-2xl lg:text-3xl font-black text-themeText ">Process Payroll</h3>
- <p className="text-xs lg:text-sm font-bold tracking-widest text-themeTextSec uppercase mt-2">Tax & Transaction Questionnaire for {selectedFac.full_name}</p>
- </div>
- <button onClick={() => setShowPaymentModal(false)} className="w-12 h-12 flex items-center justify-center rounded-full bg-themePanel/5 text-themeTextSec hover:text-themeText hover:bg-themePanel/10 transition text-lg">
- <i className="fa-solid fa-xmark"></i>
- </button>
- </div>
+ {/* PAYMENT TRANSACTION MODAL */}
+  {showPaymentModal && selectedFac && createPortal(
+  <div className="fixed inset-0 z-[99999] bg-themeApp flex flex-col animate-fade-in overflow-hidden">
+  <div className="w-full h-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex flex-col">
+  
+  {/* Header */}
+  <div className="px-6 py-6 lg:px-12 lg:py-8 border-b border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-between items-center shrink-0">
+  <div>
+  <h3 className="text-2xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-600 tracking-tight drop-shadow-sm">Finalize Payroll Disbursal</h3>
+  <p className="text-xs lg:text-sm font-bold tracking-widest text-themeTextSec uppercase mt-2">Transaction Details for {selectedFac.full_name}</p>
+  </div>
+  <button onClick={() => setShowPaymentModal(false)} className="w-12 h-12 flex items-center justify-center rounded-full bg-themePanel/5 text-themeTextSec hover:text-themeText hover:bg-themePanel/10 transition text-lg shadow-sm border border-themeBorder/50">
+  <i className="fa-solid fa-xmark"></i>
+  </button>
+  </div>
 
- <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-12 flex justify-center">
- <div className="w-full max-w-3xl flex flex-col gap-8">
- 
- {/* Salary Breakdown Recap */}
- <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex flex-col gap-2">
- <p className="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-1">Calculation Recap</p>
- <div className="flex justify-between"><span className="text-xs text-amber-500/80">Base Salary</span><span className="text-xs font-bold text-amber-500 font-mono">{formatCurrency(selectedFac.basePay)}</span></div>
- <div className="flex justify-between"><span className="text-xs text-amber-500/80">LOP Penalty</span><span className="text-xs font-bold text-amber-500 font-mono">-{formatCurrency(selectedFac.deduction)}</span></div>
- <div className="w-full h-px bg-amber-500/20 my-1"></div>
- <div className="flex justify-between"><span className="text-sm font-black text-amber-500">Gross Payable</span><span className="text-sm font-black text-amber-500 font-mono">{formatCurrency(selectedFac.netPay)}</span></div>
- </div>
+  <div className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-12 flex justify-center">
+  <div className="w-full max-w-3xl flex flex-col gap-8">
+  
+  {/* Salary Breakdown Recap */}
+  <div className="bg-themeElevated border border-themeBorder rounded-3xl p-6 lg:p-8 flex flex-col gap-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+  <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 flex items-center gap-2 mb-2"><i className="fa-solid fa-calculator text-[10px]"></i> Calculation Recap</p>
+  
+  <div className="flex justify-between items-center"><span className="text-sm font-bold text-themeTextSec">Base Salary</span><span className="text-base font-black text-themeText font-mono">{formatCurrency(selectedFac.basePay)}</span></div>
+  <div className="flex justify-between items-center"><span className="text-sm font-bold text-rose-500/80">LOP Penalty</span><span className="text-base font-black text-rose-500 font-mono">-{formatCurrency(selectedFac.deduction)}</span></div>
+  
+  <div className="w-full h-px bg-themeBorder my-2"></div>
+  
+  <div className="flex justify-between items-center"><span className="text-base font-black text-themeText uppercase tracking-widest">Gross Payable</span><span className="text-xl font-black text-emerald-500 font-mono">{formatCurrency(selectedFac.netPay)}</span></div>
+  </div>
 
- <form id="payment-form" onSubmit={handleConfirmPayment} className="flex flex-col gap-5">
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Transaction Date *</label>
- <input type="date" required value={paymentForm.transactionDate} onChange={e => setPaymentForm({...paymentForm, transactionDate: e.target.value})} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500" />
- </div>
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Payment Mode *</label>
- <select required value={paymentForm.paymentMode} onChange={e => setPaymentForm({...paymentForm, paymentMode: e.target.value})} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500 appearance-none">
- <option value="Bank Transfer (NEFT/RTGS)">Bank Transfer</option>
- <option value="UPI">UPI</option>
- <option value="Cheque">Cheque</option>
- </select>
- </div>
- </div>
+  <form id="payment-form" onSubmit={handleConfirmPayment} className="flex flex-col gap-6">
+  
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+  <div>
+  <label className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block mb-2">Transaction Date <span className="text-amber-500">*</span></label>
+  <input type="date" required value={paymentForm.transactionDate} onChange={e => setPaymentForm({...paymentForm, transactionDate: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-5 py-4 text-sm font-bold text-themeText outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all" />
+  </div>
+  <div>
+  <label className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block mb-2">Payment Mode <span className="text-amber-500">*</span></label>
+  <div className="relative">
+  <select required value={paymentForm.paymentMode} onChange={e => setPaymentForm({...paymentForm, paymentMode: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-5 py-4 text-sm font-bold text-themeText outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all appearance-none cursor-pointer">
+  <option value="Bank Transfer (NEFT/RTGS)">Bank Transfer (NEFT/RTGS)</option>
+  <option value="UPI">UPI Payment</option>
+  <option value="Cheque">Physical Cheque</option>
+  </select>
+  <i className="fa-solid fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-themeTextSec text-xs pointer-events-none"></i>
+  </div>
+  </div>
+  </div>
 
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Transaction Ref / ID *</label>
- <input type="text" required placeholder="e.g. UTR123456789" value={paymentForm.transactionId} onChange={e => setPaymentForm({...paymentForm, transactionId: e.target.value})} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500" />
- </div>
+  <div>
+  <label className="text-[10px] font-black text-themeTextSec uppercase tracking-widest block mb-2">Transaction Ref / ID <span className="text-amber-500">*</span></label>
+  <input type="text" required placeholder="e.g. UTR123456789" value={paymentForm.transactionId} onChange={e => setPaymentForm({...paymentForm, transactionId: e.target.value})} className="w-full bg-themeElevated border border-themeBorder rounded-xl px-5 py-4 text-sm font-bold text-themeText placeholder-themeTextSec/30 outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all font-mono" />
+  </div>
+  
+  <div className="bg-emerald-500/10 p-6 lg:p-8 rounded-3xl border border-emerald-500/20 flex justify-between items-center mt-4 relative overflow-hidden">
+  <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/20 blur-[60px] rounded-full pointer-events-none"></div>
+  <span className="text-base font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest z-10 flex items-center gap-2"><i className="fa-solid fa-money-bill-wave"></i> Final Disbursal</span>
+  <span className="text-4xl font-black text-emerald-600 dark:text-emerald-400 font-mono z-10">{formatCurrency(selectedFac.netPay)}</span>
+  </div>
+  
+  </form>
+  </div>
+  </div>
 
- <div className="w-full h-px bg-themePanel/5 my-2"></div>
- 
- <h4 className="text-xs font-black text-themeText tracking-widest uppercase">Statutory Deductions (Section 192)</h4>
- 
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">Professional Tax (₹)</label>
- <input type="number" required value={paymentForm.professionalTax} onChange={e => setPaymentForm({...paymentForm, professionalTax: Number(e.target.value)})} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500" />
- </div>
- <div>
- <label className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest block mb-1">TDS (%)</label>
- <input type="number" step="0.1" required value={paymentForm.tdsPercentage} onChange={e => setPaymentForm({...paymentForm, tdsPercentage: Number(e.target.value)})} className="w-full bg-themeElevated dark:bg-themeApp border border-themeBorder dark:border-white/[0.08] rounded-xl px-4 py-3 text-sm font-bold text-themeText outline-none focus:border-amber-500" />
- </div>
- </div>
-
- <div className="bg-themeElevated dark:bg-themeApp p-4 rounded-xl border border-themeBorder dark:border-white/[0.08] flex justify-between items-center">
- <div>
- <p className="text-[10px] font-bold text-themeTextSec uppercase tracking-widest">TDS Amount</p>
- <p className="text-xs font-medium text-themeTextSec /30">Taxable: {formatCurrency(selectedFac.netPay)}</p>
- </div>
- <span className="text-sm font-black text-rose-500 font-mono">-{formatCurrency(paymentForm.tdsAmount)}</span>
- </div>
-
- <div className="bg-emerald-500/10 p-5 rounded-2xl border border-emerald-500/20 flex justify-between items-center mt-2">
- <span className="text-sm font-black text-emerald-500 uppercase tracking-widest">Final Post-Tax Disbursal</span>
- <span className="text-2xl font-black text-emerald-500 font-mono">{formatCurrency(selectedFac.netPay - paymentForm.professionalTax - paymentForm.tdsAmount)}</span>
- </div>
- </form>
- </div>
- </div>
-
- <div className="p-6 lg:p-8 border-t border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-center shrink-0">
- <div className="w-full max-w-3xl flex justify-end gap-4">
- <button onClick={() => setShowPaymentModal(false)} className="px-8 py-4 bg-themePanel/5 hover:bg-themePanel/10 rounded-xl text-themeTextSec hover:text-themeText text-sm font-black transition-colors">Cancel</button>
- <button form="payment-form" type="submit" disabled={isProcessing} className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 rounded-xl text-themeText text-sm font-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
- {isProcessing ? 'Processing...' : <><i className="fa-solid fa-lock"></i> Mark Paid & Generate PDF</>}
- </button>
- </div>
- </div>
- </div>
- </div>
- , document.body)}
+  <div className="p-6 lg:p-8 border-t border-themeBorder bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex justify-end gap-4 shrink-0">
+  <button onClick={() => setShowPaymentModal(false)} className="px-8 py-4 bg-themePanel/5 hover:bg-themePanel/10 rounded-xl text-themeTextSec hover:text-themeText text-sm font-black transition-colors border border-themeBorder/50">Cancel</button>
+  <button form="payment-form" type="submit" disabled={isProcessing} className="px-8 py-4 bg-amber-500 hover:bg-amber-400 rounded-xl text-themeText text-sm font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_20px_rgba(245,158,11,0.2)] hover:shadow-[0_6px_25px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 flex items-center gap-2">
+  {isProcessing ? 'Processing Encryption...' : <><i className="fa-solid fa-lock text-black/40"></i> Encrypt & Disburse</>}
+  </button>
+  </div>
+  </div>
+  </div>
+  , document.body)}
 
  </section>
  );
