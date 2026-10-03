@@ -12,11 +12,17 @@ import { getAvatarUrl } from '../../../utils/avatarUtils';
 
 
 export default function AdminPayroll() {
- const [faculty, setFaculty] = useState([]);
- const [loading, setLoading] = useState(true);
- 
- // State for personalized pay overrides
- const [customBasePays, setCustomBasePays] = useState({});
+  const [faculty, setFaculty] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toLocaleString('default', { month: 'long' }));
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historyFac, setHistoryFac] = useState(null);
+  const [historyRolls, setHistoryRolls] = useState([]);
+
+  // State for personalized pay overrides
+  const [customBasePays, setCustomBasePays] = useState({});
  
  // Configuration state removed
  const [expandedCards, setExpandedCards] = useState([]);
@@ -46,9 +52,9 @@ export default function AdminPayroll() {
  const { data: facultyData, error } = await supabase.from('profiles').select('*').eq('role', 'faculty');
  if (error) throw error;
  if (facultyData) {
- const currentMonthStart = new Date();
- currentMonthStart.setDate(1);
- currentMonthStart.setHours(0,0,0,0);
+ const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+ const monthIndex = months.indexOf(selectedMonth);
+ const currentMonthStart = new Date(parseInt(selectedYear), monthIndex, 1);
  
  const currentMonthEnd = new Date(currentMonthStart);
  currentMonthEnd.setMonth(currentMonthEnd.getMonth() + 1);
@@ -68,10 +74,11 @@ export default function AdminPayroll() {
 
  const { data: previousRolls } = await supabase
  .from('faculty_payroll')
- .select('faculty_id, month, year');
+ .select('*');
  
- const currentMonth = new Date().toLocaleString('default', { month: 'long' });
- const currentYear = new Date().getFullYear().toString();
+ setHistoryRolls(previousRolls || []);
+ const currentMonth = selectedMonth;
+ const currentYear = selectedYear;
 
  const enriched = facultyData.map(f => {
  const facLeaves = (leaves || []).filter(l => l.faculty_id === f.id);
@@ -154,7 +161,7 @@ export default function AdminPayroll() {
  }
  };
 
- useEffect(() => { fetchFaculty(); }, []);
+ useEffect(() => { fetchFaculty(); }, [selectedMonth, selectedYear]);
 
  const formatCurrency = (val) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(val);
 
@@ -172,7 +179,7 @@ export default function AdminPayroll() {
  
  const handleConfirmPayment = async (e) => {
  e.preventDefault();
- const confirmed = await new Promise(res => window.erpDialog ? window.erpDialog.confirm("Are you sure you want to finalize this payroll disbursal? This action will generate the encrypted PDF and cannot be undone.", res) : res(window.confirm("Finalize payroll?")));
+ const confirmed = window.erpDialog ? await window.erpDialog.confirm("Are you sure you want to finalize this payroll disbursal? This action will generate the encrypted PDF and cannot be undone.", "Confirm Disbursal") : window.confirm("Finalize payroll?");
  if (!confirmed) return;
  
  setIsProcessing(true);
@@ -261,7 +268,7 @@ export default function AdminPayroll() {
 
  setFaculty(prev => prev.map(f => f.id === selectedFac.id ? { ...f, isProcessed: true } : f));
  
- if(window.erpToast) window.erpToast.show("✅ Payment processed & Recorded. Ultra Luxury Encrypted PDF Generated.", "success");
+ if(window.erpToast) window.erpToast.show("✅ Payroll disbursed & payslip securely dispatched.", "success");
  setShowPaymentModal(false);
 
  } catch (err) { 
@@ -317,7 +324,7 @@ export default function AdminPayroll() {
      return;
    }
    
-   const confirmed = await new Promise(res => window.erpDialog ? window.erpDialog.confirm(`You are about to automatically finalize and disburse payroll for ${unprocessed.length} faculty members. This will generate encrypted PDFs and send emails. Proceed?`, res) : res(window.confirm(`Disburse ${unprocessed.length} payrolls?`)));
+   const confirmed = window.erpDialog ? await window.erpDialog.confirm(`You are about to automatically finalize and disburse payroll for ${unprocessed.length} faculty members. This will generate encrypted PDFs and send emails. Proceed?`, "Bulk Disbursal") : window.confirm(`Disburse ${unprocessed.length} payrolls?`);
    if (!confirmed) return;
 
    setIsProcessing(true);
@@ -423,9 +430,14 @@ export default function AdminPayroll() {
  <div className="flex justify-between items-center mb-6">
  <div>
  <h2 className="text-xl font-black text-themeText tracking-tight">Faculty Payroll</h2>
- <span className="inline-block mt-1 px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
- Current Month
- </span>
+ <div className="flex items-center gap-2 mt-2">
+ <select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} className="bg-themeElevated border border-themeBorder rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest text-themeText outline-none focus:border-amber-500 cursor-pointer">
+   {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map(m => <option key={m} value={m}>{m}</option>)}
+ </select>
+ <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="bg-themeElevated border border-themeBorder rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest text-themeText outline-none focus:border-amber-500 cursor-pointer">
+   {[2024, 2025, 2026, 2027, 2028].map(y => <option key={y} value={y.toString()}>{y}</option>)}
+ </select>
+ </div>
  </div>
  <div className="flex items-center gap-3">
  <div className="flex bg-themeElevated rounded-xl p-1 border border-themeBorder ">
@@ -537,14 +549,23 @@ export default function AdminPayroll() {
  
  </div>
 
- {!f.isProcessed && (
+ <div className="flex items-center gap-2 mt-4">
+ <button onClick={() => { setHistoryFac(f); setShowHistoryModal(true); }} className="w-12 py-3.5 bg-themeElevated hover:bg-themeBorder text-themeText rounded-2xl text-xs font-black transition-colors flex items-center justify-center border border-themeBorder">
+ <i className="fa-solid fa-clock-rotate-left"></i>
+ </button>
+ {!f.isProcessed ? (
  <button 
  onClick={() => handleOpenPayment(f)} 
- className="w-full mt-4 py-3.5 bg-amber-500 hover:bg-amber-400 text-themeText rounded-2xl text-xs font-black transition-all duration-300 shadow-[0_4px_14px_rgba(245,158,11,0.2)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2"
+ className="flex-1 py-3.5 bg-amber-500 hover:bg-amber-400 text-themeText rounded-2xl text-xs font-black transition-all duration-300 shadow-[0_4px_14px_rgba(245,158,11,0.2)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.3)] flex items-center justify-center gap-2"
  >
  <i className="fa-solid fa-bolt"></i> Disburse Pay
  </button>
+ ) : (
+ <div className="flex-1 py-3.5 bg-emerald-500/10 text-emerald-500 rounded-2xl text-xs font-black flex items-center justify-center gap-2 border border-emerald-500/20">
+ <i className="fa-solid fa-check"></i> Paid
+ </div>
  )}
+ </div>
  </div>
  ))}
  </div>
@@ -574,6 +595,9 @@ export default function AdminPayroll() {
  </div>
 
  <div className="flex items-center gap-2">
+ <button onClick={() => { setHistoryFac(f); setShowHistoryModal(true); }} className="px-4 py-2.5 bg-themeElevated hover:bg-themeBorder text-themeText rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-2 border border-themeBorder">
+ <i className="fa-solid fa-clock-rotate-left"></i>
+ </button>
  <button 
  onClick={() => handleOpenPayment(f)}
  disabled={f.isProcessed}
@@ -619,7 +643,7 @@ export default function AdminPayroll() {
 
  {/* PAYMENT TRANSACTION MODAL */}
   {showPaymentModal && selectedFac && createPortal(
-  <div className="fixed inset-0 z-[99999] bg-themeApp flex flex-col animate-fade-in overflow-hidden">
+  <div className="fixed inset-0 z-50 bg-themeApp flex flex-col animate-fade-in overflow-hidden">
   <div className="w-full h-full bg-themePanel/80 dark:bg-themePanel/80 backdrop-blur-3xl saturate-[1.8] flex flex-col">
   
   {/* Header */}
@@ -646,6 +670,13 @@ export default function AdminPayroll() {
   <div className="w-full h-px bg-themeBorder my-2"></div>
   
   <div className="flex justify-between items-center"><span className="text-base font-black text-themeText uppercase tracking-widest">Gross Payable</span><span className="text-xl font-black text-emerald-500 font-mono">{formatCurrency(selectedFac.netPay)}</span></div>
+  </div>
+
+  <div className="bg-blue-500/5 border border-blue-500/20 rounded-3xl p-6 lg:p-8 flex flex-col gap-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+  <p className="text-[10px] font-black uppercase tracking-widest text-blue-500 flex items-center gap-2 mb-2"><i className="fa-solid fa-building-columns text-[10px]"></i> Bank Transfer Details</p>
+  <div className="flex justify-between items-center"><span className="text-sm font-bold text-themeTextSec">Bank Name</span><span className="text-sm font-black text-themeText">{selectedFac.bankDetails?.bankName || 'Not Provided'}</span></div>
+  <div className="flex justify-between items-center"><span className="text-sm font-bold text-themeTextSec">Account No</span><span className="text-sm font-black text-themeText font-mono">{selectedFac.bankDetails?.accountNo || 'N/A'}</span></div>
+  <div className="flex justify-between items-center"><span className="text-sm font-bold text-themeTextSec">IFSC Code</span><span className="text-sm font-black text-themeText font-mono">{selectedFac.bankDetails?.ifsc || 'N/A'}</span></div>
   </div>
 
   <form id="payment-form" onSubmit={handleConfirmPayment} className="flex flex-col gap-6">

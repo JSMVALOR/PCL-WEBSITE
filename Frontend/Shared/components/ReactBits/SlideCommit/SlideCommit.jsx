@@ -12,7 +12,13 @@ export default function SlideCommit({
   height = 56,
   radius = 16,
   className = '',
-  style
+  style,
+  trackColor,
+  handleColor,
+  textColor,
+  iconColor,
+  successColor,
+  dangerColor
 }) {
   const [phase, setPhase] = useState('idle');
   const [isDrag, setIsDrag] = useState(false);
@@ -100,7 +106,7 @@ export default function SlideCommit({
         width: width,
         height: height,
         borderRadius: radius,
-        backgroundColor: 'rgba(0, 0, 0, 0.04)', // Light mode track
+        backgroundColor: trackColor || 'rgba(0, 0, 0, 0.04)',
         ...style
       }}
     >
@@ -114,22 +120,22 @@ export default function SlideCommit({
       
       {/* Label */}
       <motion.div 
-        className="absolute inset-0 flex items-center justify-center font-bold text-xs uppercase tracking-widest text-themeTextSec dark:text-white/40 pointer-events-none"
-        style={{ opacity: textOpacity, paddingLeft: handleSize }}
+        className={`absolute inset-0 flex items-center justify-center font-bold text-[11px] uppercase tracking-wider whitespace-nowrap pointer-events-none ${textColor ? '' : 'text-themeTextSec dark:text-white/40'}`}
+        style={{ opacity: textOpacity, paddingLeft: handleSize, color: textColor }}
       >
         {label}
       </motion.div>
 
       {/* Overlays */}
       <motion.div
-        className="absolute inset-0 flex items-center justify-center font-bold text-xs uppercase tracking-widest text-emerald-500 bg-emerald-500/10 pointer-events-none"
+        className="absolute inset-0 flex items-center justify-center font-bold text-[11px] uppercase tracking-wider whitespace-nowrap text-emerald-500 bg-emerald-500/10 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: phase === 'done' ? 1 : 0 }}
       >
         {doneLabel}
       </motion.div>
       <motion.div
-        className="absolute inset-0 flex items-center justify-center font-bold text-xs uppercase tracking-widest text-rose-500 bg-rose-500/10 pointer-events-none"
+        className="absolute inset-0 flex items-center justify-center font-bold text-[11px] uppercase tracking-wider whitespace-nowrap text-rose-500 bg-rose-500/10 pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: phase === 'error' ? 1 : 0 }}
       >
@@ -138,12 +144,14 @@ export default function SlideCommit({
 
       {/* Draggable Handle */}
       <motion.div
-        className="absolute left-[6px] bg-white dark:bg-themeElevated shadow-md border border-black/5 dark:border-white/10 flex items-center justify-center cursor-grab active:cursor-grabbing hover:scale-[1.02] active:scale-[0.98] transition-transform z-10"
+        className="absolute left-[6px] shadow-md border border-black/5 dark:border-white/10 flex items-center justify-center cursor-grab active:cursor-grabbing hover:scale-[1.02] active:scale-[0.98] transition-transform z-10"
         style={{ 
             x, 
             width: handleSize, 
             height: handleSize, 
-            borderRadius: radius - 6 
+            borderRadius: radius - 6 > 0 ? radius - 6 : radius, // fallback for pill
+            backgroundColor: handleColor || 'white',
+            color: iconColor || 'inherit'
         }}
         drag={phase === 'idle' ? 'x' : false}
         dragConstraints={{ left: 0, right: travel }}
@@ -152,10 +160,10 @@ export default function SlideCommit({
         onDragStart={() => setIsDrag(true)}
         onDragEnd={handleDragEnd}
       >
-        {phase === 'idle' && <i className="fa-solid fa-arrow-right text-themeTextSec dark:text-white/50 text-sm"></i>}
-        {phase === 'loading' && <i className="fa-solid fa-circle-notch fa-spin text-themeTextSec dark:text-white/50 text-sm"></i>}
-        {phase === 'done' && <i className="fa-solid fa-check text-emerald-500 text-sm"></i>}
-        {phase === 'error' && <i className="fa-solid fa-xmark text-rose-500 text-sm"></i>}
+        {phase === 'idle' && <i className={`fa-solid fa-arrow-right text-sm ${iconColor ? '' : 'text-themeTextSec dark:text-white/50'}`}></i>}
+        {phase === 'loading' && <i className={`fa-solid fa-circle-notch fa-spin text-sm ${iconColor ? '' : 'text-themeTextSec dark:text-white/50'}`}></i>}
+        {phase === 'done' && <i className="fa-solid fa-check text-sm" style={{color: successColor || '#10b981'}}></i>}
+        {phase === 'error' && <i className="fa-solid fa-xmark text-sm" style={{color: dangerColor || '#f43f5e'}}></i>}
       </motion.div>
     </div>
   );

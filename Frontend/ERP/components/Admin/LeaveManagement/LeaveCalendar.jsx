@@ -20,12 +20,27 @@ export default function LeaveCalendar({}) {
  
  const { data } = await supabase
  .from('faculty_leaves')
- .select('id, from_date, to_date, leave_type')
- .eq('status', 'Approved')
+ .select('id, from_date, to_date, leave_type, faculty_id')
+ .eq('status', 'approved')
  .gte('to_date', startOfMonth)
  .lte('from_date', endOfMonth);
 
- setLeaves(data || []);
+ // Enrich with faculty names
+ let enriched = data || [];
+ if (enriched.length > 0) {
+  const uniqueIds = [...new Set(enriched.map(l => l.faculty_id).filter(Boolean))];
+  if (uniqueIds.length > 0) {
+   const { data: facultyList } = await supabase
+    .from('users')
+    .select('id, full_name')
+    .in('id', uniqueIds);
+   const nameMap = {};
+   (facultyList || []).forEach(f => nameMap[f.id] = f.full_name);
+   enriched = enriched.map(l => ({ ...l, faculty_name: nameMap[l.faculty_id] || 'Faculty' }));
+  }
+ }
+
+ setLeaves(enriched);
  } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); } finally {
  setIsLoading(false);
  }
@@ -71,11 +86,16 @@ export default function LeaveCalendar({}) {
  </div>
 
  <div className="flex flex-col gap-1 overflow-y-auto max-h-[60px] lg:max-h-[80px] no-scrollbar">
- {leavesOnDay.map(leave => (
- <div key={leave.id} className={`text-[8px] lg:text-[9px] font-bold px-1.5 py-0.5 lg:px-2 lg:py-1 rounded truncate bg-${leave.leave_type || 'blue'}-500/10 text-${leave.leave_type || 'blue'}-500 hover:bg-${leave.leave_type || 'blue'}-500 hover:text-themeText transition-colors cursor-default`}>
- {'Faculty' || 'Faculty'}
- </div>
- ))}
+ {leavesOnDay.map(leave => {
+  const colorMap = { 'Medical Leave': '#f59e0b', 'Casual Leave': '#10b981', 'Conference Leave': '#6366f1', 'Maternity Leave': '#ec4899', 'Earned Leave': '#8b5cf6' };
+  const c = colorMap[leave.leave_type] || '#6366f1';
+  return (
+  <div key={leave.id} className="text-[8px] lg:text-[9px] font-bold px-1.5 py-0.5 lg:px-2 lg:py-1 rounded truncate cursor-default"
+   style={{ backgroundColor: `${c}15`, color: c }}>
+   {leave.faculty_name || 'Faculty'}
+  </div>
+  );
+ })}
  </div>
  </div>
  );

@@ -17,7 +17,14 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  // NEW STATES
  const [isSingleDay, setIsSingleDay] = useState(true);
  const [editingLeaveId, setEditingLeaveId] = useState(null);
- const [policies, setPolicies] = useState([]);
+ const [policies, setPolicies] = useState([
+ { name: 'Casual Leave (CL)', annual_limit: 12, max_consecutive_days: 2 },
+ { name: 'On Duty (OD)', annual_limit: 30, max_consecutive_days: null },
+ { name: 'Winter Vacation', annual_limit: 15, max_consecutive_days: null },
+ { name: 'Summer Vacation', annual_limit: 15, max_consecutive_days: null },
+ { name: 'Earned Leave (EL)', annual_limit: 12, max_consecutive_days: null },
+ { name: 'Uncategorised Leave', annual_limit: 365, max_consecutive_days: null }
+ ]);
 
 
  // Form State
@@ -175,8 +182,13 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  }
  
  if (usedDays + diffDays > limitToCheck) {
+ // If it's Uncategorised, maybe we don't block. But here we have a rule: 
+ // "uncatagorised leaves will be deducted from casual or anyother available things."
+ // So if it's casual, block. Uncategorised doesn't have a limit anyway (365).
+ if (leaveType !== 'Uncategorised Leave') {
  setStatusMessage({ type: "error", text: `HR Rule: Insufficient balance for ${leaveType}. Limit: ${limitToCheck}, Used/Requested: ${usedDays + diffDays}.` });
  setIsSubmitting(false); return;
+ }
  }
  } else if (leaveType === "Earned Leave (EL)") {
  // EL is tracked manually via HR backend for encashment, but we allow requesting it.
@@ -380,15 +392,15 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  </div>
 
  {/* MODAL */}
- {showRequestModal && createPortal(<div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 /80 backdrop-blur-xl animate-fade-in">
- <div className="bg-themePanel/90 dark:bg-themePanel/90 backdrop-blur-3xl saturate-[1.8] w-full max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden border border-themeBorder dark:border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.2)] flex flex-col max-h-[90vh]">
+ {showRequestModal && createPortal(<div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
+ <div className="bg-[#121212]/95 backdrop-blur-[80px] saturate-[1.8] w-full max-w-lg rounded-t-[2.5rem] sm:rounded-[2.5rem] overflow-hidden border border-[#d4af37]/20 shadow-[0_20px_60px_rgba(212,175,55,0.1)] flex flex-col max-h-[90vh]">
  
- <div className="p-6 sm:p-8 border-b border-themeBorder dark:border-white/[0.08] shrink-0 flex justify-between items-start bg-transparent">
+ <div className="p-6 sm:p-8 border-b border-[#d4af37]/20 shrink-0 flex justify-between items-start bg-transparent">
  <div>
- <h3 className="text-xl font-black tracking-tight mb-1 text-themeText ">New Leave Request</h3>
- <p className="text-[10px] text-themeTextSec font-bold uppercase tracking-widest">Submit details to HOD for approval.</p>
+ <h3 className="text-xl font-black tracking-tight mb-1 text-white">New Leave Request</h3>
+ <p className="text-[10px] text-[#d4af37] font-bold uppercase tracking-widest">Submit details to HOD for approval.</p>
  </div>
- <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-themePanel/5 border border-themeBorder text-themeTextSec hover:text-themeText hover:bg-themePanel/10 transition-colors shrink-0">
+ <button type="button" onClick={() => setShowRequestModal(false)} className="w-8 h-8 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-white/10 transition-colors shrink-0">
  <i className="fa-solid fa-xmark"></i>
  </button>
  </div>
@@ -416,19 +428,19 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  </div>
  )}
 <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Leave Category</label>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-[#d4af37]/70 mb-2">Leave Category</label>
  <div className="relative">
- <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-black/[0.03] dark:bg-themePanel/[0.03] border border-themeBorder dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText focus:border-amber-500 focus:bg-themePanel dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm appearance-none cursor-pointer">
- {policies.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+ <select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold text-white focus:border-[#d4af37] focus:bg-black/60 outline-none transition-all shadow-sm appearance-none cursor-pointer">
+ {policies.map(p => <option key={p.name} value={p.name} className="bg-[#121212] text-white">{p.name}</option>)}
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec /30 pointer-events-none text-xs"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none text-xs"></i>
  </div>
  
 
  {leaveType && (
- <div className="mt-2 text-xs font-medium text-themeTextSec /60 bg-themeElevated p-3 rounded-xl flex items-center justify-between border border-themeBorder ">
+ <div className="mt-2 text-xs font-medium text-white/60 bg-white/5 p-3 rounded-xl flex items-center justify-between border border-white/10">
  <span>Available Balance:</span>
- <span className="font-bold text-themeText ">
+ <span className="font-bold text-[#d4af37]">
  {(() => {
  let used = 0;
  leaveHistory.forEach(l => {
@@ -449,40 +461,39 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  </span>
  </div>
  )}
-
-</div>
+ </div>
 
  <div className="grid grid-cols-2 gap-4">
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Start Date</label>
- <input type="date" min={today} max="2026-12-31" required value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-black/[0.03] dark:bg-themePanel/[0.03] border border-themeBorder dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText focus:border-amber-500 focus:bg-themePanel dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm dark:[color-scheme:dark]" />
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-[#d4af37]/70 mb-2">Start Date</label>
+ <input type="date" min={today} max="2026-12-31" required value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold text-white focus:border-[#d4af37] focus:bg-black/60 outline-none transition-all shadow-sm [color-scheme:dark]" />
  </div>
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">End Date</label>
- <input type="date" max="2026-12-31" required value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate || today} className="w-full bg-black/[0.03] dark:bg-themePanel/[0.03] border border-themeBorder dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText focus:border-amber-500 focus:bg-themePanel dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm dark:[color-scheme:dark]" />
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-[#d4af37]/70 mb-2">End Date</label>
+ <input type="date" max="2026-12-31" required value={toDate} onChange={(e) => setToDate(e.target.value)} min={fromDate || today} className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold text-white focus:border-[#d4af37] focus:bg-black/60 outline-none transition-all shadow-sm [color-scheme:dark]" />
  </div>
  </div>
 
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Assign Substitute (Optional)</label>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-[#d4af37]/70 mb-2">Assign Substitute (Optional)</label>
  <div className="relative">
- <select value={substituteId} onChange={(e) => setSubstituteId(e.target.value)} className="w-full bg-black/[0.03] dark:bg-themePanel/[0.03] border border-themeBorder dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-bold text-themeText focus:border-amber-500 focus:bg-themePanel dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm appearance-none cursor-pointer">
- <option value="">No substitute required</option>
+ <select value={substituteId} onChange={(e) => setSubstituteId(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-sm font-bold text-white focus:border-[#d4af37] focus:bg-black/60 outline-none transition-all shadow-sm appearance-none cursor-pointer">
+ <option value="" className="bg-[#121212] text-white">No substitute required</option>
  {facultyList.map(f => (
- <option key={f.id} value={f.id}>{f.full_name}</option>
+ <option key={f.id} value={f.id} className="bg-[#121212] text-white">{f.full_name}</option>
  ))}
  </select>
- <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-themeTextSec /30 pointer-events-none text-xs"></i>
+ <i className="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none text-xs"></i>
  </div>
  </div>
 
  <div>
- <label className="block text-[10px] font-bold uppercase tracking-widest text-themeTextSec mb-2">Reason for Leave</label>
- <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-black/[0.03] dark:bg-themePanel/[0.03] border border-themeBorder dark:border-white/[0.05] rounded-2xl px-4 py-4 text-sm font-medium text-themeText focus:border-amber-500 focus:bg-themePanel dark:focus:bg-[#2C2C2E] outline-none transition-all shadow-sm resize-none placeholder:text-themeTextSec /30"></textarea>
+ <label className="block text-[10px] font-bold uppercase tracking-widest text-[#d4af37]/70 mb-2">Reason for Leave</label>
+ <textarea required rows="3" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Provide details for HOD review..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-4 text-sm font-medium text-white focus:border-[#d4af37] focus:bg-black/60 outline-none transition-all shadow-sm resize-none placeholder:text-white/30"></textarea>
  </div>
 
- <button type="submit" disabled={isSubmitting} className="w-full mt-4 py-4 rounded-2xl bg-amber-500 text-themeText font-black text-[13px] tracking-wide uppercase hover:bg-amber-400 hover:shadow-[0_0_20px_#f59e0b40] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed">
- {isSubmitting ? <div className="w-4 h-4 border-2 border-themeBorder border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> {editingLeaveId ? "Update Request" : "Submit Request"}</>}
+ <button type="submit" disabled={isSubmitting} className="w-full mt-4 py-4 rounded-2xl bg-[#d4af37] text-black font-black text-[13px] tracking-wide uppercase hover:bg-[#b5952f] hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:cursor-not-allowed border border-[#d4af37]">
+ {isSubmitting ? <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div> : <><i className="fa-solid fa-paper-plane"></i> {editingLeaveId ? "Update Request" : "Submit Request"}</>}
  </button>
  </form>
  </div>

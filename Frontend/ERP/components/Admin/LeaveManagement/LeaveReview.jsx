@@ -20,13 +20,13 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  if (window.erpDialog && !(await new Promise(r => window.erpDialog.confirm('Are you sure you want to reject this leave request?', r)))) { setIsProcessing(false); return; }
  remarks = await window.erpDialog?.prompt('Please enter a reason for rejecting this leave:', 'Reject Leave') || '';
  if (!remarks) { setIsProcessing(false); return; } // cancelled
- updatePayload = { status: 'Rejected', admin_remarks: remarks };
+ updatePayload = { status: 'rejected', admin_remarks: remarks };
  } 
  else if (actionType === 'Approve') {
- updatePayload = { status: 'Approved', replacement_status: 'Not Required' };
+ updatePayload = { status: 'approved', replacement_status: 'Not Required' };
  }
  else if (actionType === 'ApproveAndReplace') {
- updatePayload = { status: 'Approved', replacement_status: 'Pending' };
+ updatePayload = { status: 'approved', replacement_status: 'Pending' };
  }
 
  const { error } = await supabase
@@ -43,8 +43,8 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  to_email: request.faculty?.email || 'admin@prudentia.edu',
  student_name: request.faculty?.full_name || request.faculty_id,
  leave_type: request.leave_type,
- start_date: request.start_date,
- end_date: request.end_date,
+ start_date: request.from_date,
+ end_date: request.to_date,
  reason: remarks
  });
  } else {
@@ -52,12 +52,12 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  to_email: request.faculty?.email || 'admin@prudentia.edu',
  student_name: request.faculty?.full_name || request.faculty_id,
  leave_type: request.leave_type,
- start_date: request.start_date,
- end_date: request.end_date
+ start_date: request.from_date,
+ end_date: request.to_date
  });
  }
  if (request.faculty?.phone) {
- sendSystemWhatsApp(request.faculty.phone, null, { template_id: 'LEAVE_STATUS', variables: { student_name: request.faculty.full_name || request.faculty_id, status: actionType === 'Reject' ? 'rejected' : 'approved', leave_type: request.leave_type, dates: `${request.start_date} to ${request.end_date}` }, recipient_name: request.faculty.full_name }).catch(e => console.error('WA failed:', e));
+ sendSystemWhatsApp(request.faculty.phone, null, { template_id: 'LEAVE_STATUS', variables: { student_name: request.faculty.full_name || request.faculty_id, status: actionType === 'Reject' ? 'rejected' : 'approved', leave_type: request.leave_type, dates: `${request.from_date} to ${request.to_date}` }, recipient_name: request.faculty.full_name }).catch(e => console.error('WA failed:', e));
  }
  } catch (emailErr) {
  console.warn("Comms dispatch failed:", emailErr);
@@ -119,11 +119,11 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <i className="fa-solid fa-user"></i>
  </div>
  <div>
- <h2 className={`font-bold tracking-tight text-xl lg:text-2xl text-themeText`}>{request.faculty?.name || 'Faculty Member'}</h2>
+ <h2 className={`font-bold tracking-tight text-xl lg:text-2xl text-themeText`}>{request.faculty?.full_name || request.faculty?.name || 'Faculty Member'}</h2>
  <div className="flex flex-wrap gap-4 mt-2">
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec">Employee ID</p>
- <p className="text-xs lg:text-sm font-bold text-themeText mt-0.5">FAC-{request.faculty_id?.substring(0,6).toUpperCase() || 'N/A'}</p>
+ <p className="text-xs lg:text-sm font-bold text-themeText mt-0.5">FAC-{request.faculty?.id?.substring(0,6).toUpperCase() || request.faculty_id?.substring(0,6).toUpperCase() || 'N/A'}</p>
  </div>
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec">Department</p>
@@ -144,8 +144,8 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <div>
  <p className="text-[13px] font-medium text-themeTextSec">Leave Type</p>
  <div className="flex items-center gap-2 mt-1">
- <div className={`w-2 h-2 rounded-full bg-${request.policy?.color_theme || 'blue'}-500`}></div>
- <p className="text-lg font-semibold tracking-tight text-themeText">{request.policy?.name || 'General Leave'}</p>
+ <div className={`w-2 h-2 rounded-full bg-blue-500`}></div>
+ <p className="text-lg font-semibold tracking-tight text-themeText">{request.leave_type || request.policy?.name || 'General Leave'}</p>
  </div>
  </div>
  <div className="text-right">
@@ -204,38 +204,42 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  </div>
 
  {/* Actions Box */}
- {request.status === 'Pending' && (
+ {request.status === 'pending' && (
  <div className="bg-themePanel shadow-sm border border-themeBorder rounded-themePanel p-5 flex flex-col gap-3">
  <SlideCommit
- label="Slide to Approve"
- doneLabel="Done"
+ label="Approve & Replace"
+ doneLabel="Approved"
  errorLabel="Failed"
  onConfirm={() => handleAction('ApproveAndReplace')}
- trackColor="rgba(28, 28, 30, 0.05)"
- handleColor="var(--theme-accent)"
+ trackColor="#f0fdf4" 
+ handleColor="#10b981"
+ textColor="#065f46"
+ iconColor="#ffffff"
  successColor="#10b981"
  dangerColor="#f43f5e"
- width={200}
- height={48}
- radius={12}
+ width="100%"
+ height={56}
+ radius={999}
  />
  <SlideCommit
- label="Slide to Approve"
- doneLabel="Done"
+ label="Approve (No Replacement)"
+ doneLabel="Approved"
  errorLabel="Failed"
  onConfirm={() => handleAction('Approve')}
- trackColor="rgba(28, 28, 30, 0.05)"
- handleColor="var(--theme-accent)"
+ trackColor="#f0fdf4"
+ handleColor="#10b981"
+ textColor="#065f46"
+ iconColor="#ffffff"
  successColor="#10b981"
  dangerColor="#f43f5e"
- width={200}
- height={48}
- radius={12}
+ width="100%"
+ height={56}
+ radius={999}
  />
  <button type="button" 
  onClick={() => handleAction('Reject')}
  disabled={isProcessing}
- className="w-full py-3 bg-themeElevated/90 backdrop-blur-2xl hover:bg-rose-500 hover:text-themeText text-rose-500 border border-themeBorder dark:border-white/[0.08]Strong rounded-xl text-[14px] font-medium tracking-normal transition"
+ className="w-full h-14 bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-100 hover:border-rose-500 rounded-full text-[14px] font-bold tracking-widest uppercase transition-all shadow-sm"
  >
  Reject
  </button>

@@ -1,6 +1,6 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React from 'react';
-import PclLogoSvg from '../components/Shared/Assets/LOGOS/PclLogoSvg';
+import PclLogoSvg from '../components/shared/Assets/LOGOS/PclLogoSvg';
 
 const numberToWordsIndian = (num) => {
   if (!num) return 'Zero Rupees Only';

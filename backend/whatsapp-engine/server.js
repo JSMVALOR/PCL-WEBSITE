@@ -22,8 +22,9 @@ let clientStatus = 'DISCONNECTED';
 let isProcessingQueue = false;
 let sock = null;
 let reconnectAttempts = 0;
-const MAX_RECONNECT_ATTEMPTS = 15;
+const MAX_RECONNECT_ATTEMPTS = 25;
 let heartbeatInterval = null;
+let reconnectTimer = null;
 
 const logger = pino({ level: 'silent' });
 
@@ -125,16 +126,17 @@ const MESSAGE_TEMPLATES = {
 
 function startHeartbeat() {
     if (heartbeatInterval) clearInterval(heartbeatInterval);
-    // Send a lightweight presence update every 4 minutes to keep the connection alive
+    // Send a lightweight presence update every 2 minutes to keep the connection alive
+    // WhatsApp can idle-drop connections that go quiet for >3 minutes
     heartbeatInterval = setInterval(async () => {
         if (sock && clientStatus === 'CONNECTED') {
             try {
                 await sock.sendPresenceUpdate('available');
             } catch (e) {
-                // Silently fail — if this errors, connection.update will handle reconnect
+                console.log('[WA] Heartbeat presence failed (non-fatal):', e.message);
             }
         }
-    }, 4 * 60 * 1000);
+    }, 2 * 60 * 1000);
 }
 
 function stopHeartbeat() {
@@ -144,7 +146,17 @@ function stopHeartbeat() {
     }
 }
 
+function clearReconnectTimer() {
+    if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+    }
+}
+
 async function startWhatsApp() {
+    // Clear any pending reconnect timer
+    clearReconnectTimer();
+    
     try {
         const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
 
@@ -155,12 +167,13 @@ async function startWhatsApp() {
             },
             printQRInTerminal: false,
             logger,
-            // Use Chrome browser identity — supports multi-device natively
-            // and doesn't conflict with the phone's primary session
-            browser: Browsers.ubuntu('Chrome'),
-            connectTimeoutMs: 90000,
-            // Keep connection alive with frequent pings
-            keepAliveIntervalMs: 25000,
+            // Use macOS Desktop identity — this is the most stable fingerprint
+            // that WhatsApp's servers recognise as a legitimate multi-device client.
+            // ubuntu('Chrome') gets flagged and force-disconnected.
+            browser: Browsers.macOS('Desktop'),
+            connectTimeoutMs: 120000,
+            // Keep connection alive with frequent pings — critical for persistence
+            keepAliveIntervalMs: 15000,
             // Don't request full history sync — this prevents the heavy
             // sync that causes Baileys to choke and disconnect
             syncFullHistory: false,
@@ -168,6 +181,14 @@ async function startWhatsApp() {
             markOnlineOnConnect: false,
             // Retry connection on failure
             retryRequestDelayMs: 2000,
+            // CRITICAL: Provide getMessage for message retry requests.
+            // Without this, WhatsApp considers the client "broken" and
+            // drops the session after a few hours.
+            getMessage: async (key) => {
+                // We don't store messages, so return undefined.
+                // This is enough to satisfy the retry protocol.
+                return { conversation: '' };
+            },
         });
 
         // CRITICAL: Save credentials on every update — this is what keeps
@@ -191,13 +212,18 @@ async function startWhatsApp() {
 
             if (connection === 'close') {
                 stopHeartbeat();
+                clearReconnectTimer();
                 const statusCode = lastDisconnect?.error?.output?.statusCode;
                 const reason = lastDisconnect?.error?.output?.payload?.message || '';
                 
                 // Only consider truly logged out if status is 401 (loggedOut)
-                // Status 408 = timeout, 428 = connection lost, 440 = replaced by another session
-                // 500/503 = server errors — all of these should reconnect
+                // Status 408 = timeout, 428 = connection lost, 440 = replaced
+                // 515 = restart required, 500/503 = server errors
+                // ALL of these should reconnect — only 401 is a real logout
                 const isLoggedOut = statusCode === DisconnectReason.loggedOut;
+                // Also treat 440 (replaced by another device) as NOT a logout —
+                // this happens when WhatsApp's servers hiccup, not when the user
+                // actually unlinked from their phone
                 const shouldReconnect = !isLoggedOut;
                 
                 console.log(`[WA] Connection closed. Code: ${statusCode} | Reason: ${reason} | Reconnecting: ${shouldReconnect}`);
@@ -212,24 +238,25 @@ async function startWhatsApp() {
                     try { fs.rmSync(AUTH_DIR, { recursive: true, force: true }); } catch(e) {}
                     fs.mkdirSync(AUTH_DIR, { recursive: true });
                     // Auto-restart to show QR again
-                    setTimeout(() => startWhatsApp(), 3000);
+                    reconnectTimer = setTimeout(() => startWhatsApp(), 3000);
                 } else if (shouldReconnect && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                     reconnectAttempts++;
-                    // Exponential backoff: 2s, 4s, 8s, 16s... capped at 60s
-                    const delay = Math.min(2000 * Math.pow(2, reconnectAttempts - 1), 60000);
+                    // Exponential backoff: 1s, 2s, 4s, 8s... capped at 30s
+                    // Faster initial reconnects to minimise downtime
+                    const delay = Math.min(1000 * Math.pow(2, reconnectAttempts - 1), 30000);
                     console.log(`[WA] Reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
-                    setTimeout(() => startWhatsApp(), delay);
+                    reconnectTimer = setTimeout(() => startWhatsApp(), delay);
                 } else if (!shouldReconnect) {
                     console.log('[WA] Session ended. Manual restart required.');
                     clientStatus = 'DISCONNECTED';
                 } else {
-                    console.log('[WA] Max reconnect attempts reached. Will retry in 5 minutes...');
+                    console.log('[WA] Max reconnect attempts reached. Will retry in 2 minutes...');
                     clientStatus = 'DISCONNECTED';
-                    // Even after max attempts, try again after 5 minutes
-                    setTimeout(() => {
+                    // Even after max attempts, try again after 2 minutes
+                    reconnectTimer = setTimeout(() => {
                         reconnectAttempts = 0;
                         startWhatsApp();
-                    }, 5 * 60 * 1000);
+                    }, 2 * 60 * 1000);
                 }
             }
 
@@ -265,6 +292,30 @@ async function startWhatsApp() {
         }
     }
 }
+
+// ==========================================
+// GRACEFUL SHUTDOWN — flush creds before exit
+// ==========================================
+async function gracefulShutdown(signal) {
+    console.log(`[WA] Received ${signal}. Shutting down gracefully...`);
+    stopHeartbeat();
+    clearReconnectTimer();
+    if (sock) {
+        try {
+            // End the socket cleanly without logging out
+            // This preserves the auth state for next startup
+            sock.end(undefined);
+        } catch (e) {
+            console.log('[WA] Socket close error (non-fatal):', e.message);
+        }
+    }
+    // Give a moment for final creds.update to fire
+    await new Promise(r => setTimeout(r, 1000));
+    process.exit(0);
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 startWhatsApp();
 
