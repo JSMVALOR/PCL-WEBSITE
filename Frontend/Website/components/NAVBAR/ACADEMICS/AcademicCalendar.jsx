@@ -45,27 +45,71 @@ export default function AcademicCalendar() {
         }
     };
 
-    const generateLuxuryPDF = () => {
+    const loadLogoAsBase64 = async () => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = "/favicon.svg"; 
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = 500;
+                canvas.height = 500;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, 500, 500);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.onerror = () => resolve(null);
+        });
+    };
+
+    const generateLuxuryPDF = async () => {
         if (!calendarData || !calendarData.columns || !calendarData.rows) return;
         setIsGenerating(true);
 
         try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'pt', 'a4');
+            const doc = new window.jspdf.jsPDF('p', 'pt', 'a4');
             
-            // Branding Header
-            doc.setFillColor(15, 23, 42); // Dark slate background
-            doc.rect(0, 0, doc.internal.pageSize.width, 100, 'F');
+            // --- BRAND COLORS (Brown & Gold Theme) ---
+            const brandBrown = [93, 64, 55]; // #5D4037
+            const brandGold = [212, 175, 55]; // #d4af37
+            const dark = [26, 26, 46]; // #1a1a2e
             
-            doc.setTextColor(255, 255, 255);
+            // Center variables
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const centerX = pageWidth / 2;
+
+            // --- HEADER SECTION ---
+            const logoData = await loadLogoAsBase64();
+            if (logoData) {
+                doc.addImage(logoData, "PNG", centerX - 40, 30, 80, 80);
+            }
+
+            doc.setFont("times", "bold");
+            doc.setTextColor(...brandBrown);
             doc.setFontSize(24);
-            doc.setFont("helvetica", "bold");
-            doc.text("PRUDENTIA COLLEGE OF LAW", 40, 50);
+            doc.text("PRUDENTIA COLLEGE OF LAW", centerX, 140, { align: 'center' });
             
-            doc.setFontSize(12);
-            doc.setFont("helvetica", "normal");
-            doc.text("ACADEMIC CALENDAR 2026-27", 40, 75);
-            doc.text(`Generated: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.width - 40, 75, { align: 'right' });
+            // Decorative Line under title
+            doc.setDrawColor(...brandBrown);
+            doc.setLineWidth(1);
+            doc.line(centerX - 150, 150, centerX + 150, 150);
+            doc.setDrawColor(...brandGold);
+            doc.setLineWidth(0.5);
+            doc.line(centerX - 150, 153, centerX + 150, 153);
+
+            doc.setFontSize(14);
+            doc.setTextColor(...dark);
+            doc.text("ANNUAL ACADEMIC CALENDAR 2026 – 2027", centerX, 180, { align: 'center' });
+            
+            doc.setFont("times", "italic");
+            doc.setFontSize(11);
+            doc.text("Academic Schedule as per the Osmania University Communication", centerX, 200, { align: 'center' });
+            
+            doc.setFont("times", "bold");
+            doc.setFontSize(11);
+            doc.text("LL. B. (3-YDC); B.A. LL. B. and B.B.A. LL. B (5-YDC)", centerX, 220, { align: 'center' });
+            
+            doc.text("CIRCULAR – 01/PCL/26", centerX, 240, { align: 'center' });
 
             // Table Body
             const headers = [calendarData.columns];
@@ -74,37 +118,53 @@ export default function AcademicCalendar() {
             );
 
             doc.autoTable({
-                startY: 120,
+                startY: 270,
                 head: headers,
                 body: data,
                 theme: 'grid',
                 headStyles: {
-                    fillColor: [194, 166, 115], // Premium Gold
-                    textColor: [255, 255, 255],
+                    fillColor: [250, 250, 250], // Whiteish
+                    textColor: [0, 0, 0],
                     fontStyle: 'bold',
-                    fontSize: 10,
-                    cellPadding: 8
+                    fontSize: 11,
+                    cellPadding: 12,
+                    halign: 'center',
+                    lineColor: [0, 0, 0],
+                    lineWidth: 1
                 },
                 bodyStyles: {
-                    textColor: [50, 50, 50],
-                    fontSize: 9,
-                    cellPadding: 8
+                    textColor: [0, 0, 0],
+                    fontSize: 11,
+                    cellPadding: 12,
+                    lineColor: [0, 0, 0],
+                    lineWidth: 1
                 },
-                alternateRowStyles: {
-                    fillColor: [250, 250, 250]
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 60 },
+                    2: { halign: 'center', cellWidth: 150 }
                 },
                 styles: {
-                    font: 'helvetica',
-                    lineWidth: 0.1,
-                    lineColor: [200, 200, 200]
+                    font: 'times',
+                    lineWidth: 1,
+                    lineColor: [0, 0, 0]
                 },
-                margin: { top: 120, left: 40, right: 40 }
+                margin: { top: 270, left: 50, right: 50 }
             });
             
+            const finalY = doc.lastAutoTable.finalY + 40;
+            
+            doc.setFont("times", "bold");
             doc.setFontSize(10);
-            doc.setTextColor(100, 100, 100);
-            doc.text("Important Note: This calendar has been prepared based on the academic schedule as per the Osmania University communication. Any subsequent changes, additions or revised dates notified by the University shall prevail and will be incorporated by the College accordingly.", 40, doc.lastAutoTable.finalY + 30, { maxWidth: doc.internal.pageSize.width - 80 });
-            doc.text("SIGNATURE AND SEAL OF THE INSTITUTION", doc.internal.pageSize.width - 40, doc.lastAutoTable.finalY + 120, { align: 'right' });
+            doc.setTextColor(...dark);
+            doc.text("Important Note: ", 50, finalY);
+            
+            doc.setFont("times", "normal");
+            doc.text("This calendar has been prepared based on the academic schedule as per the Osmania University", 130, finalY);
+            doc.text("communication. Any subsequent changes, additions or revised dates notified by the University shall prevail and will be", 50, finalY + 15);
+            doc.text("incorporated by the College accordingly.", 50, finalY + 30);
+            
+            doc.setFontSize(11);
+            doc.text("SIGNATURE AND SEAL OF THE INSTITUTION", pageWidth - 50, finalY + 90, { align: 'right' });
 
             doc.save('Prudentia_Academic_Calendar.pdf');
         } catch (error) {
