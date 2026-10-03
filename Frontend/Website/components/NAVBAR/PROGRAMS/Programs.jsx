@@ -167,7 +167,6 @@ export default function Programs() {
         doc.text("incorporated by the College accordingly.", 50, finalY + 30);
         
         doc.setFontSize(11);
-        doc.text("SIGNATURE AND SEAL OF THE INSTITUTION", pageWidth - 50, finalY + 90, { align: 'right' });
 
         doc.save('Prudentia_Academic_Calendar.pdf');
     } catch (error) {
@@ -504,10 +503,19 @@ export default function Programs() {
                     <button 
                         onClick={generateLuxuryPDF} 
                         disabled={isGenerating || !calendarEvents}
-                        className="mx-auto h-12 px-8 rounded-full bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] text-white font-bold transition flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(var(--primary-color-rgb),0.3)] disabled:opacity-50"
+                        className="tlh-btn justify-center mx-auto w-fit disabled:opacity-50"
                     >
-                        {isGenerating ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-download"></i>}
-                        <span>Download Official PDF</span>
+                        {isGenerating ? (
+                            <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                        ) : null}
+                        <span className="text-xs font-bold uppercase tracking-widest">
+                            {isGenerating ? "Generating..." : "Download Official PDF"}
+                        </span>
+                        {!isGenerating && (
+                            <svg width="9" height="13" viewBox="0 0 9 13" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
+                                <path d="M1.64453 0.972656L6.97897 6.3071L1.67567 11.6104" stroke="currentColor" strokeWidth="2"/>
+                            </svg>
+                        )}
                     </button>
                   </div>
 

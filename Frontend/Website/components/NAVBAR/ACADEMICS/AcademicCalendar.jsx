@@ -165,7 +165,6 @@ export default function AcademicCalendar() {
             doc.text("incorporated by the College accordingly.", 50, finalY + 30);
             
             doc.setFontSize(11);
-            doc.text("SIGNATURE AND SEAL OF THE INSTITUTION", pageWidth - 50, finalY + 90, { align: 'right' });
 
             doc.save('Prudentia_Academic_Calendar.pdf');
         } catch (error) {
@@ -195,10 +194,19 @@ export default function AcademicCalendar() {
                             <button 
                                 onClick={generateLuxuryPDF} 
                                 disabled={isGenerating || !calendarData}
-                                className="h-12 px-6 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold transition flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50"
+                                className="tlh-btn justify-center w-fit disabled:opacity-50"
                             >
-                                {isGenerating ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-download"></i>}
-                                <span>Download PDF</span>
+                                {isGenerating ? (
+                                    <i className="fa-solid fa-spinner fa-spin mr-2"></i>
+                                ) : null}
+                                <span className="text-xs font-bold uppercase tracking-widest">
+                                    {isGenerating ? "Generating..." : "Download Official PDF"}
+                                </span>
+                                {!isGenerating && (
+                                    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-2">
+                                        <path d="M6 1V9M6 9L2 5M6 9L10 5M1 12H11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                )}
                             </button>
                         </div>
                     </div>
