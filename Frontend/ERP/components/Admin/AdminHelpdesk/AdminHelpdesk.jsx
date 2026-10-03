@@ -130,9 +130,6 @@ export default function AdminHelpdesk({ isEmbedded = false, isHubView = false })
      }
    }
  }
- }
- 
- }
 
  setReplyText(prev => ({ ...prev, [ticketId]: '' }));
   
