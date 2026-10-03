@@ -142,16 +142,21 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
 
         {/* Headline */}
         <div className="mb-4 md:mb-[36px] w-full max-w-[1100px]">
-          <h4 className="text-xs sm:text-sm md:text-base font-bold uppercase tracking-[0.2em] mb-4 text-white/80">
+          <h4 
+            className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-[0.2em] mb-4 text-[var(--text-color)] opacity-90"
+            style={{ filter: 'drop-shadow(0 0 10px var(--bg-app)) drop-shadow(0 0 20px var(--bg-app))' }}
+          >
             Integrated Legal Education For<br className="md:hidden" /> Leadership In Law, Judiciary And Public Services
           </h4>
           <AnimatedHeadline 
             text={title1} 
-            className="text-[2.75rem] sm:text-[3.5rem] md:text-[5rem] lg:text-[76px] font-bold leading-[1.1] tracking-[-0.01em] drop-shadow-2xl" 
+            className="text-[2.75rem] sm:text-[3.5rem] md:text-[5rem] lg:text-[76px] font-bold leading-[1.1] tracking-[-0.01em] drop-shadow-2xl text-[var(--text-color)]" 
+            style={{ filter: 'drop-shadow(0 0 10px var(--bg-app)) drop-shadow(0 0 20px var(--bg-app))' }}
           />
           <AnimatedHeadline 
             text={title2} 
             className="text-[2.25rem] sm:text-[3rem] md:text-[4rem] lg:text-[64px] font-bold italic leading-[1.1] tracking-[-0.01em] text-[var(--primary-color)] drop-shadow-[0_0_30px_rgba(255,191,0,0.2)]" 
+            style={{ filter: 'drop-shadow(0 0 10px var(--bg-app)) drop-shadow(0 0 20px var(--bg-app))' }}
           />
         </div>
 
