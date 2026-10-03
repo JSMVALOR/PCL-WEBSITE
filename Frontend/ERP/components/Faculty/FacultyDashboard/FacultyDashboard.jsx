@@ -6,6 +6,7 @@ import { DashboardGreetingBanner } from "../../shared/DashboardWidgets";
 import FacultyActionItems from "../../shared/DashboardWidgets/FacultyActionItems";
 import DashboardWorkSchedule from "../../shared/DashboardWidgets/DashboardWorkSchedule";
 import FacultyWebClock from "../../shared/DashboardWidgets/FacultyWebClock";
+import FacultyQuickLinks from "../../shared/DashboardWidgets/FacultyQuickLinks";
 
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
@@ -87,7 +88,10 @@ export default function FacultyDashboard({ setActiveTab }) {
  <DashboardGreetingBanner role="faculty" />
  
  <div className="flex flex-col xl:flex-row-reverse gap-6 lg:gap-8 shrink-0">
- <div className="flex-[1] min-w-0 xl:max-w-[400px]"><FacultyWebClock /></div>
+ <div className="flex-[1] min-w-0 xl:max-w-[400px] flex flex-col gap-6 lg:gap-8">
+ <FacultyWebClock />
+ <FacultyQuickLinks setActiveTab={setActiveTab} />
+ </div>
  <div className="flex-[2] min-w-0"><DashboardWorkSchedule role="faculty" /></div>
  </div>
 
