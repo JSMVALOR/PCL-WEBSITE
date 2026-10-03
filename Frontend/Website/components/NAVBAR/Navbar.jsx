@@ -38,9 +38,9 @@ const MENU_ITEMS = [
         {
           title: 'Programs',
           items: [
-            { label: '5-Year BA. LL.B (Honors)', link: '/programs/ba-llb' },
-            { label: '5-Year BBA. LL.B (Honors)', link: '/programs/bba-llb' },
-            { label: '3-Year LL.B (Standard)', link: '/programs/llb' },
+            { label: '5 Years B.A. LL.B.', link: '/programs/ba-llb' },
+            { label: '5 Years B.B.A. LL.B.', link: '/programs/bba-llb' },
+            { label: '3 Years LL.B.', link: '/programs/llb' },
           ] },
         {
           title: 'Admissions',

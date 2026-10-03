@@ -84,8 +84,8 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
   const { content } = useSiteContent('/', 'hero');
   const isMobile = windowWidth <= 768;
 
-  const title1 = content?.title1 || "Advancing";
-  const title2 = content?.title2 || "Integrated Legal Education";
+  const title1 = content?.title1 || "Your Path to";
+  const title2 = content?.title2 || "Leadership.";
   const desc = content?.description || "Where rigorous scholarship meets uncompromising integrity. Shaping the vanguards of modern jurisprudence at Prudentia College of Law.";
   const btn1Text = content?.btn1_text || "Apply Now";
   const btn1Link = content?.btn1_link || "/apply";
@@ -142,6 +142,9 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
 
         {/* Headline */}
         <div className="mb-4 md:mb-[36px] w-full max-w-[1100px]">
+          <h4 className="text-xs sm:text-sm md:text-base font-bold uppercase tracking-[0.2em] mb-4 text-white/80">
+            Integrated Legal Education For<br className="md:hidden" /> Leadership In Law, Judiciary And Public Services
+          </h4>
           <AnimatedHeadline 
             text={title1} 
             className="text-[2.75rem] sm:text-[3.5rem] md:text-[5rem] lg:text-[76px] font-bold leading-[1.1] tracking-[-0.01em] drop-shadow-2xl" 
@@ -264,7 +267,7 @@ const Hero = forwardRef(({ windowWidth, ...props }, ref) => {
 
               <div className="flex items-center gap-5 relative z-10">
                 <div>
-                  <h4 className="font-extrabold text-[17px]" style={{ color: 'var(--text-color)' }}>Phase I Intake</h4>
+                  <h4 className="font-extrabold text-[17px]" style={{ color: 'var(--text-color)' }}>Total Intake</h4>
                   <p className="font-medium text-[13px] mt-0.5" style={{ color: 'var(--text-muted)' }}>Regulated 240 Seats</p>
                 </div>
               </div>
