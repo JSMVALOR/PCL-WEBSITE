@@ -31,7 +31,7 @@ export default function AdminApprovals({ isEmbedded = false }) {
  { data: profileUpdatesData }
  ] = await Promise.all([
  supabase.from('timetable_requests').select('*, faculty:profiles(full_name), subject:master_subjects(name)').order('created_at', { ascending: false }),
- supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role, email), accused:profiles!grievances_accused_id_fkey(full_name, role, email)').is('assigned_to', null).order('created_at', { ascending: false }),
+ supabase.from('grievances').select('*, reporter:profiles!grievances_reporter_id_fkey(full_name, role, email, phone), accused:profiles!grievances_accused_id_fkey(full_name, role, email, phone)').is('assigned_to', null).order('created_at', { ascending: false }),
  supabase.from('student_documents').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false }),
  supabase.from('profile_update_requests').select('*, profiles(full_name, erp_id)').eq('status', 'pending').order('created_at', { ascending: false })
  ]);
@@ -448,8 +448,22 @@ export default function AdminApprovals({ isEmbedded = false }) {
  <div className="flex items-center gap-2 mb-1">
  <span className="text-[13px] font-medium text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20"><i className="fa-solid fa-triangle-exclamation mr-1"></i> Escalated: {g.category}</span>
  </div>
- <p className="text-xs font-bold text-themeText mt-2">Reporter: {g.reporter?.full_name} ({g.reporter?.role})</p>
+ <div className="flex items-center gap-2 mt-2">
+ <p className="text-xs font-bold text-themeText">Reporter: {g.reporter?.full_name} ({g.reporter?.role})</p>
+ {g.reporter?.phone && (
+ <a href={`https://wa.me/${g.reporter.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="w-5 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer" title="Chat with Reporter">
+ <i className="fa-brands fa-whatsapp text-[10px]"></i>
+ </a>
+ )}
+ </div>
+ <div className="flex items-center gap-2 mt-0.5">
  <p className="text-xs font-bold text-rose-400">Against: {g.accused?.full_name} ({g.accused?.role})</p>
+ {g.accused?.phone && (
+ <a href={`https://wa.me/${g.accused.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="w-5 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer" title="Chat with Accused">
+ <i className="fa-brands fa-whatsapp text-[10px]"></i>
+ </a>
+ )}
+ </div>
  </div>
  {getStatusBadge(g.status)}
  </div>
