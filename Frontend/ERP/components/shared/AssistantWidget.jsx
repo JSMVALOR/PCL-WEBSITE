@@ -48,17 +48,22 @@ function ActiveChatView({ conversation, onBack, userSession }) {
 
   useEffect(() => {
     fetchMessages();
-    const channel = supabase.channel(`chat_${conversation.userId}`)
+    const channel = supabase.channel(`chat_${conversation.userId}_${Date.now()}`)
       .on('postgres_changes', { 
-        event: 'INSERT', 
+        event: '*', 
         schema: 'public', 
-        table: 'erp_chat_messages',
-        filter: `sender_id=eq.${conversation.userId}` 
+        table: 'erp_chat_messages'
       }, payload => {
-        if (payload.new.receiver_id === userSession.db_id) {
-          setMessages(prev => [...prev, payload.new]);
-          markAsRead(payload.new.id);
-          setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+        if (payload.eventType === 'INSERT') {
+          if (payload.new.sender_id === conversation.userId && payload.new.receiver_id === userSession.db_id) {
+            setMessages(prev => [...prev, payload.new]);
+            markAsRead(payload.new.id);
+            setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+          }
+        } else if (payload.eventType === 'UPDATE') {
+          if (payload.new.sender_id === userSession.db_id && payload.new.receiver_id === conversation.userId) {
+            setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
+          }
         }
       })
       .subscribe();

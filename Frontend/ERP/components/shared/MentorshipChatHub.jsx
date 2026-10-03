@@ -69,30 +69,35 @@ export default function MentorshipChatHub({ receiverId, receiverName, receiverRo
 
  const channel = supabase.channel(`chat_${userSession.db_id}_${receiverId}_${Date.now()}`)
  .on('postgres_changes', { 
- event: 'INSERT', 
+ event: '*', 
  schema: 'public', 
- table: 'mentorship_messages',
- filter: `receiver_id=eq.${userSession.db_id}` // Only listen for incoming to me
+ table: 'mentorship_messages'
  }, payload => {
- if (payload.new.sender_id === receiverId) {
- setMessages(prev => {
- const updated = [...prev, payload.new];
- // If chat is closed, trigger a hero reveal push notification!
- setIsOpen(currOpen => {
- if (!currOpen) {
- setUnreadCount(c => c + 1);
- addFlag({
- title: `New Message from ${receiverName || 'Mentorship'}`,
- description: payload.new.content.length > 40 ? payload.new.content.substring(0, 40) + '...' : payload.new.content,
- type: 'info',
- duration: 8000
- });
- }
- return currOpen; // Do not mutate isOpen
- });
- return updated;
- });
- setTimeout(scrollToBottom, 100);
+ if (payload.eventType === 'INSERT') {
+   if (payload.new.receiver_id === userSession.db_id && payload.new.sender_id === receiverId) {
+     setMessages(prev => {
+     const updated = [...prev, payload.new];
+     // If chat is closed, trigger a hero reveal push notification!
+     setIsOpen(currOpen => {
+     if (!currOpen) {
+     setUnreadCount(c => c + 1);
+     addFlag({
+     title: `New Message from ${receiverName || 'Mentorship'}`,
+     description: payload.new.content.length > 40 ? payload.new.content.substring(0, 40) + '...' : payload.new.content,
+     type: 'info',
+     duration: 8000
+     });
+     }
+     return currOpen; // Do not mutate isOpen
+     });
+     return updated;
+     });
+     setTimeout(scrollToBottom, 100);
+   }
+ } else if (payload.eventType === 'UPDATE') {
+   if (payload.new.sender_id === userSession.db_id && payload.new.receiver_id === receiverId) {
+     setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
+   }
  }
  })
  .subscribe();
