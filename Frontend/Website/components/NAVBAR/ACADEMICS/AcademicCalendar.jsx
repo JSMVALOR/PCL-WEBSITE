@@ -140,8 +140,9 @@ export default function AcademicCalendar() {
                     lineWidth: 1
                 },
                 columnStyles: {
-                    0: { halign: 'center', cellWidth: 60 },
-                    2: { halign: 'center', cellWidth: 150 }
+                    0: { halign: 'center', cellWidth: 40 },
+                    2: { halign: 'center', cellWidth: 120 },
+                    3: { halign: 'center', cellWidth: 140 }
                 },
                 styles: {
                     font: 'times',

@@ -385,8 +385,7 @@ export default function Programs() {
                         <div className="overflow-hidden relative z-10">
                           <table className="w-full text-left border-collapse block md:table">
                             <thead className="hidden md:table-header-group">
-                              <tr className="border-b border-[var(--card-border)] bg-black/20 md:table-row">
-                                <th className="py-6 px-8 text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.2em] w-20 text-center bg-black/10">S.NO</th>
+                                <tr className="border-b border-[var(--card-border)] bg-black/20 md:table-row">
                                 {calendarEvents.columns.map(col => (
                                   <th key={col} className="py-6 px-8 text-xs font-bold text-[var(--text-color)] uppercase tracking-widest">
                                     {col}
@@ -397,10 +396,6 @@ export default function Programs() {
                             <tbody className="divide-y divide-[var(--card-border)]/40 block md:table-row-group">
                               {calendarEvents.rows.map((row, idx) => (
                                 <tr key={row.id} className="block md:table-row hover:bg-white/5 transition-all duration-300 group p-4 md:p-0 border-b border-[var(--card-border)] md:border-none relative">
-                                  {/* Desktop S.NO */}
-                                  <td className="hidden md:table-cell py-6 px-8 text-center text-xs font-black text-[var(--text-muted)] group-hover:text-[var(--primary-color)] transition-colors bg-black/10">
-                                    {String(idx + 1).padStart(2, '0')}
-                                  </td>
                                   
                                   {/* Mobile S.NO and Compact Grid */}
                                   <td className="block md:hidden py-1">
