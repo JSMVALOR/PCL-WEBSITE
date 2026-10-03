@@ -5,6 +5,7 @@ import { useERP } from "../../../context/ErpContext";
 import MentorshipChatHub from '../../shared/MentorshipChatHub';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { getAvatarUrl } from '../../../utils/avatarUtils';
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function Mentorship() {
  const { userSession } = useERP();
@@ -81,6 +82,40 @@ export default function Mentorship() {
  }]);
 
  if (error) throw error;
+ 
+ // Notify Mentor
+ try {
+     const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+     await supabase.from('notices').insert([{
+         notice_id: noticeId,
+         title: 'Mentorship Session Requested',
+         category: 'System Alert',
+         target_audience: ['person'],
+         target_id: mentorData.id,
+         priority: 'normal',
+         content: `${userSession.full_name} has requested a mentorship session for ${requestForm.preferred_date ? new Date(requestForm.preferred_date).toLocaleDateString() : 'TBD'}.`,
+         author_name: userSession.full_name,
+         author_id: userSession.db_id
+     }]);
+
+     await supabase.from('notifications').insert([{
+         recipient_id: mentorData.id,
+         title: 'Session Requested',
+         message: `${userSession.full_name} requested a mentorship session.`,
+         type: 'mentorship',
+         action_link: 'facultymentorship'
+     }]);
+     
+     if (mentorData.email) {
+         await sendSystemEmail('GENERAL_BROADCAST', {
+             to_email: mentorData.email,
+             subject: `Mentorship Session Request - ${userSession.full_name}`,
+             message: `${userSession.full_name} has requested a mentorship session. Please check your Faculty Mentorship portal.`
+         });
+     }
+ } catch (notifyError) {
+     console.warn("Failed to notify mentor", notifyError);
+ }
  setStatusMessage({ type: "success", text: "Session requested successfully!" });
  fetchData();
  setTimeout(() => {

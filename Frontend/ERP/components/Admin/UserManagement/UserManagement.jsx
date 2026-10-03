@@ -292,6 +292,7 @@ if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() +
      const newStatus = 'Suspended';
      const { error: restrictError } = await supabase.from('profiles').update({ status: newStatus }).eq('id', user.db_id);
      if (restrictError) throw restrictError;
+    supabase.from('notifications').insert([{ recipient_id: user.db_id, title: `Account ${newStatus}`, message: `Your account status has been changed to ${newStatus}.`, type: newStatus === 'Active' ? 'success' : 'error', action_link: 'dashboard' }]).then();
 
      const updatedUsers = { ...usersData };
      const list = user.batch ? updatedUsers.students : updatedUsers.faculty;
@@ -344,6 +345,7 @@ if (window.erpToast) window.erpToast.show("Account " + newStatus.toLowerCase() +
  const newStatus = 'Suspended';
  const { error: restrictError } = await supabase.from('profiles').update({ status: newStatus }).eq('id', sourceUser.db_id);
  if (restrictError) throw restrictError;
+    supabase.from('notifications').insert([{ recipient_id: sourceUser.db_id, title: `Account ${newStatus}`, message: `Your account status has been changed to ${newStatus}.`, type: newStatus === 'Active' ? 'success' : 'error', action_link: 'dashboard' }]).then();
  
  const updatedUsers = { ...usersData };
  const list = updatedUsers.faculty;

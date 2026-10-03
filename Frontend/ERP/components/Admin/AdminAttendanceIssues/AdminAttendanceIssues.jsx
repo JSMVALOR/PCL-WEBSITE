@@ -21,7 +21,7 @@ export default function AdminAttendanceIssues() {
  try {
  const { data: tickets, error } = await supabase
  .from('helpdesk_tickets')
- .select('*, user:profiles!helpdesk_tickets_user_id_fkey(full_name, erp_id)')
+ .select('*, user:profiles!helpdesk_tickets_user_id_fkey(full_name, erp_id, email, phone)')
  .eq('category', 'Attendance')
  .order('created_at', { ascending: false });
 
@@ -39,7 +39,9 @@ export default function AdminAttendanceIssues() {
  created_at: t.created_at,
  session_id: parsed.session_id,
  student_id: parsed.student_id,
- record_id: parsed.record_id
+ record_id: parsed.record_id,
+        email: t.user?.email,
+        phone: t.user?.phone
  };
  });
  setAppeals(mapped);
@@ -104,8 +106,10 @@ export default function AdminAttendanceIssues() {
  }
  if (attError) throw attError;
  await supabase.from('helpdesk_tickets').update({ status: 'resolved', admin_reply: 'Appeal Granted by Administration.' }).eq('id', appeal.id);
+        supabase.from('notifications').insert([{ recipient_id: appeal.student_id, title: 'Attendance Appeal Granted', message: 'Your attendance appeal has been granted. Your record has been updated to present.', type: 'success', action_link: 'attendance' }]).then();
  } else {
  await supabase.from('helpdesk_tickets').update({ status: 'closed', admin_reply: 'Appeal Rejected by Administration.' }).eq('id', appeal.id);
+        supabase.from('notifications').insert([{ recipient_id: appeal.student_id, title: 'Attendance Appeal Rejected', message: 'Your attendance appeal was reviewed and rejected by the administration.', type: 'error', action_link: 'attendance' }]).then();
  }
  fetchAppeals();
  if(window.erpToast) window.erpToast.show(`Appeal successfully ${action}ed.`, "success");
@@ -154,6 +158,7 @@ export default function AdminAttendanceIssues() {
    });
  }
  if (waQueue.length > 0) supabase.from('whatsapp_queue').insert(waQueue).then();
+        supabase.from('notifications').insert([{ recipient_id: student.id, title: action === 'Debar' ? 'Debarment Notice' : 'Attendance Warning', message: action === 'Debar' ? `You have been debarred due to ${student.attendance_percentage}% attendance.` : `Warning: Your attendance is ${student.attendance_percentage}%.`, type: 'error', action_link: 'attendance' }]).then();
  if(window.erpToast) window.erpToast.show('Warning dispatched successfully.', "success");
  } else if (action === 'Debar') {
  await supabase.from('profiles').update({ is_debarred: true, debarment_reason: `Debarred due to severe attendance shortage (${student.attendance_percentage}%). Minimum required is ${debarThreshold}%.` }).eq('id', student.id);
@@ -191,6 +196,7 @@ export default function AdminAttendanceIssues() {
    });
  }
  if (waQueue.length > 0) supabase.from('whatsapp_queue').insert(waQueue).then();
+        supabase.from('notifications').insert([{ recipient_id: student.id, title: action === 'Debar' ? 'Debarment Notice' : 'Attendance Warning', message: action === 'Debar' ? `You have been debarred due to ${student.attendance_percentage}% attendance.` : `Warning: Your attendance is ${student.attendance_percentage}%.`, type: 'error', action_link: 'attendance' }]).then();
  window.erpDialog?.alert('Student has been debarred.', 'Success');
  fetchDebarmentData();
  } else if (action === 'Reinstate') {

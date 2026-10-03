@@ -298,6 +298,16 @@ export default function AdminApprovals({ isEmbedded = false }) {
  .eq('id', request.id);
  
  if (updateError) throw updateError;
+  
+  if (request.student_id) {
+    supabase.from('notifications').insert([{
+      recipient_id: request.student_id,
+      title: `Profile Update ${newStatus}`,
+      message: `Your profile update request was ${newStatus}.`,
+      type: newStatus === 'approved' ? 'success' : 'error',
+      action_link: 'approvals'
+    }]).then();
+  }
 
  // Notify Requester
  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;

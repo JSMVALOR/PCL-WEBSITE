@@ -1,6 +1,7 @@
 /* © 2026 JSM VALOR. All Rights Reserved. */
 import React, { useState, useEffect } from "react";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function MentorshipTransfers({}) {
  const [mentors, setMentors] = useState([]);
@@ -135,6 +136,39 @@ export default function MentorshipTransfers({}) {
  const sourceMentor = mentors.find(m => m.id === sourceMentorId)?.full_name;
  const targetMentor = mentors.find(m => m.id === targetMentorId)?.full_name;
  await logAction(`Transferred ${studentsToTransfer.length} students from ${sourceMentor} to ${targetMentor}`);
+
+ // Notify the transferred students
+ try {
+     const { data: studentProfiles } = await supabase.from('profiles').select('id, full_name, email, phone').in('id', studentsToTransfer);
+     
+     if (studentProfiles) {
+         const notifs = studentProfiles.map(p => ({
+             recipient_id: p.id,
+             title: 'Mentor Transferred',
+             message: `You have been transferred to a new faculty mentor: ${targetMentor}.`,
+             type: 'notice',
+             action_link: 'mentorship'
+         }));
+         await supabase.from('notifications').insert(notifs);
+         
+         const waQueue = studentProfiles.filter(p => p.phone).map(p => ({
+             phone: p.phone,
+             message: `Hello ${p.full_name},\n\nYour Faculty Mentor has been officially changed to ${targetMentor}. Please check the ERP Mentorship Hub for details.\n\n— Prudentia College of Law`,
+             recipient_name: p.full_name
+         }));
+         if (waQueue.length > 0) await supabase.from('whatsapp_queue').insert(waQueue);
+
+         for (const profile of studentProfiles) {
+             if (profile.email) {
+                 sendSystemEmail('GENERAL_BROADCAST', {
+                     to_email: profile.email,
+                     subject: 'Mentor Transferred',
+                     message: `Your mentorship assignment has been transferred to ${targetMentor}.`
+                 }).catch(e=>e);
+             }
+         }
+     }
+ } catch (notifyErr) { console.warn("Failed to notify transferred students", notifyErr); }
 
  window.erpDialog?.alert("Transfer Complete!");
  fetchMentees(sourceMentorId); // Refresh roster

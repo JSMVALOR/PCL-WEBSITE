@@ -115,6 +115,7 @@ const AdminHelpdesk = React.lazy(() => import('./components/Admin/AdminHelpdesk/
 const AdminSiteEditor = React.lazy(() => import('./components/Admin/AdminSiteEditor/AdminSiteEditor'));
 const EventsBoard = React.lazy(() => import('./components/notices/EventsBoard'));
 const AdminAcademicHub = React.lazy(() => import('./components/Admin/AdminAcademicHub/AdminAcademicHub'));
+const AdminClassrooms = React.lazy(() => import('./components/Admin/AdminClassrooms/AdminClassrooms'));
 const AdminClinicsHub = React.lazy(() => import('./components/Admin/AdminClinicsHub/AdminClinicsHub'));
 const BlogManager = React.lazy(() => import('./components/Admin/BlogManager/BlogManager'));
 const AdminCareers = React.lazy(() => import('./components/Admin/AdminWebsiteHub/AdminCareers'));
@@ -335,7 +336,7 @@ export default function App() {
  // 🟣 ADMIN ROUTES
  if (role === 'admin') {
  switch (activeTab) {
- case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />; case 'academic': return <AdminAcademicHub />;
+ case 'dashboard': return <AdminDashboard setActiveTab={setActiveTab} />; case 'academic': return <AdminAcademicHub />; case 'classrooms': return <AdminClassrooms />;
  case 'clinics': return <AdminClinicsHub />;
  case 'blogs': return <BlogManager />;
  case 'gallery': return <AdminGalleryManager />;

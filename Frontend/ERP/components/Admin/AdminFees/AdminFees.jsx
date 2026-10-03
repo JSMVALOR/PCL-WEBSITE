@@ -275,6 +275,14 @@ export default function AdminFees({ isEmbedded = false, }) {
 
   const { error: iErr } = await supabase.from('fee_invoices').update({ status: 'paid' }).eq('student_id', txn.student_id).eq('status', 'under_verification');
   if (iErr) throw new Error("Invoice Error: " + iErr.message);
+
+  await supabase.from('notifications').insert([{
+      recipient_id: txn.student_id,
+      title: 'Payment Verified',
+      message: `Your fee payment of ₹${txn.amount} has been successfully verified.`,
+      type: 'success',
+      action_link: 'finance'
+  }]);
   
   setCurrentTxnPayload(txn);
   

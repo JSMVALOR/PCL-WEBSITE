@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { useERP } from "../../../context/ErpContext";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function FacultyLeave({ isEmbedded = false, }) {
  const { userSession, events = [] } = useERP();
@@ -221,6 +222,40 @@ export default function FacultyLeave({ isEmbedded = false, }) {
  error = insErr;
  }
  if (error) throw error;
+
+ // Notify Admins
+ try {
+   const { data: adminProfiles } = await supabase.from('profiles').select('id').eq('role', 'admin');
+   if (adminProfiles && adminProfiles.length > 0) {
+     const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
+     await supabase.from('notices').insert([{
+       notice_id: noticeId,
+       title: 'New Faculty Leave Request',
+       category: 'System Alert',
+       target_audience: ['admin'],
+       priority: 'high',
+       content: `A new leave request has been submitted by ${userSession.full_name} for ${new Date(fromDate).toLocaleDateString()} to ${new Date(finalToDate).toLocaleDateString()}.`,
+       author_name: userSession.full_name,
+       author_id: userSession.db_id
+     }]);
+
+     await supabase.from('notifications').insert(adminProfiles.map(a => ({
+       recipient_id: a.id,
+       title: 'New Faculty Leave Request',
+       message: `${userSession.full_name} has requested leave for ${new Date(fromDate).toLocaleDateString()} to ${new Date(finalToDate).toLocaleDateString()}.`,
+       type: 'leave',
+       action_link: 'adminleave'
+     })));
+     
+     await sendSystemEmail('GENERAL_BROADCAST', {
+       to_email: 'admin@prudentia.edu',
+       subject: `New Leave Request - ${userSession.full_name}`,
+       message: `${userSession.full_name} has submitted a leave request. Please review it in the Admin Portal.`
+     });
+   }
+ } catch (notifyError) {
+   console.warn("Failed to notify admins", notifyError);
+ }
 
  setStatusMessage({ type: "success", text: editingLeaveId ? "Leave request updated successfully." : "Leave request submitted successfully." });
  fetchLeaveData();

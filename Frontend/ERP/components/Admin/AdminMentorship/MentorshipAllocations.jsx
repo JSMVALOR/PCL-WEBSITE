@@ -8,6 +8,7 @@ import { theme } from '../../../../Shared/theme';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { getAvatarUrl } from '../../../utils/avatarUtils';
+import { sendSystemEmail, sendSystemWhatsApp } from '../../../lib/EmailService';
 
 export default function MentorshipAllocations({}) {
  const [maxCapacity, setMaxCapacity] = useState(5);
@@ -172,6 +173,31 @@ export default function MentorshipAllocations({}) {
  const { error } = await supabase.from('mentorship').insert(newAllocations);
  if (error) throw error;
  await logAction(`Auto-allocated ${newAllocations.length} students`);
+ 
+ // Notify all students about their new mentors
+ try {
+     const studentIds = newAllocations.map(a => a.student_id);
+     const { data: studentProfiles } = await supabase.from('profiles').select('id, full_name, email, phone').in('id', studentIds);
+     
+     if (studentProfiles) {
+         const notifs = studentProfiles.map(p => ({
+             recipient_id: p.id,
+             title: 'Mentor Assigned',
+             message: 'You have been assigned a new faculty mentor. Check the Mentorship hub.',
+             type: 'notice',
+             action_link: 'mentorship'
+         }));
+         await supabase.from('notifications').insert(notifs);
+         
+         const waQueue = studentProfiles.filter(p => p.phone).map(p => ({
+             phone: p.phone,
+             message: `Hello ${p.full_name},\n\nYou have been officially assigned a Faculty Mentor for this academic year. Please check the ERP Mentorship Hub to connect with your mentor.\n\n— Prudentia College of Law`,
+             recipient_name: p.full_name
+         }));
+         if (waQueue.length > 0) await supabase.from('whatsapp_queue').insert(waQueue);
+     }
+ } catch (notifyErr) { console.warn("Failed to notify students", notifyErr); }
+ 
  } catch (error) { console.error(error); if (window.erpToast) window.erpToast.show("An error occurred. Please try again.", "error"); }
  },
  () => {
@@ -259,8 +285,10 @@ export default function MentorshipAllocations({}) {
 
  // Remove from source
  if (source.droppableId === 'unallocated') {
- draggedStudent = newUnallocated[source.index];
- newUnallocated.splice(source.index, 1);
+ const studentId = result.draggableId;
+ const realIndex = newUnallocated.findIndex(s => s.id === studentId);
+ draggedStudent = newUnallocated[realIndex];
+ newUnallocated.splice(realIndex, 1);
  } else {
  const facIndex = newFaculty.findIndex(f => f.id === source.droppableId);
  draggedStudent = newFaculty[facIndex].mentees[source.index];
@@ -269,7 +297,7 @@ export default function MentorshipAllocations({}) {
 
  // Add to destination
  if (destination.droppableId === 'unallocated') {
- newUnallocated.splice(destination.index, 0, draggedStudent);
+ newUnallocated.unshift(draggedStudent);
  await supabase.from('mentorship').delete().eq('student_id', draggedStudent.id);
  await logAction(`Unassigned student ${draggedStudent.name}`);
  } else {
@@ -298,6 +326,35 @@ export default function MentorshipAllocations({}) {
  }
 
  await logAction(`Assigned student ${draggedStudent.name} to mentor ${newFaculty[facIndex].name}`);
+ 
+ // Notify the student
+ try {
+     const { data: profile } = await supabase.from('profiles').select('email, phone').eq('id', draggedStudent.id).single();
+     if (profile) {
+         await supabase.from('notifications').insert([{
+             recipient_id: draggedStudent.id,
+             title: 'Mentor Assigned',
+             message: `You have been assigned ${newFaculty[facIndex].name} as your faculty mentor.`,
+             type: 'notice',
+             action_link: 'mentorship'
+         }]);
+         if (profile.email) {
+             sendSystemEmail('GENERAL_BROADCAST', {
+                 to_email: profile.email,
+                 subject: 'Faculty Mentor Assigned',
+                 message: `You have been assigned to ${newFaculty[facIndex].name}. Please check the ERP Mentorship Hub for more details.`
+             }).catch(e=>e);
+         }
+         if (profile.phone) {
+             await supabase.from('whatsapp_queue').insert([{
+                 phone: profile.phone,
+                 message: `Hello ${draggedStudent.name},\n\nYou have been assigned ${newFaculty[facIndex].name} as your Faculty Mentor. Check the ERP for details.\n\n— Prudentia College of Law`,
+                 recipient_name: draggedStudent.name
+             }]);
+         }
+     }
+ } catch (e) { console.warn(e); }
+
  if(window.erpToast) window.erpToast.show(`Success! ${draggedStudent.name} has been assigned to ${newFaculty[facIndex].name}.`);
  }
 
@@ -399,7 +456,7 @@ export default function MentorshipAllocations({}) {
  <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
 
  {/* LEFT PANE: Unallocated Pool (Now much smarter with filters) */}
- <div className="xl:col-span-4 flex flex-col gap-3 lg:gap-4 xl:sticky xl:top-24 h-fit self-start z-10">
+ <div className="xl:col-span-4 flex flex-col gap-3 lg:gap-4 h-fit self-start z-10">
  <div className="flex justify-between items-end px-1">
  <div>
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Unallocated Students</h2>

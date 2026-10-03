@@ -38,6 +38,7 @@ export default function MenteeLeaves({ menteeId }) {
 
  const { error } = await supabase.from('leave_requests').update(updatePayload).eq('id', leave.id);
  if (error) throw error;
+  if (menteeId) supabase.from('notifications').insert([{ recipient_id: menteeId, title: `Leave ${status.toUpperCase()}`, message: `Your leave request was ${status}.`, type: status === 'approved' ? 'success' : 'error', action_link: 'attendance' }]).then();
  
  fetchLeaves();
  window.erpToast?.show?.(`Leave marked as ${status}`, 'success');

@@ -24,7 +24,8 @@ export const ADMIN_NAV_GROUPS = [
  id: "student_ops", label: "Student Tracking", icon: "fa-solid fa-user-graduate",
  children: [
  { id: "attendance_issues", label: "Attendance Control", icon: "fa-solid fa-clipboard-question" },
- { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+ { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" },
+ { id: "classrooms", label: "Classroom Manager", icon: "fa-solid fa-chalkboard-user" }
  ]
  }
  ]
@@ -106,7 +107,8 @@ export const ADMIN_NAV_MEGA = [
  children: [
  { id: "markscontroller", label: "Marks & Ledger", icon: "fa-solid fa-file-signature" },
  { id: "attendance_issues", label: "Attendance Control", icon: "fa-solid fa-clipboard-question" },
- { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+ { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" },
+ { id: "classrooms", label: "Classroom Manager", icon: "fa-solid fa-chalkboard-user" }
  ]
  }
  ],
@@ -116,7 +118,8 @@ export const ADMIN_NAV_MEGA = [
  { id: "coursebuilder", label: "Course Builder", icon: "fa-solid fa-book-open" },
  { id: "markscontroller", label: "Marks & Ledger", icon: "fa-solid fa-file-signature" },
  { id: "attendance_issues", label: "Attendance Control", icon: "fa-solid fa-clipboard-question" },
- { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" }
+ { id: "allocations", label: "Mentorship", icon: "fa-solid fa-people-arrows" },
+ { id: "classrooms", label: "Classroom Manager", icon: "fa-solid fa-chalkboard-user" }
  ]
  },
  {

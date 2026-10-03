@@ -1682,7 +1682,56 @@ html.home-snap {
     --panel-opacity: 0.90;
   }
 
+  /* NEW THEME: Prudentia Blue (Blue & White) */
+  [data-theme="prudentia-blue"] {
+    --bg-app: #F0F4F8;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #E1E8F0;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --accent: #2563EB; /* Royal Blue */
+    --accent-muted: #1D4ED8;
+    --border-color: rgba(37, 99, 235, 0.15);
+    --border-strong: rgba(37, 99, 235, 0.3);
+    --shadow-elevated: 0 10px 40px -10px rgba(37, 99, 235, 0.1);
+    --text-on-accent: #FFFFFF;
+    --panel-blur: 40px;
+    --panel-opacity: 0.90;
+  }
 
+  /* NEW THEME: Prudentia Green (Forest & White) */
+  [data-theme="forest-whisper"] {
+    --bg-app: #F0FDF4;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #DCFCE7;
+    --text-primary: #064E3B;
+    --text-secondary: #047857;
+    --accent: #16A34A; /* Emerald Green */
+    --accent-muted: #15803D;
+    --border-color: rgba(22, 163, 74, 0.15);
+    --border-strong: rgba(22, 163, 74, 0.3);
+    --shadow-elevated: 0 10px 40px -10px rgba(22, 163, 74, 0.1);
+    --text-on-accent: #FFFFFF;
+    --panel-blur: 40px;
+    --panel-opacity: 0.90;
+  }
+
+  /* NEW THEME: Prudentia Purple (Amethyst) */
+  [data-theme="royal-amethyst"] {
+    --bg-app: #FAF5FF;
+    --bg-panel: #FFFFFF;
+    --bg-elevated: #F3E8FF;
+    --text-primary: #3B0764;
+    --text-secondary: #6B21A8;
+    --accent: #9333EA; /* Purple */
+    --accent-muted: #7E22CE;
+    --border-color: rgba(147, 51, 234, 0.15);
+    --border-strong: rgba(147, 51, 234, 0.3);
+    --shadow-elevated: 0 10px 40px -10px rgba(147, 51, 234, 0.1);
+    --text-on-accent: #FFFFFF;
+    --panel-blur: 40px;
+    --panel-opacity: 0.90;
+  }
 
   /* 1. Pristine Alabaster (Light) */
   [data-theme="apple-hig-light"] {

@@ -423,6 +423,8 @@ export default function FacultyMarks({ subjectContext, isEmbedded = false }) {
      
      if (waQueue.length > 0) await supabase.from('whatsapp_queue').insert(waQueue);
      if (emailQueue.length > 0) await Promise.allSettled(emailQueue);
+      const notifs = upsertArray.map(r => ({ recipient_id: r.student_id, title: 'Marks Released', message: `Marks for ${currentAssessmentTitle} have been published.`, type: 'notice', action_link: 'marks' }));
+      if (notifs.length > 0) supabase.from('notifications').insert(notifs).then();
    }
  } catch(e) { console.error("Marks notification failed:", e); }
  

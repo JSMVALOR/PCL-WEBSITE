@@ -128,6 +128,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 
  const { error } = await supabase.from('leave_requests').insert([payload]);
  if (error) throw error;
+  if (studentId) supabase.from('notifications').insert([{ recipient_id: studentId, title: 'Leave Request Submitted', message: `Your leave request for ${diffDays} days has been submitted.`, type: 'success', action_link: 'attendance' }]).then();
 
  // Notify Mentor
  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;
@@ -178,6 +179,7 @@ export default function StudentApprovals({ isEmbedded = false, }) {
 
  const { error } = await supabase.from('grievances').insert([payload]);
  if (error) throw error;
+  if (studentId) supabase.from('notifications').insert([{ recipient_id: studentId, title: 'Grievance Submitted', message: `Your grievance (${grievanceData.category}) has been logged successfully.`, type: 'success', action_link: 'helpdesk' }]).then();
 
  // Notify Assignee
  const noticeId = `CIR-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000) + 1000}`;

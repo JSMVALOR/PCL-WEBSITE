@@ -198,10 +198,12 @@ export default function FacultyMentorship() {
  } catch (error) { console.error(error); if (window.toast) window.toast.error("An error occurred. Please try again."); }
  };
 
- const handleMeetingStatus = async (meetingId, newStatus) => {
+ const handleMeetingAction = async (meetingId, newStatus, notes = null) => {
  setActionLoading(meetingId);
  try {
- await supabase.from('mentorship_meetings').update({ status: newStatus }).eq('id', meetingId);
+ const updateData = { status: newStatus };
+ if (notes) updateData.notes = notes;
+ await supabase.from('mentorship_meetings').update(updateData).eq('id', meetingId);
  fetchData();
  
  // 5. Fetch Grievances assigned to this mentor

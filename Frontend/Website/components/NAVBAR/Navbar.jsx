@@ -117,17 +117,41 @@ export default function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const timeoutRef = useRef(null);
-  const [isDarkMode, setIsDarkMode] = useState(() => document.documentElement.getAttribute('data-theme') === 'prudentia-dark');
+  const [showThemeDropdown, setShowThemeDropdown] = useState(false);
 
-  const toggleTheme = () => {
-    const newTheme = isDarkMode ? '' : 'prudentia-dark';
-    if (newTheme) {
-      document.documentElement.setAttribute('data-theme', newTheme);
+  const THEME_OPTIONS = [
+    { id: '', name: 'Light Gold', color: '#EAB308', bg: '#F4EFE6' },
+    { id: 'prudentia-dark', name: 'Dark Navy', color: '#C5A059', bg: '#06101E' },
+    { id: 'prudentia-blue', name: 'Blue', color: '#2563EB', bg: '#F0F4F8' },
+    { id: 'apple-hig-light', name: 'Light Red', color: '#E11D48', bg: '#F8FAFC' },
+    { id: 'midnight-justice', name: 'Dark Red', color: '#DC2626', bg: '#000000' },
+    { id: 'marble-executive', name: 'Dark Slate', color: '#EF4444', bg: '#0B1120' },
+    { id: 'emerald-chancery', name: 'Deep Red', color: '#991B1B', bg: '#FFFAFA' },
+    { id: 'forest-whisper', name: 'Green', color: '#16A34A', bg: '#F0FDF4' },
+    { id: 'royal-amethyst', name: 'Purple', color: '#9333EA', bg: '#FAF5FF' }
+  ];
+
+  const [currentTheme, setCurrentTheme] = useState(() => document.documentElement.getAttribute('data-theme') || '');
+
+  const selectTheme = (themeId) => {
+    if (themeId) {
+      document.documentElement.setAttribute('data-theme', themeId);
     } else {
       document.documentElement.removeAttribute('data-theme');
     }
-    setIsDarkMode(!isDarkMode);
+    setCurrentTheme(themeId);
+    setShowThemeDropdown(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.theme-selector')) {
+        setShowThemeDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -325,13 +349,48 @@ export default function Navbar() {
 
               {/* Right Actions */}
               <div className="flex items-center gap-6 z-50">
-                <button 
-                  onClick={toggleTheme}
-                  className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-muted)] hover:text-[var(--primary-color)] transition-colors"
-                  aria-label="Toggle Theme"
-                >
-                  {isDarkMode ? <i className="fa-solid fa-sun text-sm"></i> : <i className="fa-solid fa-moon text-sm"></i>}
-                </button>
+                
+                {/* Theme Selector Dropdown */}
+                <div className="relative theme-selector flex items-center justify-center">
+                  <button 
+                    onClick={() => setShowThemeDropdown(!showThemeDropdown)}
+                    className="flex items-center justify-center w-8 h-8 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--text-on-accent)] transition-all"
+                    aria-label="Select Theme"
+                    title="Select Color Scheme"
+                  >
+                    <i className="fa-solid fa-palette text-sm"></i>
+                  </button>
+
+                  <AnimatePresence>
+                    {showThemeDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-full right-0 mt-3 w-48 bg-[var(--bg-panel)] border border-[var(--border-color)] rounded-xl shadow-[var(--shadow-elevated)] overflow-hidden z-[100]"
+                      >
+                        <div className="p-2 flex flex-col gap-1 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                          <h4 className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] px-3 py-2">Select Theme</h4>
+                          {THEME_OPTIONS.map((theme) => (
+                            <button
+                              key={theme.id}
+                              onClick={() => selectTheme(theme.id)}
+                              className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-left transition-colors ${currentTheme === theme.id ? 'bg-[var(--accent)]/10 text-[var(--accent)] font-bold' : 'text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'}`}
+                            >
+                              <span 
+                                className="w-4 h-4 rounded-full border border-black/10 dark:border-white/10"
+                                style={{ backgroundColor: theme.color }}
+                              ></span>
+                              {theme.name}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
                 <a
                   href="/erp"
                   className="hidden md:flex text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-color)] transition-colors"
