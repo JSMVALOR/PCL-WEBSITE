@@ -50,6 +50,7 @@ export default function AcademicCalendar() {
         setIsGenerating(true);
 
         try {
+            const { jsPDF } = window.jspdf;
             const doc = new jsPDF('p', 'pt', 'a4');
             
             // Branding Header
@@ -63,7 +64,7 @@ export default function AcademicCalendar() {
             
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
-            doc.text("ACADEMIC CALENDAR", 40, 75);
+            doc.text("ACADEMIC CALENDAR 2026-27", 40, 75);
             doc.text(`Generated: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.width - 40, 75, { align: 'right' });
 
             // Table Body
@@ -99,10 +100,16 @@ export default function AcademicCalendar() {
                 },
                 margin: { top: 120, left: 40, right: 40 }
             });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Important Note: This calendar has been prepared based on the academic schedule as per the Osmania University communication. Any subsequent changes, additions or revised dates notified by the University shall prevail and will be incorporated by the College accordingly.", 40, doc.lastAutoTable.finalY + 30, { maxWidth: doc.internal.pageSize.width - 80 });
+            doc.text("SIGNATURE AND SEAL OF THE INSTITUTION", doc.internal.pageSize.width - 40, doc.lastAutoTable.finalY + 120, { align: 'right' });
 
             doc.save('Prudentia_Academic_Calendar.pdf');
         } catch (error) {
             console.error("Failed to generate PDF:", error);
+            if(window.erpToast) window.erpToast.show("Failed to generate PDF. Please try again.", "error");
         } finally {
             setIsGenerating(false);
         }
@@ -123,7 +130,16 @@ export default function AcademicCalendar() {
                             <p className="text-[var(--text-muted)] mt-4 max-w-2xl text-lg">Stay updated with important semester dates, examination schedules, and college holidays.</p>
                         </div>
                         
-                        <div className="flex gap-3"></div>
+                        <div className="flex gap-3">
+                            <button 
+                                onClick={generateLuxuryPDF} 
+                                disabled={isGenerating || !calendarData}
+                                className="h-12 px-6 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold transition flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50"
+                            >
+                                {isGenerating ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-download"></i>}
+                                <span>Download PDF</span>
+                            </button>
+                        </div>
                     </div>
 
                     {loading ? (
