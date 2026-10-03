@@ -189,22 +189,21 @@ export default function StudentDashboard({ setActiveTab }) {
  
  <DashboardWorkSchedule role="student" />
 
- {/* Metrics Ribbon (Boxed) */}
- <div className="flex flex-wrap lg:flex-nowrap gap-6 lg:gap-10 shrink-0 p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel">
+ {/* Metrics Ribbon (Grid) */}
+ <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
  {[
- { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check', color: 'text-rose-500', tab: 'academic_center' },
- { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check', color: 'text-emerald-500', tab: 'academic_center' },
- { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsTotal || 0}`, icon: 'fa-file-lines', color: 'text-indigo-500', tab: 'academic_center' },
- { label: 'CGPA', val: Number(stats?.cgpa || 0).toFixed(2), icon: 'fa-graduation-cap', color: 'text-amber-500', tab: 'academic_center' }
+ { label: 'Pending Tasks', val: stats.assignmentsPending || 0, icon: 'fa-list-check', color: 'text-rose-500', bg: 'bg-rose-500/10', glow: 'bg-rose-500/5', glowHover: 'group-hover:bg-rose-500/10', tab: 'academic_center' },
+ { label: 'Attendance', val: `${stats.attendance}%`, icon: 'fa-user-check', color: 'text-emerald-500', bg: 'bg-emerald-500/10', glow: 'bg-emerald-500/5', glowHover: 'group-hover:bg-emerald-500/10', tab: 'academic_center' },
+ { label: 'Assignments', val: `${stats.assignmentsSubmitted}/${stats.assignmentsTotal || 0}`, icon: 'fa-file-lines', color: 'text-indigo-500', bg: 'bg-indigo-500/10', glow: 'bg-indigo-500/5', glowHover: 'group-hover:bg-indigo-500/10', tab: 'academic_center' },
+ { label: 'CGPA', val: Number(stats?.cgpa || 0).toFixed(2), icon: 'fa-graduation-cap', color: 'text-amber-500', bg: 'bg-amber-500/10', glow: 'bg-amber-500/5', glowHover: 'group-hover:bg-amber-500/10', tab: 'academic_center' }
  ].map((m, i) => (
- <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="flex-1 min-w-[140px] flex items-center gap-4 relative group cursor-pointer hover:opacity-80 transition-opacity">
- <div className={`w-12 h-12 rounded-xl bg-themePanel flex items-center justify-center text-xl shadow-sm border border-themeBorder ${m.color}`}>
- <i className={`fa-solid ${m.icon}`}></i>
- </div>
- <div className="flex flex-col">
- <h3 className="text-2xl font-black tracking-tight text-themeText leading-none">{m.val}</h3>
- <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-1">{m.label}</p>
- </div>
+ <div key={i} onClick={() => m.tab ? setActiveTab(m.tab) : null} className="bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.25rem] p-5 flex flex-col gap-1 shadow-sm relative overflow-hidden group cursor-pointer hover:border-themeAccent/30 hover:shadow-md transition-all duration-300">
+   <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-2xl transition-colors duration-500 ${m.glow} ${m.glowHover}`}></div>
+   <div className={`w-10 h-10 rounded-xl ${m.bg} ${m.color} flex items-center justify-center mb-1`}>
+     <i className={`fa-solid ${m.icon} text-lg`}></i>
+   </div>
+   <h3 className="text-3xl font-black tracking-tight text-themeText leading-none">{m.val}</h3>
+   <p className="text-[10px] font-bold uppercase tracking-widest text-themeTextSec mt-1">{m.label}</p>
  </div>
  ))}
  </div>
@@ -214,7 +213,7 @@ export default function StudentDashboard({ setActiveTab }) {
  <StudentActivityRings stats={stats} />
  
  {/* Campus Notices (Boxed) */}
- <div className="flex-1 relative flex flex-col shrink-0 p-6 bg-themeElevated border border-themeBorder shadow-premium rounded-themePanel">
+ <div className="flex-1 relative flex flex-col shrink-0 p-6 bg-themePanel/60 dark:bg-themePanel/40 backdrop-blur-2xl border border-themeBorder rounded-[1.5rem] shadow-sm">
  <div className="flex justify-between items-center mb-5 shrink-0 border-b border-themeBorder dark:border-white/[0.04] pb-3">
  <h3 className="text-sm font-black tracking-tight text-themeText uppercase">Campus Notices</h3>
  <button onClick={() => setActiveTab('notices')} className="text-themeAccent text-xs hover:underline font-bold">View All</button>

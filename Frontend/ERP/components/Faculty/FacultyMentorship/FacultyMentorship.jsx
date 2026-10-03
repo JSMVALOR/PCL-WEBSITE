@@ -299,7 +299,7 @@ export default function FacultyMentorship() {
  
  {/* Header */}
  {!selectedMentee && (
- <div className="mt-4 sm:mt-6 lg:mt-8 w-full">
+ <div className="mt-4 sm:mt-6 lg:mt-8 mb-8 lg:mb-10 w-full">
  <PageHeader 
  icon="fa-solid fa-users" 
  title="Mentorship Hub" 
