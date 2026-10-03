@@ -399,7 +399,7 @@ export default function MentorshipAllocations({}) {
  <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
 
  {/* LEFT PANE: Unallocated Pool (Now much smarter with filters) */}
- <div className="xl:col-span-4 flex flex-col gap-3 lg:gap-4">
+ <div className="xl:col-span-4 flex flex-col gap-3 lg:gap-4 xl:sticky xl:top-24 h-fit self-start z-10">
  <div className="flex justify-between items-end px-1">
  <div>
  <h2 className="text-base lg:text-lg font-semibold tracking-tight text-themeText tracking-tight">Unallocated Students</h2>
