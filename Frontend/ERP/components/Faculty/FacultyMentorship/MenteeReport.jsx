@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from '../../../context/ErpContext';
+import { sendSystemEmail } from '../../../lib/EmailService';
 
 export default function MenteeReport({ menteeId, menteeName, setMenteeTab }) {
  const { userSession } = useERP();
@@ -22,7 +23,7 @@ export default function MenteeReport({ menteeId, menteeName, setMenteeTab }) {
  });
  if (error) throw error;
  
- const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ const { data: admins } = await supabase.from('profiles').select('id, email, phone').eq('role', 'admin');
  if (admins && admins.length > 0) {
    const notifications = admins.map(a => ({
      recipient_id: a.id,
@@ -32,6 +33,24 @@ export default function MenteeReport({ menteeId, menteeName, setMenteeTab }) {
      action_link: 'approvals'
    }));
    await supabase.from('notifications').insert(notifications);
+
+   for (let admin of admins) {
+     if (admin.email) {
+       await sendSystemEmail('GENERAL_BROADCAST', {
+         to_email: admin.email,
+         subject: `🚨 Urgent: New Faculty Grievance against Student`,
+         priority: 'HIGH',
+         title: 'Faculty Grievance Report',
+         content: `A new grievance under category "${formData.category}" has been filed by a faculty member against student ${menteeName} and requires immediate administrative attention. Please log in to the ERP Admin Portal to review.`,
+       });
+     }
+     if (admin.phone) {
+       await supabase.from('whatsapp_queue').insert({
+         phone: admin.phone,
+         message: `🚨 *New Faculty Grievance*\n\nCategory: ${formData.category}\nA faculty member has escalated a grievance against a student to the Administration.\n\nPlease check the ERP Admin Portal.`,
+       });
+     }
+   }
  }
 
  window.erpDialog?.alert("Report successfully filed with Admin.");

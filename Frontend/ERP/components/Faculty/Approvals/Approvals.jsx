@@ -210,7 +210,7 @@ export default function FacultyApprovals({ isEmbedded = false }) {
  if (error) throw error;
  
  // Notify Admins
- const { data: admins } = await supabase.from('profiles').select('id').eq('role', 'admin');
+ const { data: admins } = await supabase.from('profiles').select('id, email, phone').eq('role', 'admin');
  if (admins && admins.length > 0) {
    const notifications = admins.map(a => ({
      recipient_id: a.id,
@@ -220,6 +220,24 @@ export default function FacultyApprovals({ isEmbedded = false }) {
      action_link: 'approvals'
    }));
    await supabase.from('notifications').insert(notifications);
+
+   for (let admin of admins) {
+     if (admin.email) {
+       await sendSystemEmail('GENERAL_BROADCAST', {
+         to_email: admin.email,
+         subject: `🚨 Urgent: New Faculty Grievance`,
+         priority: 'HIGH',
+         title: 'Faculty Grievance Report',
+         content: `A new grievance under category "${grievanceData.category}" has been filed by a faculty member and requires immediate administrative attention. Please log in to the ERP Admin Portal to review and take action.`,
+       });
+     }
+     if (admin.phone) {
+       await supabase.from('whatsapp_queue').insert({
+         phone: admin.phone,
+         message: `🚨 *New Faculty Grievance*\n\nCategory: ${grievanceData.category}\nA faculty member has escalated a grievance to the Administration.\n\nPlease check the ERP Admin Portal.`,
+       });
+     }
+   }
  }
 
  window.erpDialog.alert("Grievance submitted successfully. It has been escalated directly to the Admin.");

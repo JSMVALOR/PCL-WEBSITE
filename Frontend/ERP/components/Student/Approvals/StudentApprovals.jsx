@@ -5,6 +5,7 @@ import { theme } from '../../../../Shared/theme';
 import PageHeader from "../../shared/PageHeader/PageHeader";
 import { supabase } from '../../../../Shared/lib/supabase/supabaseClient';
 import { useERP } from "../../../context/ErpContext";
+import { sendSystemEmail, sendSystemWhatsApp } from "../../../lib/EmailService";
 
 export default function StudentApprovals({ isEmbedded = false, }) {
  const { userSession } = useERP();
@@ -191,6 +192,50 @@ export default function StudentApprovals({ isEmbedded = false, }) {
  author_name: 'System',
  author_id: studentId
  }]);
+
+ if (assignedTo === null) {
+ try {
+ const { data: admins } = await supabase.from('profiles').select('email, phone').eq('role', 'admin');
+ if (admins && admins.length > 0) {
+ for (let admin of admins) {
+ if (admin.email) {
+ await sendSystemEmail('GENERAL_BROADCAST', {
+ to_email: admin.email,
+ subject: `🚨 Urgent: New Grievance Escalation`,
+ priority: 'HIGH',
+ title: 'New Grievance Report',
+ content: `A new grievance under category "${grievanceData.category}" has been filed by a student and requires immediate administrative attention. Please log in to the ERP Admin Portal to review and take action.`,
+ });
+ }
+ if (admin.phone) {
+ await supabase.from('whatsapp_queue').insert({
+ phone: admin.phone,
+ message: `🚨 *New Grievance Escalated*\n\nCategory: ${grievanceData.category}\nA new grievance has been escalated to the Administration and requires review.\n\nPlease check the ERP Admin Portal.`,
+ });
+ }
+ }
+ }
+ } catch(e) { console.error("Notification failed", e); }
+ } else {
+ try {
+ const { data: mProfile } = await supabase.from('profiles').select('email, phone').eq('id', assignedTo).single();
+ if (mProfile?.email) {
+ await sendSystemEmail('GENERAL_BROADCAST', {
+ to_email: mProfile.email,
+ subject: `🚨 Urgent: New Mentee Grievance`,
+ priority: 'HIGH',
+ title: 'New Mentee Grievance',
+ content: `A new grievance under category "${grievanceData.category}" has been filed by your mentee and requires your attention. Please log in to the ERP to review.`,
+ });
+ }
+ if (mProfile?.phone) {
+ await supabase.from('whatsapp_queue').insert({
+ phone: mProfile.phone,
+ message: `🚨 *Mentee Grievance Escalated*\n\nCategory: ${grievanceData.category}\nA new grievance has been routed to you as their faculty mentor.\n\nPlease check the ERP Portal.`,
+ });
+ }
+ } catch(e) { console.error("Notification failed", e); }
+ }
 
  const escalationMsg = assignedTo === null ? "It has been escalated directly to the Admin." : "It has been routed to your Faculty Mentor.";
  window.erpDialog.alert(`Grievance submitted successfully. ${escalationMsg}`);
