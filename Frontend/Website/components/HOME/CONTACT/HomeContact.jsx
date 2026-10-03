@@ -159,7 +159,14 @@ const HomeContact = forwardRef((props, ref) => {
               <Link to="/contact" className="hover:text-[var(--primary-color)] transition-colors">Contact</Link>
               <a href="/login" className="hover:text-[var(--primary-color)] transition-colors">ERP Login</a>
             </div>
-            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2 text-[var(--primary-color)] hover:text-white transition-colors group opacity-100">
+            <button 
+              onClick={() => {
+                const hero = document.getElementById('hero');
+                if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} 
+              className="flex items-center gap-2 text-[var(--primary-color)] hover:text-white transition-colors group opacity-100"
+            >
               Return To Top <ArrowUp size={12} className="group-hover:-translate-y-1 transition-transform" />
             </button>
           </div>
