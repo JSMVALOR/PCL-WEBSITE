@@ -21,7 +21,7 @@ export default function LeaveRequests({ onReviewRequest }) {
  
  const { data: profiles } = await supabase
  .from('profiles')
- .select('id, full_name, email');
+ .select('id, full_name, email, erp_id, department');
 
  if (leaves && profiles) {
  const mapped = leaves.map(l => {

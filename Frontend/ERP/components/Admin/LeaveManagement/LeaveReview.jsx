@@ -123,7 +123,7 @@ export default function LeaveReview({ request, onClose, onAssignReplacement }) {
  <div className="flex flex-wrap gap-4 mt-2">
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec">Employee ID</p>
- <p className="text-xs lg:text-sm font-bold text-themeText mt-0.5">FAC-{request.faculty?.id?.substring(0,6).toUpperCase() || request.faculty_id?.substring(0,6).toUpperCase() || 'N/A'}</p>
+ <p className="text-xs lg:text-sm font-bold text-themeText mt-0.5">{request.faculty?.erp_id || `FAC-${(request.faculty_id?.substring(0,6) || 'N/A').toUpperCase()}`}</p>
  </div>
  <div>
  <p className="text-[9px] lg:text-[13px] font-medium text-themeTextSec">Department</p>

@@ -31,7 +31,7 @@ export default function LeaveCalendar({}) {
   const uniqueIds = [...new Set(enriched.map(l => l.faculty_id).filter(Boolean))];
   if (uniqueIds.length > 0) {
    const { data: facultyList } = await supabase
-    .from('users')
+    .from('profiles')
     .select('id, full_name')
     .in('id', uniqueIds);
    const nameMap = {};
